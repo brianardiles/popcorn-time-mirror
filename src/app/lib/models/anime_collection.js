@@ -9,7 +9,7 @@
 			return {
 				torrents: App.Config.getProvider('anime'),
 				//         subtitle: App.Config.getProvider('subtitle'),
-				//         metadata: App.Trakt
+                                metadata: App.Config.getProvider('animemeta')
 			};
 		},
 	});

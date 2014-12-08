@@ -149,6 +149,8 @@
 			subtitle: 'ysubs',
 			metadata: 'trakttv',
 
+                        animemeta: 'hummingbird',
+
 			tvshowsubtitle: 'opensubtitles',
 			torrentCache: 'TorrentCache'
 		},

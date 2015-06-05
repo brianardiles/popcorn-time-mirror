@@ -1,10 +1,9 @@
-(function (App) {
+(function(App) {
     'use strict';
-
+    var util = require('util');
     var Loading = Backbone.Marionette.ItemView.extend({
         template: '#loading-tpl',
         className: 'app-overlay',
-        extPlayerStatusUpdater: null,
 
         ui: {
             stateTextDownload: '.text_download',
@@ -17,211 +16,283 @@
             progressTextSeeds: '.value_seeds',
 
             seedStatus: '.seed_status',
-            bufferPercent: '.buffer_percent',
+            downloadPercent: '.download_percent',
 
             downloadSpeed: '.download_speed',
             uploadSpeed: '.upload_speed',
             progressbar: '#loadingbar-contents',
 
-            title: '.title',
             player: '.player-name',
             streaming: '.external-play',
             controls: '.player-controls',
             cancel_button: '.cancel-button',
 
-            playingbarBox: '.playing-progressbar',
-            playingbar: '#playingbar-contents'
+            title: '.title',
+            backdrop: '.loading-background'
         },
 
         events: {
             'click .cancel-button': 'cancelStreaming',
             'click .pause': 'pauseStreaming',
-            'click .stop': 'stopStreaming',
-            'click .play': 'resumeStreaming',
-            'click .forward': 'forwardStreaming',
-            'click .backward': 'backwardStreaming',
-            'click .playing-progressbar': 'seekStreaming'
+            'click .stop': 'cancelStreaming',
+            'click .play': 'resumeStreaming'
         },
-
-        initialize: function () {
-            var _this = this;
-
-            App.vent.trigger('settings:close');
-            App.vent.trigger('about:close');
+        initialize: function() {
+            var that = this;
 
             //If a child was removed from above this view
-            App.vent.on('viewstack:pop', function () {
-                if (_.last(App.ViewStack) === _this.className) {
-                    _this.initKeyboardShortcuts();
+            App.vent.on('viewstack:pop', function() {
+                if (_.last(App.ViewStack) === that.className) {
+                    that.initKeyboardShortcuts();
                 }
             });
 
             //If a child was added above this view
-            App.vent.on('viewstack:push', function () {
-                if (_.last(App.ViewStack) !== _this.className) {
-                    _this.unbindKeyboardShortcuts();
+            App.vent.on('viewstack:push', function() {
+                if (_.last(App.ViewStack) !== that.className) {
+                    that.unbindKeyboardShortcuts();
                 }
             });
 
             win.info('Loading torrent');
-            this.listenTo(this.model, 'change:state', this.onStateUpdate);
+
+            if (this.model.attributes.data.type.indexOf('dropped') > -1) {
+                this.augmentDropModel(this.model.attributes.data); // olny call if droped torrent/magnet
+            }
+
         },
 
-        initKeyboardShortcuts: function () {
-            var _this = this;
-            Mousetrap.bind(['esc', 'backspace'], function (e) {
-                _this.cancelStreaming();
+        initKeyboardShortcuts: function() {
+            var that = this;
+            Mousetrap.bind(['esc', 'backspace'], function(e) {
+                that.cancelStreaming();
             });
         },
 
-        unbindKeyboardShortcuts: function () {
+        unbindKeyboardShortcuts: function() {
             Mousetrap.unbind(['esc', 'backspace']);
         },
 
-        onShow: function () {
-            $('.filter-bar').hide();
+        onShow: function() {
+            this.ui.stateTextDownload.text(i18n.__('Loading'));
+            win.debug('Initializing Torrent Loader For', this.model.get('data').metadata.title);
             $('#header').addClass('header-shadow');
-
+            $('.filter-bar').hide();
             this.initKeyboardShortcuts();
-        },
-        onStateUpdate: function () {
-            var self = this;
-            var state = this.model.get('state');
-            var streamInfo = this.model.get('streamInfo');
-            win.info('Loading torrent:', state);
-
-            this.ui.stateTextDownload.text(i18n.__(state));
-
-            if (state === 'downloading') {
-                this.listenTo(this.model.get('streamInfo'), 'change:downloaded', this.onProgressUpdate);
+            this.player = this.model.get('player').get('id');
+            this.StateUpdate();
+            if (this.model.get('data').metadata.backdrop) {
+                this.loadBackground(this.model.get('data').metadata.backdrop);
             }
 
-            if (state === 'playingExternally') {
-                this.ui.stateTextDownload.hide();
-                this.ui.progressbar.hide();
-                if (streamInfo.get('player') && streamInfo.get('player').get('type') === 'chromecast') {
-                    this.ui.controls.css('visibility', 'visible');
-                    this.ui.playingbarBox.css('visibility', 'visible');
-                    this.ui.playingbar.css('width', '0%');
-                    this.ui.cancel_button.hide();
-
-                    // Update gui on status update.
-                    // uses listenTo so event is unsubscribed automatically when loading view closes.
-                    this.listenTo(App.vent, 'device:status', this.onDeviceStatus);
-                }
-                // The 'downloading' state is not always sent, eg when playing canceling and replaying
-                // Start listening here instead when playing externally
-                this.listenTo(this.model.get('streamInfo'), 'change:downloaded', this.onProgressUpdate);
-                // The first progress update can take some time, so force updating the UI immediately
-                this.onProgressUpdate();
-            }
         },
 
-        onProgressUpdate: function () {
-
-            // TODO: Translate peers / seeds in the template
-            this.ui.seedStatus.css('visibility', 'visible');
-            var streamInfo = this.model.get('streamInfo');
-            var downloaded = streamInfo.get('downloaded') / (1024 * 1024);
-            this.ui.progressTextDownload.text(downloaded.toFixed(2) + ' Mb');
-
-            this.ui.progressTextPeers.text(streamInfo.get('active_peers'));
-            this.ui.progressTextSeeds.text(streamInfo.get('total_peers'));
-            this.ui.bufferPercent.text(streamInfo.get('buffer_percent').toFixed() + '%');
-
-            this.ui.downloadSpeed.text(streamInfo.get('downloadSpeed'));
-            this.ui.uploadSpeed.text(streamInfo.get('uploadSpeed'));
-            this.ui.progressbar.css('width', streamInfo.get('buffer_percent').toFixed() + '%');
-
-            if (streamInfo.get('title') !== '') {
-                this.ui.title.html(streamInfo.get('title'));
-            }
-            if (streamInfo.get('player') && streamInfo.get('player').get('type') !== 'local') {
-                if (this.model.get('state') === 'playingExternally') {
-                    this.ui.bufferPercent.text(streamInfo.get('downloadedPercent').toFixed() + '%');
-                    this.ui.stateTextDownload.text(i18n.__('Downloaded')).show();
+        initializeLoadingPlayer: function() {
+            var that = this;
+            var loadingPlayer = document.getElementById('loading_player');
+            loadingPlayer.setAttribute('src', App.Streamer.src);
+            win.debug('Requesting Initial Meta Chunks For', this.model.get('data').metadata.title);
+            loadingPlayer.muted = true;
+            loadingPlayer.load();
+            loadingPlayer.play();
+            var debugmetachunks = false;
+            loadingPlayer.ontimeupdate = function() {
+                if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
+                    win.info('Initial Meta Chunks Received! Starting Playback in 5 seconds.');
+                    debugmetachunks = true;
                 }
-                this.ui.player.text(streamInfo.get('player').get('name'));
+                if (loadingPlayer.currentTime > 5) {
+                    that.playing = true;
+                    loadingPlayer.pause();
+                    loadingPlayer.src = ""; // empty source
+                    loadingPlayer.load();
+                    that.initMainplayer();
+                }
+
+            };
+        },
+        initMainplayer: function() {
+            if (this.player === 'local') {
+                var playerModel = new Backbone.Model(this.model.get('data'));
+                App.vent.trigger('stream:local', playerModel);
+            } else {
+                var externalPlayerModel = this.model.get('player');
+                externalPlayerModel.set('src', App.Streamer.src);
+                App.vent.trigger('stream:ready', externalPlayerModel);
+
+                this.ui.player.text(this.model.get('player').get('name'));
                 this.ui.streaming.css('visibility', 'visible');
+                this.playingExternally = true;
+                this.StateUpdate();
             }
+
         },
+        StateUpdate: function() {
+            if (this.playing && !this.playingExternally)
+                return;
+            var that = this;
 
-        onDeviceStatus: function (status) {
-            if (status.media !== undefined && status.media.duration !== undefined) {
-                // Update playingbar width
-                var playedPercent = status.currentTime / status.media.duration * 100;
-                this.ui.playingbar.css('width', playedPercent.toFixed(1) + '%');
-                win.debug('ExternalStream: %s: %ss / %ss (%s%)', status.playerState,
-                    status.currentTime.toFixed(1), status.media.duration.toFixed(), playedPercent.toFixed(1));
-            }
-            if (!this.extPlayerStatusUpdater && status.playerState === 'PLAYING') {
-                // First PLAYING state. Start requesting device status update every 5 sec
-                this.extPlayerStatusUpdater = setInterval(function () {
-                    App.vent.trigger('device:status:update');
-                }, 5000);
-            }
-            if (this.extPlayerStatusUpdater && status.playerState === 'IDLE') {
-                // Media started streaming and is now finished playing
-                this.cancelStreaming();
-            }
-        },
+            var Stream = App.Streamer.client.swarm;
+            if (App.Streamer.fileindex !== null) {
+                this.ui.stateTextDownload.text(i18n.__('Connecting'));
 
-        cancelStreaming: function () {
-
-            // call stop if we play externally
-            if (this.model.get('state') === 'playingExternally') {
-                if (this.extPlayerStatusUpdater) {
-                    clearInterval(this.extPlayerStatusUpdater);
+                this.ui.seedStatus.css('visibility', 'visible');
+                //var downloaded = streamInfo.downloaded / (1024 * 1024);
+                if (!this.initializedLoadingPlayer && Stream.downloadSpeed() > 10) {
+                    this.initializedLoadingPlayer = true;
+                    this.initializeLoadingPlayer();
                 }
-                win.info('Stopping external device');
+                if (Stream.downloadSpeed()) {
+                    if (!this.initializedLoadingPlayer) {
+                        this.initializedLoadingPlayer = true;
+                        this.initializeLoadingPlayer();
+                    }
+                    if (!this.playingExternally) {
+                        this.ui.stateTextDownload.text(i18n.__('Downloading'));
+                    }
+                    this.ui.progressTextPeers.text(Stream.wires.length);
+                    this.ui.downloadSpeed.text(this.prettySpeed(Stream.downloadSpeed()));
+                    this.ui.uploadSpeed.text(this.prettySpeed(Stream.uploadSpeed()));
+                }
+                if (this.playingExternally) {
+                    this.ui.stateTextDownload.text(i18n.__('Downloaded'));
+                    this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 500);
+                }
+                if (!this.playing) {
+                    this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 500);
+                }
+            } else {
+                this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 100);
+            }
+
+
+        },
+        prettySpeed: function(speed) {
+            speed = speed || 0;
+            if (speed == 0) return util.format("%s %s", 0, "B/s");
+
+            var converted = Math.floor(Math.log(speed) / Math.log(1024));
+            return util.format("%s %s/s", (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
+        },
+        cancelStreaming: function() {
+            this.playing = true; // stop text update
+            this.playingExternally = false;
+            clearInterval(this.updateInfo);
+
+            $('.filter-bar').show();
+            $('#header').removeClass('header-shadow');
+
+            if (this.player !== 'local') {
                 App.vent.trigger('device:stop');
             }
 
-            win.info('Closing loading view');
-            App.vent.trigger('stream:stop');
-            App.vent.trigger('player:close');
-            App.vent.trigger('torrentcache:stop');
-        },
-
-        pauseStreaming: function () {
-            App.vent.trigger('device:pause');
-            $('.pause').removeClass('fa-pause').removeClass('pause').addClass('fa-play').addClass('play');
-        },
-
-        resumeStreaming: function () {
-            win.debug('Play triggered');
-            App.vent.trigger('device:unpause');
-            $('.play').removeClass('fa-play').removeClass('play').addClass('fa-pause').addClass('pause');
-        },
-
-        stopStreaming: function () {
-            this.cancelStreaming();
-        },
-
-        forwardStreaming: function () {
-            win.debug('Forward triggered');
-            App.vent.trigger('device:forward');
-        },
-
-        backwardStreaming: function () {
-            win.debug('Backward triggered');
-            App.vent.trigger('device:backward');
-        },
-
-        seekStreaming: function (e) {
-            var percentClicked = e.offsetX / e.currentTarget.clientWidth * 100;
-            win.debug('Seek (%s%) triggered', percentClicked.toFixed(2));
-            App.vent.trigger('device:seekPercentage', percentClicked);
-        },
-
-        onDestroy: function () {
-            $('.filter-bar').show();
-            $('#header').removeClass('header-shadow');
-            Mousetrap.bind('esc', function (e) {
+            Mousetrap.bind('esc', function(e) {
                 App.vent.trigger('show:closeDetail');
                 App.vent.trigger('movie:closeDetail');
             });
+            _.defer(function() {
+                App.Streamer.destroy();
+                App.vent.trigger('player:close');
+            });
+
+        },
+        loadBackground: function(data) {
+            var backgroundUrl = data;
+            var that = this;
+            var bgError = false;
+            var bgCache = new Image();
+            bgCache.src = backgroundUrl;
+            bgCache.onload = function() {
+                try {
+                    that.ui.backdrop.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+                } catch (e) {}
+                bgCache = null;
+            };
+            bgCache.onerror = function() {
+                bgError = true;
+                bgCache = null;
+            };
+
+        },
+
+        augmentDropModel: function(data) {
+            var metadata = data.metadata;
+            var that = this;
+
+            switch (data.type) {
+                case 'dropped-tvshow':
+                    // @TODO: REMOVE THAT AND MIGRATE IT TO A PACKAGE !!!
+
+                    var showTitle = metadata.showName.replace(/\w\S*/g, function(txt) {
+                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                    });
+                    App.Trakt.shows.summary(showTitle)
+                        .then(function(summary) {
+                            if (!summary) {
+                                win.warn('Unable to fetch data from Trakt.tv');
+                            } else {
+                                App.Trakt.episodes.summary(tvshowname, se_re[2], se_re[3])
+                                    .then(function(episodeSummary) {
+                                        if (!episodeSummary) {
+                                            win.warn('Unable to fetch data from Trakt.tv');
+                                        } else {
+                                            var data = summary[0];
+                                            that.model.attributes.data.type = 'tvshow';
+                                            that.model.attributes.data.metadata.title = showTitle + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
+                                            that.model.attributes.data.metadata.showName = showTitle;
+                                            that.model.attributes.data.metadata.season = data.season;
+                                            that.model.attributes.data.metadata.episode = data.number;
+                                            that.model.attributes.data.metadata.tvdb_id = data.ids.tvdb;
+                                            that.model.attributes.data.metadata.imdb_id = data.ids.imdb;
+                                            that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
+
+                                            that.ui.title.text(that.model.attributes.data.metadata.title);
+
+                                            that.loadBackground(that.model.attributes.data.metadata.backdrop);
+
+                                        }
+
+                                    }).catch(function(err) {
+                                        // It might be a movie with the name of a TV Series ? Messy hollywood !
+                                    });
+                            }
+                        }).catch(function(err) {
+                            win.error('An error occured while trying to get metadata', err);
+                        });
+
+                    break;
+                case 'dropped-movie':
+
+                    console.log(metadata.title);
+
+                    App.Trakt.search(metadata.title, 'movie')
+                        .then(function(summary) {
+                            if (!summary || summary.length === 0) {
+                                win.warn('Unable to fetch data from Trakt.tv');
+                            } else {
+                                var data = summary[0];
+                                that.model.attributes.data.type = 'movie';
+                                that.model.attributes.data.metadata.title = data.title;
+                                that.model.attributes.data.metadata.cover = data.images.poster;
+                                that.model.attributes.data.metadata.imdb_id = data.imdb_id;
+                                that.model.attributes.data.metadata.backdrop = data.images.fanart;
+
+                                that.ui.title.text(that.model.attributes.data.metadata.title);
+
+                                that.loadBackground(that.model.attributes.data.metadata.backdrop);
+
+                            }
+                        }).catch(function(err) {
+                            win.error('An error occured while trying to get metadata', err);
+                        });
+
+                    break;
+                default:
+                    //defualt none?
+            }
+
         }
+
     });
 
     App.View.Loading = Loading;

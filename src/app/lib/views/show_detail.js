@@ -1,8 +1,8 @@
-(function (App) {
+(function(App) {
     'use strict';
 
     var torrentHealth = require('torrent-health');
-    var cancelTorrentHealth = function () {};
+    var cancelTorrentHealth = function() {};
     var torrentHealthRestarted = null;
 
     var _this, bookmarked;
@@ -38,7 +38,7 @@
             'click .health-icon': 'resetHealth'
         },
 
-        toggleFavorite: function (e) {
+        toggleFavorite: function(e) {
 
             if (e.type) {
                 e.preventDefault();
@@ -51,20 +51,20 @@
 
                 var provider = App.Providers.get(this.model.get('provider'));
                 var data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
-                    .then(function (data) {
+                    .then(function(data) {
                             data.provider = that.model.get('provider');
                             Database.addTVShow(data)
-                                .then(function (idata) {
+                                .then(function(idata) {
                                     return Database.addBookmark(that.model.get('imdb_id'), 'tvshow');
                                 })
-                                .then(function () {
+                                .then(function() {
                                     win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
                                     that.model.set('bookmarked', true);
                                     that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
                                     App.userBookmarks.push(that.model.get('imdb_id'));
                                 });
                         },
-                        function (err) {
+                        function(err) {
                             $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
                         });
 
@@ -73,7 +73,7 @@
                 bookmarked = false;
 
                 Database.deleteBookmark(this.model.get('imdb_id'))
-                    .then(function () {
+                    .then(function() {
                         win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
                         that.model.set('bookmarked', false);
                         App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
@@ -88,20 +88,20 @@
         },
 
 
-        initialize: function () {
+        initialize: function() {
             _this = this;
             this.renameUntitled();
             //Handle keyboard shortcuts when other views are appended or removed
 
             //If a child was removed from above this view
-            App.vent.on('viewstack:pop', function () {
+            App.vent.on('viewstack:pop', function() {
                 if (_.last(App.ViewStack) === _this.className) {
                     _this.initKeyboardShortcuts();
                 }
             });
 
             //If a child was added above this view
-            App.vent.on('viewstack:push', function () {
+            App.vent.on('viewstack:push', function() {
                 if (_.last(App.ViewStack) !== _this.className) {
                     _this.unbindKeyboardShortcuts();
                 }
@@ -115,12 +115,12 @@
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster, 'thumb');
 
-            App.vent.on('shortcuts:shows', function () {
+            App.vent.on('shortcuts:shows', function() {
                 _this.initKeyboardShortcuts();
             });
 
         },
-        renameUntitled: function () {
+        renameUntitled: function() {
             var episodes = this.model.get('episodes');
             for (var i = 0; i < episodes.length; i++) {
                 if (!episodes[i].title) {
@@ -134,7 +134,7 @@
                 }
             }
         },
-        initKeyboardShortcuts: function () {
+        initKeyboardShortcuts: function() {
             Mousetrap.bind('q', _this.toggleQuality);
             Mousetrap.bind('down', _this.nextEpisode);
             Mousetrap.bind('up', _this.previousEpisode);
@@ -143,12 +143,12 @@
             Mousetrap.bind(['esc', 'backspace'], _this.closeDetails);
             Mousetrap.bind(['ctrl+up', 'command+up'], _this.previousSeason);
             Mousetrap.bind(['ctrl+down', 'command+down'], _this.nextSeason);
-            Mousetrap.bind('f', function () {
+            Mousetrap.bind('f', function() {
                 $('.favourites-toggle').click();
             });
         },
 
-        unbindKeyboardShortcuts: function () { // There should be a better way to do this
+        unbindKeyboardShortcuts: function() { // There should be a better way to do this
             Mousetrap.unbind('w');
             Mousetrap.unbind('f');
             Mousetrap.unbind('q');
@@ -160,7 +160,7 @@
             Mousetrap.unbind(['ctrl+down', 'command+down']);
         },
 
-        onShow: function () {
+        onShow: function() {
             bookmarked = App.userBookmarks.indexOf(this.model.get('imdb_id')) !== -1;
 
             if (bookmarked) {
@@ -174,7 +174,7 @@
             var cbackground = $('.tv-cover').attr('data-bgr');
             var coverCache = new Image();
             coverCache.src = cbackground;
-            coverCache.onload = function () {
+            coverCache.onload = function() {
                 try {
                     $('.tv-cover')
                         .css('background-image', 'url(' + cbackground + ')')
@@ -182,7 +182,7 @@
                 } catch (e) {}
                 coverCache = null;
             };
-            coverCache.onerror = function () {
+            coverCache.onerror = function() {
                 try {
                     $('.tv-cover')
                         .css('background-image', 'url("images/posterholder.png")')
@@ -194,7 +194,7 @@
             var background = $('.tv-poster-background').attr('data-bgr');
             var bgCache = new Image();
             bgCache.src = background;
-            bgCache.onload = function () {
+            bgCache.onload = function() {
                 try {
                     $('.tv-poster-background')
                         .css('background-image', 'url(' + background + ')')
@@ -202,7 +202,7 @@
                 } catch (e) {}
                 bgCache = null;
             };
-            bgCache.onerror = function () {
+            bgCache.onerror = function() {
                 try {
                     $('.tv-poster-background')
                         .css('background-image', 'url("images/bg-header.jpg")')
@@ -226,12 +226,12 @@
             App.Device.ChooserView('#player-chooser').render();
         },
 
-        selectNextEpisode: function () {
+        selectNextEpisode: function() {
 
             var episodesSeen = [];
             Database.getEpisodesWatched(this.model.get('tvdb_id'))
-                .then(function (data) {
-                    _.each(data, function (value, state) {
+                .then(function(data) {
+                    _.each(data, function(value, state) {
                         // we'll mark episode already watched
                         _this.markWatched(value, true);
                         // store all watched episode
@@ -246,20 +246,20 @@
                         //get all episode
                         var episodes = [];
                         _.each(_this.model.get('episodes'),
-                            function (value, currentepisode) {
+                            function(value, currentepisode) {
                                 episodes.push(parseInt(value.season) * 100 +
                                     parseInt(value.episode));
                             }
                         );
-                        episodesSeen.sort(function (a, b) {
+                        episodesSeen.sort(function(a, b) {
                             return a - b;
                         });
-                        episodes.sort(function (a, b) {
+                        episodes.sort(function(a, b) {
                             return a - b;
                         });
                         var first = episodes[0];
                         var last = episodes[episodes.length - 1];
-                        var unseen = episodes.filter(function (item) {
+                        var unseen = episodes.filter(function(item) {
                             return episodesSeen.indexOf(item) === -1;
                         });
                         if (Settings.tv_detail_jump_to !== 'firstUnwatched') {
@@ -267,7 +267,7 @@
 
                             if (lastSeen !== episodes[episodes.length - 1]) {
                                 var idx;
-                                _.find(episodes, function (data, dataIdx) {
+                                _.find(episodes, function(data, dataIdx) {
                                     if (data === lastSeen) {
                                         idx = dataIdx;
                                         return true;
@@ -313,11 +313,11 @@
                 });
         },
 
-        openIMDb: function () {
+        openIMDb: function() {
             gui.Shell.openExternal('http://www.imdb.com/title/' + this.model.get('imdb_id'));
         },
 
-        openMagnet: function (e) {
+        openMagnet: function(e) {
             var torrentUrl = $('.startStreaming').attr('data-torrent');
             if (e.button === 2) { //if right click on magnet link
                 var clipboard = gui.Clipboard.get();
@@ -328,7 +328,7 @@
             }
         },
 
-        switchRating: function () {
+        switchRating: function() {
             if ($('.number-container-tv').hasClass('hidden')) {
                 $('.number-container-tv').removeClass('hidden');
                 $('.star-container-tv').addClass('hidden');
@@ -340,9 +340,9 @@
             }
         },
 
-        toggleWatched: function (e) {
+        toggleWatched: function(e) {
             var edata = e.currentTarget.id.split('-');
-            setTimeout(function () {
+            setTimeout(function() {
                 var value = {
                     tvdb_id: _this.model.get('tvdb_id'),
                     imdb_id: _this.model.get('imdb_id'),
@@ -353,7 +353,7 @@
                 };
 
                 Database.checkEpisodeWatched(value)
-                    .then(function (watched) {
+                    .then(function(watched) {
                         if (watched) {
                             App.vent.trigger('show:unwatched', value, 'seen');
                         } else {
@@ -363,12 +363,12 @@
             }, 100);
         },
 
-        isShowWatched: function () {
+        isShowWatched: function() {
             var tvdb_id = _this.model.get('tvdb_id');
             var imdb_id = _this.model.get('imdb_id');
 
             var episodes = this.model.get('episodes');
-            episodes.forEach(function (episode, index, array) {
+            episodes.forEach(function(episode, index, array) {
                 var value = {
                     tvdb_id: tvdb_id,
                     imdb_id: imdb_id,
@@ -377,7 +377,7 @@
                     from_browser: true
                 };
                 Database.checkEpisodeWatched(value)
-                    .then(function (watched) {
+                    .then(function(watched) {
                         if (!watched) {
                             $('.show-watched-toggle').show();
                         }
@@ -385,14 +385,14 @@
             });
         },
 
-        markShowAsWatched: function () {
+        markShowAsWatched: function() {
             $('.show-watched-toggle').addClass('selected');
 
             var tvdb_id = _this.model.get('tvdb_id');
             var imdb_id = _this.model.get('imdb_id');
 
             var episodes = _this.model.get('episodes');
-            episodes.forEach(function (episode, index, array) {
+            episodes.forEach(function(episode, index, array) {
                 var value = {
                     tvdb_id: tvdb_id,
                     imdb_id: imdb_id,
@@ -402,7 +402,7 @@
                     from_browser: true
                 };
                 Database.checkEpisodeWatched(value)
-                    .then(function (watched) {
+                    .then(function(watched) {
                         if (!watched) {
                             App.vent.trigger('show:watched', value, 'seen');
                             $('.show-watched-toggle').hide();
@@ -411,17 +411,17 @@
             });
         },
 
-        onWatched: function (value, channel) {
+        onWatched: function(value, channel) {
             this.markWatched(value, true);
 
             this.selectNextEpisode();
         },
 
-        onUnWatched: function (value, channel) {
+        onUnWatched: function(value, channel) {
             this.markWatched(value, false);
         },
 
-        markWatched: function (value, state) {
+        markWatched: function(value, state) {
             state = (state === undefined) ? true : state;
             // we should never get any shows that aren't us, but you know, just in case.
             if (value.tvdb_id === _this.model.get('tvdb_id')) {
@@ -431,7 +431,8 @@
             }
         },
 
-        startStreaming: function (e) {
+        startStreaming: function(e) {
+
             if (e.type) {
                 e.preventDefault();
             }
@@ -440,96 +441,60 @@
             var episode = $(e.currentTarget).attr('data-episode');
             var season = $(e.currentTarget).attr('data-season');
             var name = $(e.currentTarget).attr('data-title');
-            var episode_id = $(e.currentTarget).attr('data-episodeid');
-            var imdbid = that.model.get('imdb_id').indexOf('mal') === -1 ? that.model.get('imdb_id') : null; //fix for anime
 
-            title += ' - ' + i18n.__('Season %s', season) + ', ' + i18n.__('Episode %s', episode) + ' - ' + name;
-            var epInfo = {
-                type: 'tvshow',
-                imdbid: imdbid,
-                tvdbid: that.model.get('tvdb_id'),
-                episode_id: episode_id,
-                season: season,
-                episode: episode
-            };
-
-
+            //title += ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name;
             var episodes = [];
             var episodes_data = [];
             var selected_quality = $(e.currentTarget).attr('data-quality');
-            var auto_play = false;
 
-            if (Settings.playNextEpisodeAuto && this.model.get('imdb_id').indexOf('mal') === -1) {
-                _.each(this.model.get('episodes'), function (value) {
+            if (AdvSettings.get('playNextEpisodeAuto')) {
+                _.each(this.model.get('episodes'), function(value) {
                     var epaInfo = {
-                        id: parseInt(value.season) * 100 + parseInt(value.episode),
-                        backdrop: that.model.get('images').fanart,
-                        defaultSubtitle: Settings.subtitle_language,
-                        episode: value.episode,
-                        season: value.season,
-                        title: that.model.get('title') + ' - ' + i18n.__('Season %s', value.season) + ', ' + i18n.__('Episode %s', value.episode) + ' - ' + value.title,
+                        title: value.title,
                         torrents: value.torrents,
-                        extract_subtitle: {
-                            type: 'tvshow',
-                            imdbid: that.model.get('imdb_id'),
-                            tvdbid: value.tvdb_id.toString(),
-                            season: value.season,
-                            episode: value.episode
-                        },
-                        episode_id: value.tvdb_id,
-                        tvdb_id: that.model.get('tvdb_id'),
-                        imdb_id: that.model.get('imdb_id'),
-                        device: App.Device.Collection.selected,
-                        cover: that.model.get('images').poster,
-                        status: that.model.get('status'),
-                        type: 'episode'
+                        tvdb_id: value.tvdb_id,
+                        imdb_id: that.model.get('imdb_id')
                     };
                     episodes_data.push(epaInfo);
                     episodes.push(parseInt(value.season) * 100 + parseInt(value.episode));
                 });
-                episodes.sort(function (a, b) {
-                    return a - b;
-                });
+                episodes.sort();
                 episodes_data = _.sortBy(episodes_data, 'id');
-
-                if (parseInt(season) * 100 + parseInt(episode) !== episodes[episodes.length - 1]) {
-                    auto_play = true;
-                }
 
             } else {
                 episodes_data = null;
             }
-            var torrentStart = new Backbone.Model({
-                torrent: $(e.currentTarget).attr('data-torrent'),
-                backdrop: that.model.get('images').fanart,
-                type: 'episode',
-                tvdb_id: that.model.get('tvdb_id'),
-                imdb_id: that.model.get('imdb_id'),
-                episode_id: episode_id,
-                episode: episode,
-                season: season,
-                title: title,
-                status: that.model.get('status'),
-                extract_subtitle: epInfo,
-                quality: $(e.currentTarget).attr('data-quality'),
-                defaultSubtitle: Settings.subtitle_language,
-                device: App.Device.Collection.selected,
-                cover: that.model.get('images').poster,
-                episodes: episodes,
-                auto_play: auto_play,
-                auto_id: parseInt(season) * 100 + parseInt(episode),
-                auto_play_data: episodes_data
-            });
-            win.info('Playing next episode automatically:', Settings.playNextEpisodeAuto);
-            _this.unbindKeyboardShortcuts();
-            App.vent.trigger('stream:start', torrentStart);
-        },
 
-        closeDetails: function (e) {
+            var torrentStart = {
+                torrent: $(e.currentTarget).attr('data-torrent'),
+                type: 'tvshow',
+                metadata: {
+                    title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
+                    showName: title,
+                    season: season,
+                    episode: episode,
+                    cover: that.model.get('images').poster,
+                    tvdb_id: that.model.get('tvdb_id'),
+                    imdb_id: that.model.get('imdb_id'),
+                    backdrop: that.model.get('images').fanart
+                },
+                autoPlayData: {
+                    episodes: episodes,
+                    episodes_data: episodes_data,
+                    selected_quality: selected_quality
+                },
+                status: that.model.get('status'),
+                device: App.Device.Collection.selected
+
+            };
+            _this.unbindKeyboardShortcuts();
+            App.Streamer.start(torrentStart);
+        },
+        closeDetails: function(e) {
             App.vent.trigger('show:closeDetail');
         },
 
-        clickSeason: function (e) {
+        clickSeason: function(e) {
             if (e.type) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -537,7 +502,7 @@
             this.selectSeason($(e.currentTarget));
         },
 
-        clickEpisode: function (e) {
+        clickEpisode: function(e) {
             if (e.type) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -545,7 +510,7 @@
             this.selectEpisode($(e.currentTarget));
         },
 
-        dblclickEpisode: function (e) {
+        dblclickEpisode: function(e) {
             if (e.type) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -554,7 +519,7 @@
             $('.startStreaming').trigger('click');
         },
         // Helper Function
-        selectSeason: function ($elem) {
+        selectSeason: function($elem) {
             $('.tab-season.active').removeClass('active');
             $elem.addClass('active');
             $('.tab-episodes').hide();
@@ -564,7 +529,7 @@
             this.selectEpisode($('.tab-episodes.' + $elem.attr('data-tab') + ' li:first'));
         },
 
-        selectEpisode: function ($elem) {
+        selectEpisode: function($elem) {
             if ($elem.length === 0) {
                 return;
             }
@@ -596,33 +561,33 @@
             }
 
             switch (Settings.shows_default_quality) {
-            case '1080p':
-                if (torrents.q1080) {
-                    quality = '1080p';
-                } else if (torrents.q720) {
-                    quality = '720p';
-                } else if (torrents.q480) {
-                    quality = '480p';
-                }
-                break;
-            case '720p':
-                if (torrents.q720) {
-                    quality = '720p';
-                } else if (torrents.q480) {
-                    quality = '480p';
-                } else if (torrents.q1080) {
-                    quality = '1080p';
-                }
-                break;
-            case '480p':
-                if (torrents.q480) {
-                    quality = '480p';
-                } else if (torrents.q720) {
-                    quality = '720p';
-                } else if (torrents.q1080) {
-                    quality = '1080p';
-                }
-                break;
+                case '1080p':
+                    if (torrents.q1080) {
+                        quality = '1080p';
+                    } else if (torrents.q720) {
+                        quality = '720p';
+                    } else if (torrents.q480) {
+                        quality = '480p';
+                    }
+                    break;
+                case '720p':
+                    if (torrents.q720) {
+                        quality = '720p';
+                    } else if (torrents.q480) {
+                        quality = '480p';
+                    } else if (torrents.q1080) {
+                        quality = '1080p';
+                    }
+                    break;
+                case '480p':
+                    if (torrents.q480) {
+                        quality = '480p';
+                    } else if (torrents.q720) {
+                        quality = '720p';
+                    } else if (torrents.q1080) {
+                        quality = '1080p';
+                    }
+                    break;
             }
 
 
@@ -665,7 +630,7 @@
 
             this.ui.startStreaming.show();
         },
-        toggleShowQuality: function (e) {
+        toggleShowQuality: function(e) {
             if ($(e.currentTarget).hasClass('disabled')) {
                 return;
             }
@@ -684,7 +649,7 @@
             _this.resetHealth();
         },
 
-        nextEpisode: function (e) {
+        nextEpisode: function(e) {
             var index = $('.tab-episode.active').index();
             if (index === $('.tab-episode:visible').length - 1) {
                 return;
@@ -702,7 +667,7 @@
 
         },
 
-        previousEpisode: function (e) {
+        previousEpisode: function(e) {
             var index = $('.tab-episode.active').index();
             if (index === 0) {
                 return;
@@ -720,7 +685,7 @@
 
         },
 
-        nextSeason: function (e) {
+        nextSeason: function(e) {
             var index = $('.tab-season.active').index();
             if (index === $('.tab-season').length - 1) {
                 return;
@@ -737,7 +702,7 @@
             }
         },
 
-        previousSeason: function (e) {
+        previousSeason: function(e) {
             var index = $('.tab-season.active').index();
             if (index === 0) {
                 return;
@@ -755,7 +720,7 @@
 
         },
 
-        playEpisode: function (e) {
+        playEpisode: function(e) {
             $('.startStreaming').trigger('click');
 
             if (e.type) {
@@ -764,7 +729,7 @@
             }
         },
 
-        toggleQuality: function (e) {
+        toggleQuality: function(e) {
 
             if ($('.quality').is(':visible')) {
                 if ($('#switch-hd-off').is(':checked')) {
@@ -777,20 +742,20 @@
 
         },
 
-        toggleEpisodeWatched: function (e) {
+        toggleEpisodeWatched: function(e) {
             var data = {};
             data.currentTarget = $('.tab-episode.active .watched')[0];
             _this.toggleWatched(data);
         },
 
 
-        isElementVisible: function (el) {
+        isElementVisible: function(el) {
             var eap,
                 rect = el.getBoundingClientRect(),
                 docEl = document.documentElement,
                 vWidth = window.innerWidth || docEl.clientWidth,
                 vHeight = window.innerHeight || docEl.clientHeight,
-                efp = function (x, y) {
+                efp = function(x, y) {
                     return document.elementFromPoint(x, y);
                 },
                 contains = 'contains' in el ? 'contains' : 'compareDocumentPosition',
@@ -807,7 +772,7 @@
             );
         },
 
-        getTorrentHealth: function (e) {
+        getTorrentHealth: function(e) {
             var torrent = $('.startStreaming').attr('data-torrent');
 
             cancelTorrentHealth();
@@ -815,7 +780,7 @@
             // Use fancy coding to cancel
             // pending torrent-health's
             var cancelled = false;
-            cancelTorrentHealth = function () {
+            cancelTorrentHealth = function() {
                 cancelled = true;
             };
 
@@ -824,7 +789,7 @@
 
                 torrent = torrent.split('&tr')[0] + '&tr=udp://tracker.openbittorrent.com:80/announce' + '&tr=udp://open.demonii.com:1337/announce' + '&tr=udp://tracker.coppersurfer.tk:6969';
 
-                torrentHealth(torrent).then(function (res) {
+                torrentHealth(torrent).then(function(res) {
 
                     if (cancelled) {
                         return;
@@ -842,8 +807,8 @@
                         var ratio = res.peers > 0 ? res.seeds / res.peers : +res.seeds;
 
                         $('.health-icon').tooltip({
-                                html: true
-                            })
+                            html: true
+                        })
                             .removeClass('Bad Medium Good Excellent')
                             .addClass(health)
                             .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + res.seeds + ' - ' + i18n.__('Peers:') + ' ' + res.peers)
@@ -853,17 +818,17 @@
             }
         },
 
-        resetHealth: function () {
+        resetHealth: function() {
             $('.health-icon').tooltip({
-                    html: true
-                })
+                html: true
+            })
                 .removeClass('Bad Medium Good Excellent')
                 .attr('data-original-title', i18n.__('Health Unknown'))
                 .tooltip('fixTitle');
             this.getTorrentHealth();
         },
 
-        selectPlayer: function (e) {
+        selectPlayer: function(e) {
             var player = $(e.currentTarget).parent('li').attr('id').replace('player-', '');
             _this.model.set('device', player);
             if (!player.match(/[0-9]+.[0-9]+.[0-9]+.[0-9]/ig)) {
@@ -871,7 +836,7 @@
             }
         },
 
-        onDestroy: function () {
+        onDestroy: function() {
             this.unbindKeyboardShortcuts();
         }
 

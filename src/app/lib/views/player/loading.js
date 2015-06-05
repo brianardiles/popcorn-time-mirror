@@ -231,22 +231,22 @@
                             if (!summary) {
                                 win.warn('Unable to fetch data from Trakt.tv');
                             } else {
+                                console.log(summary);
+                                that.model.attributes.data.metadata.showName = summary.title;
                                 App.Trakt.episodes.summary(showTitle, metadata.season, metadata.episode)
                                     .then(function(episodeSummary) {
                                         if (!episodeSummary) {
                                             win.warn('Unable to fetch data from Trakt.tv');
                                         } else {
-                                            var data = episodeSummary[0];
+                                            var data = episodeSummary;
                                             that.model.attributes.data.type = 'tvshow';
-                                            console.log(data);
-                                            that.model.attributes.data.metadata.title = showTitle + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
-                                            that.model.attributes.data.metadata.showName = showTitle;
+                                            console.log(episodeSummary);
+                                            that.model.attributes.data.metadata.title = summary.title + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
                                             that.model.attributes.data.metadata.season = data.season;
                                             that.model.attributes.data.metadata.episode = data.number;
                                             that.model.attributes.data.metadata.tvdb_id = data.ids.tvdb;
                                             that.model.attributes.data.metadata.imdb_id = data.ids.imdb;
                                             that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
-
                                             that.ui.title.text(that.model.attributes.data.metadata.title);
 
                                             that.loadBackground(that.model.attributes.data.metadata.backdrop);

@@ -231,13 +231,14 @@
                             if (!summary) {
                                 win.warn('Unable to fetch data from Trakt.tv');
                             } else {
-                                App.Trakt.episodes.summary(tvshowname, se_re[2], se_re[3])
+                                App.Trakt.episodes.summary(showTitle, metadata.season, metadata.episode)
                                     .then(function(episodeSummary) {
                                         if (!episodeSummary) {
                                             win.warn('Unable to fetch data from Trakt.tv');
                                         } else {
                                             var data = episodeSummary[0];
                                             that.model.attributes.data.type = 'tvshow';
+                                            console.log(data);
                                             that.model.attributes.data.metadata.title = showTitle + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
                                             that.model.attributes.data.metadata.showName = showTitle;
                                             that.model.attributes.data.metadata.season = data.season;

@@ -133,7 +133,7 @@
             var that = this;
 
             var Stream = App.Streamer.client.swarm;
-            if (App.Streamer.fileindex !== null) {
+            if (App.Streamer.fileindex !== null && !App.FileSelectorIsOpen) {
                 this.ui.stateTextDownload.text(i18n.__('Connecting'));
 
                 this.ui.seedStatus.css('visibility', 'visible');
@@ -236,7 +236,7 @@
                                         if (!episodeSummary) {
                                             win.warn('Unable to fetch data from Trakt.tv');
                                         } else {
-                                            var data = summary[0];
+                                            var data = episodeSummary[0];
                                             that.model.attributes.data.type = 'tvshow';
                                             that.model.attributes.data.metadata.title = showTitle + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
                                             that.model.attributes.data.metadata.showName = showTitle;
@@ -249,9 +249,7 @@
                                             that.ui.title.text(that.model.attributes.data.metadata.title);
 
                                             that.loadBackground(that.model.attributes.data.metadata.backdrop);
-
                                         }
-
                                     }).catch(function(err) {
                                         // It might be a movie with the name of a TV Series ? Messy hollywood !
                                     });
@@ -270,12 +268,13 @@
                             if (!summary || summary.length === 0) {
                                 win.warn('Unable to fetch data from Trakt.tv');
                             } else {
-                                var data = summary[0];
+                                console.log(summary);
+                                var data = summary[0].movie;
                                 that.model.attributes.data.type = 'movie';
                                 that.model.attributes.data.metadata.title = data.title;
                                 that.model.attributes.data.metadata.cover = data.images.poster;
                                 that.model.attributes.data.metadata.imdb_id = data.imdb_id;
-                                that.model.attributes.data.metadata.backdrop = data.images.fanart;
+                                that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
 
                                 that.ui.title.text(that.model.attributes.data.metadata.title);
 

@@ -1,4 +1,4 @@
-(function (App) {
+(function(App) {
     'use strict';
 
     var _this,
@@ -15,10 +15,10 @@
             'click .playerchoicemenu li a': 'selectPlayer'
         },
 
-        initialize: function () {
+        initialize: function() {
             _this = this;
 
-            formatMagnet = function (link) {
+            formatMagnet = function(link) {
                 // format magnet with Display Name
                 var index = link.indexOf('\&dn=') + 4, // keep display name
                     _link = link.substring(index); // remove everything before dn
@@ -31,14 +31,14 @@
             };
         },
 
-        onBeforeRender: function () {
-            this.bitsnoopRequest(this.model.get('torrent').infoHash);
+        onBeforeRender: function() {
+            this.bitsnoopRequest(this.model.get('torrent'));
         },
 
-        onShow: function () {
+        onShow: function() {
             this.isTorrentStored();
-
-            Mousetrap.bind(['esc', 'backspace'], function (e) {
+            App.FileSelectorIsOpen = true;
+            Mousetrap.bind(['esc', 'backspace'], function(e) {
                 _this.closeSelector(e);
             });
 
@@ -47,7 +47,7 @@
             this.$('#watch-now').text('');
         },
 
-        bitsnoopRequest: function (hash) {
+        bitsnoopRequest: function(hash) {
             var endpoint = 'http://bitsnoop.com/api/fakeskan.php?hash=';
 
             request({
@@ -56,7 +56,7 @@
                 headers: {
                     'User-Agent': 'request'
                 }
-            }, function (error, response, body) {
+            }, function(error, response, body) {
                 if (!error && response.statusCode <= 400) {
                     if (body === 'FAKE') {
                         $('.fakeskan').text(i18n.__('%s reported this torrent as fake', 'FakeSkan')).show();
@@ -65,23 +65,19 @@
             });
         },
 
-        startStreaming: function (e) {
-            var torrent = _this.model.get('torrent');
-            var file = parseInt($(e.currentTarget).attr('data-file'));
-            var actualIndex = parseInt($(e.currentTarget).attr('data-index'));
-            torrent.name = torrent.files[file].name;
+        startStreaming: function(e) {
 
-            var torrentStart = new Backbone.Model({
-                torrent: torrent,
-                torrent_read: true,
-                file_index: actualIndex,
-                device: App.Device.Collection.selected
+            //var file = parseInt($(e.currentTarget).attr('data-file'));
+            var actualIndex = parseInt($(e.currentTarget).attr('data-index'));
+
+            App.vent.trigger('streamer:update', {
+                fileSelectorIndex: actualIndex
             });
-            App.vent.trigger('stream:start', torrentStart);
             App.vent.trigger('system:closeFileSelector');
         },
 
-        isTorrentStored: function () {
+
+        isTorrentStored: function() {
             var target = require('nw.gui').App.dataPath + '/TorrentCollection/';
 
             // bypass errors
@@ -99,7 +95,7 @@
                 file = Settings.droppedTorrent;
             } else if (Settings.droppedMagnet && !Settings.droppedStoredMagnet) {
                 _file = Settings.droppedMagnet,
-                    file = formatMagnet(_file);
+                file = formatMagnet(_file);
             } else if (Settings.droppedMagnet && Settings.droppedStoredMagnet) {
                 file = Settings.droppedStoredMagnet;
             }
@@ -114,7 +110,7 @@
             }
         },
 
-        storeTorrent: function () {
+        storeTorrent: function() {
             var source = App.settings.tmpLocation + '/',
                 target = require('nw.gui').App.dataPath + '/TorrentCollection/',
                 file,
@@ -135,7 +131,7 @@
                 }
             } else if (Settings.droppedMagnet) {
                 _file = Settings.droppedMagnet,
-                    file = formatMagnet(_file);
+                file = formatMagnet(_file);
 
                 if (this.isTorrentStored()) {
                     if (Settings.droppedStoredMagnet) {
@@ -158,7 +154,7 @@
             }
         },
 
-        selectPlayer: function (e) {
+        selectPlayer: function(e) {
             var player = $(e.currentTarget).parent('li').attr('id').replace('player-', '');
             _this.model.set('device', player);
             if (!player.match(/[0-9]+.[0-9]+.[0-9]+.[0-9]/ig)) {
@@ -166,8 +162,8 @@
             }
         },
 
-        closeSelector: function (e) {
-            Mousetrap.bind('backspace', function (e) {
+        closeSelector: function(e) {
+            Mousetrap.bind('backspace', function(e) {
                 App.vent.trigger('show:closeDetail');
                 App.vent.trigger('movie:closeDetail');
             });
@@ -177,14 +173,11 @@
             App.vent.trigger('system:closeFileSelector');
         },
 
-        onDestroy: function () {
+        onDestroy: function() {
             Settings.droppedTorrent = false;
             Settings.droppedMagnet = false;
             Settings.droppedStoredMagnet = false;
-
-            //Clean TorrentCache
-            App.Providers.TorrentCache().clearTmpDir();
-            App.Providers.TorrentCache()._checkTmpDir();
+            App.FileSelectorIsOpen = false;
         },
 
     });

@@ -1,4 +1,4 @@
-(function (App) {
+(function(App) {
     'use strict';
 
     var semver = require('semver');
@@ -7,13 +7,13 @@
     var crypto = require('crypto');
     var Streamer = Backbone.Model.extend({
 
-        initialize: function () {
+        initialize: function() {
             this.updatedInfo = {};
             this.client = false;
             this.fileindex = null;
             var self = this;
             this.getPort();
-            App.vent.on('streamer:update', function (data) {
+            App.vent.on('streamer:update', function(data) {
                 if (!data)
                     return;
                 for (var key in data) {
@@ -22,7 +22,7 @@
             });
         },
 
-        start: function (data) {
+        start: function(data) {
             var self = this;
             var streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
 
@@ -35,12 +35,12 @@
                 tmp: streamPath // we'll have a different file name for each stream also if it's same torrent in same session
             });
 
-            this.client.on('ready', function () {
+            this.client.on('ready', function() {
 
                 if (data.choosefile) {
 
                     var streamableFiles = [];
-                    self.client.files.forEach(function (file, index) {
+                    self.client.files.forEach(function(file, index) {
                         if (file.name.endsWith('.avi') || file.name.endsWith('.mp4') || file.name.endsWith('.mkv') || file.name.endsWith('.wmv') || file.name.endsWith('.mov')) {
                             file.index = index;
                             streamableFiles.push(file);
@@ -48,10 +48,11 @@
                     })
 
                     App.vent.trigger('system:openFileSelector', new Backbone.Model({
-                        files: streamableFiles
+                        files: streamableFiles,
+                        torrent: data.torrent
                     }));
 
-                    var startLoadingFromFileSelector = function () {
+                    var startLoadingFromFileSelector = function() {
                         require('watchjs').unwatch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector);
                         var index = self.updatedInfo.fileSelectorIndex;
                         var stream = self.client.files[index].createReadStream();
@@ -60,8 +61,8 @@
                     require('watchjs').watch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector);
                 } else {
                     if (self.client) {
-                        self.client.files.forEach(function (file) {
-                            var index = self.client.files.reduce(function (a, b) {
+                        self.client.files.forEach(function(file) {
+                            var index = self.client.files.reduce(function(a, b) {
                                 return a.length > b.length ? a : b;
                             });
                             index = self.client.files.indexOf(index);
@@ -84,10 +85,10 @@
             App.vent.trigger('stream:started', stateModel);
 
         },
-        getPort: function () {
+        getPort: function() {
             if (!Settings.streamPort) {
                 var self = this;
-                getPort(function (err, port) {
+                getPort(function(err, port) {
                     self.port = port;
                     self.src = 'http://127.0.0.1:' + port;
                 });
@@ -96,7 +97,7 @@
                 this.src = 'http://127.0.0.1:' + parseInt(Settings.streamPort, 10);
             }
         },
-        getPeerID: function () {
+        getPeerID: function() {
             var version = semver.parse(App.settings.version);
             var torrentVersion = '';
             torrentVersion += version.major;
@@ -109,7 +110,7 @@
             torrentPeerId += crypto.pseudoRandomBytes(6).toString('hex');
             return torrentPeerId;
         },
-        destroy: function () {
+        destroy: function() {
             if (this.client) {
                 this.client.destroy();
             }

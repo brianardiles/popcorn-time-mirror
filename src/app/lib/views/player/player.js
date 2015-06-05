@@ -181,11 +181,11 @@
                     }
                     var id = type === 'movie' ? that.model.get('imdb_id') : that.model.get('tvdb_id');
 
-                    App.Trakt.playback(type, id).then(function(position_percent) {
-                        var total = that.video.duration();
+                    App.Trakt.sync.playback(type, id).then(function(position_percent) {
+                        var total = _this.video.duration();
                         var position = (position_percent / 100) * total | 0;
                         win.debug('Resuming position to', position.toFixed(), 'secs (reported by Trakt)');
-                        that.player.currentTime(position);
+                        player.currentTime(position);
                     });
                 }
 

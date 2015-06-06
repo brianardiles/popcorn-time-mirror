@@ -1,4 +1,4 @@
-(function(App) {
+(function (App) {
     'use strict';
     var readTorrent = require('read-torrent'),
         path = require('path'),
@@ -29,7 +29,7 @@
             } else {
                 var filename = $.trim(torrenttitle.replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, ' ').replace(/ +/g, ' ');
 
-                title = filename.split(filename.split(/[^\d]/).filter(function(n) {
+                title = filename.split(filename.split(/[^\d]/).filter(function (n) {
                     if ((n >= 1900) && (n <= 2099)) {
                         return n;
                     }
@@ -64,7 +64,7 @@
 
         if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
 
-            fs.writeFile(path.join(App.settings.tmpLocation, file.name), fs.readFileSync(file.path), function(err) {
+            fs.writeFile(path.join(App.settings.tmpLocation, file.name), fs.readFileSync(file.path), function (err) {
                 if (err) {
                     App.PlayerView.closePlayer();
                     win.error(err.stack);
@@ -73,10 +73,10 @@
                     if (file.name.indexOf('.torrent') !== -1) {
                         Settings.droppedTorrent = file.name;
                         var torrentsrc = path.join(AdvSettings.get('tmpLocation'), file.name);
-                        readTorrent(torrentsrc, function(err, torrent) {
+                        readTorrent(torrentsrc, function (err, torrent) {
                             if (!err) {
                                 var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
-                                _.each(torrent.announce, function(value) {
+                                _.each(torrent.announce, function (value) {
                                     var announce = '&tr=' + encodeURIComponent(value);
                                     torrentMagnet += announce;
                                 });
@@ -111,7 +111,7 @@
 
         if (torrentsrc.indexOf('magnet') > -1) {
             Settings.droppedMagnet = data;
-            readTorrent(torrentsrc, function(err, torrent) {
+            readTorrent(torrentsrc, function (err, torrent) {
                 startStream(torrent, torrentsrc);
             });
         } else {
@@ -121,31 +121,31 @@
                 if (fs.exists(path.join(AdvSettings.get('tmpLocation'), 'pct-remote-torrent.torrent'))) {
                     fs.unlink(path.join(AdvSettings.get('tmpLocation'), 'pct-remote-torrent.torrent'));
                 }
-                request(torrentsrc).on('response', function(resp) {
+                request(torrentsrc).on('response', function (resp) {
                     if (resp.statusCode >= 400) {
                         return done('Invalid status: ' + resp.statusCode); // jshint ignore:line
                     }
                     switch (resp.headers['content-encoding']) {
-                        case 'gzip':
-                            resp.pipe(zlib.createGunzip()).pipe(ws);
-                            break;
-                        case 'deflate':
-                            resp.pipe(zlib.createInflate()).pipe(ws);
-                            break;
-                        default:
-                            resp.pipe(ws);
-                            break;
+                    case 'gzip':
+                        resp.pipe(zlib.createGunzip()).pipe(ws);
+                        break;
+                    case 'deflate':
+                        resp.pipe(zlib.createInflate()).pipe(ws);
+                        break;
+                    default:
+                        resp.pipe(ws);
+                        break;
                     }
                     ws
-                        .on('error', function() {
+                        .on('error', function () {
                             console.log('error');
                         })
-                        .on('close', function() {
+                        .on('close', function () {
                             console.log('done');
                             console.log(ws.path);
-                            readTorrent(ws.path, function(err, torrent) {
+                            readTorrent(ws.path, function (err, torrent) {
                                 var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
-                                _.each(torrent.announce, function(value) {
+                                _.each(torrent.announce, function (value) {
                                     var announce = '&tr=' + encodeURIComponent(value);
                                     torrentMagnet += announce;
                                 });
@@ -173,20 +173,20 @@
         var showDrag = true;
         var timeout = -1;
         $('#drop-mask').on('dragenter',
-            function(e) {
+            function (e) {
                 $('.drop-indicator').show();
                 console.log('drag init');
             });
         $('#drop-mask').on('dragover',
-            function(e) {
+            function (e) {
                 var showDrag = true;
             });
 
         $('#drop-mask').on('dragleave',
-            function(e) {
+            function (e) {
                 var showDrag = false;
                 clearTimeout(timeout);
-                timeout = setTimeout(function() {
+                timeout = setTimeout(function () {
                     if (!showDrag) {
                         console.log('drag aborted');
                         $('.drop-indicator').hide();
@@ -198,16 +198,16 @@
 
     function initDragDrop() {
 
-        window.ondragenter = function(e) {
+        window.ondragenter = function (e) {
             e.preventDefault();
             onDragUI(false);
         };
-        window.ondrop = function(e) {
+        window.ondrop = function (e) {
             e.preventDefault();
             onDragUI(true);
             onDrop(e);
         };
-        $(document).on('paste', function(e) {
+        $(document).on('paste', function (e) {
             e.preventDefault();
             onPaste(e);
         });

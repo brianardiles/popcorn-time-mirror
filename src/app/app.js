@@ -483,7 +483,7 @@ var last_arg = gui.App.argv.pop();
 
 if (last_arg && (last_arg.substring(0, 8) === 'magnet:?' || last_arg.substring(0, 7) === 'http://' || last_arg.endsWith('.torrent'))) {
     App.vent.on('app:started', function() {
-        handleTorrent(last_arg);
+        // handleTorrent(last_arg);
     });
 }
 
@@ -519,7 +519,7 @@ gui.App.on('open', function(cmd) {
             };
             handleVideoFile(fileModel);
         } else if (file.endsWith('.torrent')) {
-            handleTorrent(file);
+            //  handleTorrent(file);
         }
     }
 });

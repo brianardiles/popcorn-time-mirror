@@ -1,4 +1,4 @@
-(function(App) {
+(function (App) {
     'use strict';
     var util = require('util');
     var Loading = Backbone.Marionette.ItemView.extend({
@@ -37,18 +37,18 @@
             'click .stop': 'cancelStreaming',
             'click .play': 'resumeStreaming'
         },
-        initialize: function() {
+        initialize: function () {
             var that = this;
 
             //If a child was removed from above this view
-            App.vent.on('viewstack:pop', function() {
+            App.vent.on('viewstack:pop', function () {
                 if (_.last(App.ViewStack) === that.className) {
                     that.initKeyboardShortcuts();
                 }
             });
 
             //If a child was added above this view
-            App.vent.on('viewstack:push', function() {
+            App.vent.on('viewstack:push', function () {
                 if (_.last(App.ViewStack) !== that.className) {
                     that.unbindKeyboardShortcuts();
                 }
@@ -62,18 +62,18 @@
 
         },
 
-        initKeyboardShortcuts: function() {
+        initKeyboardShortcuts: function () {
             var that = this;
-            Mousetrap.bind(['esc', 'backspace'], function(e) {
+            Mousetrap.bind(['esc', 'backspace'], function (e) {
                 that.cancelStreaming();
             });
         },
 
-        unbindKeyboardShortcuts: function() {
+        unbindKeyboardShortcuts: function () {
             Mousetrap.unbind(['esc', 'backspace']);
         },
 
-        onShow: function() {
+        onShow: function () {
             this.ui.stateTextDownload.text(i18n.__('Loading'));
             win.debug('Initializing Torrent Loader For', this.model.get('data').metadata.title);
             $('#header').addClass('header-shadow');
@@ -87,7 +87,7 @@
 
         },
 
-        initializeLoadingPlayer: function() {
+        initializeLoadingPlayer: function () {
             var that = this;
             var loadingPlayer = document.getElementById('loading_player');
             loadingPlayer.setAttribute('src', App.Streamer.src);
@@ -96,7 +96,7 @@
             loadingPlayer.load();
             loadingPlayer.play();
             var debugmetachunks = false;
-            loadingPlayer.ontimeupdate = function() {
+            loadingPlayer.ontimeupdate = function () {
                 if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
                     win.info('Initial Meta Chunks Received! Starting Playback in 5 seconds.');
                     debugmetachunks = true;
@@ -104,14 +104,14 @@
                 if (loadingPlayer.currentTime > 5) {
                     that.playing = true;
                     loadingPlayer.pause();
-                    loadingPlayer.src = ""; // empty source
+                    loadingPlayer.src = ''; // empty source
                     loadingPlayer.load();
                     that.initMainplayer();
                 }
 
             };
         },
-        initMainplayer: function() {
+        initMainplayer: function () {
             if (this.player === 'local') {
                 var playerModel = new Backbone.Model(this.model.get('data'));
                 App.vent.trigger('stream:local', playerModel);
@@ -127,9 +127,10 @@
             }
 
         },
-        StateUpdate: function() {
-            if (this.playing && !this.playingExternally)
+        StateUpdate: function () {
+            if (this.playing && !this.playingExternally) {
                 return;
+            }
             var that = this;
 
             var Stream = App.Streamer.client.swarm;
@@ -167,14 +168,16 @@
 
 
         },
-        prettySpeed: function(speed) {
+        prettySpeed: function (speed) {
             speed = speed || 0;
-            if (speed == 0) return util.format("%s %s", 0, "B/s");
+            if (speed === 0) {
+                return util.format('%s %s', 0, 'B/s');
+            }
 
             var converted = Math.floor(Math.log(speed) / Math.log(1024));
-            return util.format("%s %s/s", (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
+            return util.format('%s %s/s', (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
         },
-        cancelStreaming: function() {
+        cancelStreaming: function () {
             this.playing = true; // stop text update
             this.playingExternally = false;
             clearInterval(this.updateInfo);
@@ -186,109 +189,109 @@
                 App.vent.trigger('device:stop');
             }
 
-            Mousetrap.bind('esc', function(e) {
+            Mousetrap.bind('esc', function (e) {
                 App.vent.trigger('show:closeDetail');
                 App.vent.trigger('movie:closeDetail');
             });
-            _.defer(function() {
+            _.defer(function () {
                 App.Streamer.destroy();
                 App.vent.trigger('player:close');
             });
 
         },
-        loadBackground: function(data) {
+        loadBackground: function (data) {
             var backgroundUrl = data;
             var that = this;
             var bgError = false;
             var bgCache = new Image();
             bgCache.src = backgroundUrl;
-            bgCache.onload = function() {
+            bgCache.onload = function () {
                 try {
                     that.ui.backdrop.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
                 } catch (e) {}
                 bgCache = null;
             };
-            bgCache.onerror = function() {
+            bgCache.onerror = function () {
                 bgError = true;
                 bgCache = null;
             };
 
         },
 
-        augmentDropModel: function(data) {
+        augmentDropModel: function (data) {
             var metadata = data.metadata;
             var that = this;
 
             switch (data.type) {
-                case 'dropped-tvshow':
-                    // @TODO: REMOVE THAT AND MIGRATE IT TO A PACKAGE !!!
+            case 'dropped-tvshow':
+                // @TODO: REMOVE THAT AND MIGRATE IT TO A PACKAGE !!!
 
-                    var showTitle = metadata.showName.replace(/\w\S*/g, function(txt) {
-                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                var showTitle = metadata.showName.replace(/\w\S*/g, function (txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+                App.Trakt.shows.summary(showTitle)
+                    .then(function (summary) {
+                        if (!summary) {
+                            win.warn('Unable to fetch data from Trakt.tv');
+                        } else {
+                            console.log(summary);
+                            that.model.attributes.data.metadata.showName = summary.title;
+                            App.Trakt.episodes.summary(showTitle, metadata.season, metadata.episode)
+                                .then(function (episodeSummary) {
+                                    if (!episodeSummary) {
+                                        win.warn('Unable to fetch data from Trakt.tv');
+                                    } else {
+                                        var data = episodeSummary;
+                                        that.model.attributes.data.type = 'tvshow';
+                                        console.log(episodeSummary);
+                                        that.model.attributes.data.metadata.title = summary.title + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
+                                        that.model.attributes.data.metadata.season = data.season;
+                                        that.model.attributes.data.metadata.episode = data.number;
+                                        that.model.attributes.data.metadata.tvdb_id = data.ids.tvdb;
+                                        that.model.attributes.data.metadata.imdb_id = data.ids.imdb;
+                                        that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
+                                        that.ui.title.text(that.model.attributes.data.metadata.title);
+
+                                        that.loadBackground(that.model.attributes.data.metadata.backdrop);
+                                    }
+                                }).catch(function (err) {
+                                    // It might be a movie with the name of a TV Series ? Messy hollywood !
+                                });
+                        }
+                    }).catch(function (err) {
+                        win.error('An error occured while trying to get metadata', err);
                     });
-                    App.Trakt.shows.summary(showTitle)
-                        .then(function(summary) {
-                            if (!summary) {
-                                win.warn('Unable to fetch data from Trakt.tv');
-                            } else {
-                                console.log(summary);
-                                that.model.attributes.data.metadata.showName = summary.title;
-                                App.Trakt.episodes.summary(showTitle, metadata.season, metadata.episode)
-                                    .then(function(episodeSummary) {
-                                        if (!episodeSummary) {
-                                            win.warn('Unable to fetch data from Trakt.tv');
-                                        } else {
-                                            var data = episodeSummary;
-                                            that.model.attributes.data.type = 'tvshow';
-                                            console.log(episodeSummary);
-                                            that.model.attributes.data.metadata.title = summary.title + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
-                                            that.model.attributes.data.metadata.season = data.season;
-                                            that.model.attributes.data.metadata.episode = data.number;
-                                            that.model.attributes.data.metadata.tvdb_id = data.ids.tvdb;
-                                            that.model.attributes.data.metadata.imdb_id = data.ids.imdb;
-                                            that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
-                                            that.ui.title.text(that.model.attributes.data.metadata.title);
 
-                                            that.loadBackground(that.model.attributes.data.metadata.backdrop);
-                                        }
-                                    }).catch(function(err) {
-                                        // It might be a movie with the name of a TV Series ? Messy hollywood !
-                                    });
-                            }
-                        }).catch(function(err) {
-                            win.error('An error occured while trying to get metadata', err);
-                        });
+                break;
+            case 'dropped-movie':
 
-                    break;
-                case 'dropped-movie':
+                console.log(metadata.title);
 
-                    console.log(metadata.title);
+                App.Trakt.search(metadata.title, 'movie')
+                    .then(function (summary) {
+                        if (!summary || summary.length === 0) {
+                            win.warn('Unable to fetch data from Trakt.tv');
+                        } else {
+                            console.log(summary);
+                            var data = summary[0].movie;
+                            that.model.attributes.data.type = 'movie';
+                            that.model.attributes.data.metadata.title = data.title;
+                            that.model.attributes.data.metadata.cover = data.images.poster;
+                            that.model.attributes.data.metadata.imdb_id = data.imdb_id;
+                            that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
 
-                    App.Trakt.search(metadata.title, 'movie')
-                        .then(function(summary) {
-                            if (!summary || summary.length === 0) {
-                                win.warn('Unable to fetch data from Trakt.tv');
-                            } else {
-                                console.log(summary);
-                                var data = summary[0].movie;
-                                that.model.attributes.data.type = 'movie';
-                                that.model.attributes.data.metadata.title = data.title;
-                                that.model.attributes.data.metadata.cover = data.images.poster;
-                                that.model.attributes.data.metadata.imdb_id = data.imdb_id;
-                                that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
+                            that.ui.title.text(that.model.attributes.data.metadata.title);
 
-                                that.ui.title.text(that.model.attributes.data.metadata.title);
+                            that.loadBackground(that.model.attributes.data.metadata.backdrop);
 
-                                that.loadBackground(that.model.attributes.data.metadata.backdrop);
+                        }
+                    }).catch(function (err) {
+                        win.error('An error occured while trying to get metadata', err);
+                    });
 
-                            }
-                        }).catch(function(err) {
-                            win.error('An error occured while trying to get metadata', err);
-                        });
-
-                    break;
-                default:
-                    //defualt none?
+                break;
+            default:
+                //defualt none?
             }
 
         }

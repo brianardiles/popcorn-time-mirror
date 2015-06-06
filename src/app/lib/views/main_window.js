@@ -1,4 +1,4 @@
-(function(App) {
+(function (App) {
     'use strict';
 
     var _this;
@@ -35,12 +35,12 @@
             'click .links': 'links'
         },
 
-        initialize: function() {
+        initialize: function () {
             _this = this;
 
-            _.each(_this.regionManager._regions, function(element, index) {
+            _.each(_this.regionManager._regions, function (element, index) {
 
-                element.on('show', function(view) {
+                element.on('show', function (view) {
                     if (view.className && App.ViewStack[0] !== view.className) {
                         App.ViewStack.push(view.className);
                     }
@@ -51,7 +51,7 @@
                  * Marionette 2.x changed close to destroy, and doesn't pass along a view anymore.
                  * TODO: Find better solution
                  */
-                element.on('destroy', function(view) {
+                element.on('destroy', function (view) {
                     if (typeof view === 'undefined' && element.currentView !== null) {
                         view = element.currentView;
                     }
@@ -135,7 +135,7 @@
             App.vent.on('updatePostersSizeStylesheet', _.bind(this.updatePostersSizeStylesheet, this));
         },
 
-        showSubtitles: function(model) {
+        showSubtitles: function (model) {
             win.debug('Show subtitles', model);
             var s = new App.View.Subtitles({
                 model: model
@@ -143,7 +143,7 @@
             s.render();
         },
 
-        onShow: function() {
+        onShow: function () {
             this.Header.show(new App.View.TitleBar());
             // Set the app title (for Windows mostly)
             this.nativeWindow.title = App.Config.title;
@@ -152,11 +152,11 @@
             var that = this;
             this.Content.show(new App.View.InitModal());
             App.db.initialize()
-                .then(function() {
+                .then(function () {
 
                     // Create the System Temp Folder. This is used to store temporary data like movie files.
                     if (!fs.existsSync(Settings.tmpLocation)) {
-                        fs.mkdir(Settings.tmpLocation, function(err) {
+                        fs.mkdir(Settings.tmpLocation, function (err) {
                             if (!err || err.errno === '-4075') {
                                 //success
                             } else {
@@ -217,7 +217,7 @@
                 });
 
             // Cancel all new windows (Middle clicks / New Tab)
-            this.nativeWindow.on('new-win-policy', function(frame, url, policy) {
+            this.nativeWindow.on('new-win-policy', function (frame, url, policy) {
                 policy.ignore();
             });
 
@@ -226,32 +226,32 @@
 
         },
 
-        showMovies: function(e) {
+        showMovies: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
 
             this.Content.show(new App.View.MovieBrowser());
         },
 
-        showShows: function(e) {
+        showShows: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
 
             this.Content.show(new App.View.ShowBrowser());
         },
 
-        showAnime: function(e) {
+        showAnime: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
 
             this.Content.show(new App.View.AnimeBrowser());
         },
 
-        updateShows: function(e) {
+        updateShows: function (e) {
             var that = this;
             App.vent.trigger('show:closeDetail');
             this.Content.show(new App.View.InitModal());
-            App.db.syncDB(function() {
+            App.db.syncDB(function () {
                 that.InitModal.destroy();
                 that.showShows();
                 // Focus the window when the app opens
@@ -260,16 +260,16 @@
             });
         },
 
-        connectVpn: function(e) {
+        connectVpn: function (e) {
             App.VPNClient.launch();
         },
 
         // used in app to re-triger a api resync
-        initShows: function(e) {
+        initShows: function (e) {
             var that = this;
             App.vent.trigger('settings:close');
             this.Content.show(new App.View.InitModal());
-            App.db.initDB(function(err, data) {
+            App.db.initDB(function (err, data) {
                 that.InitModal.destroy();
 
                 if (!err) {
@@ -284,14 +284,14 @@
             });
         },
 
-        showFavorites: function(e) {
+        showFavorites: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
 
             this.Content.show(new App.View.FavoriteBrowser());
         },
 
-        renderFavorites: function(e) {
+        renderFavorites: function (e) {
             this.Content.show(new App.View.FavoriteBrowser());
             App.currentview = 'Favorites';
             $('.right .search').hide();
@@ -299,30 +299,30 @@
             $('#filterbar-favorites').addClass('active');
         },
 
-        showWatchlist: function(e) {
+        showWatchlist: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
 
             this.Content.show(new App.View.WatchlistBrowser());
         },
 
-        showDisclaimer: function(e) {
+        showDisclaimer: function (e) {
             this.Disclaimer.show(new App.View.DisclaimerModal());
         },
 
-        showAbout: function(e) {
+        showAbout: function (e) {
             this.About.show(new App.View.About());
         },
 
-        showTorrentCollection: function(e) {
+        showTorrentCollection: function (e) {
             this.TorrentCollection.show(new App.View.TorrentCollection());
         },
 
-        showKeyboard: function(e) {
+        showKeyboard: function (e) {
             this.Keyboard.show(new App.View.Keyboard());
         },
 
-        toggleKeyboard: function(e) {
+        toggleKeyboard: function (e) {
             if ($('.keyboard-container').length > 0) {
                 App.vent.trigger('keyboard:close');
             } else {
@@ -330,11 +330,11 @@
             }
         },
 
-        showHelp: function(e) {
+        showHelp: function (e) {
             this.Help.show(new App.View.Help());
         },
 
-        toggleHelp: function(e) {
+        toggleHelp: function (e) {
             if ($('.help-container').length > 0) {
                 App.vent.trigger('help:close');
             } else {
@@ -342,50 +342,50 @@
             }
         },
 
-        showIssue: function(e) {
+        showIssue: function (e) {
             this.Issue.show(new App.View.Issue());
         },
 
-        preventDefault: function(e) {
+        preventDefault: function (e) {
             e.preventDefault();
         },
 
-        showMovieDetail: function(movieModel) {
+        showMovieDetail: function (movieModel) {
             this.MovieDetail.show(new App.View.MovieDetail({
                 model: movieModel
             }));
         },
 
-        closeMovieDetail: function(movieModel) {
+        closeMovieDetail: function (movieModel) {
             _this.MovieDetail.destroy();
             App.vent.trigger('shortcuts:list');
         },
 
-        showShowDetail: function(showModel) {
+        showShowDetail: function (showModel) {
             this.MovieDetail.show(new App.View.ShowDetail({
                 model: showModel
             }));
         },
 
-        closeShowDetail: function(showModel) {
+        closeShowDetail: function (showModel) {
             _this.MovieDetail.destroy();
             App.vent.trigger('shortcuts:list');
         },
 
-        showFileSelector: function(fileModel) {
+        showFileSelector: function (fileModel) {
             App.vent.trigger('about:close');
             this.FileSelector.show(new App.View.FileSelector({
                 model: fileModel
             }));
         },
 
-        showSettings: function(settingsModel) {
+        showSettings: function (settingsModel) {
             this.Settings.show(new App.View.Settings({
                 model: settingsModel
             }));
         },
 
-        traktAuthenticated: function() {
+        traktAuthenticated: function () {
             win.info('Trakt: authenticated');
             if (Settings.traktSyncOnStart && (Settings.traktLastSync + 1200000 < new Date().valueOf())) { //only refresh every 20min
                 Database.deleteWatched();
@@ -393,7 +393,7 @@
             }
         },
 
-        streamStarted: function(stateModel) {
+        streamStarted: function (stateModel) {
 
             // People wanted to keep the active
             // modal (tvshow/movie) detail open when
@@ -408,11 +408,11 @@
             }));
         },
 
-        streamReady: function(streamModel) {
+        streamReady: function (streamModel) {
             App.Device.Collection.startDevice(streamModel);
         },
 
-        showPlayer: function(streamModel) {
+        showPlayer: function (streamModel) {
             this.Player.show(new App.View.Player({
                 model: streamModel
             }));
@@ -422,7 +422,7 @@
             }
         },
 
-        showViews: function(streamModel) {
+        showViews: function (streamModel) {
             this.Content.$el.show();
             try {
                 this.MovieDetail.$el.show();
@@ -442,14 +442,14 @@
             $(window).trigger('resize');
         },
 
-        updatePostersSizeStylesheet: function() {
+        updatePostersSizeStylesheet: function () {
 
             var that = this;
 
             App.db.getSetting({
-                key: 'postersWidth'
-            })
-                .then(function(doc) {
+                    key: 'postersWidth'
+                })
+                .then(function (doc) {
                     var postersWidth = doc.value;
                     var postersHeight = Math.round(postersWidth * Settings.postersSizeRatio);
                     var postersWidthPercentage = (postersWidth - Settings.postersMinWidth) / (Settings.postersMaxWidth - Settings.postersMinWidth) * 100;
@@ -490,7 +490,7 @@
                 });
         },
 
-        links: function(e) {
+        links: function (e) {
             e.preventDefault();
             gui.Shell.openExternal($(e.currentTarget).attr('href'));
         }

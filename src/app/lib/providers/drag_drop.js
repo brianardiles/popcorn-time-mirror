@@ -1,4 +1,4 @@
-(function (App) {
+(function(App) {
     'use strict';
     var readTorrent = require('read-torrent'),
         path = require('path'),
@@ -6,27 +6,32 @@
         request = require('request'),
         zlib = require('zlib');
 
+    function capitaliseFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
     function startStream(torrent, torrentsrc) {
 
+        var type, title, season, episode, showName;
+
         if (torrent.name) { // sometimes magnets don't have names for some reason
-            var torrenttitle = $.trim(torrent.name.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.'),
-                title, type;
+            var torrenttitle = $.trim(torrent.name.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
+
             var se_re = torrenttitle.match(/(.*)S(\d\d)E(\d\d)/i);
 
             if (se_re != null) {
-                var showName = capitaliseFirstLetter(se_re[1].replace(/\./g, ' ').trim().replace(/ /g, '-'));
-                var season = parseInt(se_re[2]);
-                var episode = parseInt(se_re[3]);
+                showName = capitaliseFirstLetter(se_re[1].replace(/\./g, ' ').trim().replace(/ /g, '-'));
+                season = parseInt(se_re[2]);
+                episode = parseInt(se_re[3]);
                 title = showName + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;
                 type = 'dropped-tvshow';
 
             } else {
                 var filename = $.trim(torrenttitle.replace(/[\.]/g, ' ')).replace(/[^\w ]+/g, ' ').replace(/ +/g, ' ');
 
-                title = filename.split(filename.split(/[^\d]/).filter(function (n) {
+                title = filename.split(filename.split(/[^\d]/).filter(function(n) {
                     if ((n >= 1900) && (n <= 2099)) {
-                        return n
+                        return n;
                     }
                 }))[0];
 
@@ -35,9 +40,7 @@
             }
         }
 
-        function capitaliseFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
+
         var torrentStart = {
             torrent: torrentsrc,
             type: type,
@@ -61,7 +64,7 @@
 
         if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
 
-            fs.writeFile(path.join(App.settings.tmpLocation, file.name), fs.readFileSync(file.path), function (err) {
+            fs.writeFile(path.join(App.settings.tmpLocation, file.name), fs.readFileSync(file.path), function(err) {
                 if (err) {
                     App.PlayerView.closePlayer();
                     win.error(err.stack);
@@ -70,10 +73,10 @@
                     if (file.name.indexOf('.torrent') !== -1) {
                         Settings.droppedTorrent = file.name;
                         var torrentsrc = path.join(AdvSettings.get('tmpLocation'), file.name);
-                        readTorrent(torrentsrc, function (err, torrent) {
+                        readTorrent(torrentsrc, function(err, torrent) {
                             if (!err) {
                                 var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
-                                _.each(torrent.announce, function (value) {
+                                _.each(torrent.announce, function(value) {
                                     var announce = '&tr=' + encodeURIComponent(value);
                                     torrentMagnet += announce;
                                 });
@@ -108,7 +111,7 @@
 
         if (torrentsrc.indexOf('magnet') > -1) {
             Settings.droppedMagnet = data;
-            readTorrent(torrentsrc, function (err, torrent) {
+            readTorrent(torrentsrc, function(err, torrent) {
                 startStream(torrent, torrentsrc);
             });
         } else {
@@ -118,31 +121,31 @@
                 if (fs.exists(path.join(AdvSettings.get('tmpLocation'), 'pct-remote-torrent.torrent'))) {
                     fs.unlink(path.join(AdvSettings.get('tmpLocation'), 'pct-remote-torrent.torrent'));
                 }
-                request(torrentsrc).on('response', function (resp) {
+                request(torrentsrc).on('response', function(resp) {
                     if (resp.statusCode >= 400) {
-                        return done('Invalid status: ' + resp.statusCode);
+                        return done('Invalid status: ' + resp.statusCode); // jshint ignore:line
                     }
                     switch (resp.headers['content-encoding']) {
-                    case 'gzip':
-                        resp.pipe(zlib.createGunzip()).pipe(ws);
-                        break;
-                    case 'deflate':
-                        resp.pipe(zlib.createInflate()).pipe(ws);
-                        break;
-                    default:
-                        resp.pipe(ws);
-                        break;
+                        case 'gzip':
+                            resp.pipe(zlib.createGunzip()).pipe(ws);
+                            break;
+                        case 'deflate':
+                            resp.pipe(zlib.createInflate()).pipe(ws);
+                            break;
+                        default:
+                            resp.pipe(ws);
+                            break;
                     }
                     ws
-                        .on('error', function () {
-                            console.log('error')
+                        .on('error', function() {
+                            console.log('error');
                         })
-                        .on('close', function () {
+                        .on('close', function() {
                             console.log('done');
                             console.log(ws.path);
-                            readTorrent(ws.path, function (err, torrent) {
+                            readTorrent(ws.path, function(err, torrent) {
                                 var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
-                                _.each(torrent.announce, function (value) {
+                                _.each(torrent.announce, function(value) {
                                     var announce = '&tr=' + encodeURIComponent(value);
                                     torrentMagnet += announce;
                                 });
@@ -170,20 +173,20 @@
         var showDrag = true;
         var timeout = -1;
         $('#drop-mask').on('dragenter',
-            function (e) {
+            function(e) {
                 $('.drop-indicator').show();
                 console.log('drag init');
             });
         $('#drop-mask').on('dragover',
-            function (e) {
+            function(e) {
                 var showDrag = true;
             });
 
         $('#drop-mask').on('dragleave',
-            function (e) {
+            function(e) {
                 var showDrag = false;
                 clearTimeout(timeout);
-                timeout = setTimeout(function () {
+                timeout = setTimeout(function() {
                     if (!showDrag) {
                         console.log('drag aborted');
                         $('.drop-indicator').hide();
@@ -195,16 +198,16 @@
 
     function initDragDrop() {
 
-        window.ondragenter = function (e) {
+        window.ondragenter = function(e) {
             e.preventDefault();
             onDragUI(false);
-        }
-        window.ondrop = function (e) {
+        };
+        window.ondrop = function(e) {
             e.preventDefault();
             onDragUI(true);
             onDrop(e);
-        }
-        $(document).on('paste', function (e) {
+        };
+        $(document).on('paste', function(e) {
             e.preventDefault();
             onPaste(e);
         });

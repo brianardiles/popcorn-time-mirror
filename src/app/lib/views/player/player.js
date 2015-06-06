@@ -384,12 +384,13 @@
 
         prettySpeed: function(speed) {
             speed = speed || 0;
-            if (speed == 0) return util.format('%s %s', 0, 'B/s');
+            if (speed === 0) {
+                return util.format('%s %s', 0, 'B/s');
+            }
 
             var converted = Math.floor(Math.log(speed) / Math.log(1024));
             return util.format('%s %s/s', (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
         },
-
 
 
         processNext: function() {

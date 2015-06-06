@@ -130,12 +130,22 @@
         },
 
         restoreUserPref: function () {
+
+
+            if (AdvSettings.get('alwaysFullscreen') && !this.inFullscreen) {
+                this.toggleFullscreen();
+            }
+            if (this.inFullscreen) {
+                win.leaveFullscreen();
+                this.toggleFullscreen();
+            }
+
             this.player.volume(AdvSettings.get('playerVolume'));
         },
 
         setPlayerEvents: function () {
             var type = this.model.get('type');
-
+            console.log(this.model);
             this.player.one('play', function () {
 
                 if (that.model.get('type') === 'trailer') {
@@ -233,6 +243,8 @@
                         App.vent.trigger('player:close');
                     }, 2000);
                 }
+
+
                 win.error('video.js error code: ' + $('#video_player').get(0).player.error().code, $('#video_player').get(0).player.error());
             });
 
@@ -263,6 +275,9 @@
             }
 
 
+        },
+        toggleFullscreen: function () {
+            $('.vjs-fullscreen-control').click();
         },
 
         sendToTrakt: function (method) {
@@ -666,21 +681,6 @@
             this.player.muted(!this.player.muted());
         },
 
-        toggleFullscreen: function () {
-            $('.vjs-fullscreen-control').click();
-        },
-
-        leaveFullscreen: function () {
-            this.nativeWindow = require('nw.gui').Window.get();
-
-            if (this.nativeWindow.isFullscreen) {
-                this.player.isFullscreen(false);
-                this.player.trigger('fullscreenchange');
-                this.nativeWindow.leaveFullscreen();
-                this.nativeWindow.focus();
-            }
-        },
-
         displayStreamURL: function () {
             var clipboard = require('nw.gui').Clipboard.get();
             clipboard.set($('#video_player video').attr('src'), 'text');
@@ -734,11 +734,22 @@
             this.playing = false;
 
             var type = this.model.get('type');
+            var watchObject;
             if (type === 'tvshow') {
                 type = 'show';
+                watchObject = {
+                    imdb_id: this.model.get('metadata').imdb_id,
+                    tvdb_id: this.model.get('metadata').tvdb_id,
+                    season: this.model.get('metadata').season,
+                    episode: this.model.get('metadata').episode
+                };
+            } else {
+                watchObject = {
+                    imdbid: this.model.get('metadata').imdb_id,
+                };
             }
             if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
-                App.vent.trigger(type + ':watched', this.model.attributes, 'database');
+                App.vent.trigger(type + ':watched', watchObject, 'database');
             }
 
             // remember position

@@ -17,10 +17,32 @@
         if (torrent.name) { // sometimes magnets don't have names for some reason
             var torrenttitle = $.trim(torrent.name.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
 
-            var se_re = torrenttitle.match(/(.*)S(\d\d)E(\d\d)/i);
+
+            var se_re = torrenttitle.match(/(.*)S(\d\d)E(\d\d)/i); // regex try (ex: title.s01e01)
+
+            if (se_re === null) { // if fails
+                se_re = title.match(/(.*)(\d\d\d\d)+\W/i); // try another regex (ex: title.0101)
+                if (se_re !== null) {
+                    se_re[3] = se_re[2].substr(2, 4);
+                    se_re[2] = se_re[2].substr(0, 2);
+                } else {
+                    se_re = title.match(/(.*)(\d\d\d)+\W/i); // try a last one (ex: title.101)
+                    if (se_re !== null) {
+                        se_re[3] = se_re[2].substr(1, 2);
+                        se_re[2] = se_re[2].substr(0, 1);
+                    }
+                }
+            }
 
             if (se_re != null) {
-                showName = capitaliseFirstLetter(se_re[1].replace(/\./g, ' ').trim().replace(/ /g, '-'));
+                showName = $.trim(se_re[1].replace(/[\.]/g, ' '))
+                    .replace(/^\[.*\]/, '') // starts with brackets
+                    .replace(/[^\w ]+/g, '') // remove brackets
+                    .replace(/ +/g, '-') // has spaces
+                    .replace(/_/g, '-') // has '_'
+                    .replace(/\-$/, '') // ends with '-'
+                    .replace(/^\./, ''); // starts with '.'
+                showName = capitaliseFirstLetter(showName);
                 season = parseInt(se_re[2]);
                 episode = parseInt(se_re[3]);
                 title = showName + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode;

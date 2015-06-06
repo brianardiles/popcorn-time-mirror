@@ -42,7 +42,7 @@
                 _this.closeSelector(e);
             });
 
-            App.Device.Collection.setDevice(Settings.chosenPlayer);
+            App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
             App.Device.ChooserView('#player-chooser2').render();
             this.$('#watch-now').text('');
         },

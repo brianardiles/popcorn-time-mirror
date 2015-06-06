@@ -215,14 +215,14 @@
 
             _this.initKeyboardShortcuts();
 
-            if (!Settings.ratingStars) {
+            if (!AdvSettings.get('ratingStars')) {
                 $('.star-container-tv').addClass('hidden');
                 $('.number-container-tv').removeClass('hidden');
             }
 
             this.isShowWatched();
 
-            App.Device.Collection.setDevice(Settings.chosenPlayer);
+            App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
             App.Device.ChooserView('#player-chooser').render();
         },
 
@@ -262,7 +262,7 @@
                         var unseen = episodes.filter(function(item) {
                             return episodesSeen.indexOf(item) === -1;
                         });
-                        if (Settings.tv_detail_jump_to !== 'firstUnwatched') {
+                        if (AdvSettings.get('tv_detail_jump_to') !== 'firstUnwatched') {
                             var lastSeen = episodesSeen[episodesSeen.length - 1];
 
                             if (lastSeen !== episodes[episodes.length - 1]) {

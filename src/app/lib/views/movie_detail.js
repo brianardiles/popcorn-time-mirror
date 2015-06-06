@@ -138,14 +138,14 @@
             });
 
             // display stars or number
-            if (!Settings.ratingStars) {
+            if (!AdvSettings.get('ratingStars')) {
                 $('.star-container').addClass('hidden');
                 $('.number-container').removeClass('hidden');
             }
 
             this.initKeyboardShortcuts();
 
-            App.Device.Collection.setDevice(Settings.chosenPlayer);
+            App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
             App.Device.ChooserView('#player-chooser').render();
         },
 

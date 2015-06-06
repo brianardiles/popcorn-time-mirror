@@ -170,6 +170,7 @@
             $('.filter-bar').show();
             $('#header').removeClass('header-shadow');
             $('#movie-detail').show();
+            App.vent.trigger('player:close');
             App.vent.trigger('system:closeFileSelector');
         },
 

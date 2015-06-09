@@ -69,10 +69,13 @@
 
             //var file = parseInt($(e.currentTarget).attr('data-file'));
             var actualIndex = parseInt($(e.currentTarget).attr('data-index'));
+            var fileSelectedName = $(e.currentTarget).attr('data-filename');
 
             App.vent.trigger('streamer:update', {
-                fileSelectorIndex: actualIndex
+                fileSelectorIndex: actualIndex,
+                fileSelectorIndexName: fileSelectedName
             });
+
             App.vent.trigger('system:closeFileSelector');
         },
 

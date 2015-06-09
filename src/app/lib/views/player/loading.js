@@ -57,7 +57,7 @@
             win.info('Loading torrent');
 
             if (this.model.attributes.data.type === 'dropped-content') {
-                this.augmentDropModel(this.model.attributes.data); // olny call if droped torrent/magnet
+                this.waitForSelection();
             }
 
         },
@@ -216,6 +216,24 @@
                 bgCache = null;
             };
 
+        },
+        waitForSelection: function () {
+            var that = this;
+
+            function removeExtension(filename) {
+                var lastDotPosition = filename.lastIndexOf('.');
+                if (lastDotPosition === -1) {
+                    return filename;
+                } else {
+                    return filename.substr(0, lastDotPosition);
+                }
+            }
+            var watchFileSelected = function () {
+                require('watchjs').unwatch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
+                that.model.attributes.data.metadata.title = removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
+                that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
+            };
+            require('watchjs').watch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
         },
 
         augmentDropModel: function (data) {

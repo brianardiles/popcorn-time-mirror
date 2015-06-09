@@ -117,6 +117,8 @@
             this.client = false;
             this.fileindex = null;
             this.getPort();
+            this.updatedInfo.fileSelectorIndex = null;
+            this.updatedInfo.fileSelectorIndexName = null;
         }
 
     });

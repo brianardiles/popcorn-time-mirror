@@ -56,7 +56,7 @@
 
             win.info('Loading torrent');
 
-            if (this.model.attributes.data.type.indexOf('dropped') > -1) {
+            if (this.model.attributes.data.type === 'dropped-content') {
                 this.augmentDropModel(this.model.attributes.data); // olny call if droped torrent/magnet
             }
 
@@ -134,7 +134,7 @@
             var that = this;
 
             var Stream = App.Streamer.client.swarm;
-            if (App.Streamer.fileindex !== null && !App.FileSelectorIsOpen) {
+            if (App.Streamer.fileindex !== null) {
                 this.ui.stateTextDownload.text(i18n.__('Connecting'));
 
                 this.ui.seedStatus.css('visibility', 'visible');
@@ -222,27 +222,67 @@
             var metadata = data.metadata;
             var that = this;
 
-            switch (data.type) {
-            case 'dropped-tvshow':
-                // @TODO: REMOVE THAT AND MIGRATE IT TO A PACKAGE !!!
+            var title = $.trim(metadata.title.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
 
-                var showTitle = metadata.showName.replace(/\w\S*/g, function (txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                });
-                App.Trakt.shows.summary(showTitle)
+            var se_re = title.match(/(.*)S(\d\d)E(\d\d)/i); // regex try (ex: title.s01e01)
+            if (se_re === null) { // if fails
+                se_re = title.match(/(.*)(\d\d\d\d)+\W/i); // try another regex (ex: title.0101)
+                if (se_re !== null) {
+                    se_re[3] = se_re[2].substr(2, 4);
+                    se_re[2] = se_re[2].substr(0, 2);
+                } else {
+                    se_re = title.match(/(.*)(\d\d\d)+\W/i); // try a last one (ex: title.101)
+                    if (se_re !== null) {
+                        se_re[3] = se_re[2].substr(1, 2);
+                        se_re[2] = se_re[2].substr(0, 1);
+                    }
+                }
+            }
+            if (se_re != null) {
+                // function in case it's a movie (or not, it also handles errors)
+                var tryMovie = function (moviename) {
+                    App.Trakt.search(moviename, 'movie')
+                        .then(function (summary) {
+                            if (!summary || summary.length === 0) {
+                                win.warn('Unable to fetch data from Trakt.tv');
+                            } else {
+                                var data = summary[0].movie;
+                                that.model.attributes.data.type = 'movie';
+                                that.model.attributes.data.metadata.title = data.title;
+                                that.model.attributes.data.metadata.cover = data.images.poster;
+                                that.model.attributes.data.metadata.imdb_id = data.imdb_id;
+                                that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
+                                that.ui.title.text(that.model.attributes.data.metadata.title);
+                                that.loadBackground(that.model.attributes.data.metadata.backdrop);
+                            }
+
+                        }).catch(function (err) {
+                            // Ok then, it's not a tv show, it's not a movie. I give up, deal with it.
+                            win.error('An error occured while trying to get subtitles', err);
+                        });
+                };
+
+                // we're going to start by assuming it's a TV Series
+                var tvshowname = $.trim(se_re[1].replace(/[\.]/g, ' '))
+                    .replace(/^\[.*\]/, '') // starts with brackets
+                    .replace(/[^\w ]+/g, '') // remove brackets
+                    .replace(/ +/g, '-') // has spaces
+                    .replace(/_/g, '-') // has '_'
+                    .replace(/\-$/, '') // ends with '-'
+                    .replace(/^\./, ''); // starts with '.'
+                App.Trakt.shows.summary(tvshowname)
                     .then(function (summary) {
                         if (!summary) {
                             win.warn('Unable to fetch data from Trakt.tv');
                         } else {
-                            console.log(summary);
                             that.model.attributes.data.metadata.showName = summary.title;
-                            App.Trakt.episodes.summary(showTitle, metadata.season, metadata.episode)
+                            App.Trakt.episodes.summary(tvshowname, se_re[2], se_re[3])
                                 .then(function (episodeSummary) {
                                     if (!episodeSummary) {
                                         win.warn('Unable to fetch data from Trakt.tv');
                                     } else {
                                         var data = episodeSummary;
-                                        that.model.attributes.data.type = 'tvshow';
+                                        that.model.attributes.data.type = 'show';
                                         console.log(episodeSummary);
                                         that.model.attributes.data.metadata.title = summary.title + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
                                         that.model.attributes.data.metadata.season = data.season;
@@ -255,45 +295,13 @@
                                         that.loadBackground(that.model.attributes.data.metadata.backdrop);
                                     }
                                 }).catch(function (err) {
-                                    // It might be a movie with the name of a TV Series ? Messy hollywood !
+                                    tryMovie(tvshowname);
                                 });
                         }
                     }).catch(function (err) {
-                        win.error('An error occured while trying to get metadata', err);
+                        tryMovie(tvshowname);
                     });
-
-                break;
-            case 'dropped-movie':
-
-                console.log(metadata.title);
-
-                App.Trakt.search(metadata.title, 'movie')
-                    .then(function (summary) {
-                        if (!summary || summary.length === 0) {
-                            win.warn('Unable to fetch data from Trakt.tv');
-                        } else {
-                            console.log(summary);
-                            var data = summary[0].movie;
-                            that.model.attributes.data.type = 'movie';
-                            that.model.attributes.data.metadata.title = data.title;
-                            that.model.attributes.data.metadata.cover = data.images.poster;
-                            that.model.attributes.data.metadata.imdb_id = data.imdb_id;
-                            that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
-
-                            that.ui.title.text(that.model.attributes.data.metadata.title);
-
-                            that.loadBackground(that.model.attributes.data.metadata.backdrop);
-
-                        }
-                    }).catch(function (err) {
-                        win.error('An error occured while trying to get metadata', err);
-                    });
-
-                break;
-            default:
-                //defualt none?
             }
-
         }
 
     });

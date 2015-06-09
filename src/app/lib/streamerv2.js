@@ -32,7 +32,6 @@
                 dht: parseInt(Settings.dhtLimit, 10) || 50,
                 port: parseInt(Settings.streamPort, 10) || self.port,
                 id: self.getPeerID(),
-                verify: false,
                 tmp: streamPath // we'll have a different file name for each stream also if it's same torrent in same session
             });
 

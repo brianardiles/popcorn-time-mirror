@@ -37,7 +37,7 @@
 
             this.client.on('ready', function () {
 
-                if (data.choosefile) { //if this is a dropped torrent this will be true.
+                if (data.dropped) { //if this is a dropped torrent this will be true.
 
                     var streamableFiles = [];
                     self.client.files.forEach(function (file, index) {
@@ -47,18 +47,27 @@
                         }
                     });
 
-                    App.vent.trigger('system:openFileSelector', new Backbone.Model({ //Open the file selctor if more than 1 file with streamable content is present in dropped torrent
-                        files: streamableFiles,
-                        torrent: data.torrent
-                    }));
+                    if (streamableFiles.length > 1) {
+                        App.vent.trigger('system:openFileSelector', new Backbone.Model({ //Open the file selctor if more than 1 file with streamable content is present in dropped torrent
+                            files: streamableFiles,
+                            torrent: data.torrent
+                        }));
 
-                    var startLoadingFromFileSelector = function () {
-                        require('watchjs').unwatch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); //Its been updated we dont need to watch anymore!
-                        var index = self.updatedInfo.fileSelectorIndex;
+                        var startLoadingFromFileSelector = function () {
+                            require('watchjs').unwatch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); //Its been updated we dont need to watch anymore!
+                            var index = self.updatedInfo.fileSelectorIndex;
+                            var stream = self.client.files[index].createReadStream(); //begin stream
+                            self.fileindex = index;
+                        };
+                        require('watchjs').watch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); // watch for the updated info object to be updated with selected fileindex (from fileselector)
+                    } else {
+                        var index = streamableFiles[0].index;
+                        console.log(self.client.files[index]);
+                        self.updatedInfo.fileSelectorIndexName = self.client.files[index].name;
                         var stream = self.client.files[index].createReadStream(); //begin stream
                         self.fileindex = index;
-                    };
-                    require('watchjs').watch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); // watch for the updated info object to be updated with selected fileindex (from fileselector)
+                    }
+
                 } else {
                     if (self.client) {
                         self.client.files.forEach(function (file) {

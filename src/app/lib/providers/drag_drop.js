@@ -16,7 +16,7 @@
         var torrentStart = {
             torrent: torrentsrc,
             type: 'dropped-content',
-            choosefile: true,
+            dropped: true,
             metadata: {
                 title: torrent.name,
             },

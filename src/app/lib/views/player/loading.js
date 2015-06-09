@@ -218,6 +218,7 @@
 
         },
         waitForSelection: function () {
+
             var that = this;
 
             function removeExtension(filename) {
@@ -234,12 +235,13 @@
                 that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
             };
             require('watchjs').watch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
+
         },
 
         augmentDropModel: function (data) {
             var metadata = data.metadata;
             var that = this;
-
+            console.log(metadata);
             var title = $.trim(metadata.title.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
 
             var se_re = title.match(/(.*)S(\d\d)E(\d\d)/i); // regex try (ex: title.s01e01)

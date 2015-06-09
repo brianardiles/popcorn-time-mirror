@@ -117,8 +117,7 @@
             this.client = false;
             this.fileindex = null;
             this.getPort();
-            this.updatedInfo.fileSelectorIndex = null;
-            this.updatedInfo.fileSelectorIndexName = null;
+            this.updatedInfo = {}; //reset the updated object back to empty
         }
 
     });

@@ -51,9 +51,13 @@
             cmd += url;
             win.info('Launching External Player: ' + cmd);
             child.exec(cmd, function (error, stdout, stderr) {
-                App.vent.trigger('player:close');
-                App.vent.trigger('stream:stop');
-                App.vent.trigger('preload:stop');
+                $('.filter-bar').show();
+                $('#header').removeClass('header-shadow');
+                $('#movie-detail').show();
+                _.defer(function () {
+                    App.Streamer.destroy();
+                    App.vent.trigger('player:close');
+                });
             });
         },
 

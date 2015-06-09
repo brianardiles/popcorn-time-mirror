@@ -37,7 +37,7 @@
 
             this.client.on('ready', function () {
 
-                if (data.choosefile) {
+                if (data.choosefile) { //if this is a dropped torrent this will be true.
 
                     var streamableFiles = [];
                     self.client.files.forEach(function (file, index) {
@@ -47,26 +47,25 @@
                         }
                     });
 
-                    App.vent.trigger('system:openFileSelector', new Backbone.Model({
+                    App.vent.trigger('system:openFileSelector', new Backbone.Model({ //Open the file selctor if more than 1 file with streamable content is present in dropped torrent
                         files: streamableFiles,
                         torrent: data.torrent
                     }));
 
                     var startLoadingFromFileSelector = function () {
-                        require('watchjs').unwatch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector);
+                        require('watchjs').unwatch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); //Its been updated we dont need to watch anymore!
                         var index = self.updatedInfo.fileSelectorIndex;
-                        var stream = self.client.files[index].createReadStream();
+                        var stream = self.client.files[index].createReadStream(); //begin stream
                         self.fileindex = index;
                     };
-                    require('watchjs').watch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector);
+                    require('watchjs').watch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); // watch for the updated info object to be updated with selected fileindex (from fileselector)
                 } else {
                     if (self.client) {
                         self.client.files.forEach(function (file) {
-                            var index = self.client.files.reduce(function (a, b) {
+                            var index = self.client.files.reduce(function (a, b) { //find the biggest file and stream it.
                                 return a.length > b.length ? a : b;
                             });
                             index = self.client.files.indexOf(index);
-
                             var stream = self.client.files[index].createReadStream();
                             self.fileindex = index;
                         });
@@ -111,6 +110,7 @@
             return torrentPeerId;
         },
         destroy: function () {
+            console.info('Streamer destroyed');
             if (this.client) {
                 this.client.destroy();
             }

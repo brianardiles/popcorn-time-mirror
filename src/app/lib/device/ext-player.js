@@ -138,6 +138,12 @@
             subswitch: '/sub ',
             fs: '/fullscreen'
         },
+        'Beamer': {
+            type: 'Beamer',
+            switches: '',
+            subswitch: '',
+            cmd: '/Contents/MacOS/Beamer'
+        },
         'MPC-HC64': {
             type: 'mpc-hc',
             switches: '',
@@ -189,6 +195,7 @@
         folderName = path.resolve(folderName);
         win.info('Scanning: ' + folderName);
         var appIndex = -1;
+
         var fileStream = readdirp({
             root: folderName,
             depth: 3

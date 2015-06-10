@@ -35,8 +35,37 @@
                 var videosrc = App.Streamer.src;
                 var videotype = 'video/mp4';
             }
+if(typeof subtitles !== "undefined"){
+    var subArray = [];
+    for (var langcode in subtitles) {
+        subArray.push({
+            "language": langcode,
+            "languageName": (App.Localization.langcodes[langcode] !== undefined ? App.Localization.langcodes[langcode].nativeName : langcode),
+            "sub": subtitles[langcode]
+        });
+    }
+    subArray.sort(function (sub1, sub2) {
+        return sub1.language > sub2.language;
+    });
+    var subtracks = "";
 
+    var defaultSub = "none";
+    if (typeof defaultSubtitle != "undefined") {
+        defaultSub = defaultSubtitle;
+    }
+    for(var index in subArray ) {
+        var imDefault = "";
+
+        if(defaultSub == subArray[index].language)
+            imDefault = "default";
+
+        subtracks += '<track kind="subtitles" src="' + subArray[index].sub + '" srclang="'+ subArray[index].language +'" label="' + subArray[index].languageName + '" charset="utf-8" '+ imDefault +' />';
+    }
+}
 %>
-<video  id="video_player" width="100%" height="100%" class="video-js vjs-popcorn-skin" controls preload="auto" autoplay >
+
+<video id="video_player" width="100%" height="100%" class="video-js vjs-popcorn-skin" controls preload="auto" autoplay >
     <source src="<%= videosrc %>" type="<%= videotype %>" />
+
+       <%=subtracks%>
 </video>

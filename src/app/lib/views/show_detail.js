@@ -467,13 +467,12 @@
 
             var torrentStart = {
                 torrent: $(e.currentTarget).attr('data-torrent'),
-                type: 'tvshow',
+                type: 'show',
                 metadata: {
                     title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
                     showName: title,
                     season: season,
                     episode: episode,
-                    episode_id: $('#watch-now').attr('data-episodeid'),
                     cover: that.model.get('images').poster,
                     tvdb_id: that.model.get('tvdb_id'),
                     imdb_id: that.model.get('imdb_id'),
@@ -538,6 +537,7 @@
             var torrents = {};
             var quality;
             torrents.q480 = $('.template-' + tvdbid + ' .q480').text();
+
             torrents.q720 = $('.template-' + tvdbid + ' .q720').text();
             torrents.q1080 = $('.template-' + tvdbid + ' .q1080').text();
             this.ui.q1080p.removeClass('active');

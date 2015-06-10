@@ -28,7 +28,8 @@
             cancel_button: '.cancel-button',
 
             title: '.title',
-            backdrop: '.loading-background'
+            backdrop: '.loading-background',
+            backdrop2: '.loading-background-crossfade'
         },
 
         events: {
@@ -56,9 +57,54 @@
 
             win.info('Loading torrent');
 
-            if (this.model.attributes.data.type === 'dropped-content') {
+            function formatTwoDigit(n) {
+                return n > 9 ? '' + n : '0' + n;
+            }
+
+
+            if (this.model.get('data').metadata.backdrop) {
+                this.loadBackground(this.model.get('data').metadata.backdrop);
+            }
+
+            switch (this.model.attributes.data.type) {
+            case 'show':
+                this.fetchTVSubtitles({
+                    imdbid: this.model.attributes.data.metadata.imdb_id,
+                    season: this.model.attributes.data.metadata.season,
+                    episode: this.model.attributes.data.metadata.episode
+                });
+                var tvshowname = $.trim(this.model.attributes.data.metadata.showName.replace(/[\.]/g, ' '))
+                    .replace(/^\[.*\]/, '') // starts with brackets
+                    .replace(/[^\w ]+/g, '') // remove brackets
+                    .replace(/ +/g, '-') // has spaces
+                    .replace(/_/g, '-') // has '_'
+                    .replace(/\-$/, '') // ends with '-'
+                    .replace(/^\./, ''); // starts with '.'
+
+                console.log(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode));
+
+                App.Trakt.episodes.summary(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode))
+                    .then(function (episodeSummary) {
+                        if (!episodeSummary) {
+                            win.warn('Unable to fetch data from Trakt.tv');
+                        } else {
+                            var data = episodeSummary;
+                            that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
+                            setTimeout(function () {
+                                that.loadBackground(data.images.screenshot.full, true);
+                            }, 1000);
+                        }
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                break;
+            case 'movie':
+
+                break;
+            default: //this is a dropped selection
                 this.waitForSelection();
             }
+
 
         },
 
@@ -81,10 +127,6 @@
             this.initKeyboardShortcuts();
             this.player = this.model.get('player').get('id');
             this.StateUpdate();
-            if (this.model.get('data').metadata.backdrop) {
-                this.loadBackground(this.model.get('data').metadata.backdrop);
-            }
-
         },
 
         initializeLoadingPlayer: function () {
@@ -199,7 +241,7 @@
             });
 
         },
-        loadBackground: function (data) {
+        loadBackground: function (data, change) {
             var backgroundUrl = data;
             var that = this;
             var bgError = false;
@@ -207,7 +249,12 @@
             bgCache.src = backgroundUrl;
             bgCache.onload = function () {
                 try {
-                    that.ui.backdrop.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+                    if (change) {
+                        that.ui.backdrop.addClass('fadeout');
+                        that.ui.backdrop2.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+                    } else {
+                        that.ui.backdrop.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+                    }
                 } catch (e) {}
                 bgCache = null;
             };
@@ -235,6 +282,28 @@
                 that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
             };
             require('watchjs').watch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
+
+        },
+
+        fetchTVSubtitles: function (data) {
+            var that = this;
+            console.log(data);
+            win.debug('Subtitles data request:', data);
+
+            var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
+
+            subtitleProvider.fetch(data).then(function (subs) {
+                if (subs && Object.keys(subs).length > 0) {
+                    var subtitles = subs;
+                    that.model.attributes.data.subtitles = subtitles;
+
+                    win.info(Object.keys(subs).length + ' subtitles found');
+                } else {
+                    win.warn('No subtitles returned');
+                }
+            }).catch(function (err) {
+                console.log('subtitleProvider.fetch()', err);
+            });
 
         },
 
@@ -302,8 +371,8 @@
                                         win.warn('Unable to fetch data from Trakt.tv');
                                     } else {
                                         var data = episodeSummary;
+
                                         that.model.attributes.data.type = 'show';
-                                        console.log(episodeSummary);
                                         that.model.attributes.data.metadata.title = summary.title + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
                                         that.model.attributes.data.metadata.season = data.season;
                                         that.model.attributes.data.metadata.episode = data.number;
@@ -312,7 +381,13 @@
                                         that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
                                         that.ui.title.text(that.model.attributes.data.metadata.title);
 
-                                        that.loadBackground(that.model.attributes.data.metadata.backdrop);
+                                        that.loadBackground(that.model.attributes.data.metadata.backdrop, true);
+
+                                        that.fetchTVSubtitles({
+                                            imdbid: data.ids.imdb,
+                                            season: data.season,
+                                            episode: data.number
+                                        });
                                     }
                                 }).catch(function (err) {
                                     tryMovie(tvshowname);

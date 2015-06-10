@@ -11,6 +11,7 @@
             this.updatedInfo = {};
             this.client = false;
             this.fileindex = null;
+            this.streamDir = null;
             var self = this;
             this.getPort();
             App.vent.on('streamer:update', function (data) {
@@ -32,7 +33,7 @@
                 dht: parseInt(Settings.dhtLimit, 10) || 50,
                 port: parseInt(Settings.streamPort, 10) || self.port,
                 id: self.getPeerID(),
-                tmp: streamPath // we'll have a different file name for each stream also if it's same torrent in same session
+                path: streamPath
             });
 
             this.client.on('ready', function () {
@@ -66,6 +67,7 @@
                         self.updatedInfo.fileSelectorIndexName = self.client.files[index].name;
                         var stream = self.client.files[index].createReadStream(); //begin stream
                         self.fileindex = index;
+                        self.streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
                     }
 
                 } else {
@@ -77,6 +79,7 @@
                             index = self.client.files.indexOf(index);
                             var stream = self.client.files[index].createReadStream();
                             self.fileindex = index;
+                            self.streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
                         });
                     }
                 }
@@ -124,6 +127,7 @@
                 this.client.destroy();
             }
             this.client = false;
+            this.streamDir = null;
             this.fileindex = null;
             this.getPort();
             this.updatedInfo = {}; //reset the updated object back to empty

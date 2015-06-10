@@ -1,5 +1,6 @@
 <div class="loading">
 	<div class="loading-background"></div>
+	<div class="loading-background-crossfade"></div>
 	<div class="loading-background-overlay"></div>
 	<video controls id="loading_player" width="20%" height="20%" style="display:none" preload="none"></video>
 	<div class="state">

@@ -2,6 +2,7 @@
     'use strict';
 
     var clipboard = gui.Clipboard.get(),
+        readTorrent = require('read-torrent'),
         collection = path.join(require('nw.gui').App.dataPath + '/TorrentCollection/'),
         files;
 
@@ -130,9 +131,22 @@
         },
 
         onlineOpen: function (e) {
+            var that = this;
             var file = $(e.currentTarget).context.dataset.file;
-            Settings.droppedMagnet = file;
-            window.handleTorrent(file);
+
+            readTorrent(file, function (err, torrent) {
+                if (!err) {
+                    var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
+                    _.each(torrent.announce, function (value) {
+                        var announce = '&tr=' + encodeURIComponent(value);
+                        torrentMagnet += announce;
+                    });
+                    that.startStream(torrent, torrentMagnet);
+                } else {
+                    win.error(err.stack);
+                }
+            });
+
         },
 
         onlineClose: function () {
@@ -181,20 +195,60 @@
         },
 
         openFileSelector: function (e) {
+            var that = this;
             var _file = $(e.currentTarget).context.innerText,
                 file = _file.substring(0, _file.length - 2); // avoid ENOENT
 
             if (_file.indexOf('.torrent') !== -1) {
-                Settings.droppedTorrent = file;
-                window.handleTorrent(collection + file);
+
+
+                readTorrent(file, function (err, torrent) {
+                    if (!err) {
+                        var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
+                        _.each(torrent.announce, function (value) {
+                            var announce = '&tr=' + encodeURIComponent(value);
+                            torrentMagnet += announce;
+                        });
+                        that.startStream(torrent, torrentMagnet);
+                    } else {
+                        win.error(err.stack);
+                    }
+                });
+
+
             } else { // assume magnet
                 var content = fs.readFileSync(collection + file, 'utf8');
-                Settings.droppedMagnet = content;
-                Settings.droppedStoredMagnet = file;
-                window.handleTorrent(content);
+
+                readTorrent(content, function (err, torrent) {
+                    if (!err) {
+                        var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
+                        _.each(torrent.announce, function (value) {
+                            var announce = '&tr=' + encodeURIComponent(value);
+                            torrentMagnet += announce;
+                        });
+                        that.startStream(torrent, torrentMagnet);
+                    } else {
+                        win.error(err.stack);
+                    }
+                });
+
+
             }
         },
+        startStream: function (torrent, torrentsrc) {
 
+            var torrentStart = {
+                torrent: torrentsrc,
+                type: 'dropped-content',
+                dropped: true,
+                metadata: {
+                    title: torrent.name,
+                },
+                device: App.Device.Collection.selected
+            };
+            App.Streamer.start(torrentStart);
+
+        },
         deleteItem: function (e) {
             this.$('.tooltip').css('display', 'none');
             e.preventDefault();

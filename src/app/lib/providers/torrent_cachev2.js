@@ -10,44 +10,52 @@
         request = require('request'),
         zlib = require('zlib');
 
-
     var cacheTorrent = Backbone.Model.extend({
 
         initialize: function () {
             this.tpmDir = path.join(App.settings.tmpLocation, 'TorrentCache');
             this.MAGNET_RESOLVE_TIMEOUT = 60 * 1000; // one minute
             this.handelTmpDir('check');
+            this.caching = false;
         },
 
-
         cache: function (torrent) {
+            this.cacheInfo = {}; //reset the info object used for debugging 
+            this.caching = true;
+            var deferred = Q.defer();
             var that = this;
             var type = this.getType(torrent);
             switch (type) {
             case 'torrenturl':
             case 'torrent':
             case 'magnet':
+                this.cacheInfo.type = type;
                 this.checkCached(torrent).then(function (result) {
                     var filePath = result[0],
                         exists = result[1];
                     if (exists) {
-                        return true;
+                        that.cacheInfo.preExisting = true;
+                        deferred.resolve(filePath);
+                    } else {
+                        that.cacheInfo.preExisting = false;
+                        that.handelTorrent(filePath, type, torrent).then(function (path) {
+                            deferred.resolve(path);
+                        });
                     }
-                    that.handelTorrent(filePath, type, torrent);
+                    that.cacheInfo.path = filePath;
+                    that.cacheInfo.input = torrent;
                 });
                 break;
             default:
+                deferred.reject('TorrentCache.resolve(): Unknown torrent type', torrent);
                 console.log('TorrentCache.resolve(): Unknown torrent type', torrent);
-                return false;
             }
-            return true;
+            return deferred.promise;
         },
-
 
         handelTorrent: function (path, type, torrent) {
             var deferred = Q.defer();
             var self = this;
-
             switch (type) {
             case 'magnet':
 
@@ -63,6 +71,8 @@
                             if (err) {
                                 console.log(err);
                             }
+                            self.caching = false;
+                            deferred.resolve(path);
                             self.engine.destroy();
                             self.engine = null;
                         });
@@ -72,10 +82,8 @@
                         self.engine = null;
                     }
                 });
-
                 break;
             case 'torrenturl':
-
                 var done = function (error) {
                     if (error) {
                         try {
@@ -83,6 +91,7 @@
                         } catch (e) {}
                         return console.error('TorrentCache.handletorrenturl() error: ' + error, torrent);
                     }
+                    self.caching = false;
                     deferred.resolve(path);
                 };
 
@@ -128,15 +137,13 @@
                     if (err) {
                         console.error('TorrentCache.handletorrent() error: ' + err, torrent);
                     }
+                    self.caching = false;
                     deferred.resolve(path);
                 });
                 break;
-            default:
-
             }
             return deferred.promise;
         },
-
         handelTmpDir: function (type) {
             var self = this;
             switch (type) {
@@ -203,9 +210,7 @@
         },
         getKey: function (name) {
             return Common.md5(path.basename(name));
-        },
-
-
+        }
     });
 
     App.cacheTorrent = new cacheTorrent();

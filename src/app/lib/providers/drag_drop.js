@@ -74,58 +74,11 @@
         var data = (e.originalEvent || e).clipboardData.getData('text/plain');
 
         var torrentsrc = data;
-        console.log(torrentsrc, torrentsrc.indexOf('magnet') > -1);
+        //console.log(torrentsrc, torrentsrc.indexOf('magnet') > -1);
 
-
-        if (torrentsrc.indexOf('magnet') > -1) {
-            Settings.droppedMagnet = data;
-            readTorrent(torrentsrc, function (err, torrent) {
-                startStream(torrent, torrentsrc);
-            });
-        } else {
-            if (torrentsrc.startsWith('http')) {
-                var ws = fs.createWriteStream(path.join(AdvSettings.get('tmpLocation'), 'pct-remote-torrent.torrent'));
-
-                if (fs.exists(path.join(AdvSettings.get('tmpLocation'), 'pct-remote-torrent.torrent'))) {
-                    fs.unlink(path.join(AdvSettings.get('tmpLocation'), 'pct-remote-torrent.torrent'));
-                }
-                request(torrentsrc).on('response', function (resp) {
-                    if (resp.statusCode >= 400) {
-                        return done('Invalid status: ' + resp.statusCode); // jshint ignore:line
-                    }
-                    switch (resp.headers['content-encoding']) {
-                    case 'gzip':
-                        resp.pipe(zlib.createGunzip()).pipe(ws);
-                        break;
-                    case 'deflate':
-                        resp.pipe(zlib.createInflate()).pipe(ws);
-                        break;
-                    default:
-                        resp.pipe(ws);
-                        break;
-                    }
-                    ws
-                        .on('error', function () {
-                            console.log('error');
-                        })
-                        .on('close', function () {
-                            console.log('done');
-                            console.log(ws.path);
-                            readTorrent(ws.path, function (err, torrent) {
-                                var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
-                                _.each(torrent.announce, function (value) {
-                                    var announce = '&tr=' + encodeURIComponent(value);
-                                    torrentMagnet += announce;
-                                });
-                                startStream(torrent, torrentMagnet);
-                            });
-
-                        });
-                });
-            } else {
-                win.error('Not an online torrent');
-            }
-        }
+        App.cacheTorrent.cache(torrentsrc).then(function (path) {
+            console.log(path);
+        });
     }
 
     function onDragUI(hide) {

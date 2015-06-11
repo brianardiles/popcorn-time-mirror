@@ -18,7 +18,8 @@
             percentCompleted: '.downloaded_player',
             title: '.player-title',
             pause: '.fa-pause',
-            play: '.fa-play'
+            play: '.fa-play',
+            quality: '.quality-info-player'
         },
 
         events: {
@@ -114,6 +115,10 @@
 
         setUI: function () {
             this.ui.title.text(this.model.attributes.metadata.title);
+
+            if (this.model.attributes.metadata.quality) {
+                this.ui.quality.text(this.model.attributes.metadata.quality);
+            }
 
             $('.player-header-background').appendTo('div#video_player');
 

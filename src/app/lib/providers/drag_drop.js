@@ -31,7 +31,6 @@
 
         if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
 
-
             App.cacheTorrent.cache(file.path).then(function (path) {
                 readTorrent(path, function (err, torrent) {
                     if (!err) {

@@ -212,7 +212,8 @@
                     backdrop: this.model.get('backdrop'),
                     title: this.model.get('title'),
                     cover: this.model.get('image'),
-                    imdb_id: this.model.get('imdb_id')
+                    imdb_id: this.model.get('imdb_id'),
+                    quality: this.model.get('quality')
                 },
                 subtitle: this.model.get('subtitle'),
                 defaultSubtitle: this.subtitle_selected,
@@ -291,8 +292,8 @@
             var ratio = torrent.peer > 0 ? torrent.seed / torrent.peer : +torrent.seed;
 
             $('.health-icon').tooltip({
-                    html: true
-                })
+                html: true
+            })
                 .removeClass('Bad Medium Good Excellent')
                 .addClass(health)
                 .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + torrent.seed + ' - ' + i18n.__('Peers:') + ' ' + torrent.peer)

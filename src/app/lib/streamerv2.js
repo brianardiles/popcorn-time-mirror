@@ -33,6 +33,7 @@
                 dht: parseInt(Settings.dhtLimit, 10) || 50,
                 port: parseInt(Settings.streamPort, 10) || self.port,
                 id: self.getPeerID(),
+                verify: false,
                 path: streamPath
             });
 

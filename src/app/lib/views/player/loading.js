@@ -131,21 +131,44 @@
 
         },
 
+
+        backupCountdown: function () {
+            if (this.playing) {
+                return;
+            }
+            if (!this.count) {
+                this.count = 60;
+                win.debug('Backup ' + this.count + ' Second timeout started for:', this.model.get('data').metadata.title);
+            }
+            if (this.count === 1) {
+                win.debug('Smart Loading timeout reached for :', this.model.get('data').metadata.title, 'Starting Playback Arbitrarily in 3 seconds');
+                var loadingPlayer = document.getElementById('loading_player');
+                this.playing = true;
+                loadingPlayer.pause();
+                loadingPlayer.src = ''; // empty source
+                loadingPlayer.load();
+                _.delay(_.bind(this.initMainplayer, this), 3000);
+                return;
+            }
+            this.count--;
+            _.delay(_.bind(this.backupCountdown, this), 1000);
+        },
+
         initializeLoadingPlayer: function () {
             var that = this;
             var loadingPlayer = document.getElementById('loading_player');
             loadingPlayer.setAttribute('src', App.Streamer.src);
-            win.debug('Requesting Initial Meta Chunks For', this.model.get('data').metadata.title);
+            win.debug('Requesting Initial Meta Chunks For', this.model.get('data').metadata.title, '(Smart Loader)');
             loadingPlayer.muted = true;
             loadingPlayer.load();
             loadingPlayer.play();
             var debugmetachunks = false;
             loadingPlayer.ontimeupdate = function () {
                 if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
-                    win.info('Initial Meta Chunks Received! Starting Playback in 5 seconds.');
+                    win.info('Initial Meta Chunks Received! Starting Playback in 3 seconds.');
                     debugmetachunks = true;
                 }
-                if (loadingPlayer.currentTime > 5) {
+                if (loadingPlayer.currentTime > 3) {
                     that.playing = true;
                     loadingPlayer.pause();
                     loadingPlayer.src = ''; // empty source
@@ -186,6 +209,7 @@
                 if (!this.initializedLoadingPlayer && Stream.downloadSpeed() > 10) {
                     this.initializedLoadingPlayer = true;
                     this.initializeLoadingPlayer();
+                    this.backupCountdown();
                 }
                 if (Stream.downloadSpeed()) {
                     if (!this.initializedLoadingPlayer) {

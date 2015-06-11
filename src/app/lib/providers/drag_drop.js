@@ -32,37 +32,24 @@
 
         if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
 
-            fs.writeFile(path.join(App.settings.tmpLocation, file.name), fs.readFileSync(file.path), function (err) {
-                if (err) {
-                    App.PlayerView.closePlayer();
-                    win.error(err.stack);
 
-                } else {
-                    if (file.name.indexOf('.torrent') !== -1) {
-                        Settings.droppedTorrent = file.name;
-                        var torrentsrc = path.join(AdvSettings.get('tmpLocation'), file.name);
-                        readTorrent(torrentsrc, function (err, torrent) {
-                            if (!err) {
-                                var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
-                                _.each(torrent.announce, function (value) {
-                                    var announce = '&tr=' + encodeURIComponent(value);
-                                    torrentMagnet += announce;
-                                });
-                                startStream(torrent, torrentMagnet);
-                            } else {
-                                win.error(err.stack);
-                            }
+            App.cacheTorrent.cache(file.path).then(function (path) {
+                readTorrent(path, function (err, torrent) {
+                    if (!err) {
+                        var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
+                        _.each(torrent.announce, function (value) {
+                            var announce = '&tr=' + encodeURIComponent(value);
+                            torrentMagnet += announce;
                         });
-                    } else if (file.name.indexOf('.srt') !== -1) {
-                        Settings.droppedSub = file.name;
-                        App.vent.trigger('videojs:drop_sub');
+                        startStream(torrent, torrentMagnet);
+                    } else {
+                        win.error(err.stack);
                     }
-                }
+                });
             });
 
         } else {
             var data = e.dataTransfer.getData('text/plain');
-
         }
 
     }

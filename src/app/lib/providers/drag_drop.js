@@ -77,8 +77,21 @@
         //console.log(torrentsrc, torrentsrc.indexOf('magnet') > -1);
 
         App.cacheTorrent.cache(torrentsrc).then(function (path) {
-            console.log(path);
+            readTorrent(path, function (err, torrent) {
+                if (!err) {
+                    var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
+                    _.each(torrent.announce, function (value) {
+                        var announce = '&tr=' + encodeURIComponent(value);
+                        torrentMagnet += announce;
+                    });
+                    startStream(torrent, torrentMagnet);
+                } else {
+                    win.error(err.stack);
+                }
+            });
         });
+
+
     }
 
     function onDragUI(hide) {

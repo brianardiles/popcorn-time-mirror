@@ -12,7 +12,6 @@
 
     function startStream(torrent, torrentsrc) {
 
-
         var torrentStart = {
             torrent: torrentsrc,
             type: 'dropped-content',

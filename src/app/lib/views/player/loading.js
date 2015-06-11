@@ -66,6 +66,7 @@
                 this.loadBackground(this.model.get('data').metadata.backdrop);
             }
 
+
             switch (this.model.attributes.data.type) {
             case 'show':
                 this.fetchTVSubtitles({
@@ -90,9 +91,11 @@
                         } else {
                             var data = episodeSummary;
                             that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
+
                             setTimeout(function () {
                                 that.loadBackground(data.images.screenshot.full, true);
                             }, 1000);
+
                         }
                     }).catch(function (err) {
                         console.log(err);
@@ -127,6 +130,8 @@
             this.initKeyboardShortcuts();
             this.player = this.model.get('player').get('id');
             this.StateUpdate();
+
+
         },
 
         initializeLoadingPlayer: function () {

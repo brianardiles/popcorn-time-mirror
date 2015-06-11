@@ -90,12 +90,9 @@
                             win.warn('Unable to fetch data from Trakt.tv');
                         } else {
                             var data = episodeSummary;
+                            console.log(data);
                             that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
-
-                            setTimeout(function () {
-                                that.loadBackground(data.images.screenshot.full, true);
-                            }, 1000);
-
+                            that.loadBackground(data.images.screenshot.full, true);
                         }
                     }).catch(function (err) {
                         console.log(err);

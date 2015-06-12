@@ -127,8 +127,6 @@
             this.initKeyboardShortcuts();
             this.player = this.model.get('player').get('id');
             this.StateUpdate();
-
-
         },
 
 
@@ -330,8 +328,13 @@
             }).catch(function (err) {
                 console.log('subtitleProvider.fetch()', err);
             });
+        },
+
+
+        fetchMovieSubtitles: function (data) {
 
         },
+
 
         augmentDropModel: function (data) {
             var metadata = data.metadata;

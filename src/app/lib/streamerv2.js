@@ -24,7 +24,7 @@
             });
         },
 
-        start: function (data) {
+        start: function (data, preload) {
             var self = this;
             var streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
 
@@ -86,28 +86,24 @@
                 }
             });
 
-            var stateModel = new Backbone.Model({
-                backdrop: data.metadata.backdrop,
-                title: data.metadata.title,
-                player: data.device,
-                show_controls: false,
-                data: data
-            });
+            if (!preload) { //its not a preloading instance
+                var stateModel = new Backbone.Model({
+                    backdrop: data.metadata.backdrop,
+                    title: data.metadata.title,
+                    player: data.device,
+                    show_controls: false,
+                    data: data
+                });
 
-            App.vent.trigger('stream:started', stateModel);
-
+                App.vent.trigger('stream:started', stateModel);
+            }
         },
         getPort: function () {
-            if (!Settings.streamPort) {
-                var self = this;
-                getPort(function (err, port) {
-                    self.port = port;
-                    self.src = 'http://127.0.0.1:' + port;
-                });
-            } else {
-                this.port = parseInt(Settings.streamPort, 10);
-                this.src = 'http://127.0.0.1:' + parseInt(Settings.streamPort, 10);
-            }
+            var self = this;
+            getPort(function (err, port) {
+                self.port = port;
+                self.src = 'http://127.0.0.1:' + port;
+            });
         },
         getPeerID: function () {
             var version = semver.parse(App.settings.version);

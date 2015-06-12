@@ -3,6 +3,7 @@
 
     var that,
         util = require('util'),
+        Q = require('q'),
         prettyBytes = require('pretty-bytes');
 
     var Player = Backbone.Marionette.ItemView.extend({
@@ -33,6 +34,7 @@
             this.video = false;
             this.firstplay = true;
             this.playing = false;
+            this.NextEpisode = false;
             this.inFullscreen = win.isFullscreen;
         },
 
@@ -45,7 +47,6 @@
             this.bindKeyboardShortcuts();
             this.restoreUserPref();
             this.processNext();
-            console.log(this.model.attributes);
         },
 
         prossessType: function () {
@@ -136,7 +137,6 @@
 
         restoreUserPref: function () {
 
-
             if (AdvSettings.get('alwaysFullscreen') && !this.inFullscreen) {
                 this.toggleFullscreen();
             }
@@ -150,7 +150,6 @@
 
         setPlayerEvents: function () {
             var type = this.model.get('type');
-            console.log(this.model);
             this.player.one('play', function () {
 
                 if (that.model.get('type') === 'trailer') {
@@ -172,11 +171,6 @@
                     that.playing = true;
                     that.progressDoneUI();
                 }
-
-                if (that.model.get('auto_play')) {
-                    that._AutoPlayCheckTimer = setInterval(that.checkAutoPlay(that), 10 * 100 * 1); // every 1 sec
-                }
-
             });
 
             this.player.on('loadeddata', function () {
@@ -296,34 +290,41 @@
         },
 
         checkAutoPlay: function () {
-            if (this.model.get('type') !== 'movie' && this.next_episode_model) {
-                if ((this.video.duration() - this.video.currentTime()) < 60 && this.video.currentTime() > 30) {
+            if (!this.playing) {
+                return;
+            }
+            console.log('checking autoplay');
 
-                    if (!this.autoplayisshown) {
-                        if (!this.precachestarted) {
-                            this.precachestarted = true;
-                        }
+            if ((this.video.duration() - this.video.currentTime()) < 60 && this.video.currentTime() > 30) {
 
-                        win.debug('Showing Auto Play message');
-                        this.autoplayisshown = true;
-                        $('.playing_next').show();
-                        $('.playing_next').appendTo('div#video_player');
-                        if (!this.player.userActive()) {
-                            this.player.userActive(true);
-                        }
+                if (!this.autoplayisshown) {
+                    if (!this.precachestarted) {
+                        this.precachestarted = true;
                     }
 
-                    var count = Math.round(this.video.duration() - this.video.currentTime());
-                    $('.playing_next span').text(count + ' ' + i18n.__('Seconds'));
-
-                } else {
-                    if (this.autoplayisshown) {
-                        win.debug('Hiding Auto Play message');
-                        $('.playing_next').hide();
-                        $('.playing_next span').text('');
-                        this.autoplayisshown = false;
+                    win.debug('Showing Auto Play message');
+                    this.autoplayisshown = true;
+                    $('.playing_next').show();
+                    $('.playing_next').appendTo('div#video_player');
+                    if (!this.player.userActive()) {
+                        this.player.userActive(true);
                     }
                 }
+
+                var count = Math.round(this.video.duration() - this.video.currentTime());
+                $('.playing_next span').text(count + ' ' + i18n.__('Seconds'));
+
+            } else {
+                if (this.autoplayisshown) {
+                    win.debug('Hiding Auto Play message');
+                    $('.playing_next').hide();
+                    $('.playing_next span').text('');
+                    this.autoplayisshown = false;
+                }
+            }
+
+            if (this.playing) {
+                this.checkAutoPlayTimer = _.delay(_.bind(this.checkAutoPlay, this), 1000);
             }
         },
 
@@ -348,6 +349,10 @@
                 }
                 this.ui.percentCompleted.text(prettyBytes(downloadedsize) + ' / ' + prettyBytes(totalsize) + ' (' + percent.toFixed() + '%)');
             } else {
+                if (!this.PreloadStarted) { //we create it
+                    this.PreloadStarted = true;
+
+                }
                 this.ui.percentCompleted.text(i18n.__('Done'));
                 if ($('.remaining').length) {
                     $('.remaining').remove();
@@ -414,40 +419,90 @@
 
 
         processNext: function () {
-            if (!this.model.get('auto_play')) {
+            var that = this;
+            if (!this.model.get('autoPlayData')) {
                 return;
             }
 
-            var episodes = this.model.get('episodes');
+            var episodes = this.model.attributes.autoPlayData.episodes;
+            var episodesData = this.model.attributes.autoPlayData.episodes_data;
+            var episodeID = parseInt(this.model.attributes.metadata.season) * 100 + parseInt(this.model.attributes.metadata.episode);
 
-            if (this.model.get('auto_id') !== episodes[episodes.length - 1]) {
+            var nextEpisodeID = episodes.indexOf(episodeID) + 1;
 
-                var auto_play_data = this.model.get('auto_play_data');
-                var current_quality = this.model.get('quality');
-                var idx;
+            var nextEpisodeData,
+                nextEpisodeTorrent;
 
-                _.find(auto_play_data, function (data, dataIdx) {
-                    if (data.id === this.model.get('auto_id')) {
-                        idx = dataIdx;
-                        return true;
-                    }
-                });
-                var next_episode = auto_play_data[idx + 1];
-
-                next_episode.auto_id = parseInt(next_episode.season) * 100 + parseInt(next_episode.episode);
-                next_episode.auto_play_data = auto_play_data;
-                next_episode.episodes = episodes;
-                next_episode.quality = current_quality;
-
-                if (next_episode.torrents[current_quality].url) {
-                    next_episode.torrent = next_episode.torrents[current_quality].url;
-                } else {
-                    next_episode.torrent = next_episode[next_episode.torrents.length - 1].url; //select highest quality available if user selected not found
+            var nextEpisodeDetails = _.find(episodesData, function (data, dataIdx) {
+                if (data.episode_id === episodes[nextEpisodeID]) {
+                    nextEpisodeData = data;
+                    return true;
                 }
+            });
 
-                this.next_episode_model = new Backbone.Model(next_episode);
+            if (nextEpisodeData.torrents[this.model.attributes.metadata.quality]) {
+                nextEpisodeTorrent = nextEpisodeData.torrents[this.model.attributes.metadata.quality].url;
             }
+
+            var torrentStartNext = {
+                torrent: nextEpisodeTorrent,
+                type: 'show',
+                metadata: {
+                    title: this.model.attributes.metadata.showName + ' - ' + i18n.__('Season') + ' ' + nextEpisodeData.season + ', ' + i18n.__('Episode') + ' ' + nextEpisodeData.episode + ' - ' + nextEpisodeData.title,
+                    showName: this.model.attributes.metadata.showName,
+                    season: nextEpisodeData.season,
+                    episode: nextEpisodeData.episode,
+                    cover: this.model.attributes.metadata.cover,
+                    tvdb_id: this.model.attributes.metadata.tvdb_id,
+                    imdb_id: this.model.attributes.metadata.imdb_id,
+                    backdrop: this.model.attributes.metadata.backdrop,
+                    quality: this.model.attributes.metadata.quality
+                },
+                autoPlayData: this.model.attributes.autoPlayData,
+                status: this.model.attributes.status,
+                device: App.Device.Collection.selected
+            };
+
+            this.fetchTVSubtitles({
+                imdbid: this.model.attributes.metadata.imdb_id,
+                season: nextEpisodeData.season,
+                episode: nextEpisodeData.episode
+            }).then(function (subs) {
+                torrentStartNext.subtitles = subs;
+                that.NextEpisode = torrentStartNext;
+                console.log(torrentStartNext);
+                //App.PreloadStreamer.start(torrentStartNext); // DO NOT UNCOMMIT YET THIOS IS NOT DONE YET
+                //that.checkAutoPlay();
+            });
+
+
         },
+
+
+        fetchTVSubtitles: function (data) {
+            var deferred = Q.defer();
+            var that = this;
+            console.log(data);
+            win.debug('Subtitles data request:', data);
+
+            var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
+
+            subtitleProvider.fetch(data).then(function (subs) {
+                if (subs && Object.keys(subs).length > 0) {
+                    var subtitles = subs;
+                    deferred.resolve(subtitles);
+                    win.info(Object.keys(subs).length + ' subtitles found');
+                } else {
+                    deferred.reject({});
+                    win.warn('No subtitles returned');
+                }
+            }).catch(function (err) {
+                deferred.reject({});
+                console.log('subtitleProvider.fetch()', err);
+            });
+            return deferred.promise;
+        },
+
         bindKeyboardShortcuts: function () {
             var _this = this;
 
@@ -729,14 +784,15 @@
             }
         },
 
-        closePlayer: function () {
+        closePlayer: function (next) {
+            this.playing = false;
             win.info('Player closed');
-            if (this._AutoPlayCheckTimer) {
-                clearInterval(this._AutoPlayCheckTimer);
+            if (this.checkAutoPlayTimer) {
+                clearInterval(this.checkAutoPlayTimer);
             }
 
             this.sendToTrakt('stop');
-            this.playing = false;
+
 
             var type = this.model.get('type');
             var watchObject = this.model.get('metadata');
@@ -767,7 +823,7 @@
             this.ui.play.dequeue();
 
             App.Streamer.destroy();
-
+            App.PreloadStreamer.destroy();
             this.destroy();
         },
 

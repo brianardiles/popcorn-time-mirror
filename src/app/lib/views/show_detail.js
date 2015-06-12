@@ -161,6 +161,8 @@
         },
 
         onShow: function () {
+
+
             bookmarked = App.userBookmarks.indexOf(this.model.get('imdb_id')) !== -1;
 
             if (bookmarked) {
@@ -224,6 +226,8 @@
 
             App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
             App.Device.ChooserView('#player-chooser').render();
+
+
         },
 
         selectNextEpisode: function () {
@@ -442,7 +446,6 @@
             var season = $(e.currentTarget).attr('data-season');
             var name = $(e.currentTarget).attr('data-title');
 
-            //title += ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name;
             var episodes = [];
             var episodes_data = [];
             var selected_quality = $(e.currentTarget).attr('data-quality');
@@ -452,16 +455,19 @@
                     var epaInfo = {
                         title: value.title,
                         torrents: value.torrents,
-                        tvdb_id: value.tvdb_id,
-                        imdb_id: that.model.get('imdb_id')
+                        season: value.season,
+                        episode: value.episode,
+                        episode_id: parseInt(value.season) * 100 + parseInt(value.episode),
+                        tvdb_id: value.tvdb_id
                     };
                     episodes_data.push(epaInfo);
                     episodes.push(parseInt(value.season) * 100 + parseInt(value.episode));
                 });
                 episodes.sort();
-                episodes_data = _.sortBy(episodes_data, 'id');
+                episodes_data = _.sortBy(episodes_data, 'episode_id');
 
             } else {
+                episodes = null;
                 episodes_data = null;
             }
 
@@ -481,13 +487,12 @@
                 },
                 autoPlayData: {
                     episodes: episodes,
-                    episodes_data: episodes_data,
-                    selected_quality: selected_quality
+                    episodes_data: episodes_data
                 },
                 status: that.model.get('status'),
                 device: App.Device.Collection.selected
-
             };
+
             _this.unbindKeyboardShortcuts();
             App.Streamer.start(torrentStart);
         },

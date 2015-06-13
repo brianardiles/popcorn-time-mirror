@@ -12,6 +12,7 @@
             this.client = false;
             this.fileindex = null;
             this.streamDir = null;
+            this.src = false;
             var self = this;
             this.getPort();
             App.vent.on('streamer:update', function (data) {
@@ -124,6 +125,7 @@
                 this.client.destroy();
             }
             this.client = false;
+            this.src = false;
             this.streamDir = null;
             this.fileindex = null;
             this.getPort();

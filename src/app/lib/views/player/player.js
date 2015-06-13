@@ -293,17 +293,24 @@
             if (!this.playing) {
                 return;
             }
-            console.log('checking autoplay');
+            var timeLeft = this.video.duration() - this.video.currentTime();
 
             if ((this.video.duration() - this.video.currentTime()) < 60 && this.video.currentTime() > 30) {
 
                 if (!this.autoplayisshown) {
+                    this.autoplayisshown = true;
+
                     if (!this.precachestarted) {
                         this.precachestarted = true;
+                        console.log('Preload Streamer Started');
+                        if (this.model.attributes.autoPlayData.streamer === 'preload') {
+                            App.PreloadStreamer.start(this.NextEpisode);
+                        } else {
+                            App.Streamer.start(this.NextEpisode, true);
+                        }
                     }
-
                     win.debug('Showing Auto Play message');
-                    this.autoplayisshown = true;
+
                     $('.playing_next').show();
                     $('.playing_next').appendTo('div#video_player');
                     if (!this.player.userActive()) {
@@ -327,15 +334,27 @@
                 this.checkAutoPlayTimer = _.delay(_.bind(this.checkAutoPlay, this), 1000);
             }
         },
-
+        playNextNow: function () {
+            this.closePlayer(true);
+        },
         refreshStreamStats: function () {
+            var Streamer;
+            if (App.Streamer.src) {
+                Streamer = App.Streamer;
+            } else {
+                Streamer = App.PreloadStreamer;
+            }
+            var Stream = Streamer.client.swarm;
 
-            var Stream = App.Streamer.client.swarm;
+            if (!Stream) {
+                return;
+            }
+
             this.ui.downloadSpeed.text(this.prettySpeed(Stream.downloadSpeed()));
             this.ui.uploadSpeed.text(this.prettySpeed(Stream.uploadSpeed()));
             this.ui.activePeers.text(Stream.wires.length);
             var downloadedsize = Stream.downloaded;
-            var totalsize = App.Streamer.client.torrent.files[App.Streamer.fileindex].length;
+            var totalsize = Streamer.client.torrent.files[Streamer.fileindex].length;
             var percent = downloadedsize / totalsize * 100;
             if (percent.toFixed() === 0) {
                 percent = 1;
@@ -365,9 +384,24 @@
             if (!this.playing) {
                 return;
             }
-            var Stream = App.Streamer.client.swarm;
+            var Streamer;
+            if (App.Streamer.src) {
+                Streamer = App.Streamer;
+            } else {
+                Streamer = App.PreloadStreamer;
+            }
+
+
+            var Stream = Streamer.client.swarm;
+            if (!Stream) {
+                if (this.playing) {
+                    this.updateInfo = _.delay(_.bind(this.progressDoneUI, this), 100);
+                }
+                return;
+            }
             var downloadedsize = Stream.downloaded;
-            var totalsize = App.Streamer.client.torrent.files[App.Streamer.fileindex].length;
+
+            var totalsize = Streamer.client.torrent.files[Streamer.fileindex].length;
             var percent = downloadedsize / totalsize * 100;
             if (percent.toFixed() === 0) {
                 percent = 1;
@@ -384,9 +418,18 @@
 
 
         remainingTime: function () {
-            var Stream = App.Streamer.client.swarm;
+
+
+            var Streamer;
+            if (App.Streamer.src) {
+                Streamer = App.Streamer;
+            } else {
+                Streamer = App.PreloadStreamer;
+            }
+            var Stream = Streamer.client.swarm;
+
             var downloadedsize = Stream.downloaded;
-            var totalsize = App.Streamer.client.torrent.files[App.Streamer.fileindex].length;
+            var totalsize = Streamer.client.torrent.files[Streamer.fileindex].length;
 
             var downloadTimeLeft = Math.round((totalsize - downloadedsize) / Stream.downloadSpeed()); // time to wait before download complete
             if (isNaN(downloadTimeLeft) || downloadTimeLeft < 0) {
@@ -439,9 +482,21 @@
                     return true;
                 }
             });
+            if (!nextEpisodeData) {
+                return;
+            }
 
             if (nextEpisodeData.torrents[this.model.attributes.metadata.quality]) {
                 nextEpisodeTorrent = nextEpisodeData.torrents[this.model.attributes.metadata.quality].url;
+            }
+
+
+            var autoPlayDataNext = this.model.attributes.autoPlayData;
+
+            if (autoPlayDataNext.streamer === 'main') {
+                autoPlayDataNext.streamer = 'preload';
+            } else {
+                autoPlayDataNext.streamer = 'main';
             }
 
             var torrentStartNext = {
@@ -458,7 +513,7 @@
                     backdrop: this.model.attributes.metadata.backdrop,
                     quality: this.model.attributes.metadata.quality
                 },
-                autoPlayData: this.model.attributes.autoPlayData,
+                autoPlayData: autoPlayDataNext,
                 status: this.model.attributes.status,
                 device: App.Device.Collection.selected
             };
@@ -471,8 +526,7 @@
                 torrentStartNext.subtitles = subs;
                 that.NextEpisode = torrentStartNext;
                 console.log(torrentStartNext);
-                //App.PreloadStreamer.start(torrentStartNext); // DO NOT UNCOMMIT YET THIOS IS NOT DONE YET
-                //that.checkAutoPlay();
+                that.checkAutoPlay();
             });
 
 
@@ -784,7 +838,13 @@
             }
         },
 
-        closePlayer: function (next) {
+        closePlayer: function (nextTrue) {
+            var next;
+            if (!nextTrue) {
+                next = false;
+            } else {
+                next = true;
+            }
             this.playing = false;
             win.info('Player closed');
             if (this.checkAutoPlayTimer) {
@@ -793,14 +853,9 @@
 
             this.sendToTrakt('stop');
 
-
             var type = this.model.get('type');
             var watchObject = this.model.get('metadata');
 
-            if (type === 'tvshow') {
-                type = 'show';
-
-            }
             if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
                 App.vent.trigger(type + ':watched', watchObject, 'database');
             }
@@ -822,12 +877,10 @@
             this.ui.pause.dequeue();
             this.ui.play.dequeue();
 
-            App.Streamer.destroy();
-            App.PreloadStreamer.destroy();
-            this.destroy();
+            this.destroy(next);
         },
 
-        onDestroy: function () {
+        onDestroy: function (next) {
             if (this.model.get('type') === 'trailer') { // XXX Sammuel86 Trailer UI Show FIX/HACK -START
                 $('.trailer_mouse_catch').remove();
                 this.closePlayer();
@@ -842,6 +895,22 @@
             }
             this.unbindKeyboardShortcuts();
             App.vent.trigger('player:close');
+            if (!next) {
+                App.Streamer.destroy();
+                App.PreloadStreamer.destroy();
+            } else {
+                if (this.model.attributes.autoPlayData.streamer === 'preload') {
+                    App.Streamer.src = false;
+                    App.Streamer.destroy();
+                    console.log('DESTROYING MAIN STREAMER');
+                } else {
+                    console.log('DESTROYING PRELOAD STREAMER');
+                    App.PreloadStreamer.src = false;
+                    App.PreloadStreamer.destroy();
+                }
+                var playerModel = new Backbone.Model(this.NextEpisode);
+                App.vent.trigger('stream:local', playerModel);
+            }
         }
     });
     App.View.Player = Player;

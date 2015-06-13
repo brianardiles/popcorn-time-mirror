@@ -487,6 +487,7 @@
                 },
                 autoPlayData: {
                     episodes: episodes,
+                    streamer: 'main',
                     episodes_data: episodes_data
                 },
                 status: that.model.get('status'),
@@ -814,8 +815,8 @@
                         var ratio = res.peers > 0 ? res.seeds / res.peers : +res.seeds;
 
                         $('.health-icon').tooltip({
-                                html: true
-                            })
+                            html: true
+                        })
                             .removeClass('Bad Medium Good Excellent')
                             .addClass(health)
                             .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + res.seeds + ' - ' + i18n.__('Peers:') + ' ' + res.peers)
@@ -827,8 +828,8 @@
 
         resetHealth: function () {
             $('.health-icon').tooltip({
-                    html: true
-                })
+                html: true
+            })
                 .removeClass('Bad Medium Good Excellent')
                 .attr('data-original-title', i18n.__('Health Unknown'))
                 .tooltip('fixTitle');

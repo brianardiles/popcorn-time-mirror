@@ -32,9 +32,18 @@
                 var videosrc = src;
                 var videotype = 'video/youtube';
             }else{
-                var videosrc = App.Streamer.src;
+
+            if(App.Streamer.src){
+                  var videosrc = App.Streamer.src;
+                   console.log('USING MAIN STREAMER SRC');
+            }else{
+                var videosrc = App.PreloadStreamer.src;
+                 console.log('USING PRELOAD STREAMER SRC');
+            }
                 var videotype = 'video/mp4';
             }
+
+
 if(typeof subtitles !== "undefined"){
     var subArray = [];
     for (var langcode in subtitles) {

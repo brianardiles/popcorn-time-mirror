@@ -335,7 +335,7 @@
             }
         },
         playNextNow: function () {
-            this.closePlayer(true);
+            this.closePlayer('yes');
         },
         refreshStreamStats: function () {
             var Streamer;
@@ -840,11 +840,12 @@
 
         closePlayer: function (nextTrue) {
             var next;
-            if (!nextTrue) {
+            if (nextTrue !== 'yes') {
                 next = false;
             } else {
                 next = true;
             }
+            console.log(next);
             this.playing = false;
             win.info('Player closed');
             if (this.checkAutoPlayTimer) {

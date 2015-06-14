@@ -1,4 +1,4 @@
-(function (App) {
+(function(App) {
     'use strict';
     var util = require('util');
     var Loading = Backbone.Marionette.ItemView.extend({
@@ -38,18 +38,18 @@
             'click .stop': 'cancelStreaming',
             'click .play': 'resumeStreaming'
         },
-        initialize: function () {
+        initialize: function() {
             var that = this;
 
             //If a child was removed from above this view
-            App.vent.on('viewstack:pop', function () {
+            App.vent.on('viewstack:pop', function() {
                 if (_.last(App.ViewStack) === that.className) {
                     that.initKeyboardShortcuts();
                 }
             });
 
             //If a child was added above this view
-            App.vent.on('viewstack:push', function () {
+            App.vent.on('viewstack:push', function() {
                 if (_.last(App.ViewStack) !== that.className) {
                     that.unbindKeyboardShortcuts();
                 }
@@ -68,58 +68,58 @@
 
 
             switch (this.model.attributes.data.type) {
-            case 'show':
-                this.fetchTVSubtitles({
-                    imdbid: this.model.attributes.data.metadata.imdb_id,
-                    season: this.model.attributes.data.metadata.season,
-                    episode: this.model.attributes.data.metadata.episode
-                });
-                var tvshowname = $.trim(this.model.attributes.data.metadata.showName.replace(/[\.]/g, ' '))
-                    .replace(/^\[.*\]/, '') // starts with brackets
-                    .replace(/[^\w ]+/g, '') // remove brackets
-                    .replace(/ +/g, '-') // has spaces
-                    .replace(/_/g, '-') // has '_'
-                    .replace(/\-$/, '') // ends with '-'
-                    .replace(/^\./, ''); // starts with '.'
-
-                console.log(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode));
-
-                App.Trakt.episodes.summary(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode))
-                    .then(function (episodeSummary) {
-                        if (!episodeSummary) {
-                            win.warn('Unable to fetch data from Trakt.tv');
-                        } else {
-                            var data = episodeSummary;
-                            console.log(data);
-                            that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
-                            that.loadBackground(data.images.screenshot.full, true);
-                        }
-                    }).catch(function (err) {
-                        console.log(err);
+                case 'show':
+                    this.fetchTVSubtitles({
+                        imdbid: this.model.attributes.data.metadata.imdb_id,
+                        season: this.model.attributes.data.metadata.season,
+                        episode: this.model.attributes.data.metadata.episode
                     });
-                break;
-            case 'movie':
+                    var tvshowname = $.trim(this.model.attributes.data.metadata.showName.replace(/[\.]/g, ' '))
+                        .replace(/^\[.*\]/, '') // starts with brackets
+                        .replace(/[^\w ]+/g, '') // remove brackets
+                        .replace(/ +/g, '-') // has spaces
+                        .replace(/_/g, '-') // has '_'
+                        .replace(/\-$/, '') // ends with '-'
+                        .replace(/^\./, ''); // starts with '.'
 
-                break;
-            default: //this is a dropped selection
-                this.waitForSelection();
+                    console.log(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode));
+
+                    App.Trakt.episodes.summary(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode))
+                        .then(function(episodeSummary) {
+                            if (!episodeSummary) {
+                                win.warn('Unable to fetch data from Trakt.tv');
+                            } else {
+                                var data = episodeSummary;
+                                console.log(data);
+                                that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
+                                that.loadBackground(data.images.screenshot.full, true);
+                            }
+                        }).catch(function(err) {
+                            console.log(err);
+                        });
+                    break;
+                case 'movie':
+
+                    break;
+                default: //this is a dropped selection
+                    this.waitForSelection();
             }
 
 
         },
 
-        initKeyboardShortcuts: function () {
+        initKeyboardShortcuts: function() {
             var that = this;
-            Mousetrap.bind(['esc', 'backspace'], function (e) {
+            Mousetrap.bind(['esc', 'backspace'], function(e) {
                 that.cancelStreaming();
             });
         },
 
-        unbindKeyboardShortcuts: function () {
+        unbindKeyboardShortcuts: function() {
             Mousetrap.unbind(['esc', 'backspace']);
         },
 
-        onShow: function () {
+        onShow: function() {
             this.ui.stateTextDownload.text(i18n.__('Loading'));
             win.debug('Initializing Torrent Loader For', this.model.get('data').metadata.title);
             $('#header').addClass('header-shadow');
@@ -130,7 +130,7 @@
         },
 
 
-        backupCountdown: function () {
+        backupCountdown: function() {
             if (this.playing) {
                 return;
             }
@@ -152,7 +152,7 @@
             _.delay(_.bind(this.backupCountdown, this), 1000);
         },
 
-        initializeLoadingPlayer: function () {
+        initializeLoadingPlayer: function() {
             var that = this;
             var loadingPlayer = document.getElementById('loading_player');
             loadingPlayer.setAttribute('src', App.Streamer.src);
@@ -161,7 +161,7 @@
             loadingPlayer.load();
             loadingPlayer.play();
             var debugmetachunks = false;
-            loadingPlayer.ontimeupdate = function () {
+            loadingPlayer.ontimeupdate = function() {
                 if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
                     win.info('Initial Meta Chunks Received! Starting Playback in 3 seconds.');
                     debugmetachunks = true;
@@ -176,7 +176,7 @@
 
             };
         },
-        initMainplayer: function () {
+        initMainplayer: function() {
             if (this.player === 'local') {
                 var playerModel = new Backbone.Model(this.model.get('data'));
                 App.vent.trigger('stream:local', playerModel);
@@ -192,7 +192,7 @@
             }
 
         },
-        StateUpdate: function () {
+        StateUpdate: function() {
             if (this.playing && !this.playingExternally) {
                 return;
             }
@@ -234,7 +234,7 @@
 
 
         },
-        prettySpeed: function (speed) {
+        prettySpeed: function(speed) {
             speed = speed || 0;
             if (speed === 0) {
                 return util.format('%s %s', 0, 'B/s');
@@ -243,7 +243,7 @@
             var converted = Math.floor(Math.log(speed) / Math.log(1024));
             return util.format('%s %s/s', (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
         },
-        cancelStreaming: function () {
+        cancelStreaming: function() {
             this.playing = true; // stop text update
             this.playingExternally = false;
             clearInterval(this.updateInfo);
@@ -255,23 +255,23 @@
                 App.vent.trigger('device:stop');
             }
 
-            Mousetrap.bind('esc', function (e) {
+            Mousetrap.bind('esc', function(e) {
                 App.vent.trigger('show:closeDetail');
                 App.vent.trigger('movie:closeDetail');
             });
-            _.defer(function () {
-                App.Streamer.destroy();
+            _.defer(function() {
+                App.vent.trigger('streamer:stop');
                 App.vent.trigger('player:close');
             });
 
         },
-        loadBackground: function (data, change) {
+        loadBackground: function(data, change) {
             var backgroundUrl = data;
             var that = this;
             var bgError = false;
             var bgCache = new Image();
             bgCache.src = backgroundUrl;
-            bgCache.onload = function () {
+            bgCache.onload = function() {
                 try {
                     if (change) {
                         that.ui.backdrop.addClass('fadeout');
@@ -282,13 +282,13 @@
                 } catch (e) {}
                 bgCache = null;
             };
-            bgCache.onerror = function () {
+            bgCache.onerror = function() {
                 bgError = true;
                 bgCache = null;
             };
 
         },
-        waitForSelection: function () {
+        waitForSelection: function() {
 
             var that = this;
 
@@ -300,7 +300,7 @@
                     return filename.substr(0, lastDotPosition);
                 }
             }
-            var watchFileSelected = function () {
+            var watchFileSelected = function() {
                 require('watchjs').unwatch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
                 that.model.attributes.data.metadata.title = removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
                 that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
@@ -309,14 +309,14 @@
 
         },
 
-        fetchTVSubtitles: function (data) {
+        fetchTVSubtitles: function(data) {
             var that = this;
             console.log(data);
             win.debug('Subtitles data request:', data);
 
             var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
 
-            subtitleProvider.fetch(data).then(function (subs) {
+            subtitleProvider.fetch(data).then(function(subs) {
                 if (subs && Object.keys(subs).length > 0) {
                     var subtitles = subs;
                     that.model.attributes.data.subtitles = subtitles;
@@ -325,18 +325,18 @@
                 } else {
                     win.warn('No subtitles returned');
                 }
-            }).catch(function (err) {
+            }).catch(function(err) {
                 console.log('subtitleProvider.fetch()', err);
             });
         },
 
 
-        fetchMovieSubtitles: function (data) {
+        fetchMovieSubtitles: function(data) {
 
         },
 
 
-        augmentDropModel: function (data) {
+        augmentDropModel: function(data) {
             var metadata = data.metadata;
             var that = this;
             console.log(metadata);
@@ -358,9 +358,9 @@
             }
             if (se_re != null) {
                 // function in case it's a movie (or not, it also handles errors)
-                var tryMovie = function (moviename) {
+                var tryMovie = function(moviename) {
                     App.Trakt.search(moviename, 'movie')
-                        .then(function (summary) {
+                        .then(function(summary) {
                             if (!summary || summary.length === 0) {
                                 win.warn('Unable to fetch data from Trakt.tv');
                             } else {
@@ -374,7 +374,7 @@
                                 that.loadBackground(that.model.attributes.data.metadata.backdrop);
                             }
 
-                        }).catch(function (err) {
+                        }).catch(function(err) {
                             // Ok then, it's not a tv show, it's not a movie. I give up, deal with it.
                             win.error('An error occured while trying to get subtitles', err);
                         });
@@ -389,13 +389,13 @@
                     .replace(/\-$/, '') // ends with '-'
                     .replace(/^\./, ''); // starts with '.'
                 App.Trakt.shows.summary(tvshowname)
-                    .then(function (summary) {
+                    .then(function(summary) {
                         if (!summary) {
                             win.warn('Unable to fetch data from Trakt.tv');
                         } else {
                             that.model.attributes.data.metadata.showName = summary.title;
                             App.Trakt.episodes.summary(tvshowname, se_re[2], se_re[3])
-                                .then(function (episodeSummary) {
+                                .then(function(episodeSummary) {
                                     if (!episodeSummary) {
                                         win.warn('Unable to fetch data from Trakt.tv');
                                     } else {
@@ -418,11 +418,11 @@
                                             episode: data.number
                                         });
                                     }
-                                }).catch(function (err) {
+                                }).catch(function(err) {
                                     tryMovie(tvshowname);
                                 });
                         }
-                    }).catch(function (err) {
+                    }).catch(function(err) {
                         tryMovie(tvshowname);
                     });
             }

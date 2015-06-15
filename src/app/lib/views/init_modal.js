@@ -22,12 +22,7 @@
 
         onDestroy: function () {
 
-        },
-
-        fixApp: function (e) {
-
-
-        },
+        }
 
     });
 

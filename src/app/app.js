@@ -85,7 +85,7 @@ App.addRegions({
     Window: '.main-window-region'
 });
 
-// Menu for mac 
+// Menu for mac
 if (os.platform() === 'darwin') {
     var nativeMenuBar = new gui.Menu({
         type: 'menubar'
@@ -508,7 +508,7 @@ if (gui.App.fullArgv.indexOf('-m') !== -1) {
 }
 
 
-// Show 404 page on uncaughtException
+// On uncaught exceptions, log to console.
 process.on('uncaughtException', function (err) {
     try {
         if (err.message.indexOf('[sprintf]') !== -1) {

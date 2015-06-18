@@ -144,7 +144,7 @@
         },
 
         providers: {
-            movie: ['Yts'],
+            movie: ['Cubarte'],
             tvshow: ['Eztv'],
             anime: ['Haruhichan'],
             subtitle: 'YSubs',

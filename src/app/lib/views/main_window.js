@@ -342,7 +342,7 @@
         },
 
         closeNotification: function () {
-            this.Notification.close();
+            this.Notification.destroy();
         },
 
         showShowDetail: function (showModel) {

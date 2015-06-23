@@ -1,4 +1,4 @@
-(function(App) {
+(function (App) {
     'use strict';
 
     var semver = require('semver');
@@ -7,16 +7,16 @@
     var crypto = require('crypto');
     var preloadStreamer = Backbone.Model.extend({
 
-        initialize: function() {
+        initialize: function () {
             this.client = false;
             this.src = false;
             App.vent.on('preloadStreamer:stop', this.stop);
         },
 
-        start: function(data) {
+        start: function (data) {
             var self = this;
             var streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
-            getPort(function(err, port) {
+            getPort(function (err, port) {
                 self.src = 'http://127.0.0.1:' + port;
 
                 self.client = peerflix(data.torrent, {
@@ -27,10 +27,10 @@
                     path: streamPath
                 });
 
-                self.client.on('ready', function() {
+                self.client.on('ready', function () {
 
-                    self.client.files.forEach(function(file) {
-                        var index = self.client.files.reduce(function(a, b) { //find the biggest file and stream it.
+                    self.client.files.forEach(function (file) {
+                        var index = self.client.files.reduce(function (a, b) { //find the biggest file and stream it.
                             return a.length > b.length ? a : b;
                         });
                         index = self.client.files.indexOf(index);
@@ -42,7 +42,7 @@
             });
         },
 
-        getPeerID: function() {
+        getPeerID: function () {
             var version = semver.parse(App.settings.version);
             var torrentVersion = '';
             torrentVersion += version.major;
@@ -55,7 +55,7 @@
             torrentPeerId += crypto.pseudoRandomBytes(6).toString('hex');
             return torrentPeerId;
         },
-        stop: function() {
+        stop: function () {
             console.info('PreloadStreamer destroyed');
             this.src = false;
             if (this.client) {

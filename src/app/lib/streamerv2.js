@@ -1,4 +1,4 @@
-(function(App) {
+(function (App) {
     'use strict';
 
     var semver = require('semver');
@@ -7,7 +7,7 @@
     var crypto = require('crypto');
     var Streamer = Backbone.Model.extend({
 
-        initialize: function() {
+        initialize: function () {
             this.updatedInfo = {};
             this.client = false;
             this.fileindex = null;
@@ -15,7 +15,7 @@
             this.src = false;
             var self = this;
             App.vent.on('streamer:stop', this.stop);
-            App.vent.on('streamer:update', function(data) {
+            App.vent.on('streamer:update', function (data) {
                 if (!data) {
                     return;
                 }
@@ -25,10 +25,10 @@
             });
         },
 
-        start: function(data, preload) {
+        start: function (data, preload) {
             var self = this;
             var streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
-            getPort(function(err, port) {
+            getPort(function (err, port) {
                 self.src = 'http://127.0.0.1:' + port;
 
                 self.client = peerflix(data.torrent, {
@@ -39,12 +39,12 @@
                     path: streamPath
                 });
 
-                self.client.on('ready', function() {
+                self.client.on('ready', function () {
 
                     if (data.dropped) { //if this is a dropped torrent this will be true.
 
                         var streamableFiles = [];
-                        self.client.files.forEach(function(file, index) {
+                        self.client.files.forEach(function (file, index) {
                             if (file.name.endsWith('.avi') || file.name.endsWith('.mp4') || file.name.endsWith('.mkv') || file.name.endsWith('.wmv') || file.name.endsWith('.mov')) {
                                 file.index = index;
                                 streamableFiles.push(file);
@@ -57,7 +57,7 @@
                                 torrent: data.torrent
                             }));
 
-                            var startLoadingFromFileSelector = function() {
+                            var startLoadingFromFileSelector = function () {
                                 require('watchjs').unwatch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); //Its been updated we dont need to watch anymore!
                                 var index = self.updatedInfo.fileSelectorIndex;
                                 var stream = self.client.files[index].createReadStream(); //begin stream
@@ -75,8 +75,8 @@
 
                     } else {
                         if (self.client) {
-                            self.client.files.forEach(function(file) {
-                                var index = self.client.files.reduce(function(a, b) { //find the biggest file and stream it.
+                            self.client.files.forEach(function (file) {
+                                var index = self.client.files.reduce(function (a, b) { //find the biggest file and stream it.
                                     return a.length > b.length ? a : b;
                                 });
                                 index = self.client.files.indexOf(index);
@@ -101,7 +101,7 @@
             }
         },
 
-        getPeerID: function() {
+        getPeerID: function () {
             var version = semver.parse(App.settings.version);
             var torrentVersion = '';
             torrentVersion += version.major;
@@ -114,7 +114,7 @@
             torrentPeerId += crypto.pseudoRandomBytes(6).toString('hex');
             return torrentPeerId;
         },
-        stop: function() {
+        stop: function () {
             console.info('Streamer destroyed');
             this.src = false;
             this.streamDir = null;

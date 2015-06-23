@@ -11,6 +11,15 @@
             watchedIcon: '.watched-toggle'
         },
 
+        keyboardEvents: {
+            'esc': 'closeDetails',
+            'backspace': 'closeDetails',
+            'q': 'toggleQuality',
+            'enter': 'startStreaming',
+            'space': 'startStreaming',
+            'f': 'toggleFavourite'
+        },
+
         events: {
             'click #watch-now': 'startStreaming',
             'click #watch-trailer': 'playTrailer',
@@ -31,22 +40,6 @@
             var _this = this;
 
             //Handle keyboard shortcuts when other views are appended or removed
-
-            //If a child was removed from above this view
-            App.vent.on('viewstack:pop', function () {
-                if (_.last(App.ViewStack) === _this.className) {
-                    _this.initKeyboardShortcuts();
-                }
-            });
-
-            //If a child was added above this view
-            App.vent.on('viewstack:push', function () {
-                if (_.last(App.ViewStack) !== _this.className) {
-                    _this.unbindKeyboardShortcuts();
-                }
-            });
-
-            App.vent.on('shortcuts:movies', _this.initKeyboardShortcuts);
 
             this.model.on('change:quality', this.renderHealth, this);
         },
@@ -143,7 +136,6 @@
                 $('.number-container').removeClass('hidden');
             }
 
-            this.initKeyboardShortcuts();
 
             App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
             App.Device.ChooserView('#player-chooser').render();
@@ -156,28 +148,6 @@
 
             $('.movie-imdb-link, .rating-container, .magnet-link, .health-icon').hide();
             $('.dot').css('opacity', 0);
-        },
-
-        onDestroy: function () {
-            this.unbindKeyboardShortcuts();
-        },
-
-        initKeyboardShortcuts: function () {
-            Mousetrap.bind(['esc', 'backspace'], this.closeDetails);
-            Mousetrap.bind(['enter', 'space'], function (e) {
-                $('#watch-now').click();
-            });
-            Mousetrap.bind('q', this.toggleQuality);
-            Mousetrap.bind('f', function () {
-                $('.favourites-toggle').click();
-            });
-        },
-
-        unbindKeyboardShortcuts: function () { // There should be a better way to do this
-            Mousetrap.unbind(['esc', 'backspace']);
-            Mousetrap.unbind(['enter', 'space']);
-            Mousetrap.unbind('q');
-            Mousetrap.unbind('f');
         },
 
         switchRating: function () {

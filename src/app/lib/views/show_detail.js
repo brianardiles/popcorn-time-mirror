@@ -19,6 +19,7 @@
             bookmarkIcon: '.favourites-toggle'
         },
 
+
         events: {
             'click .favourites-toggle': 'toggleFavorite',
             'click .show-watched-toggle': 'markShowAsWatched',
@@ -37,6 +38,24 @@
             'click .rating-container-tv': 'switchRating',
             'click .health-icon': 'resetHealth'
         },
+
+
+        keyboardEvents: {
+            'esc': 'closeDetails',
+            'backspace': 'closeDetails',
+            'q': 'toggleQuality',
+            'enter': 'playEpisode',
+            'space': 'playEpisode',
+            'ctrl+up': 'previousSeason',
+            'command+up': 'previousSeason',
+            'ctrl+down': 'nextSeason',
+            'command+down': 'nextSeason',
+            'up': 'previousEpisode',
+            'down': 'nextEpisode',
+            'w': 'toggleEpisodeWatched',
+            'f': 'toggleFavorite'
+        },
+
 
         toggleFavorite: function (e) {
 
@@ -91,21 +110,7 @@
         initialize: function () {
             _this = this;
             this.renameUntitled();
-            //Handle keyboard shortcuts when other views are appended or removed
 
-            //If a child was removed from above this view
-            App.vent.on('viewstack:pop', function () {
-                if (_.last(App.ViewStack) === _this.className) {
-                    _this.initKeyboardShortcuts();
-                }
-            });
-
-            //If a child was added above this view
-            App.vent.on('viewstack:push', function () {
-                if (_.last(App.ViewStack) !== _this.className) {
-                    _this.unbindKeyboardShortcuts();
-                }
-            });
             App.vent.on('show:watched:' + this.model.id,
                 _.bind(this.onWatched, this));
             App.vent.on('show:unwatched:' + this.model.id,
@@ -115,9 +120,6 @@
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster, 'thumb');
 
-            App.vent.on('shortcuts:shows', function () {
-                _this.initKeyboardShortcuts();
-            });
 
         },
         renameUntitled: function () {
@@ -134,31 +136,7 @@
                 }
             }
         },
-        initKeyboardShortcuts: function () {
-            Mousetrap.bind('q', _this.toggleQuality);
-            Mousetrap.bind('down', _this.nextEpisode);
-            Mousetrap.bind('up', _this.previousEpisode);
-            Mousetrap.bind('w', _this.toggleEpisodeWatched);
-            Mousetrap.bind(['enter', 'space'], _this.playEpisode);
-            Mousetrap.bind(['esc', 'backspace'], _this.closeDetails);
-            Mousetrap.bind(['ctrl+up', 'command+up'], _this.previousSeason);
-            Mousetrap.bind(['ctrl+down', 'command+down'], _this.nextSeason);
-            Mousetrap.bind('f', function () {
-                $('.favourites-toggle').click();
-            });
-        },
 
-        unbindKeyboardShortcuts: function () { // There should be a better way to do this
-            Mousetrap.unbind('w');
-            Mousetrap.unbind('f');
-            Mousetrap.unbind('q');
-            Mousetrap.unbind('up');
-            Mousetrap.unbind('down');
-            Mousetrap.unbind(['enter', 'space']);
-            Mousetrap.unbind(['esc', 'backspace']);
-            Mousetrap.unbind(['ctrl+up', 'command+up']);
-            Mousetrap.unbind(['ctrl+down', 'command+down']);
-        },
 
         onShow: function () {
 
@@ -214,8 +192,6 @@
             };
 
             this.selectNextEpisode();
-
-            _this.initKeyboardShortcuts();
 
             if (!AdvSettings.get('ratingStars')) {
                 $('.star-container-tv').addClass('hidden');
@@ -494,7 +470,6 @@
                 device: App.Device.Collection.selected
             };
 
-            _this.unbindKeyboardShortcuts();
             App.Streamer.start(torrentStart);
         },
         closeDetails: function (e) {
@@ -842,10 +817,6 @@
             if (!player.match(/[0-9]+.[0-9]+.[0-9]+.[0-9]/ig)) {
                 AdvSettings.set('chosenPlayer', player);
             }
-        },
-
-        onDestroy: function () {
-            this.unbindKeyboardShortcuts();
         }
 
     });

@@ -158,10 +158,12 @@
                 this.video = videojs('video_player', {
                     techOrder: ['youtube'],
                     forceSSL: true,
+                    forceHTML5: true,
                     ytcontrols: false,
                     quality: '720p'
                 }).ready(function () {
                     this.addClass('vjs-has-started');
+                    this.play();
                 });
                 this.ui.eyeInfo.hide();
 
@@ -193,6 +195,8 @@
                         customSubtitles: {},
                         progressTips: {}
                     }
+                }).ready(function () {
+                    this.play();
                 });
 
             }

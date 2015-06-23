@@ -73,8 +73,7 @@ if(typeof subtitles !== "undefined"){
 }
 %>
 
-<video id="video_player" width="100%" height="100%" class="video-js vjs-popcorn-skin" controls preload="auto" autoplay >
+<video id="video_player" width="100%" height="100%" class="video-js vjs-popcorn-skin" controls preload="none"  >
     <source src="<%= videosrc %>" type="<%= videotype %>" />
-
        <%=subtracks%>
 </video>

@@ -148,7 +148,6 @@
             this.prossessType();
             this.setUI();
             this.setPlayerEvents();
-            this.bindKeyboardShortcuts();
             this.restoreUserPref();
             this.processNext();
         },
@@ -216,6 +215,7 @@
 
             // Force custom controls
             this.player.usingNativeControls(false);
+            $('#player').bind('mousewheel', _.bind(this.mouseScroll, this)); //volume wheel control
         },
 
         setUI: function () {
@@ -694,16 +694,6 @@
             return deferred.promise;
         },
 
-        bindKeyboardShortcuts: function () {
-
-
-            document.addEventListener('mousewheel', _.bind(this.mouseScroll, this));
-        },
-
-        unbindKeyboardShortcuts: function () {
-
-            document.removeEventListener('mousewheel', this.mouseScroll);
-        },
 
         toggleMouseDebug: function () {
             if (this.player.debugMouse_) {
@@ -795,7 +785,8 @@
             } else {
                 next = true;
             }
-            console.log(next);
+            $('#player').unbind('mousewheel', _.bind(this.mouseScroll, this));
+
             this.playing = false;
             win.info('Player closed');
             if (this.checkAutoPlayTimer) {
@@ -844,7 +835,8 @@
             if (this.inFullscreen && !win.isFullscreen) {
                 $('.btn-os.fullscreen').removeClass('active');
             }
-            this.unbindKeyboardShortcuts();
+
+
             App.vent.trigger('player:close');
             if (!next) {
                 App.vent.trigger('streamer:stop');

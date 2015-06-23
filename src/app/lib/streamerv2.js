@@ -14,7 +14,7 @@
             this.streamDir = null;
             this.src = false;
             var self = this;
-            App.vent.on('streamer:stop', this.stop);
+            App.vent.on('streamer:stop', _.bind(this.stop, this));
             App.vent.on('streamer:update', function (data) {
                 if (!data) {
                     return;
@@ -120,11 +120,8 @@
             this.streamDir = null;
             this.fileindex = null;
             this.updatedInfo = {}; //reset the updated object back to empty
-            if (this.client) {
-                this.client.destroy();
-            }
+            this.client.destroy();
             this.client = false;
-
         }
 
     });

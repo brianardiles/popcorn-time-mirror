@@ -10,7 +10,7 @@
         initialize: function () {
             this.client = false;
             this.src = false;
-            App.vent.on('preloadStreamer:stop', this.stop);
+            App.vent.on('preloadStreamer:stop', _.bind(this.stop, this));
         },
 
         start: function (data) {

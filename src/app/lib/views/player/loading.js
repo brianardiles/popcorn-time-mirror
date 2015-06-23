@@ -124,8 +124,12 @@
             win.debug('Initializing Torrent Loader For', this.model.get('data').metadata.title);
             $('#header').addClass('header-shadow');
             $('.filter-bar').hide();
-            this.initKeyboardShortcuts();
-            this.player = this.model.get('player').get('id');
+            this.initKeyboardShortcuts();            
+            if(this.model.get('player').get('id')){
+            	this.player = this.model.get('player').get('id');
+            }else{
+            	this.player = 'local';
+            }
             this.StateUpdate();
         },
 

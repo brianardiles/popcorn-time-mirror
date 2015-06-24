@@ -70,7 +70,8 @@
                     .replace(/ +/g, '-') // has spaces
                     .replace(/_/g, '-') // has '_'
                     .replace(/\-$/, '') // ends with '-'
-                    .replace(/^\./, ''); // starts with '.'
+                    .replace(/^\./, '') // starts with '.'
+                    .replace(/^\-/, ''); // starts with '-'
 
                 console.log(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode));
 

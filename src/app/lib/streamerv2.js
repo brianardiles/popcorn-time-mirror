@@ -108,7 +108,14 @@
             torrentPeerId += crypto.pseudoRandomBytes(6).toString('hex');
             return torrentPeerId;
         },
-
+        logTotalUsage: function () {
+            if (this.client.swarm) {
+                var downloaded = this.client.swarm.downloaded;
+                var uploaded = this.client.swarm.uploaded;
+                AdvSettings.set('totalDownloaded', Settings.totalDownloaded + downloaded);
+                AdvSettings.set('totalUploaded', Settings.totalUploaded + uploaded);
+            }
+        },
         stop: function () {
             console.info('Streamer destroyed');
             this.src = false;
@@ -124,21 +131,8 @@
                 this.client.destroy();
             }
             this.client = false;
-        },
-        logTotalUsage: function () {
-            if (this.client.swarm) {
-                try {
-                    AdvSettings.set('totalDownloaded', Settings.totalDownloaded + this.client.swarm.downloaded);
-                } catch (e) {
-                    console.log(e);
-                }
-                try {
-                    AdvSettings.set('totalUploaded', Settings.totalUploaded + this.client.swarm.uploaded);
-                } catch (e) {
-                    console.log(e);
-                }
-            }
         }
+
 
     });
 

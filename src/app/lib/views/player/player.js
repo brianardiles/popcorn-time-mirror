@@ -695,7 +695,9 @@
             });
             return deferred.promise;
         },
-
+        playNextNot: function () {
+            this.NextEpisode = false;
+        },
         toggleMouseDebug: function () {
             if (this.player.debugMouse_) {
                 this.player.debugMouse_ = false;
@@ -705,7 +707,6 @@
                 this.displayOverlayMsg('Mouse debug enabled. Dont touch the mouse until disabled.');
             }
         },
-
         seek: function (s) {
             var t = this.player.currentTime();
             this.player.currentTime(t + s);
@@ -713,7 +714,6 @@
                 this.player.userActive(true);
             }
         },
-
         mouseScroll: function (e) {
             if ($(e.target).parents('.vjs-subtitles-button').length) {
                 return;
@@ -826,7 +826,6 @@
         onDestroy: function (next) {
             if (this.model.get('type') === 'trailer') { // XXX Sammuel86 Trailer UI Show FIX/HACK -START
                 $('.trailer_mouse_catch').remove();
-                this.closePlayer();
             }
             $('#player_drag').hide();
             $('#header').show();
@@ -836,7 +835,6 @@
             if (this.inFullscreen && !win.isFullscreen) {
                 $('.btn-os.fullscreen').removeClass('active');
             }
-
 
             App.vent.trigger('player:close');
 

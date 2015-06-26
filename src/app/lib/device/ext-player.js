@@ -59,13 +59,9 @@
                 $('#header').removeClass('header-shadow');
                 $('#movie-detail').show();
                 _.defer(function () {
-                    App.Streamer.destroy();
+                    App.vent.trigger('streamer:stop');
                     App.vent.trigger('player:close');
                 });
-                App.vent.trigger('player:close');
-                App.vent.trigger('stream:stop');
-                App.vent.trigger('preload:stop');
-
             });
         },
 

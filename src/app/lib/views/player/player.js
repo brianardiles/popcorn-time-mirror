@@ -393,8 +393,6 @@
 
         checkAutoPlay: function () {
             if (!this.playing || !this.NextEpisode) {
-                $('.playing_next').hide();
-                $('.playing_next span').text('');
                 return;
             }
             var timeLeft = this.video.duration() - this.video.currentTime();
@@ -693,6 +691,11 @@
             return deferred.promise;
         },
         playNextNot: function () {
+            win.debug('Hiding Auto Play message');
+            $('.playing_next').hide();
+            $('.playing_next span').text('');
+            this.autoplayisshown = false;
+
             this.NextEpisode = false;
         },
         toggleMouseDebug: function () {

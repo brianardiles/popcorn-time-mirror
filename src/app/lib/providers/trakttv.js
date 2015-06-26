@@ -630,65 +630,30 @@
     };
 
     function onShowWatched(show, channel) {
-        win.debug('Mark Episode as watched on channel:', channel);
-        switch (channel) {
-        case 'database':
-            break;
-        case 'seen':
-            /* falls through */
-        default:
+        if (App.Trakt.authenticated && channel === 'seen') {
+            win.debug('Trakt: report %s as watched', show.episode_id);
             App.Trakt.sync.addToHistory('episode', show.episode_id);
-            break;
         }
     }
 
     function onShowUnWatched(show, channel) {
-        win.debug('Mark Episode as unwatched on channel:', channel);
-        switch (channel) {
-        case 'database':
-            break;
-        case 'seen':
-            /* falls through */
-        default:
+        if (App.Trakt.authenticated && channel === 'seen') {
+            win.debug('Trakt: report %s as unwatched', show.episode_id);
             App.Trakt.sync.removeFromHistory('episode', show.episode_id);
-            break;
         }
     }
 
     function onMoviesWatched(movie, channel) {
-        win.debug('Mark Movie as watched on channel:', channel);
-        switch (channel) {
-        case 'database':
-            switch (Settings.watchedCovers) {
-            case 'fade':
-                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"] .actions-watched').addClass('selected');
-                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"]').addClass('watched');
-                break;
-            case 'hide':
-                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"]').remove();
-                break;
-            }
-            $('.watched-toggle').addClass('selected').text(i18n.__('Seen'));
-            App.MovieDetailView.model.set('watched', true);
-            break;
-        case 'seen':
-            /* falls through */
-        default:
+        if (App.Trakt.authenticated && channel === 'seen') {
+            win.debug('Trakt: report %s as watched', movie.imdb_id);
             App.Trakt.sync.addToHistory('movie', movie.imdb_id);
-            break;
         }
     }
 
     function onMoviesUnWatched(movie, channel) {
-        win.debug('Mark Movie as unwatched on channel:', channel);
-        switch (channel) {
-        case 'database':
-            break;
-        case 'seen':
-            /* falls through */
-        default:
+        if (App.Trakt.authenticated && channel === 'seen') {
+            win.debug('Trakt: report %s as unwatched', movie.imdb_id);
             App.Trakt.sync.removeFromHistory('movie', movie.imdb_id);
-            break;
         }
     }
 

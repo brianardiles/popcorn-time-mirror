@@ -162,7 +162,21 @@ var Database = {
         return db.watched.insert(data);
     },
 
-    markMovieAsWatched: function (data) {
+    markMovieAsWatched: function (data, channel) {
+        win.debug('Mark Movie as watched on channel:', channel);
+        if (channel === 'database') {
+            switch (Settings.watchedCovers) {
+            case 'fade':
+                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"] .actions-watched').addClass('selected');
+                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"]').addClass('watched');
+                break;
+            case 'hide':
+                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"]').remove();
+                break;
+            }
+            $('.watched-toggle').addClass('selected').text(i18n.__('Seen'));
+            App.MovieDetailView.model.set('watched', true);
+        }
         if (data.imdb_id) {
             App.watchedMovies.push(data.imdb_id);
 
@@ -178,8 +192,8 @@ var Database = {
         return Q();
     },
 
-    markMovieAsNotWatched: function (data) {
-
+    markMovieAsNotWatched: function (data, channel) {
+        win.debug('Mark Movie as unwatched on channel:', channel);
         App.watchedMovies.splice(App.watchedMovies.indexOf(data.imdb_id), 1);
 
         return db.watched.remove({
@@ -206,7 +220,8 @@ var Database = {
         }, data);
     },
 
-    markEpisodeAsWatched: function (data) {
+    markEpisodeAsWatched: function (data, channel) {
+        win.debug('Mark Episode as watched on channel:', channel);
         return promisifyDb(db.watched.find({
                 tvdb_id: data.tvdb_id.toString()
             }))
@@ -235,7 +250,8 @@ var Database = {
         return db.watched.insert(data);
     },
 
-    markEpisodeAsNotWatched: function (data) {
+    markEpisodeAsNotWatched: function (data, channel) {
+        win.debug('Mark Episode as unwatched on channel:', channel);
         return promisifyDb(db.watched.find({
                 tvdb_id: data.tvdb_id.toString()
             }))

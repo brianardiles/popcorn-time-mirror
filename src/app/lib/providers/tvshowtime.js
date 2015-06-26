@@ -122,15 +122,15 @@
     };
 
     function onShowWatched(show, channel) {
-        win.debug('Mark TV Show as watched, on channel:', channel);
-        if (App.TVShowTime.authenticated) {
+        if (App.TVShowTime.authenticated && channel === 'seen') {
+            win.debug('TVShow Time: report %s as watched', show.episode_id);
             App.TVShowTime.checkin(show);
         }
     }
 
     function onShowUnWatched(show, channel) {
-        win.debug('Mark TV Show as unwatched, on channel:', channel);
-        if (App.TVShowTime.authenticated) {
+        if (App.TVShowTime.authenticated && channel === 'seen') {
+            win.debug('TVShow Time: report %s as unwatched', show.episode_id);
             App.TVShowTime.checkout(show);
         }
     }

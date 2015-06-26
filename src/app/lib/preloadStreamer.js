@@ -54,16 +54,32 @@
             torrentPeerId += crypto.pseudoRandomBytes(6).toString('hex');
             return torrentPeerId;
         },
+
         stop: function () {
             console.info('PreloadStreamer destroyed');
             this.src = false;
             if (this.client) {
+                this.logTotalUsage();
                 if (this.client.server._handle) {
                     this.client.server.close();
                 }
                 this.client.destroy();
             }
             this.client = false;
+        },
+        logTotalUsage: function () {
+            if (this.client.swarm) {
+                try {
+                    AdvSettings.set('totalDownloaded', Settings.totalDownloaded + this.client.swarm.downloaded);
+                } catch (e) {
+                    console.log(e);
+                }
+                try {
+                    AdvSettings.set('totalUploaded', Settings.totalUploaded + this.client.swarm.uploaded);
+                } catch (e) {
+                    console.log(e);
+                }
+            }
         }
     });
 

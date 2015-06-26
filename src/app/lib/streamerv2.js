@@ -120,7 +120,9 @@
             this.streamDir = null;
             this.fileindex = null;
             this.updatedInfo = {}; //reset the updated object back to empty
-            this.client.destroy();
+            if (this.client) {
+                this.client.destroy();
+            }
             this.client = false;
         }
 

@@ -351,7 +351,6 @@
                     }, 2000);
                 }
 
-
                 win.error('video.js error code: ' + $('#video_player').get(0).player.error().code, $('#video_player').get(0).player.error());
             });
 
@@ -673,7 +672,6 @@
 
         },
 
-
         fetchTVSubtitles: function (data) {
             var deferred = Q.defer();
             var that = this;
@@ -697,7 +695,6 @@
             });
             return deferred.promise;
         },
-
 
         toggleMouseDebug: function () {
             if (this.player.debugMouse_) {
@@ -842,6 +839,7 @@
 
 
             App.vent.trigger('player:close');
+
             if (!next) {
                 App.vent.trigger('streamer:stop');
                 App.vent.trigger('preloadStreamer:stop');

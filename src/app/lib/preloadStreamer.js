@@ -62,7 +62,6 @@
                 this.client.destroy();
             }
             this.client = false;
-
         }
     });
 

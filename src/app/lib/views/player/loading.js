@@ -184,7 +184,6 @@
                 this.ui.stateTextDownload.text(i18n.__('Connecting'));
 
                 this.ui.seedStatus.css('visibility', 'visible');
-                //var downloaded = streamInfo.downloaded / (1024 * 1024);
                 if (!this.initializedLoadingPlayer && Stream.downloadSpeed() > 10) {
                     this.initializedLoadingPlayer = true;
                     this.initializeLoadingPlayer();
@@ -204,10 +203,10 @@
                 }
                 if (this.playingExternally) {
                     this.ui.stateTextDownload.text(i18n.__('Downloaded'));
-                    this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 500);
+                    this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 1000);
                 }
                 if (!this.playing) {
-                    this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 500);
+                    this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 1000);
                 }
             } else {
                 this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 100);
@@ -255,8 +254,10 @@
             bgCache.onload = function () {
                 try {
                     if (change) {
-                        that.ui.backdrop.addClass('fadeout');
-                        that.ui.backdrop2.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+                        if (this.width >= 1920 && this.height >= 1080) {
+                            that.ui.backdrop.addClass('fadeout');
+                            that.ui.backdrop2.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+                        }
                     } else {
                         that.ui.backdrop.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
                     }

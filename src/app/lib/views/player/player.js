@@ -281,15 +281,18 @@
 
             this.player.on('loadeddata', function () {
                 // resume position
-                if (AdvSettings.get('lastWatchedTitle') === that.model.get('title') && AdvSettings.get('lastWatchedTime') > 0) {
+                console.log(that.model.attributes.metadata.title, AdvSettings.get('lastWatchedTitle'), AdvSettings.get('lastWatchedTime'))
+                if (AdvSettings.get('lastWatchedTitle') === that.model.attributes.metadata.title && AdvSettings.get('lastWatchedTime') > 0) {
                     var position = AdvSettings.get('lastWatchedTime');
+                    console.log(position);
+
                     win.debug('Resuming position to', position.toFixed(), 'secs');
                     that.player.currentTime(position);
                 } else if (AdvSettings.get('traktPlayback')) {
 
                     var type = that.model.get('type');
 
-                    var id = type === 'movie' ? that.model.get('imdb_id') : that.model.get('tvdb_id');
+                    var id = type === 'movie' ? that.model.attributes.metadata.imdb_id : that.model.attributes.metadata.tvdb_id;
 
                     App.Trakt.sync.playback(type, id).then(function (position_percent) {
                         var total = that.video.duration();
@@ -798,7 +801,10 @@
                 if (this.checkAutoPlayTimer) {
                     clearInterval(this.checkAutoPlayTimer);
                 }
+                AdvSettings.set('lastWatchedTitle', this.model.attributes.metadata.title);
+                AdvSettings.set('lastWatchedTime', this.video.currentTime() - 3);
             }
+
 
             if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
 
@@ -807,12 +813,12 @@
                 var watchObject = this.model.get('metadata');
 
                 App.vent.trigger(type + ':watched', watchObject, 'database');
-                AdvSettings.set('lastWatchedTitle', this.model.get('title'));
-                AdvSettings.set('lastWatchedTime', this.video.currentTime() - 5);
+
             }
 
             // clear last pos
             if (!(this.video.currentTime() / this.video.duration() < 0.8) && type !== 'trailer') {
+                console.log('CLEARNING LAST WATCHED TIME');
                 AdvSettings.set('lastWatchedTime', false);
             }
 

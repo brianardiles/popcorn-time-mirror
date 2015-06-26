@@ -255,8 +255,10 @@
             bgCache.onload = function () {
                 try {
                     if (change) {
-                        that.ui.backdrop.addClass('fadeout');
-                        that.ui.backdrop2.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+                        if (this.width >= 1920 && this.height >= 1080) {
+                            that.ui.backdrop.addClass('fadeout');
+                            that.ui.backdrop2.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+                        }
                     } else {
                         that.ui.backdrop.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
                     }

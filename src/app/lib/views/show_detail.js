@@ -111,10 +111,8 @@
             _this = this;
             this.renameUntitled();
 
-            App.vent.on('show:watched:' + this.model.id,
-                _.bind(this.onWatched, this));
-            App.vent.on('show:unwatched:' + this.model.id,
-                _.bind(this.onUnWatched, this));
+            App.vent.on('show:watched:' + this.model.id, _.bind(this.onWatched, this));
+            App.vent.on('show:unwatched:' + this.model.id, _.bind(this.onUnWatched, this));
 
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
@@ -790,8 +788,8 @@
                         var ratio = res.peers > 0 ? res.seeds / res.peers : +res.seeds;
 
                         $('.health-icon').tooltip({
-                                html: true
-                            })
+                            html: true
+                        })
                             .removeClass('Bad Medium Good Excellent')
                             .addClass(health)
                             .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + res.seeds + ' - ' + i18n.__('Peers:') + ' ' + res.peers)
@@ -803,8 +801,8 @@
 
         resetHealth: function () {
             $('.health-icon').tooltip({
-                    html: true
-                })
+                html: true
+            })
                 .removeClass('Bad Medium Good Excellent')
                 .attr('data-original-title', i18n.__('Health Unknown'))
                 .tooltip('fixTitle');

@@ -397,7 +397,9 @@
         },
 
         checkAutoPlay: function () {
-            if (!this.playing) {
+            if (!this.playing || !this.NextEpisode) {
+                $('.playing_next').hide();
+                $('.playing_next span').text('');
                 return;
             }
             var timeLeft = this.video.duration() - this.video.currentTime();

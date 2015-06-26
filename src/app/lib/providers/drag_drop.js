@@ -12,17 +12,18 @@
 
     function startStream(torrent, torrentsrc) {
 
-        var torrentStart = {
-            torrent: torrentsrc,
-            type: 'dropped-content',
-            dropped: true,
-            metadata: {
-                title: torrent.name,
-            },
-            device: App.Device.Collection.selected
-        };
-        App.Streamer.start(torrentStart);
-
+        if (!App.Streamer.hasStarted) {
+            var torrentStart = {
+                torrent: torrentsrc,
+                type: 'dropped-content',
+                dropped: true,
+                metadata: {
+                    title: torrent.name,
+                },
+                device: App.Device.Collection.selected
+            };
+            App.Streamer.start(torrentStart);
+        }
     }
 
     function onDrop(e) {

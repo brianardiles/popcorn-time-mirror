@@ -12,6 +12,7 @@
             this.client = false;
             this.fileindex = null;
             this.streamDir = null;
+            this.hasStarted = false;
             this.src = false;
             var self = this;
             App.vent.on('streamer:stop', _.bind(this.stop, this));
@@ -26,6 +27,7 @@
         },
 
         start: function (data, preload) {
+            this.hasStarted = true;
             var self = this;
             var streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
             getPort(function (err, port) {
@@ -111,6 +113,7 @@
             console.info('Streamer destroyed');
             this.src = false;
             this.streamDir = null;
+            this.hasStarted = false;
             this.fileindex = null;
             this.updatedInfo = {}; //reset the updated object back to empty
             if (this.client) {

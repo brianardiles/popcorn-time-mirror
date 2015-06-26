@@ -9,7 +9,6 @@
     var Player = Backbone.Marionette.ItemView.extend({
         template: '#player-tpl',
         className: 'player',
-        player: null,
 
         ui: {
             eyeInfo: '.eye-info-player',
@@ -200,7 +199,6 @@
                 });
 
             }
-
             this.player = this.video.player();
             App.PlayerView = this;
 
@@ -291,9 +289,6 @@
 
                     var type = that.model.get('type');
 
-                    if (type === 'tvshow') {
-                        type = 'show';
-                    }
                     var id = type === 'movie' ? that.model.get('imdb_id') : that.model.get('tvdb_id');
 
                     App.Trakt.sync.playback(type, id).then(function (position_percent) {
@@ -792,24 +787,29 @@
 
             this.playing = false;
             win.info('Player closed');
-            if (this.checkAutoPlayTimer) {
-                clearInterval(this.checkAutoPlayTimer);
-            }
 
-            this.sendToTrakt('stop');
 
             var type = this.model.get('type');
-            var watchObject = this.model.get('metadata');
 
-            if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
-                App.vent.trigger(type + ':watched', watchObject, 'database');
+            if (type !== 'trailer') {
+                if (this.checkAutoPlayTimer) {
+                    clearInterval(this.checkAutoPlayTimer);
+                }
             }
 
-            // remember position
-            if (this.video.currentTime() / this.video.duration() < 0.8) {
+            if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
+
+                this.sendToTrakt('stop');
+
+                var watchObject = this.model.get('metadata');
+
+                App.vent.trigger(type + ':watched', watchObject, 'database');
                 AdvSettings.set('lastWatchedTitle', this.model.get('title'));
                 AdvSettings.set('lastWatchedTime', this.video.currentTime() - 5);
-            } else {
+            }
+
+            // clear last pos
+            if (!(this.video.currentTime() / this.video.duration() < 0.8) && type !== 'trailer') {
                 AdvSettings.set('lastWatchedTime', false);
             }
 
@@ -840,21 +840,23 @@
 
             App.vent.trigger('player:close');
 
-            if (!next) {
-                App.vent.trigger('streamer:stop');
-                App.vent.trigger('preloadStreamer:stop');
-            } else {
-                if (this.model.attributes.autoPlayData.streamer === 'preload') {
-                    App.Streamer.src = false;
+            if (this.model.get('type') !== 'trailer') {
+                if (!next) {
                     App.vent.trigger('streamer:stop');
-                    console.log('DESTROYING MAIN STREAMER');
-                } else {
-                    console.log('DESTROYING PRELOAD STREAMER');
-                    App.PreloadStreamer.src = false;
                     App.vent.trigger('preloadStreamer:stop');
+                } else {
+                    if (this.model.attributes.autoPlayData.streamer === 'preload') {
+                        App.Streamer.src = false;
+                        App.vent.trigger('streamer:stop');
+                        console.log('DESTROYING MAIN STREAMER');
+                    } else {
+                        console.log('DESTROYING PRELOAD STREAMER');
+                        App.PreloadStreamer.src = false;
+                        App.vent.trigger('preloadStreamer:stop');
+                    }
+                    var playerModel = new Backbone.Model(this.NextEpisode);
+                    App.vent.trigger('stream:local', playerModel);
                 }
-                var playerModel = new Backbone.Model(this.NextEpisode);
-                App.vent.trigger('stream:local', playerModel);
             }
         }
     });

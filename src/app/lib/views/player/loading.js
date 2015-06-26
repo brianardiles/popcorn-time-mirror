@@ -90,7 +90,6 @@
                     });
                 break;
             case 'movie':
-
                 break;
             default: //this is a dropped selection
                 this.waitForSelection();
@@ -101,6 +100,7 @@
         onShow: function () {
             this.ui.stateTextDownload.text(i18n.__('Loading'));
             win.debug('Initializing Torrent Loader For', this.model.get('data').metadata.title);
+            this.ui.title.text(this.model.get('data').metadata.title);
             $('#header').addClass('header-shadow');
             $('.filter-bar').hide();
             if (this.model.get('player').get('id')) {

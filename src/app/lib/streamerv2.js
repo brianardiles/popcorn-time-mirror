@@ -121,6 +121,9 @@
             this.fileindex = null;
             this.updatedInfo = {}; //reset the updated object back to empty
             if (this.client) {
+                if (this.client.server._handle) {
+                    this.client.server.close();
+                }
                 this.client.destroy();
             }
             this.client = false;

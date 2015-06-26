@@ -28,7 +28,6 @@
                 });
 
                 self.client.on('ready', function () {
-
                     self.client.files.forEach(function (file) {
                         var index = self.client.files.reduce(function (a, b) { //find the biggest file and stream it.
                             return a.length > b.length ? a : b;
@@ -59,6 +58,9 @@
             console.info('PreloadStreamer destroyed');
             this.src = false;
             if (this.client) {
+                if (this.client.server._handle) {
+                    this.client.server.close();
+                }
                 this.client.destroy();
             }
             this.client = false;

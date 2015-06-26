@@ -51,27 +51,19 @@
                             }
                         });
 
-                        if (streamableFiles.length > 1) {
-                            App.vent.trigger('system:openFileSelector', new Backbone.Model({ //Open the file selctor if more than 1 file with streamable content is present in dropped torrent
-                                files: streamableFiles,
-                                torrent: data.torrent
-                            }));
+                        App.vent.trigger('system:openFileSelector', new Backbone.Model({ //Open the file selctor if more than 1 file with streamable content is present in dropped torrent
+                            files: streamableFiles,
+                            torrent: data.torrent
+                        }));
 
-                            var startLoadingFromFileSelector = function () {
-                                require('watchjs').unwatch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); //Its been updated we dont need to watch anymore!
-                                var index = self.updatedInfo.fileSelectorIndex;
-                                var stream = self.client.files[index].createReadStream(); //begin stream
-                                self.fileindex = index;
-                            };
-                            require('watchjs').watch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); // watch for the updated info object to be updated with selected fileindex (from fileselector)
-                        } else {
-                            var index = streamableFiles[0].index;
-                            console.log(self.client.files[index]);
-                            self.updatedInfo.fileSelectorIndexName = self.client.files[index].name;
+                        var startLoadingFromFileSelector = function () {
+                            require('watchjs').unwatch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); //Its been updated we dont need to watch anymore!
+                            var index = self.updatedInfo.fileSelectorIndex;
                             var stream = self.client.files[index].createReadStream(); //begin stream
                             self.fileindex = index;
-                            self.streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
-                        }
+                        };
+                        require('watchjs').watch(self.updatedInfo, 'fileSelectorIndex', startLoadingFromFileSelector); // watch for the updated info object to be updated with selected fileindex (from fileselector)
+
 
                     } else {
                         if (self.client) {

@@ -330,7 +330,7 @@
 
             this.player.on('ended', function () {
                 if (that.NextEpisode) {
-                    that.closePlayer('yes');
+                    that.closePlayer(true);
                 } else {
                     that.closePlayer();
                 }
@@ -437,7 +437,7 @@
             }
         },
         playNextNow: function () {
-            this.closePlayer('yes');
+            this.closePlayer(true);
         },
         refreshStreamStats: function () {
             var Streamer;
@@ -779,13 +779,8 @@
             }
         },
 
-        closePlayer: function (nextTrue) {
-            var next;
-            if (nextTrue !== 'yes') {
-                next = false;
-            } else {
-                next = true;
-            }
+        closePlayer: function (next) {
+            next = next == true ? true : false; // undefined|event trap
             $('#player').unbind('mousewheel', _.bind(this.mouseScroll, this));
 
             this.playing = false;

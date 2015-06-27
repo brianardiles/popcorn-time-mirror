@@ -384,16 +384,16 @@
                 App.Database.watched('check', 'show', value)
                     .then(function (watched) {
                         if (!watched) {
-                            App.vent.trigger('show:watched', value, 'seen');
+                            App.vent.trigger('watched', 'add', 'show', value);
                             $('.show-watched-toggle').hide();
                         }
+
                     });
             });
         },
 
         onWatched: function (value, channel) {
             this.markWatched(value, true);
-
             this.selectNextEpisode();
         },
 

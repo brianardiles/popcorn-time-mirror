@@ -332,21 +332,14 @@
             }
         },
 
-        toggleWatched: function (e) {
-
-            if (e.type) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
-            var that = this;
+        toggleWatched: function () {
             if (this.model.get('watched') === true) {
-                that.model.set('watched', false);
-                that.ui.watchedIcon.removeClass('selected').text(i18n.__('Not Seen'));
+                this.model.set('watched', false);
+                this.ui.watchedIcon.removeClass('selected').text(i18n.__('Not Seen'));
             } else {
-                that.model.set('watched', true);
-                that.ui.watchedIcon.addClass('selected').text(i18n.__('Seen'));
+                this.model.set('watched', true);
+                this.ui.watchedIcon.addClass('selected').text(i18n.__('Seen'));
             }
-
             $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-watched').click();
         },
 

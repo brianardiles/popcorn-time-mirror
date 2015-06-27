@@ -246,9 +246,7 @@
                     this.$el.removeClass('watched');
                 }
                 this.model.set('watched', false);
-                App.vent.trigger('movie:unwatched', {
-                    imdb_id: this.model.get('imdb_id')
-                }, 'seen');
+                App.vent.trigger('watched', 'remove', 'movie', this.model.get('imdb_id'));
             } else {
                 this.ui.watchedIcon.addClass('selected');
                 switch (Settings.watchedCovers) {
@@ -260,10 +258,7 @@
                     break;
                 }
                 this.model.set('watched', true);
-                App.vent.trigger('movie:watched', {
-                    imdb_id: this.model.get('imdb_id'),
-                    from_browser: true
-                }, 'seen');
+                App.vent.trigger('watched', 'add', 'movie', this.model.get('imdb_id'));
             }
 
             this.ui.watchedIcon.tooltip({

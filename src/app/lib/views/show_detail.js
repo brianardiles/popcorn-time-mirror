@@ -419,6 +419,7 @@
             var that = this;
             var title = that.model.get('title');
             var episode = $(e.currentTarget).attr('data-episode');
+            var episode_id = $(e.currentTarget).attr('data-episodeid');
             var season = $(e.currentTarget).attr('data-season');
             var name = $(e.currentTarget).attr('data-title');
 
@@ -429,18 +430,20 @@
             if (AdvSettings.get('playNextEpisodeAuto')) {
                 _.each(this.model.get('episodes'), function (value) {
                     var epaInfo = {
+                        id: parseInt(value.season) * 100 + parseInt(value.episode),
                         title: value.title,
                         torrents: value.torrents,
                         season: value.season,
                         episode: value.episode,
-                        episode_id: parseInt(value.season) * 100 + parseInt(value.episode),
-                        tvdb_id: value.tvdb_id
+                        episode_id: value.tvdb_id,
+                        tvdb_id: that.model.get('tvdb_id'),
+                        imdb_id: that.model.get('imdb_id')
                     };
                     episodes_data.push(epaInfo);
                     episodes.push(parseInt(value.season) * 100 + parseInt(value.episode));
                 });
                 episodes.sort();
-                episodes_data = _.sortBy(episodes_data, 'episode_id');
+                episodes_data = _.sortBy(episodes_data, 'id');
 
             } else {
                 episodes = null;
@@ -457,6 +460,7 @@
                     episode: episode,
                     cover: that.model.get('images').poster,
                     tvdb_id: that.model.get('tvdb_id'),
+                    episode_id: episode_id,
                     imdb_id: that.model.get('imdb_id'),
                     backdrop: that.model.get('images').fanart,
                     quality: selected_quality

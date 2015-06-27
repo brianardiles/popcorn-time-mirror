@@ -385,19 +385,20 @@
 
                                         that.model.attributes.data.type = 'show';
                                         that.model.attributes.data.metadata.title = summary.title + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
-                                        that.model.attributes.data.metadata.season = data.season;
-                                        that.model.attributes.data.metadata.episode = data.number;
-                                        that.model.attributes.data.metadata.tvdb_id = data.ids.tvdb;
-                                        that.model.attributes.data.metadata.imdb_id = data.ids.imdb;
+                                        that.model.attributes.data.metadata.season = data.season.toString();
+                                        that.model.attributes.data.metadata.episode = data.number.toString();
+                                        that.model.attributes.data.metadata.tvdb_id = summary.ids.tvdb;
+                                        that.model.attributes.data.metadata.episode_id = data.ids.tvdb;
+                                        that.model.attributes.data.metadata.imdb_id = summary.ids.imdb;
                                         that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
                                         that.ui.title.text(that.model.attributes.data.metadata.title);
 
                                         that.loadBackground(that.model.attributes.data.metadata.backdrop, true);
 
                                         that.fetchTVSubtitles({
-                                            imdbid: data.ids.imdb,
-                                            season: data.season,
-                                            episode: data.number
+                                            imdbid: summary.ids.imdb,
+                                            season: data.season.toString(),
+                                            episode: data.number.toString()
                                         });
                                     }
                                 }).catch(function (err) {

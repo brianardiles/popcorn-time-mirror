@@ -72,9 +72,10 @@
                 var data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
                     .then(function (data) {
                             data.provider = that.model.get('provider');
-                            Database.addTVShow(data)
-                                .then(function (idata) {
-                                    return Database.addBookmark(that.model.get('imdb_id'), 'tvshow');
+
+                            App.Database.show('add', data)
+                                .then(function (d) {
+                                    return App.Database.bookmark('add', 'show', that.model.get('imdb_id'));
                                 })
                                 .then(function () {
                                     win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
@@ -91,18 +92,20 @@
                 that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
                 bookmarked = false;
 
-                Database.deleteBookmark(this.model.get('imdb_id'))
+                App.Database.bookmark('remove', 'show', this.model.get('imdb_id'))
                     .then(function () {
-                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
-                        that.model.set('bookmarked', false);
                         App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
 
-                        // we'll make sure we dont have a cached show
-                        Database.deleteTVShow(that.model.get('imdb_id'));
+                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
+
+                        App.Database.show('remove', that.model.get('imdb_id'));
+
                         if (App.currentview === 'Favorites') {
                             App.vent.trigger('favorites:render');
                         }
                     });
+
+
             }
         },
 
@@ -379,7 +382,7 @@
                     episode: episode.episode,
                     from_browser: true
                 };
-                Database.checkEpisodeWatched(value)
+                App.Database.watched('check', 'show', value)
                     .then(function (watched) {
                         if (!watched) {
                             App.vent.trigger('show:watched', value, 'seen');

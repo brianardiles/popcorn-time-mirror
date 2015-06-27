@@ -263,8 +263,8 @@
             var ratio = torrent.peer > 0 ? torrent.seed / torrent.peer : +torrent.seed;
 
             $('.health-icon').tooltip({
-                    html: true
-                })
+                html: true
+            })
                 .removeClass('Bad Medium Good Excellent')
                 .addClass(health)
                 .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + torrent.seed + ' - ' + i18n.__('Peers:') + ' ' + torrent.peer)
@@ -321,16 +321,14 @@
                     watched: this.model.get('watched'),
                 };
 
-                Database.addMovie(movie)
-                    .then(function () {
-                        return Database.addBookmark(that.model.get('imdb_id'), 'movie');
-                    })
-                    .then(function () {
-                        win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
-                        that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
-                        App.userBookmarks.push(that.model.get('imdb_id'));
-                        that.model.set('bookmarked', true);
-                    });
+                App.Database.movie('add', movie).then(function () {
+                    return App.Database.bookmark('add', 'movie', that.model.get('imdb_id'));
+                }).then(function () {
+                    win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
+                    that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
+                    App.userBookmarks.push(that.model.get('imdb_id'));
+                    that.model.set('bookmarked', true);
+                });
             }
         },
 

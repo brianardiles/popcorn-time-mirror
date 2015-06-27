@@ -56,67 +56,12 @@
             'f': 'toggleFavorite'
         },
 
-
-        toggleFavorite: function (e) {
-
-            if (e.type) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            var that = this;
-
-            if (bookmarked !== true) {
-                bookmarked = true;
-
-                var provider = App.Providers.get(this.model.get('provider'));
-                var data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
-                    .then(function (data) {
-                            data.provider = that.model.get('provider');
-
-                            App.Database.show('add', data)
-                                .then(function (d) {
-                                    return App.Database.bookmark('add', 'show', that.model.get('imdb_id'));
-                                })
-                                .then(function () {
-                                    win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
-                                    that.model.set('bookmarked', true);
-                                    that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
-                                    App.userBookmarks.push(that.model.get('imdb_id'));
-                                });
-                        },
-                        function (err) {
-                            $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
-                        });
-
-            } else {
-                that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
-                bookmarked = false;
-
-                App.Database.bookmark('remove', 'show', this.model.get('imdb_id'))
-                    .then(function () {
-                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
-
-                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
-
-                        App.Database.show('remove', that.model.get('imdb_id'));
-
-                        if (App.currentview === 'Favorites') {
-                            App.vent.trigger('favorites:render');
-                        }
-                    });
-
-
-            }
-        },
-
-
         initialize: function () {
             _this = this;
             this.renameUntitled();
 
-            App.vent.on('show:watched:' + this.model.id, _.bind(this.onWatched, this));
-            App.vent.on('show:unwatched:' + this.model.id, _.bind(this.onUnWatched, this));
 
+            App.vent.on('watched', _.bind(this.onWatched, this));
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster, 'thumb');
@@ -138,9 +83,7 @@
             }
         },
 
-
         onShow: function () {
-
 
             bookmarked = App.userBookmarks.indexOf(this.model.get('imdb_id')) !== -1;
 
@@ -206,7 +149,57 @@
 
 
         },
+        toggleFavorite: function (e) {
 
+            if (e.type) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var that = this;
+
+            if (bookmarked !== true) {
+                bookmarked = true;
+
+                var provider = App.Providers.get(this.model.get('provider'));
+                var data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
+                    .then(function (data) {
+                            data.provider = that.model.get('provider');
+
+                            App.Database.show('add', data)
+                                .then(function (d) {
+                                    return App.Database.bookmark('add', 'show', that.model.get('imdb_id'));
+                                })
+                                .then(function () {
+                                    win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
+                                    that.model.set('bookmarked', true);
+                                    that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
+                                    App.userBookmarks.push(that.model.get('imdb_id'));
+                                });
+                        },
+                        function (err) {
+                            $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
+                        });
+
+            } else {
+                that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
+                bookmarked = false;
+
+                App.Database.bookmark('remove', 'show', this.model.get('imdb_id'))
+                    .then(function () {
+                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
+
+                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
+
+                        App.Database.show('remove', that.model.get('imdb_id'));
+
+                        if (App.currentview === 'Favorites') {
+                            App.vent.trigger('favorites:render');
+                        }
+                    });
+
+
+            }
+        },
         selectNextEpisode: function () {
 
             var episodesSeen = [];
@@ -378,8 +371,7 @@
                     imdb_id: imdb_id,
                     episode_id: episode.tvdb_id,
                     season: episode.season,
-                    episode: episode.episode,
-                    from_browser: true
+                    episode: episode.episode
                 };
                 App.Database.watched('check', 'show', value)
                     .then(function (watched) {
@@ -392,13 +384,17 @@
             });
         },
 
-        onWatched: function (value, channel) {
-            this.markWatched(value, true);
-            this.selectNextEpisode();
-        },
+        onWatched: function (method, type, data) {
+            if (type !== 'show') {
+                return;
+            }
+            if (method === 'add') {
+                this.markWatched(data, true);
+                this.selectNextEpisode();
+            } else if (method === 'remove') {
+                this.markWatched(data, false);
+            }
 
-        onUnWatched: function (value, channel) {
-            this.markWatched(value, false);
         },
 
         markWatched: function (value, state) {

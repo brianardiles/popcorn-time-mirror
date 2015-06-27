@@ -16,25 +16,35 @@
         getUserInfo: function () {
             var bookmarks = this.bookmark('get', 'all')
                 .then(function (data) {
-                    App.userBookmarks = data;
-                    _.each(items, function (t, i) {
+                    var bookmarks = [];
+                    _.each(data, function (t, i) {
                         var imdb_id = i;
-                        App.userBookmarks.push(imdb_id);
+                        bookmarks.push(imdb_id);
                     });
-                });
-            /*
-            var movies = this.watched('get', 'movie')
-                .then(function (data) {
-                    App.watchedMovies = extractMovieIds(data);
+                    App.userBookmarks = bookmarks;
                 });
 
-            var episodes = this.watched('get', 'show')
+            var movies = this.watched('get', 'movie', 'all')
                 .then(function (data) {
-                    App.watchedShows = extractIds(data);
+                    var watchedmovies = [];
+                    _.each(data, function (t, i) {
+                        var imdb_id = i;
+                        watchedmovies.push(imdb_id);
+                    });
+                    App.watchedMovies = watchedmovies;
                 });
 
-            return Q.all([bookmarks, movies, episodes]);
-            */
+            var episodes = this.watched('get', 'show', 'all')
+                .then(function (data) {
+                    var watchedshows = [];
+                    _.each(data, function (d) {
+                        var tvdb_id = d.tvdb_id;
+                        watchedshows.push(tvdb_id);
+                    });
+                    console.log(watchedshows);
+                    App.watchedShows = watchedshows;
+                });
+
         },
         movie: function (action, data) {
             var toreturn;
@@ -44,7 +54,7 @@
                 break;
             case 'add':
                 if (!localStorage.getItem('movie-' + data.imdb_id)) {
-                    localStorage.setItem(movie, JSON.stringify('movie-' + data.imdb_id));
+                    localStorage.setItem('movie-' + data.imdb_id, JSON.stringify(data));
                     toreturn = true;
                 }
                 break;
@@ -63,7 +73,7 @@
                 break;
             case 'add':
                 if (!localStorage.getItem('show-' + data.imdb_id)) {
-                    localStorage.setItem(show, JSON.stringify('show-' + data.imdb_id));
+                    localStorage.setItem('show-' + data.imdb_id, JSON.stringify(data));
                 }
                 toreturn = true;
                 break;
@@ -110,7 +120,7 @@
             return Q(toreturn);
         },
         watched: function (action, type, data) {
-
+            console.log(action, type, data);
             var toreturn, item;
             if (type && data) {
                 switch (type) {
@@ -124,7 +134,7 @@
             }
             switch (action) {
             case 'get':
-                var watched = {},
+                var watcheditems = {},
                     find;
                 if (data === 'all') {
                     find = 'watched-' + type;
@@ -133,26 +143,35 @@
                 }
                 for (var key in localStorage) {
                     if (key.toString().includes(find)) {
+
+                        var i;
                         var d = key.split('-');
                         var type = d[1];
                         var imdb_id = d[2];
                         var tvdb_id, episode_id;
-                        if (type !== 'show') {
+                        if (type === 'show') {
                             tvdb_id = d[3];
                             episode_id = d[4];
+                            i = tvdb_id;
                         } else {
+                            i = imdb_id;
                             tvdb_id = false;
                             episode_id = false;
                         }
-                        watched[imdb_id] = {
-                            type: type,
-                            imdb_id: imdb_id,
-                            tvdb_id: tvdb_id,
-                            episode_id: episode_id
+
+                        var newwatched = {
+                            'type': type,
+                            'imdb_id': imdb_id,
+                            'tvdb_id': tvdb_id,
+                            'episode_id': episode_id
                         };
+                        watcheditems[i] = newwatched;
+
+
+                        console.log(watcheditems, episode_id);
                     }
                 }
-                toreturn = watched;
+                toreturn = watcheditems;
                 break;
             case 'check':
                 if (localStorage.getItem(item) !== null) {

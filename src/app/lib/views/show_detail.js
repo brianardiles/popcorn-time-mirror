@@ -114,9 +114,8 @@
             _this = this;
             this.renameUntitled();
 
-            App.vent.on('show:watched:' + this.model.id, _.bind(this.onWatched, this));
-            App.vent.on('show:unwatched:' + this.model.id, _.bind(this.onUnWatched, this));
 
+            App.vent.on('watched', _.bind(this.onWatched, this));
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster, 'thumb');
@@ -378,8 +377,7 @@
                     imdb_id: imdb_id,
                     episode_id: episode.tvdb_id,
                     season: episode.season,
-                    episode: episode.episode,
-                    from_browser: true
+                    episode: episode.episode
                 };
                 App.Database.watched('check', 'show', value)
                     .then(function (watched) {
@@ -392,13 +390,17 @@
             });
         },
 
-        onWatched: function (value, channel) {
-            this.markWatched(value, true);
-            this.selectNextEpisode();
-        },
+        onWatched: function (method, type, data) {
+            if (type !== 'show') {
+                return;
+            }
+            if (method === 'add') {
+                this.markWatched(data, true);
+                this.selectNextEpisode();
+            } else if (method === 'remove') {
+                this.markWatched(data, false);
+            }
 
-        onUnWatched: function (value, channel) {
-            this.markWatched(value, false);
         },
 
         markWatched: function (value, state) {

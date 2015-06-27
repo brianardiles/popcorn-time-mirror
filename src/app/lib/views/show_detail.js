@@ -427,7 +427,7 @@
             var episodes_data = [];
             var selected_quality = $(e.currentTarget).attr('data-quality');
 
-            if (AdvSettings.get('playNextEpisodeAuto')) {
+            if (AdvSettings.get('playNextEpisodeAuto') && this.model.get('imdb_id').indexOf('mal') === -1) {
                 _.each(this.model.get('episodes'), function (value) {
                     var epaInfo = {
                         id: parseInt(value.season) * 100 + parseInt(value.episode),

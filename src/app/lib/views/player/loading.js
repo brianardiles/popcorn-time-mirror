@@ -293,6 +293,11 @@
 
         fetchTVSubtitles: function (data) {
             var that = this;
+
+            // fix for anime
+            if (data.imdbid.indexOf('mal') !== -1) {
+                data.imdbid = null;
+            }
             console.log(data);
             win.debug('Subtitles data request:', data);
 

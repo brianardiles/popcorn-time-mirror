@@ -280,8 +280,8 @@ vjs.TextTrack.prototype.load = function () {
             var parse = function (strings) {
                 strings = strings
                     .replace(/\{.*\}/g, '') // {/pos(x,y)}
-                    .replace(/(- |==|sync).*[\s\S].*[\s\S].*[\s\S].*[\s\S].*\.(com|org|net|edu)/ig, '') // various teams
-                    .replace(/[^0-9][\s\S][^0-9\W].*[\s\S].*[\s\S].*opensubtitles.*/ig, ''); // opensubs "contact us" ads
+                .replace(/(- |==|sync).*[\s\S].*[\s\S].*[\s\S].*[\s\S].*\.(com|org|net|edu)/ig, '') // various teams
+                .replace(/[^0-9][\s\S][^0-9\W].*[\s\S].*[\s\S].*opensubtitles.*/ig, ''); // opensubs "contact us" ads
 
                 callback(strings);
             };
@@ -463,4 +463,20 @@ vjs.ErrorDisplay.prototype.update = function () {
 // Remove videojs key listeners
 vjs.Button.prototype.onKeyPress = function (event) {
     return;
+};
+
+// Dispose needs to clear currentTimeInterval to avoid vdata error (https://github.com/videojs/video.js/issues/1484#issuecomment-55245716)
+vjs.MediaTechController.prototype.dispose = function () {
+    // Turn off any manual progress or timeupdate tracking
+    if (this.manualProgress) {
+        this.manualProgressOff();
+    }
+
+    if (this.manualTimeUpdates) {
+        this.manualTimeUpdatesOff();
+    }
+
+    clearInterval(this.currentTimeInterval);
+
+    vjs.Component.prototype.dispose.call(this);
 };

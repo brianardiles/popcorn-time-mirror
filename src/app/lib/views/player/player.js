@@ -814,22 +814,17 @@
 
             this.sendToTrakt('stop');
 
-
             if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
+
+                this.sendToTrakt('stop');
+>>>>>>> 5fa3d9749df6d85a5040228e9167a02112b68c0c
                 var watchObject = this.model.get('metadata');
                 App.vent.trigger(type + ':watched', watchObject, 'database');
             }
 
             // clear last pos
             if (!(this.video.currentTime() / this.video.duration() < 0.8) && type !== 'trailer') {
-                console.log('CLEARNING LAST WATCHED TIME');
                 AdvSettings.set('lastWatchedTime', false);
-            }
-
-            try {
-                this.video.dispose();
-            } catch (e) {
-                // Stop weird Videojs errors
             }
 
             this.ui.pause.dequeue();
@@ -853,6 +848,9 @@
 
             App.vent.trigger('player:close');
 
+            var vjsPlayer = document.getElementById('video_player');
+            videojs(vjsPlayer).dispose();
+
             if (this.model.get('type') !== 'trailer') {
                 if (!next) {
                     App.vent.trigger('streamer:stop');
@@ -871,6 +869,7 @@
                     App.vent.trigger('stream:local', playerModel);
                 }
             }
+
         }
     });
     App.View.Player = Player;

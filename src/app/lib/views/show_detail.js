@@ -56,60 +56,6 @@
             'f': 'toggleFavorite'
         },
 
-
-        toggleFavorite: function (e) {
-
-            if (e.type) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            var that = this;
-
-            if (bookmarked !== true) {
-                bookmarked = true;
-
-                var provider = App.Providers.get(this.model.get('provider'));
-                var data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
-                    .then(function (data) {
-                            data.provider = that.model.get('provider');
-
-                            App.Database.show('add', data)
-                                .then(function (d) {
-                                    return App.Database.bookmark('add', 'show', that.model.get('imdb_id'));
-                                })
-                                .then(function () {
-                                    win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
-                                    that.model.set('bookmarked', true);
-                                    that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
-                                    App.userBookmarks.push(that.model.get('imdb_id'));
-                                });
-                        },
-                        function (err) {
-                            $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
-                        });
-
-            } else {
-                that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
-                bookmarked = false;
-
-                App.Database.bookmark('remove', 'show', this.model.get('imdb_id'))
-                    .then(function () {
-                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
-
-                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
-
-                        App.Database.show('remove', that.model.get('imdb_id'));
-
-                        if (App.currentview === 'Favorites') {
-                            App.vent.trigger('favorites:render');
-                        }
-                    });
-
-
-            }
-        },
-
-
         initialize: function () {
             _this = this;
             this.renameUntitled();
@@ -137,9 +83,7 @@
             }
         },
 
-
         onShow: function () {
-
 
             bookmarked = App.userBookmarks.indexOf(this.model.get('imdb_id')) !== -1;
 
@@ -205,7 +149,57 @@
 
 
         },
+        toggleFavorite: function (e) {
 
+            if (e.type) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var that = this;
+
+            if (bookmarked !== true) {
+                bookmarked = true;
+
+                var provider = App.Providers.get(this.model.get('provider'));
+                var data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
+                    .then(function (data) {
+                            data.provider = that.model.get('provider');
+
+                            App.Database.show('add', data)
+                                .then(function (d) {
+                                    return App.Database.bookmark('add', 'show', that.model.get('imdb_id'));
+                                })
+                                .then(function () {
+                                    win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
+                                    that.model.set('bookmarked', true);
+                                    that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
+                                    App.userBookmarks.push(that.model.get('imdb_id'));
+                                });
+                        },
+                        function (err) {
+                            $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
+                        });
+
+            } else {
+                that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
+                bookmarked = false;
+
+                App.Database.bookmark('remove', 'show', this.model.get('imdb_id'))
+                    .then(function () {
+                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
+
+                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
+
+                        App.Database.show('remove', that.model.get('imdb_id'));
+
+                        if (App.currentview === 'Favorites') {
+                            App.vent.trigger('favorites:render');
+                        }
+                    });
+
+
+            }
+        },
         selectNextEpisode: function () {
 
             var episodesSeen = [];

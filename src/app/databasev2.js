@@ -10,7 +10,7 @@
 
             App.vent.on('watched', _.bind(this.watched, this));
 
-            this.getUserInfo()
+            //this.getUserInfo()
 
         },
         getUserInfo: function () {
@@ -106,6 +106,13 @@
                     toreturn = JSON.parse(localStorage.getItem(item));
                 }
                 break;
+            case 'check':
+                if (localStorage.getItem(item) !== null) {
+                    toreturn = true;
+                } else {
+                    toreturn = false;
+                }
+                break;
             case 'add':
                 if (!localStorage.getItem(item)) {
                     localStorage.setItem(item, JSON.stringify(data));
@@ -125,7 +132,11 @@
             if (type && data) {
                 switch (type) {
                 case 'show':
-                    item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id + '-' + data.episode_id;
+                    if (action === 'get-all') {
+                        item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id;
+                    } else {
+                        item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id + '-' + data.episode_id;
+                    }
                     break;
                 case 'movie':
                     item = 'watched-' + type + '-' + data;
@@ -133,17 +144,11 @@
                 }
             }
             switch (action) {
+            case 'get-all':
             case 'get':
-                var watcheditems = {},
-                    find;
-                if (data === 'all') {
-                    find = 'watched-' + type;
-                } else {
-                    find = 'watched-' + type + '-' + data;
-                }
+                var watcheditems = {};
                 for (var key in localStorage) {
-                    if (key.toString().includes(find)) {
-
+                    if (key.toString().includes(item)) {
                         var i;
                         var d = key.split('-');
                         var type = d[1];
@@ -166,8 +171,6 @@
                             'episode_id': episode_id
                         };
                         watcheditems[i] = newwatched;
-
-
                         console.log(watcheditems, episode_id);
                     }
                 }

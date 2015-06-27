@@ -32,29 +32,32 @@
         initialize: function () {
 
             var imdb = this.model.get('imdb_id'),
-                bookmarked = App.userBookmarks.indexOf(imdb) !== -1,
                 itemtype = this.model.get('type'),
                 images = this.model.get('images'),
                 img = (images) ? images.poster : this.model.get('image'),
-                watched, cached, that = this;
+                watched, bookmarked, cached, that = this;
+
+            App.Database.bookmark('check', this.model.get('type'), imdb).then(function (d) {
+                bookmarked = d;
+                that.model.set('bookmarked', bookmarked);
+                App.Database.watched('check', that.model.get('type'), imdb).then(function (w) {
+                    watched = w;
+                    that.model.set('watched', watched);
+                });
+            });
 
             switch (itemtype) {
             case 'bookmarkedshow':
-                watched = App.watchedShows.indexOf(imdb) !== -1;
                 this.model.set('image', App.Trakt.resizeImage(img, 'thumb'));
                 break;
             case 'show':
-                watched = App.watchedShows.indexOf(imdb) !== -1;
                 images.poster = App.Trakt.resizeImage(img, 'thumb');
                 break;
             case 'bookmarkedmovie':
             case 'movie':
-                watched = App.watchedMovies.indexOf(imdb) !== -1;
                 this.model.set('image', img);
                 break;
             }
-            this.model.set('watched', watched);
-            this.model.set('bookmarked', bookmarked);
 
             var date = new Date();
             var today = ('0' + (date.getMonth() + 　1)).slice(-2) + ('0' + (date.getDate())).slice(-2);

@@ -817,7 +817,6 @@
             if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
 
                 this.sendToTrakt('stop');
->>>>>>> 5fa3d9749df6d85a5040228e9167a02112b68c0c
                 var watchObject = this.model.get('metadata');
                 App.vent.trigger(type + ':watched', watchObject, 'database');
             }

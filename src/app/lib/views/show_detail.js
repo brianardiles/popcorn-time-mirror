@@ -173,7 +173,6 @@
                                     win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
                                     that.model.set('bookmarked', true);
                                     that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
-                                    App.userBookmarks.push(that.model.get('imdb_id'));
                                 });
                         },
                         function (err) {
@@ -183,21 +182,14 @@
             } else {
                 that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
                 bookmarked = false;
-
                 App.Database.bookmark('remove', 'show', this.model.get('imdb_id'))
                     .then(function () {
-                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
-
                         win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
-
                         App.Database.show('remove', that.model.get('imdb_id'));
-
                         if (App.currentview === 'Favorites') {
                             App.vent.trigger('favorites:render');
                         }
                     });
-
-
             }
         },
         selectNextEpisode: function () {
@@ -324,7 +316,6 @@
                     season: edata[1],
                     episode: edata[2]
                 };
-
                 App.Database.watched('check', 'show', value)
                     .then(function (watched) {
                         if (watched) {

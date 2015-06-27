@@ -16,25 +16,33 @@
         getUserInfo: function () {
             var bookmarks = this.bookmark('get', 'all')
                 .then(function (data) {
-                    App.userBookmarks = data;
-                    _.each(items, function (t, i) {
+                    _.each(data, function (t, i) {
                         var imdb_id = i;
                         App.userBookmarks.push(imdb_id);
                     });
                 });
-            /*
-            var movies = this.watched('get', 'movie')
+
+            var movies = this.watched('get', 'movie', 'all')
                 .then(function (data) {
-                    App.watchedMovies = extractMovieIds(data);
+                    _.each(data, function (t, i) {
+                        var imdb_id = i;
+                        App.watchedMovies.push(imdb_id);
+                    });
                 });
 
-            var episodes = this.watched('get', 'show')
+            var episodes = this.watched('get', 'show', 'all')
                 .then(function (data) {
-                    App.watchedShows = extractIds(data);
+                    _.each(data, function (d) {
+                        console.log(d);
+                        var tvdb_id = d.tvdb_id;
+                        console.log(tvdb_id);
+                        App.watchedShows.push(tvdb_id);
+                    });
                 });
+
 
             return Q.all([bookmarks, movies, episodes]);
-            */
+
         },
         movie: function (action, data) {
             var toreturn;
@@ -110,7 +118,7 @@
             return Q(toreturn);
         },
         watched: function (action, type, data) {
-
+            console.log(action, type, data);
             var toreturn, item;
             if (type && data) {
                 switch (type) {
@@ -137,7 +145,7 @@
                         var type = d[1];
                         var imdb_id = d[2];
                         var tvdb_id, episode_id;
-                        if (type !== 'show') {
+                        if (type === 'show') {
                             tvdb_id = d[3];
                             episode_id = d[4];
                         } else {

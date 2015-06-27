@@ -15,51 +15,64 @@
 
         },
         movie: function (action, data) {
-            var movie = 'movie-' + data.imdb_id;
             var toreturn;
             switch (action) {
             case 'get':
-                toreturn = JSON.parse(localStorage.getItem(movie));
+                toreturn = JSON.parse(localStorage.getItem('movie-' + data));
                 break;
             case 'add':
-                if (!localStorage.getItem(movie)) {
-                    localStorage.setItem(movie, JSON.stringify(data));
+                if (!localStorage.getItem('movie-' + data.imdb_id)) {
+                    localStorage.setItem(movie, JSON.stringify('movie-' + data.imdb_id));
                     toreturn = true;
                 }
                 break;
             case 'remove':
-                localStorage.removeItem(movie);
+                localStorage.removeItem('movie-' + data);
                 toreturn = true;
                 break;
             }
             return Q(toreturn);
         },
         show: function (action, data) {
-            var show = 'show-' + data.imdb_id;
             var toreturn;
             switch (action) {
             case 'get':
-                toreturn = JSON.parse(localStorage.getItem(show));
+                toreturn = JSON.parse(localStorage.getItem('show-' + data));
                 break;
             case 'add':
-                if (!localStorage.getItem(show)) {
-                    localStorage.setItem(show, JSON.stringify(data));
+                if (!localStorage.getItem('show-' + data.imdb_id)) {
+                    localStorage.setItem(show, JSON.stringify('show-' + data.imdb_id));
                 }
                 toreturn = true;
                 break;
             case 'remove':
-                localStorage.removeItem(show);
+                localStorage.removeItem('show-' + data);
                 toreturn = true;
                 break;
             }
             return Q(toreturn);
         },
         bookmark: function (action, type, data) {
-            var item = 'bookmark-' + type + '-' + data.imdb_id;
+            if (data && type) {
+                var item = 'bookmark-' + type + '-' + data;
+            }
             var toreturn;
             switch (action) {
             case 'get':
-                toreturn = JSON.parse(localStorage.getItem(item));
+                if (type === 'all') { //we are fetching all bookmarks!
+                    var bookmarked = {};
+                    for (var key in localStorage) {
+                        if (key.toString().includes('bookmark')) {
+                            var d = key.split('-');
+                            var type = d[1];
+                            var imdb_id = d[2];
+                            bookmarked[imdb_id] = type;
+                        }
+                    }
+                    toreturn = bookmarked;
+                } else {
+                    toreturn = JSON.parse(localStorage.getItem(item));
+                }
                 break;
             case 'add':
                 if (!localStorage.getItem(item)) {

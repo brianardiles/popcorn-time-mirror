@@ -110,7 +110,7 @@
             return Q(toreturn);
         },
         watched: function (action, type, data) {
-            console.log(action, type, data);
+
             var toreturn, item;
             if (type && data) {
                 switch (type) {
@@ -155,7 +155,7 @@
                 toreturn = watched;
                 break;
             case 'check':
-                if (localStorage.getItem(item)) {
+                if (localStorage.getItem(item) !== null) {
                     toreturn = true;
                 } else {
                     toreturn = false;

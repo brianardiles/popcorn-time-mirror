@@ -329,16 +329,15 @@
                     imdb_id: _this.model.get('imdb_id'),
                     episode_id: $('#watch-now').attr('data-episodeid'),
                     season: edata[1],
-                    episode: edata[2],
-                    from_browser: true
+                    episode: edata[2]
                 };
 
-                Database.checkEpisodeWatched(value)
+                App.Database.watched('check', 'show', value)
                     .then(function (watched) {
                         if (watched) {
-                            App.vent.trigger('show:unwatched', value, 'seen');
+                            App.vent.trigger('watched', 'remove', 'show', value);
                         } else {
-                            App.vent.trigger('show:watched', value, 'seen');
+                            App.vent.trigger('watched', 'add', 'show', value);
                         }
                     });
             }, 100);
@@ -354,15 +353,15 @@
                     tvdb_id: tvdb_id,
                     imdb_id: imdb_id,
                     season: episode.season,
-                    episode: episode.episode,
-                    from_browser: true
+                    episode: episode.episode
                 };
-                Database.checkEpisodeWatched(value)
+                App.Database.watched('check', 'show', value)
                     .then(function (watched) {
                         if (!watched) {
                             $('.show-watched-toggle').show();
                         }
                     });
+
             });
         },
 

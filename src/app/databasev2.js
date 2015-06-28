@@ -9,7 +9,6 @@ var App = new Backbone.Marionette.Application();
     var Database = Backbone.Model.extend({
         initialize: function () {
             App.vent.on('watched', _.bind(this.watched, this));
-
         },
         setting: function (action, data) {
             var toreturn;
@@ -18,10 +17,8 @@ var App = new Backbone.Marionette.Application();
                 toreturn = JSON.parse(localStorage.getItem('setting-' + data.key));
                 break;
             case 'set':
-                if (!localStorage.getItem('setting-' + data.key)) {
-                    localStorage.setItem('setting-' + data.key, JSON.stringify(data.value));
-                    toreturn = true;
-                }
+                localStorage.setItem('setting-' + data.key, JSON.stringify(data.value));
+                toreturn = true;
                 break;
             case 'remove':
                 localStorage.removeItem('setting-' + data.key);

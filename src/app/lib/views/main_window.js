@@ -187,9 +187,8 @@
                     $('link#theme').attr('href', 'themes/' + Settings.theme + '.css');
                     // Always on top
                     win.setAlwaysOnTop(Settings.alwaysOnTop);
-
-                    splashwin.close(true);
                     require('nw.gui').Window.get().show();
+                    splashwin.close(true);
 
                     // we check if the disclaimer is accepted
                     if (!AdvSettings.get('disclaimerAccepted')) {

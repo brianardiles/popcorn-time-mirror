@@ -244,7 +244,6 @@ win.on('resize', function (width, height) {
 win.on('move', function (x, y) {
     localStorage.posX = Math.round(x);
     localStorage.posY = Math.round(y);
-
 });
 
 var delCache = function () {
@@ -302,18 +301,7 @@ Mousetrap.bind('mod+,', function (e) {
     App.vent.trigger('settings:show');
 });
 Mousetrap.bind('f11', function (e) {
-    Settings.deleteTmpOnClose = false;
-    var spawn = require('child_process').spawn,
-        argv = gui.App.fullArgv,
-        CWD = process.cwd();
-
-    argv.push(CWD);
-    spawn(process.execPath, argv, {
-        cwd: CWD,
-        detached: true,
-        stdio: ['ignore', 'ignore', 'ignore']
-    }).unref();
-    gui.App.quit();
+    win.reloadIgnoringCache();
 });
 Mousetrap.bind(['?', '/', '\''], function (e) {
     e.preventDefault();

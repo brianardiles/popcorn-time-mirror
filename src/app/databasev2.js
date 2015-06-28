@@ -1,7 +1,6 @@
 // Global App skeleton for backbone
 var App = new Backbone.Marionette.Application();
 
-
 (function (App) {
     'use strict';
     var Q = require('q');

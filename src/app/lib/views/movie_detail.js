@@ -40,7 +40,7 @@
             var _this = this;
 
             //Handle keyboard shortcuts when other views are appended or removed
-
+            App.vent.on('watched', _.bind(this.onWatched, this));
             this.model.on('change:quality', this.renderHealth, this);
         },
 
@@ -139,6 +139,20 @@
 
             App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
             App.Device.ChooserView('#player-chooser').render();
+        },
+        onWatched: function (method, type) {
+            if (type !== 'movie') {
+                return;
+            }
+            if (method === 'add') {
+                this.model.set('watched', true);
+                this.ui.watchedIcon.addClass('selected').text(i18n.__('Seen'));
+            } else if (method === 'remove') {
+                this.model.set('watched', false);
+                this.ui.watchedIcon.removeClass('selected').text(i18n.__('Not Seen'));
+            }
+            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-watched').click();
+
         },
 
         handleAnime: function () {
@@ -264,8 +278,7 @@
 
             $('.health-icon').tooltip({
                 html: true
-            })
-                .removeClass('Bad Medium Good Excellent')
+            }).removeClass('Bad Medium Good Excellent')
                 .addClass(health)
                 .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + torrent.seed + ' - ' + i18n.__('Peers:') + ' ' + torrent.peer)
                 .tooltip('fixTitle');

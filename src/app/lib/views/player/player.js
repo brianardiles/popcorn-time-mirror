@@ -801,7 +801,6 @@
             this.playing = false;
             win.info('Player closed');
 
-
             var type = this.model.get('type');
 
             if (type !== 'trailer') {
@@ -815,10 +814,8 @@
             this.sendToTrakt('stop');
 
             if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
-
                 this.sendToTrakt('stop');
                 var watchObject = this.model.get('metadata');
-
                 App.vent.trigger('watched', 'add', type, watchObject);
             }
 
@@ -846,11 +843,9 @@
                 $('.btn-os.fullscreen').removeClass('active');
             }
 
-            App.vent.trigger('player:close');
-
             var vjsPlayer = document.getElementById('video_player');
             videojs(vjsPlayer).dispose();
-
+            App.vent.trigger('player:close');
             if (this.model.get('type') !== 'trailer') {
                 if (!next) {
                     App.vent.trigger('streamer:stop');
@@ -863,6 +858,7 @@
                         App.vent.trigger('preloadStreamer:stop');
                     }
                     var playerModel = new Backbone.Model(this.NextEpisode);
+
                     App.vent.trigger('stream:local', playerModel);
                 }
             }

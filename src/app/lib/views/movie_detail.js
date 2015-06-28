@@ -37,8 +37,6 @@
         },
 
         initialize: function () {
-            var _this = this;
-
             //Handle keyboard shortcuts when other views are appended or removed
             App.vent.on('watched', _.bind(this.onWatched, this));
             this.model.on('change:quality', this.renderHealth, this);
@@ -140,8 +138,8 @@
             App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
             App.Device.ChooserView('#player-chooser').render();
         },
-        onWatched: function (method, type) {
-            if (type !== 'movie') {
+        onWatched: function (method, type, data) {
+            if (type !== 'movie' || data.imdb_id !== this.model.get('imdb_id')) {
                 return;
             }
             if (method === 'add') {
@@ -152,7 +150,6 @@
                 this.ui.watchedIcon.removeClass('selected').text(i18n.__('Not Seen'));
             }
             $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-watched').click();
-
         },
 
         handleAnime: function () {

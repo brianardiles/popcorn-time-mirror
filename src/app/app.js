@@ -167,7 +167,6 @@ var initTemplates = function () {
 
 var initApp = function () {
     var mainWindow = new App.View.MainWindow();
-    win.show();
 
     try {
         App.Window.show(mainWindow);

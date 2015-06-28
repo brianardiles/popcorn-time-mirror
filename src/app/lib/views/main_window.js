@@ -158,7 +158,6 @@
             // Set the app title (for Windows mostly)
             this.nativeWindow.title = App.Config.title;
             // Show loading modal on startup
-            this.Content.show(new App.View.InitModal());
             var that = this;
 
             AdvSettings.init().then(function (f) { // Create the System Temp Folder. This is used to store temporary data like movie files.
@@ -189,7 +188,9 @@
                     // Always on top
                     win.setAlwaysOnTop(Settings.alwaysOnTop);
 
-                    that.InitModal.destroy();
+                    splashwin.close(true);
+                    require('nw.gui').Window.get().show();
+
                     // we check if the disclaimer is accepted
                     if (!AdvSettings.get('disclaimerAccepted')) {
                         that.showDisclaimer();

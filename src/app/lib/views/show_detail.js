@@ -527,8 +527,6 @@
             this.selectedTorrent.episode = $('.template-' + tvdbid + ' .episode').html();
             this.selectedTorrent.title = $('.template-' + tvdbid + ' .title').html();
 
-
-            console.log($('.startStreaming'));
             this.ui.startStreaming.show();
             this.resetHealth();
 

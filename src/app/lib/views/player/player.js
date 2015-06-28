@@ -818,7 +818,8 @@
 
                 this.sendToTrakt('stop');
                 var watchObject = this.model.get('metadata');
-                App.vent.trigger(type + ':watched', watchObject, 'database');
+
+                App.vent.trigger('watched', 'add', type, watchObject);
             }
 
             // clear last pos
@@ -856,12 +857,9 @@
                     App.vent.trigger('preloadStreamer:stop');
                 } else {
                     if (this.model.attributes.autoPlayData.streamer === 'preload') {
-                        App.Streamer.src = false;
                         App.vent.trigger('streamer:stop');
-                        console.log('DESTROYING MAIN STREAMER');
                     } else {
                         console.log('DESTROYING PRELOAD STREAMER');
-                        App.PreloadStreamer.src = false;
                         App.vent.trigger('preloadStreamer:stop');
                     }
                     var playerModel = new Backbone.Model(this.NextEpisode);

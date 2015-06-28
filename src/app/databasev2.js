@@ -3,7 +3,6 @@
     var Q = require('q');
 
     var Database = Backbone.Model.extend({
-
         initialize: function () {
             var startupTime = window.performance.now();
             console.debug('Database path: ' + data_path);
@@ -127,7 +126,6 @@
             return Q(toreturn);
         },
         watched: function (action, type, data) {
-            console.log(action, type, data);
             var toreturn, item;
             if (type && data) {
                 switch (type) {
@@ -171,7 +169,6 @@
                             'episode_id': episode_id
                         };
                         watcheditems[i] = newwatched;
-                        console.log(watcheditems, episode_id);
                     }
                 }
                 toreturn = watcheditems;

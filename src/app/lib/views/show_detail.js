@@ -327,15 +327,17 @@
             }, 100);
         },
 
+
         isShowWatched: function () {
             var tvdb_id = _this.model.get('tvdb_id');
             var imdb_id = _this.model.get('imdb_id');
-
+            var that = this;
             var episodes = this.model.get('episodes');
             episodes.forEach(function (episode, index, array) {
                 var value = {
                     tvdb_id: tvdb_id,
                     imdb_id: imdb_id,
+                    episode_id: episode.tvdb_id,
                     season: episode.season,
                     episode: episode.episode
                 };
@@ -343,6 +345,8 @@
                     .then(function (watched) {
                         if (!watched) {
                             $('.show-watched-toggle').show();
+                        } else {
+                            that.markWatched(value, true);
                         }
                     });
 
@@ -356,11 +360,12 @@
             var imdb_id = _this.model.get('imdb_id');
 
             var episodes = _this.model.get('episodes');
+
+
             episodes.forEach(function (episode, index, array) {
                 var value = {
                     tvdb_id: tvdb_id,
                     imdb_id: imdb_id,
-                    episode_id: episode.tvdb_id,
                     season: episode.season,
                     episode: episode.episode
                 };
@@ -370,7 +375,6 @@
                             App.vent.trigger('watched', 'add', 'show', value);
                             $('.show-watched-toggle').hide();
                         }
-
                     });
             });
         },

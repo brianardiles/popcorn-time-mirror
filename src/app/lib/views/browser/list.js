@@ -360,13 +360,12 @@
             var postersWidthIndex = Settings.postersJump.indexOf(parseInt(Settings.postersWidth));
 
             if (postersWidthIndex !== -1 && postersWidthIndex + 1 in Settings.postersJump) {
-                App.db.writeSetting({
-                        key: 'postersWidth',
-                        value: Settings.postersJump[postersWidthIndex + 1]
-                    })
-                    .then(function () {
-                        App.vent.trigger('updatePostersSizeStylesheet');
-                    });
+                App.Database.setting('set', {
+                    key: 'postersWidth',
+                    value: Settings.postersJump[postersWidthIndex + 1]
+                }).then(function () {
+                    App.vent.trigger('updatePostersSizeStylesheet');
+                });
             } else {
                 // do nothing for now
             }
@@ -381,14 +380,12 @@
             } else {
                 postersWidth = Settings.postersJump[0];
             }
-
-            App.db.writeSetting({
-                    key: 'postersWidth',
-                    value: postersWidth
-                })
-                .then(function () {
-                    App.vent.trigger('updatePostersSizeStylesheet');
-                });
+            App.Database.setting('set', {
+                key: 'postersWidth',
+                value: postersWidth
+            }).then(function () {
+                App.vent.trigger('updatePostersSizeStylesheet');
+            });
         },
 
 

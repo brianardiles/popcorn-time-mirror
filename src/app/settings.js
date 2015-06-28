@@ -4,7 +4,6 @@ var Q = require('q'),
     _ = require('underscore'),
     data_path = require('nw.gui').App.dataPath;
 
-
 /** Default settings **/
 var Settings = {};
 
@@ -164,8 +163,6 @@ var ScreenResolution = {
 };
 
 var AdvSettings = {
-
-
     init: function () {
         var defer = Q.defer();
         var total = Object.keys(Settings).length;
@@ -189,14 +186,12 @@ var AdvSettings = {
         });
         return defer.promise;
     },
-
     get: function (variable) {
         if (typeof Settings[variable] !== 'undefined') {
             return Settings[variable];
         }
         return false;
     },
-
     set: function (variable, newValue) {
         App.Database.setting('set', {
             key: variable,
@@ -205,14 +200,12 @@ var AdvSettings = {
             Settings[variable] = newValue;
         });
     },
-
     setup: function () {
-
-        AdvSettings.performUpgrade();
         AdvSettings.checkAdmin();
         AdvSettings.getHardwareInfo();
+        AdvSettings.set('version', require('nw.gui').App.manifest.version);
+        AdvSettings.set('releaseName', require('nw.gui').App.manifest.releaseName);
     },
-
     getHardwareInfo: function () {
         if (/64/.test(process.arch)) {
             AdvSettings.set('arch', 'x64');
@@ -316,7 +309,7 @@ var AdvSettings = {
                     if (!_.isRegExp(endpoint.fingerprint) || !endpoint.fingerprint.test(body.toString('utf8'))) {
                         console.warn('[%s] Endpoint fingerprint %s does not match %s',
                             url.hostname,
-                            endpoint.fingerprint,
+                            JSON.stringify(endpoint.fingerprint),
                             body.toString('utf8'));
                         tryNextEndpoint();
                     } else {
@@ -382,16 +375,7 @@ var AdvSettings = {
         }
 
         return defer.promise;
-    },
+    }
 
-    performUpgrade: function () {
-        // This gives the official version (the package.json one)
-        gui = require('nw.gui');
-        var currentVersion = gui.App.manifest.version;
 
-        AdvSettings.set('version', currentVersion);
-        AdvSettings.set('releaseName', gui.App.manifest.releaseName);
-    },
 };
-
-AdvSettings.setup();

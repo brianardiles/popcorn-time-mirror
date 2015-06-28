@@ -9,7 +9,7 @@ var Q = require('q'),
 var Settings = {};
 
 // User interface
-Settings.language = '';
+Settings.language = 'english';
 Settings.translateSynopsis = true;
 Settings.coversShowRating = true;
 Settings.watchedCovers = 'fade';
@@ -167,20 +167,27 @@ var AdvSettings = {
 
 
     init: function () {
+        var defer = Q.defer();
+        var total = Object.keys(Settings).length;
+        var count = 0;
         _.each(Settings, function (v, k) {
             var key = k;
             var value = v;
             App.Database.setting('get', {
                 key: key
             }).then(function (i) {
+                count++;
                 if (!i) {
                     AdvSettings.set(key, value);
                 } else {
                     Settings[key] = i;
                 }
+                if (count === total) {
+                    defer.resolve(true);
+                }
             });
         });
-
+        return defer.promise;
     },
 
     get: function (variable) {
@@ -200,10 +207,10 @@ var AdvSettings = {
     },
 
     setup: function () {
-        AdvSettings.init();
+
         AdvSettings.performUpgrade();
         AdvSettings.checkAdmin();
-        return AdvSettings.getHardwareInfo();
+        AdvSettings.getHardwareInfo();
     },
 
     getHardwareInfo: function () {

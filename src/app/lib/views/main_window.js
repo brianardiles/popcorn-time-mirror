@@ -40,11 +40,6 @@
             App.Trakt = App.Config.getProvider('metadata');
             App.TVShowTime = App.Config.getProvider('tvst');
 
-            AdvSettings.checkApiEndpoints([
-                Settings.tvshowAPI,
-                Settings.updateEndpoint
-            ]);
-
             window.setLanguage(Settings.language);
 
             App.vent.trigger('initHttpApi');
@@ -147,6 +142,11 @@
             App.vent.on('vpn:connect', _.bind(this.connectVpn, this));
 
             App.vent.on('updatePostersSizeStylesheet', _.bind(this.updatePostersSizeStylesheet, this));
+
+            AdvSettings.checkApiEndpoints([
+                Settings.tvshowAPI,
+                Settings.updateEndpoint
+            ]);
         },
 
         showSubtitles: function (model) {
@@ -161,77 +161,78 @@
             this.Header.show(new App.View.TitleBar());
             // Set the app title (for Windows mostly)
             this.nativeWindow.title = App.Config.title;
-
+            this.Content.show(new App.View.InitModal());
             // Show loading modal on startup
             var that = this;
 
-
-            // Create the System Temp Folder. This is used to store temporary data like movie files.
-            if (!fs.existsSync(Settings.tmpLocation)) {
-                fs.mkdir(Settings.tmpLocation, function (err) {
-                    if (!err || err.errno === '-4075') {
-                        //success
-                    } else {
-                        Settings.tmpLocation = path.join(os.tmpDir(), 'Popcorn-Time');
-                        fs.mkdir(Settings.tmpLocation);
-                    }
-                });
-            }
-
-            try {
-                require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
-            } catch (e) {
-                Settings.theme = 'Official_-_Dark_theme';
-                AdvSettings.set('theme', 'Official_-_Dark_theme');
-            }
-
-            $('link#theme').attr('href', 'themes/' + Settings.theme + '.css');
-            // Always on top
-            win.setAlwaysOnTop(App.settings.alwaysOnTop);
-
-            // we check if the disclaimer is accepted
-            if (!AdvSettings.get('disclaimerAccepted')) {
-                that.showDisclaimer();
-            }
-
-            var lastOpen = (Settings.startScreen === 'Last Open') ? true : false;
-
-            if (Settings.startScreen === 'Watchlist' || (lastOpen && Settings.lastTab === 'Watchlist')) {
-                that.showWatchlist();
-            } else if (Settings.startScreen === 'Favorites' || (lastOpen && Settings.lastTab === 'Favorites')) {
-                that.showFavorites();
-            } else if (Settings.startScreen === 'TV Series' || (lastOpen && Settings.lastTab === 'TV Series')) {
-                that.showShows();
-            } else if (Settings.startScreen === 'Anime' || (lastOpen && Settings.lastTab === 'Anime')) {
-                that.showAnime();
-            } else {
-                that.showMovies();
-            }
-
-            // do we celebrate events?
-            if (AdvSettings.get('events')) {
-                $('.events').css('display', 'block');
-            }
-
-            // set player from settings
-            var players = App.Device.Collection.models;
-            for (var i in players) {
-                if (players[i].id === AdvSettings.get('chosenPlayer')) {
-                    App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
+            AdvSettings.init().then(function (f) { // Create the System Temp Folder. This is used to store temporary data like movie files.
+                if (!fs.existsSync(Settings.tmpLocation)) {
+                    fs.mkdir(Settings.tmpLocation, function (err) {
+                        if (!err || err.errno === '-4075') {
+                            //success
+                        } else {
+                            Settings.tmpLocation = path.join(os.tmpDir(), 'Popcorn-Time');
+                            fs.mkdir(Settings.tmpLocation);
+                        }
+                    });
                 }
-            }
+                try {
+                    require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
+                } catch (e) {
+                    console.log(e);
+                    Settings.theme = 'Official_-_Dark_theme';
+                    AdvSettings.set('theme', 'Official_-_Dark_theme');
+                }
 
-            // Focus the window when the app opens
-            that.nativeWindow.focus();
+                $('link#theme').attr('href', 'themes/' + Settings.theme + '.css');
+                // Always on top
+                win.setAlwaysOnTop(App.settings.alwaysOnTop);
+
+                that.InitModal.destroy();
+                // we check if the disclaimer is accepted
+                if (!AdvSettings.get('disclaimerAccepted')) {
+                    that.showDisclaimer();
+                }
+
+                var lastOpen = (Settings.startScreen === 'Last Open') ? true : false;
+
+                if (Settings.startScreen === 'Watchlist' || (lastOpen && Settings.lastTab === 'Watchlist')) {
+                    that.showWatchlist();
+                } else if (Settings.startScreen === 'Favorites' || (lastOpen && Settings.lastTab === 'Favorites')) {
+                    that.showFavorites();
+                } else if (Settings.startScreen === 'TV Series' || (lastOpen && Settings.lastTab === 'TV Series')) {
+                    that.showShows();
+                } else if (Settings.startScreen === 'Anime' || (lastOpen && Settings.lastTab === 'Anime')) {
+                    that.showAnime();
+                } else {
+                    that.showMovies();
+                }
+
+                // do we celebrate events?
+                if (AdvSettings.get('events')) {
+                    $('.events').css('display', 'block');
+                }
+
+                // set player from settings
+                var players = App.Device.Collection.models;
+                for (var i in players) {
+                    if (players[i].id === AdvSettings.get('chosenPlayer')) {
+                        App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
+                    }
+                }
+
+                // Focus the window when the app opens
+                that.nativeWindow.focus();
 
 
-            // Cancel all new windows (Middle clicks / New Tab)
-            this.nativeWindow.on('new-win-policy', function (frame, url, policy) {
-                policy.ignore();
+                // Cancel all new windows (Middle clicks / New Tab)
+                that.nativeWindow.on('new-win-policy', function (frame, url, policy) {
+                    policy.ignore();
+                });
+
+                App.vent.trigger('updatePostersSizeStylesheet');
+                App.vent.trigger('main:ready');
             });
-
-            App.vent.trigger('updatePostersSizeStylesheet');
-            App.vent.trigger('main:ready');
 
         },
 

@@ -166,10 +166,12 @@ var AdvSettings = {
 
 
     init: function () {
+        _.each(Settings, function (v, k) {
+            var key = k;
+            var value = v;
 
-        for (var key in Settings) {
-            console.log(key);
-        }
+        });
+
 
     },
 

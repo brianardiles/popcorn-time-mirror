@@ -39,15 +39,17 @@
 
             App.Trakt = App.Config.getProvider('metadata');
             App.TVShowTime = App.Config.getProvider('tvst');
+
             AdvSettings.checkApiEndpoints([
                 Settings.tvshowAPI,
                 Settings.updateEndpoint
             ]);
+
             window.setLanguage(Settings.language);
 
             App.vent.trigger('initHttpApi');
-
             AdvSettings.setup();
+
             _this = this;
 
             _.each(_this.regionManager._regions, function (element, index) {
@@ -445,7 +447,7 @@
 
             var that = this;
 
-            App.db.getSetting({
+            App.Database.setting('get', {
                 key: 'postersWidth'
             })
                 .then(function (doc) {

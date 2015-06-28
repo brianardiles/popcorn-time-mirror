@@ -109,7 +109,7 @@
             return torrentPeerId;
         },
         logTotalUsage: function () {
-            if (this.client.swarm) {
+            if (this.client.swarm && (this.client.swarm.downloaded || this.client.swarm.uploaded)) { //we want to be extra sure or we may corrupt the db
                 var downloaded = this.client.swarm.downloaded;
                 var uploaded = this.client.swarm.uploaded;
                 AdvSettings.set('totalDownloaded', Settings.totalDownloaded + downloaded);

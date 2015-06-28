@@ -68,17 +68,11 @@
             this.client = false;
         },
         logTotalUsage: function () {
-            if (this.client.swarm) {
-                try {
-                    AdvSettings.set('totalDownloaded', Settings.totalDownloaded + this.client.swarm.downloaded);
-                } catch (e) {
-                    console.log(e);
-                }
-                try {
-                    AdvSettings.set('totalUploaded', Settings.totalUploaded + this.client.swarm.uploaded);
-                } catch (e) {
-                    console.log(e);
-                }
+            if (this.client.swarm && (this.client.swarm.downloaded || this.client.swarm.uploaded)) { //we want to be extra sure or we may corrupt the db
+                var downloaded = this.client.swarm.downloaded;
+                var uploaded = this.client.swarm.uploaded;
+                AdvSettings.set('totalDownloaded', Settings.totalDownloaded + downloaded);
+                AdvSettings.set('totalUploaded', Settings.totalUploaded + uploaded);
             }
         }
     });

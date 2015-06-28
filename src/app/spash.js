@@ -5,6 +5,7 @@ var splashwin = require('nw.gui').Window.open('splash.html', {
     'width': 600,
     'resizable': false,
     'height': 300,
+    'show_in_taskbar': false,
     'transparent': true,
     'always-on-top': true // always on top
 });

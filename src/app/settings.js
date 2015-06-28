@@ -167,18 +167,16 @@ var AdvSettings = {
         if (typeof Settings[variable] !== 'undefined') {
             return Settings[variable];
         }
-
         return false;
     },
 
     set: function (variable, newValue) {
-        Database.writeSetting({
-                key: variable,
-                value: newValue
-            })
-            .then(function () {
-                Settings[variable] = newValue;
-            });
+        App.Database.setting('set', {
+            key: variable,
+            value: newValue
+        }).then(function () {
+            Settings[variable] = newValue;
+        });
     },
 
     setup: function () {

@@ -1,49 +1,72 @@
+// Global App skeleton for backbone
+var App = new Backbone.Marionette.Application();
+_.extend(App, {
+    Controller: {},
+    View: {},
+    Model: {},
+    Page: {},
+    Scrapers: {},
+    Providers: {},
+    Localization: {}
+});
+
+
 (function (App) {
     'use strict';
     var Q = require('q');
 
     var Database = Backbone.Model.extend({
         initialize: function () {
-            var startupTime = window.performance.now();
-            console.debug('Database path: ' + data_path);
-
             App.vent.on('watched', _.bind(this.watched, this));
 
-            //this.getUserInfo()
-
         },
-        getUserInfo: function () {
-            var bookmarks = this.bookmark('get', 'all')
-                .then(function (data) {
-                    var bookmarks = [];
-                    _.each(data, function (t, i) {
-                        var imdb_id = i;
-                        bookmarks.push(imdb_id);
-                    });
-                    App.userBookmarks = bookmarks;
-                });
-
-            var movies = this.watched('get', 'movie', 'all')
-                .then(function (data) {
-                    var watchedmovies = [];
-                    _.each(data, function (t, i) {
-                        var imdb_id = i;
-                        watchedmovies.push(imdb_id);
-                    });
-                    App.watchedMovies = watchedmovies;
-                });
-
-            var episodes = this.watched('get', 'show', 'all')
-                .then(function (data) {
-                    var watchedshows = [];
-                    _.each(data, function (d) {
-                        var tvdb_id = d.tvdb_id;
-                        watchedshows.push(tvdb_id);
-                    });
-                    console.log(watchedshows);
-                    App.watchedShows = watchedshows;
-                });
-
+        setting: function (action, data) {
+            var toreturn;
+            switch (action) {
+            case 'get':
+                toreturn = JSON.parse(localStorage.getItem('setting-' + data.key));
+                break;
+            case 'set':
+                if (!localStorage.getItem('setting-' + data.key)) {
+                    localStorage.setItem('setting-' + data.key, JSON.stringify(data.value));
+                    toreturn = true;
+                }
+                break;
+            case 'remove':
+                localStorage.removeItem('setting-' + data.key);
+                toreturn = true;
+                break;
+            }
+            return Q(toreturn);
+        },
+        delete: function (db) {
+            switch (db) {
+            case 'watched':
+                for (var key in localStorage) {
+                    if (key.toString().includes('watched')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                break;
+            case 'bookmarks':
+                for (var key in localStorage) {
+                    if (key.includes('bookmark') || key.includes('movie') || key.includes('show')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                break;
+            case 'settings':
+                for (var key in localStorage) {
+                    if (key.includes('setting')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                break;
+            case 'all':
+                localStorage.clear();
+                break;
+            }
+            return Q(true);
         },
         movie: function (action, data) {
             var toreturn;
@@ -130,11 +153,7 @@
             if (type && data) {
                 switch (type) {
                 case 'show':
-                    if (action === 'get-all') {
-                        item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id;
-                    } else {
-                        item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id + '-' + data.episode_id;
-                    }
+                    item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id + '-' + data.episode_id;
                     break;
                 case 'movie':
                     item = 'watched-' + type + '-' + data;
@@ -142,12 +161,10 @@
                 }
             }
             switch (action) {
-            case 'get-all':
             case 'get':
-                var watcheditems = {};
+                var watched;
                 for (var key in localStorage) {
                     if (key.toString().includes(item)) {
-                        var i;
                         var d = key.split('-');
                         var type = d[1];
                         var imdb_id = d[2];
@@ -155,23 +172,21 @@
                         if (type === 'show') {
                             tvdb_id = d[3];
                             episode_id = d[4];
-                            i = tvdb_id;
+                            watched = {
+                                'type': type,
+                                'imdb_id': imdb_id,
+                                'tvdb_id': tvdb_id,
+                                'episode_id': episode_id
+                            };
                         } else {
-                            i = imdb_id;
-                            tvdb_id = false;
-                            episode_id = false;
+                            watched = {
+                                'type': type,
+                                'imdb_id': imdb_id
+                            };
                         }
-
-                        var newwatched = {
-                            'type': type,
-                            'imdb_id': imdb_id,
-                            'tvdb_id': tvdb_id,
-                            'episode_id': episode_id
-                        };
-                        watcheditems[i] = newwatched;
                     }
                 }
-                toreturn = watcheditems;
+                toreturn = watched;
                 break;
             case 'check':
                 if (localStorage.getItem(item) !== null) {

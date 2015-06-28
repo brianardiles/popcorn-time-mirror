@@ -61,49 +61,8 @@ if (gui.App.fullArgv.indexOf('--reset') !== -1) {
 
     localStorage.clear();
 
-    fs.unlinkSync(path.join(data_path, 'data/watched.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-    fs.unlinkSync(path.join(data_path, 'data/movies.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-    fs.unlinkSync(path.join(data_path, 'data/bookmarks.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-    fs.unlinkSync(path.join(data_path, 'data/shows.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-    fs.unlinkSync(path.join(data_path, 'data/settings.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-
 }
 
-
-// Global App skeleton for backbone
-var App = new Backbone.Marionette.Application();
-_.extend(App, {
-    Controller: {},
-    View: {},
-    Model: {},
-    Page: {},
-    Scrapers: {},
-    Providers: {},
-    Localization: {}
-});
-
-// set database
-App.db = Database;
 
 // Set settings
 App.advsettings = AdvSettings;

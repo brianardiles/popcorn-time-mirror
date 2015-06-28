@@ -193,90 +193,20 @@
             }
         },
         selectNextEpisode: function () {
-
-            var episodesSeen = [];
-            Database.getEpisodesWatched(this.model.get('tvdb_id'))
-                .then(function (data) {
-                    _.each(data, function (value, state) {
-                        // we'll mark episode already watched
-                        _this.markWatched(value, true);
-                        // store all watched episode
-                        if (value) {
-                            episodesSeen.push(parseInt(value.season) * 100 +
-                                parseInt(value.episode));
-                        }
-                    });
-                    var season = 1;
-                    var episode = 1;
-                    if (episodesSeen.length > 0) {
-                        //get all episode
-                        var episodes = [];
-                        _.each(_this.model.get('episodes'),
-                            function (value, currentepisode) {
-                                episodes.push(parseInt(value.season) * 100 +
-                                    parseInt(value.episode));
-                            }
-                        );
-                        episodesSeen.sort(function (a, b) {
-                            return a - b;
-                        });
-                        episodes.sort(function (a, b) {
-                            return a - b;
-                        });
-                        var first = episodes[0];
-                        var last = episodes[episodes.length - 1];
-                        var unseen = episodes.filter(function (item) {
-                            return episodesSeen.indexOf(item) === -1;
-                        });
-                        if (AdvSettings.get('tv_detail_jump_to') !== 'firstUnwatched') {
-                            var lastSeen = episodesSeen[episodesSeen.length - 1];
-
-                            if (lastSeen !== episodes[episodes.length - 1]) {
-                                var idx;
-                                _.find(episodes, function (data, dataIdx) {
-                                    if (data === lastSeen) {
-                                        idx = dataIdx;
-                                        return true;
-                                    }
-                                });
-
-                                if (!idx) {
-                                    // switch back to firstUnwatched method if idx not found
-                                    unseen.push(first);
-                                    episode = unseen[0] % 100;
-                                    season = (unseen[0] - episode) / 100;
-                                } else {
-                                    var next_episode = episodes[idx + 1];
-                                    episode = next_episode % 100;
-                                    season = (next_episode - episode) / 100;
-                                }
-                            } else {
-                                episode = lastSeen % 100;
-                                season = (lastSeen - episode) / 100;
-                            }
-                        } else {
-                            //if all episode seend back to first
-                            //it will be the only one
-                            unseen.push(first);
-                            episode = unseen[0] % 100;
-                            season = (unseen[0] - episode) / 100;
-                        }
+            this.selectSeason($('li[data-tab="season-' + 1 + '"]'));
 
 
-                    }
-                    if (season === 1 && episode === 1) {
-                        // Workaround in case S01E01 doesn't exist in PT
-                        // Select the first possible season
-                        _this.selectSeason($('.tab-season:first'));
-                    } else {
-                        _this.selectSeason($('li[data-tab="season-' + season + '"]'));
-                        var $episode = $('#watched-' + season + '-' + episode).parent();
-                        _this.selectEpisode($episode);
-                        if (!_this.isElementVisible($episode[0])) {
-                            $episode[0].scrollIntoView(false);
-                        }
-                    }
-                });
+            this.selectEpisode($('#watched-' + 1 + '-' + 1).parent());
+
+            console.log($("div[id^='watched']").not(".true"));
+
+
+            if (AdvSettings.get('tv_detail_jump_to') !== 'firstUnwatched') {
+
+            } else {
+
+            }
+
         },
 
         openIMDb: function () {
@@ -327,7 +257,6 @@
             }, 100);
         },
 
-
         isShowWatched: function () {
             var tvdb_id = _this.model.get('tvdb_id');
             var imdb_id = _this.model.get('imdb_id');
@@ -360,7 +289,6 @@
             var imdb_id = _this.model.get('imdb_id');
 
             var episodes = _this.model.get('episodes');
-
 
             episodes.forEach(function (episode, index, array) {
                 var value = {

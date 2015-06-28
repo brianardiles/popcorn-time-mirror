@@ -253,7 +253,7 @@
             }
 
             //save to db
-            App.db.writeSetting({
+            App.Database.setting('set', {
                 key: field.attr('name'),
                 value: value
             }).then(function () {
@@ -383,16 +383,16 @@
             App.settings['traktTokenTTL'] = '';
             App.Trakt.authenticated = false;
 
-            App.db.writeSetting({
+            App.Database.setting('set', {
                 key: 'traktToken',
                 value: ''
             }).then(function () {
-                return App.db.writeSetting({
+                return App.Database.setting('set', {
                     key: 'traktTokenRefresh',
                     value: ''
                 });
             }).then(function () {
-                return App.db.writeSetting({
+                return App.Database.setting('set', {
                     key: 'traktTokenTTL',
                     value: ''
                 });
@@ -456,10 +456,11 @@
 
             this.alertMessageWait(i18n.__('We are flushing your database'));
 
-            Database.deleteBookmarks()
-                .then(function () {
-                    that.alertMessageSuccess(true);
-                });
+            App.Database.delete('bookmarks').then(function () {
+                that.alertMessageSuccess(true);
+            });
+
+
         },
 
         resetSettings: function (e) {
@@ -471,12 +472,12 @@
 
             this.alertMessageWait(i18n.__('We are resetting the settings'));
 
-            Database.resetSettings()
-                .then(function () {
-                    AdvSettings.set('disclaimerAccepted', 1);
-                    that.alertMessageSuccess(true);
-                });
+            App.Database.delete('settings').then(function () {
+                AdvSettings.set('disclaimerAccepted', 1);
+                that.alertMessageSuccess(true);
+            });
         },
+
 
         flushAllDatabase: function (e) {
             var btn = $(e.currentTarget);
@@ -486,12 +487,12 @@
             }
 
             this.alertMessageWait(i18n.__('We are flushing your databases'));
+            App.Database.delete('all').then(function () {
+                deleteCookies();
+                that.alertMessageSuccess(true);
+            });
 
-            Database.deleteDatabases()
-                .then(function () {
-                    deleteCookies();
-                    that.alertMessageSuccess(true);
-                });
+
         },
 
         flushAllSubtitles: function (e) {

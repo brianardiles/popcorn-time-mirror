@@ -30,7 +30,7 @@ Settings.disclaimerAccepted = false;
 
 // Advanced UI
 Settings.alwaysOnTop = false;
-Settings.theme = 'Official_-_Dark_theme';
+Settings.theme = 'Official_-_FlaX_theme';
 Settings.ratingStars = true; //trigger on click in details
 Settings.startScreen = 'Movies';
 Settings.lastTab = '';

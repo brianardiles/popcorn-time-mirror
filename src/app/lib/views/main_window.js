@@ -160,7 +160,6 @@
             // Show loading modal on startup
             var that = this;
 
-
             if (!fs.existsSync(Settings.tmpLocation)) {
                 fs.mkdir(Settings.tmpLocation, function (err) {
                     if (!err || err.errno === '-4075') {
@@ -171,15 +170,8 @@
                     }
                 });
             }
-            try {
-                require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
-            } catch (e) {
-                console.log(e);
-                Settings.theme = 'Official_-_Dark_theme';
-                AdvSettings.set('theme', 'Official_-_Dark_theme');
-            }
 
-            $('link#theme').attr('href', 'themes/' + Settings.theme + '.css');
+
             // Always on top
             win.setAlwaysOnTop(Settings.alwaysOnTop);
             require('nw.gui').Window.get().show();

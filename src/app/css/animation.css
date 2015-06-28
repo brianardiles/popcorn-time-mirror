@@ -1,3 +1,8 @@
+body,
+.main-window-region {
+  background-color: #191d22;
+}
+
 #init-content {
     width: 100%;
     /* Full Width */

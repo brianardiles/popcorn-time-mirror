@@ -175,7 +175,17 @@ var initApp = function () {
                 Settings.tvshowAPI,
                 Settings.updateEndpoint
             ]).then(function () {
-                App.Window.show(mainWindow);
+                try {
+                    require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
+                } catch (e) {
+                    console.log(e);
+                    Settings.theme = 'Official_-_FlaX_theme';
+                    AdvSettings.set('theme', Settings.theme);
+                }
+                $('link#theme').attr('href', 'themes/' + Settings.theme + '.css').load(function () {
+                    App.Window.show(mainWindow);
+                });
+
             });
         });
     } catch (e) {

@@ -1,14 +1,5 @@
 // Global App skeleton for backbone
 var App = new Backbone.Marionette.Application();
-_.extend(App, {
-    Controller: {},
-    View: {},
-    Model: {},
-    Page: {},
-    Scrapers: {},
-    Providers: {},
-    Localization: {}
-});
 
 
 (function (App) {

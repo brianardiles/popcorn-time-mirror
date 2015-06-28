@@ -30,7 +30,15 @@ var
 
     Q = require('q');
 
-
+_.extend(App, {
+    Controller: {},
+    View: {},
+    Model: {},
+    Page: {},
+    Scrapers: {},
+    Providers: {},
+    Localization: {}
+});
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -57,8 +65,6 @@ win.error = function () {
 
 
 if (gui.App.fullArgv.indexOf('--reset') !== -1) {
-
-    var data_path = require('nw.gui').App.dataPath;
 
     localStorage.clear();
 

@@ -224,7 +224,6 @@
                 // Focus the window when the app opens
                 that.nativeWindow.focus();
 
-
                 // Cancel all new windows (Middle clicks / New Tab)
                 that.nativeWindow.on('new-win-policy', function (frame, url, policy) {
                     policy.ignore();

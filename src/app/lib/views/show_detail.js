@@ -334,14 +334,14 @@
             }
             var that = this;
             var title = that.model.get('title');
-            var episode = $(e.currentTarget).attr('data-episode');
-            var episode_id = $(e.currentTarget).attr('data-episodeid');
-            var season = $(e.currentTarget).attr('data-season');
-            var name = $(e.currentTarget).attr('data-title');
+            var episode = this.selectedTorrent.episode;
+            var episode_id = this.selectedTorrent.episodeid;
+            var season = this.selectedTorrent.season;
+            var name = this.selectedTorrent.title;
 
             var episodes = [];
             var episodes_data = [];
-            var selected_quality = $(e.currentTarget).attr('data-quality');
+            var selected_quality = this.selectedTorrent.quality;
 
             if (AdvSettings.get('playNextEpisodeAuto') && this.model.get('imdb_id').indexOf('mal') === -1) {
                 _.each(this.model.get('episodes'), function (value) {
@@ -367,7 +367,7 @@
             }
 
             var torrentStart = {
-                torrent: $(e.currentTarget).attr('data-torrent'),
+                torrent: this.selectedTorrent.def,
                 type: 'show',
                 metadata: {
                     title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
@@ -446,7 +446,7 @@
             this.ui.q720p.removeClass('active');
             this.ui.q480p.removeClass('active');
 
-
+            console.log(torrents);
             if (!torrents.q480) {
                 this.ui.q480p.addClass('disabled');
             } else {
@@ -520,18 +520,19 @@
             //pull the scroll always to top
             $('.episode-info-description').scrollTop(0);
 
-            $('.startStreaming').attr('data-torrent', torrents.def);
-            $('.startStreaming').attr('data-quality', torrents.quality);
-            $('.startStreaming').attr('data-episodeid', tvdbid);
+            this.selectedTorrent = torrents;
 
-            // set var for player
-            $('.startStreaming').attr('data-episode', $('.template-' + tvdbid + ' .episode').html());
-            $('.startStreaming').attr('data-season', $('.template-' + tvdbid + ' .season').html());
-            $('.startStreaming').attr('data-title', $('.template-' + tvdbid + ' .title').html());
+            this.selectedTorrent.episodeid = tvdbid;
+            this.selectedTorrent.season = $('.template-' + tvdbid + ' .season').html();
+            this.selectedTorrent.episode = $('.template-' + tvdbid + ' .episode').html();
+            this.selectedTorrent.title = $('.template-' + tvdbid + ' .title').html();
 
-            //_this.resetHealth();
 
+            console.log($('.startStreaming'));
             this.ui.startStreaming.show();
+            this.resetHealth();
+
+
         },
         toggleShowQuality: function (e) {
             if ($(e.currentTarget).hasClass('disabled')) {
@@ -549,7 +550,7 @@
             $('.startStreaming').attr('data-torrent', torrent);
             $('.startStreaming').attr('data-quality', quality.text());
             AdvSettings.set('shows_default_quality', quality.text());
-            _this.resetHealth();
+            this.resetHealth();
         },
 
         nextEpisode: function (e) {
@@ -640,7 +641,7 @@
                 } else {
                     $('#switch-hd-off').trigger('click');
                 }
-                _this.resetHealth();
+                this.resetHealth();
             }
 
         },
@@ -676,7 +677,7 @@
         },
 
         getTorrentHealth: function (e) {
-            var torrent = $('.startStreaming').attr('data-torrent');
+            var torrent = this.selectedTorrent.def;
 
             cancelTorrentHealth();
 

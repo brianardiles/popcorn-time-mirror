@@ -85,9 +85,7 @@
 
         onShow: function () {
 
-            bookmarked = App.userBookmarks.indexOf(this.model.get('imdb_id')) !== -1;
-
-            if (bookmarked) {
+            if (this.model.get('bookmarked')) {
                 this.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
             } else {
                 this.ui.bookmarkIcon.removeClass('selected');
@@ -193,12 +191,10 @@
             }
         },
         selectNextEpisode: function () {
-            this.selectSeason($('li[data-tab="season-' + 1 + '"]'));
+            this.selectSeason($('.tab-season:first'));
 
 
             this.selectEpisode($('#watched-' + 1 + '-' + 1).parent());
-
-            console.log($("div[id^='watched']").not(".true"));
 
 
             if (AdvSettings.get('tv_detail_jump_to') !== 'firstUnwatched') {
@@ -206,6 +202,7 @@
             } else {
 
             }
+
 
         },
 
@@ -532,7 +529,7 @@
             $('.startStreaming').attr('data-season', $('.template-' + tvdbid + ' .season').html());
             $('.startStreaming').attr('data-title', $('.template-' + tvdbid + ' .title').html());
 
-            _this.resetHealth();
+            //_this.resetHealth();
 
             this.ui.startStreaming.show();
         },

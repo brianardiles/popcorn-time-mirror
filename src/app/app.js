@@ -31,9 +31,6 @@ var
     Q = require('q');
 
 
-AdvSettings.setup();
-
-
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
 win.debug = function () {

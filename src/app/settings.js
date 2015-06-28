@@ -262,7 +262,7 @@ var AdvSettings = {
                     $('.notification_alert').show().text(i18n.__('%s is not supposed to be run as administrator', 'Popcorn Time')).delay(6000).fadeOut(400);
                 });
             } catch (e) {
-                win.error('Couldn\'t check admin privileges, continuing');
+                console.error('Couldn\'t check admin privileges, continuing');
             }
         }
     },
@@ -295,12 +295,12 @@ var AdvSettings = {
         _.extend(endpoint, endpoint.proxies[endpoint.index]);
 
         var url = uri.parse(endpoint.url);
-        win.debug('Checking %s endpoint', url.hostname);
+        console.debug('Checking %s endpoint', url.hostname);
 
         if (endpoint.ssl === false) {
             var timeoutWrapper = function (req) {
                 return function () {
-                    win.warn('[%s] Endpoint timed out',
+                    console.warn('[%s] Endpoint timed out',
                         url.hostname);
                     req.abort();
                     tryNextEndpoint();
@@ -314,7 +314,7 @@ var AdvSettings = {
                     res.removeAllListeners('error');
                     // Doesn't match the expected response
                     if (!_.isRegExp(endpoint.fingerprint) || !endpoint.fingerprint.test(body.toString('utf8'))) {
-                        win.warn('[%s] Endpoint fingerprint %s does not match %s',
+                        console.warn('[%s] Endpoint fingerprint %s does not match %s',
                             url.hostname,
                             endpoint.fingerprint,
                             body.toString('utf8'));
@@ -323,7 +323,7 @@ var AdvSettings = {
                         defer.resolve();
                     }
                 }).once('error', function (e) {
-                    win.warn('[%s] Endpoint failed [%s]',
+                    console.warn('[%s] Endpoint failed [%s]',
                         url.hostname,
                         e.message);
                     clearTimeout(timeout);
@@ -345,7 +345,7 @@ var AdvSettings = {
                     this.getPeerCertificate().fingerprint !== endpoint.fingerprint) {
                     // "These are not the certificates you're looking for..."
                     // Seems like they even got a certificate signed for us :O
-                    win.warn('[%s] Endpoint fingerprint %s does not match %s',
+                    console.warn('[%s] Endpoint fingerprint %s does not match %s',
                         url.hostname,
                         endpoint.fingerprint,
                         this.getPeerCertificate().fingerprint);
@@ -355,13 +355,13 @@ var AdvSettings = {
                 }
                 this.end();
             }).once('error', function (e) {
-                win.warn('[%s] Endpoint failed [%s]',
+                console.warn('[%s] Endpoint failed [%s]',
                     url.hostname,
                     e.message);
                 this.setTimeout(0);
                 tryNextEndpoint();
             }).once('timeout', function () {
-                win.warn('[%s] Endpoint timed out',
+                console.warn('[%s] Endpoint timed out',
                     url.hostname);
                 this.removeAllListeners('error');
                 this.end();
@@ -393,3 +393,5 @@ var AdvSettings = {
         AdvSettings.set('releaseName', gui.App.manifest.releaseName);
     },
 };
+
+AdvSettings.setup();

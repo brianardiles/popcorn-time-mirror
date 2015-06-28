@@ -169,7 +169,25 @@ var initApp = function () {
     var mainWindow = new App.View.MainWindow();
 
     try {
-        App.Window.show(mainWindow);
+        AdvSettings.init().then(function (f) { // Create the System Temp Folder. This is used to store temporary data like movie files.
+            AdvSettings.setup();
+            AdvSettings.checkApiEndpoints([
+                Settings.tvshowAPI,
+                Settings.updateEndpoint
+            ]).then(function () {
+                try {
+                    require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
+                } catch (e) {
+                    console.log(e);
+                    Settings.theme = 'Official_-_FlaX_theme';
+                    AdvSettings.set('theme', Settings.theme);
+                }
+                $('link#theme').attr('href', 'themes/' + Settings.theme + '.css').load(function () {
+                    App.Window.show(mainWindow);
+                });
+
+            });
+        });
     } catch (e) {
         console.error('Couldn\'t start app: ', e, e.stack);
     }

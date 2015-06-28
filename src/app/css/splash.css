@@ -1,5 +1,7 @@
-body {
-    background-color:rgba(0, 0, 0, 0);
+body{
+     -webkit-user-select: none;
+    pointer-events: none;
+    background-color:rgba(23, 24, 27, 0);
 }
 #splash {
     width: 450px;

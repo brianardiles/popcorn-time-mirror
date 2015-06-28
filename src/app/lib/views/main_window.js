@@ -48,8 +48,6 @@
             window.setLanguage(Settings.language);
 
             App.vent.trigger('initHttpApi');
-            AdvSettings.init();
-            AdvSettings.setup();
 
 
             _this = this;

@@ -27,6 +27,7 @@ Settings.postersJump = [134, 154, 174, 194, 214, 234, 254, 274, 294];
 Settings.alwaysFullscreen = false;
 Settings.playNextEpisodeAuto = true;
 Settings.chosenPlayer = 'local';
+Settings.disclaimerAccepted = false;
 
 // Advanced UI
 Settings.alwaysOnTop = false;
@@ -169,9 +170,16 @@ var AdvSettings = {
         _.each(Settings, function (v, k) {
             var key = k;
             var value = v;
-
+            App.Database.setting('get', {
+                key: key
+            }).then(function (i) {
+                if (!i) {
+                    AdvSettings.set(key, value);
+                } else {
+                    Settings[key] = i;
+                }
+            });
         });
-
 
     },
 
@@ -192,6 +200,7 @@ var AdvSettings = {
     },
 
     setup: function () {
+        AdvSettings.init();
         AdvSettings.performUpgrade();
         AdvSettings.checkAdmin();
         return AdvSettings.getHardwareInfo();

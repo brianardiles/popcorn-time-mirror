@@ -30,6 +30,10 @@ var
 
     Q = require('q');
 
+
+AdvSettings.setup();
+
+
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -281,6 +285,7 @@ String.prototype.capitalizeEach = function () {
 String.prototype.endsWith = function (suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
+win.showDevTools();
 // Developer Shortcuts
 Mousetrap.bind(['shift+f12', 'f12', 'command+0'], function (e) {
     win.showDevTools();

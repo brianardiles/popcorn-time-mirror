@@ -44,6 +44,10 @@
 
             App.vent.trigger('initHttpApi');
 
+            AdvSettings.checkApiEndpoints([
+                Settings.tvshowAPI,
+                Settings.updateEndpoint
+            ]);
 
             _this = this;
 
@@ -143,10 +147,7 @@
 
             App.vent.on('updatePostersSizeStylesheet', _.bind(this.updatePostersSizeStylesheet, this));
 
-            AdvSettings.checkApiEndpoints([
-                Settings.tvshowAPI,
-                Settings.updateEndpoint
-            ]);
+
         },
 
         showSubtitles: function (model) {
@@ -161,8 +162,8 @@
             this.Header.show(new App.View.TitleBar());
             // Set the app title (for Windows mostly)
             this.nativeWindow.title = App.Config.title;
-            this.Content.show(new App.View.InitModal());
             // Show loading modal on startup
+            this.Content.show(new App.View.InitModal());
             var that = this;
 
             AdvSettings.init().then(function (f) { // Create the System Temp Folder. This is used to store temporary data like movie files.
@@ -186,7 +187,7 @@
 
                 $('link#theme').attr('href', 'themes/' + Settings.theme + '.css');
                 // Always on top
-                win.setAlwaysOnTop(App.settings.alwaysOnTop);
+                win.setAlwaysOnTop(Settings.alwaysOnTop);
 
                 that.InitModal.destroy();
                 // we check if the disclaimer is accepted
@@ -231,6 +232,11 @@
 
                 App.vent.trigger('updatePostersSizeStylesheet');
                 App.vent.trigger('main:ready');
+
+                if (!isNaN(App.startupTime)) {
+                    win.debug('Popcorn Time %s startup time: %sms', Settings.version, (window.performance.now() - App.startupTime).toFixed(3)); // started in database.js;
+                }
+
             });
 
         },

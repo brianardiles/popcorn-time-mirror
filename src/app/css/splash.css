@@ -13,19 +13,19 @@ body #splash {
 }
 
 body #splash .bar {
-    background: rgba(25, 29, 34, 0.4);
-    border-bottom: 1px solid rgba(210, 210, 210, 0.4);
+    background: rgba(25, 29, 34, 0.5);
+    border-bottom: 1px solid rgba(245, 247, 250, 0.3);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     width: 450px;
-    height: 20px;
+    height: 22px;
 }
 
 body #splash .bar p {
-    color: #eee;
+    color: rgba(245, 247, 250, 0.9);
     font-family: "Open Sans", sans-serif;
-    margin-left: 10px;
-    padding-top: 2px;
+    padding-left: 10px;
+    padding-top: 3px;
     font-size: 12px;
 }
 
@@ -38,28 +38,24 @@ body #splash .icon {
 
 body #splash #spinner{
     position: absolute;
-    width: 190px;
-    height: 20px;
-    margin-left: 130px;
+    width: 184px;
+    height: 10px;
+    margin-left: 133px;
     top: 140px;
 }
 
-body #splash #spinner .spinner {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 10px;
-    background-color: #f5f7fa;
-    opacity: 1;
-    -webkit-animation: bounce 1s infinite;
-}
+body #splash #spinner .spinner,
 body #splash #spinner .spinner_bg {
     position: absolute;
     width: 8px;
     height: 8px;
     border-radius: 10px;
-    background-color: #db3e4e;
+    background-color: rgba(245, 247, 250, 1);
     opacity: 1;
+    -webkit-animation: bounce 1s infinite;
+}
+body #splash #spinner .spinner_bg {
+    background-color: #db3e4e;
     -webkit-animation: rev_bounce 1s infinite;
 }
 

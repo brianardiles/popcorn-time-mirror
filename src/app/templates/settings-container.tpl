@@ -489,17 +489,23 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-            <span>
-                <input class="settings-checkbox" name="automaticUpdating" id="cb5" type="checkbox" <%=(Settings.automaticUpdating? "checked='checked'":"")%>>
-                <label class="settings-label" for="cb5"><%= i18n.__("Activate automatic updating") %></label>
+            <span class="dropdown automaticUpdating">
+                <p><%= i18n.__("Update Settings:") %></p>
+                <select name="automaticUpdating">                        
+                    <option <%=(Settings.automaticUpdating == "checkandinstall"? "selected='selected'":"") %> value="checkandinstall"><%= i18n.__("Install updates automatically") %></option>
+                    <option <%=(Settings.automaticUpdating == "checkandnotify"? "selected='selected'":"") %> value="checkandnotify"><%= i18n.__("Notify me when updates are available") %></option>
+                    <option <%=(Settings.automaticUpdating == "disable"? "selected='selected'":"") %> value="disable"><%= i18n.__("Never check for updates") %></option>
+                </select>
+                <div class="dropdown-arrow"></div>
             </span>
-            <span class="dropdown updatechannel" <%=(Settings.automaticUpdating ? "" : "style='display:none'")%>>
-                    <p><%= i18n.__("Choose channel update") %></p>
-                    <select name="updatechannel">                        
-                        <option <%=(Settings.updatechannel == "beta"? "selected='selected'":"") %> value="beta"><%= i18n.__("Beta") %></option>
-                        <option <%=(Settings.updatechannel == "nightly"? "selected='selected'":"") %> value="nightly"><%= i18n.__("Experimental") %></option>
-                    </select>
-                    <div class="dropdown-arrow"></div>
+            <span class="dropdown updatechannel">
+                <p><%= i18n.__("Update Channel:") %></p>
+                <select name="updatechannel" id="updatechannelsel" <%=(Settings.automaticUpdating == "disable" ? "disabled" : "")%>>                        
+                    <option <%=(Settings.updatechannel == "desktop"? "selected='selected'":"") %> value="desktop"><%= i18n.__("Stable") %></option>
+                    <option <%=(Settings.updatechannel == "desktop_experimental"? "selected='selected'":"") %> value="desktop_experimental"><%= i18n.__("Experimental") %></option>
+                    <option <%=(Settings.updatechannel == "desktop_nightly"? "selected='selected'":"") %> value="desktop_nightly"><%= i18n.__("Nightly") %></option>
+                </select>
+                <div class="dropdown-arrow"></div>
             </span>
             </span>
             <span>

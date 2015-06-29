@@ -12,8 +12,8 @@
         AdmZip = require('adm-zip'),
         spawn = require('child_process').spawn;
 
-    var UPDATE_ENDPOINT = AdvSettings.get('updateEndpoint').url + 'update.json',
-        CHANNELS = ['stable', 'beta', 'nightly'],
+    var UPDATE_ENDPOINT = AdvSettings.get('updateEndpoint').url + 'update.json',        
+        CHANNELS = ['desktop', 'desktop_experimental', 'desktop_nightly'], //stable = 'desktop', experimental = 'desktop_experimental', nightly = 'desktop_nightly'
         FILENAME = 'package.nw.new',
         VERIFY_PUBKEY =
         '-----BEGIN PUBLIC KEY-----\n' +

@@ -193,6 +193,12 @@
             case 'updatechannel':
                 value = $('option:selected', field).val();
                 break;
+            case 'automaticUpdating':
+                value = $('option:selected', field).val();
+                if ( value == "disabled" ) { 
+                    $('updatechannelsel').disabled = true;
+                }
+                break;
             case 'language':
                 value = $('option:selected', field).val();
                 i18n.setLocale(value);
@@ -214,10 +220,6 @@
             case 'activateWatchlist':
             case 'activateRandomize':
                 value = field.is(':checked');
-                break;
-            case 'automaticUpdating':
-                value = field.is(':checked');
-                $('.updatechannel').toggle();
                 break;
             case 'httpApiUsername':
             case 'httpApiPassword':

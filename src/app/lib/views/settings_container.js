@@ -206,7 +206,6 @@
             case 'traktSyncOnStart':
             case 'traktPlayback':
             case 'playNextEpisodeAuto':
-            case 'automaticUpdating':
             case 'events':
             case 'alwaysFullscreen':
             case 'minimizeToTray':
@@ -215,6 +214,10 @@
             case 'activateWatchlist':
             case 'activateRandomize':
                 value = field.is(':checked');
+                break;
+            case 'automaticUpdating':
+                value = field.is(':checked');
+                $('.updatechannel').toggle();
                 break;
             case 'httpApiUsername':
             case 'httpApiPassword':

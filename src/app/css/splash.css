@@ -38,20 +38,29 @@ body #splash .icon {
 
 body #splash #spinner{
     position: absolute;
-    width: 200px;
+    width: 190px;
     height: 20px;
-    margin-left: 125px;
-    top: 135px;
+    margin-left: 130px;
+    top: 140px;
 }
 
 body #splash #spinner .spinner {
     position: absolute;
-    width: 15px;
-    height: 15px;
+    width: 8px;
+    height: 8px;
     border-radius: 10px;
-    background-color: #fff;
+    background-color: #f5f7fa;
+    opacity: 1;
     -webkit-animation: bounce 1s infinite;
-    -webkit-transform: scale(.3);
+}
+body #splash #spinner .spinner_bg {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 10px;
+    background-color: #db3e4e;
+    opacity: 1;
+    -webkit-animation: rev_bounce 1s infinite;
 }
 
 body #splash #spinner .spin1 {
@@ -96,12 +105,21 @@ body #splash #spinner .spin8 {
 
 @-webkit-keyframes bounce {
     0% {
-        -webkit-transform: scale(.9);
-        background-color: #b22222;
+        opacity: 0;
     }
 
     100% {
-        -webkit-transform: scale(.3);
-        background-color: #fff;
+        opacity: 1;
+
+    }
+}
+@-webkit-keyframes rev_bounce {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+
     }
 }

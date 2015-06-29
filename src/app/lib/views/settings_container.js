@@ -190,7 +190,7 @@
                 /* falls through */
             case 'watchedCovers':
             case 'theme':
-            case 'updateChannel':
+            case 'updatechannel':
                 value = $('option:selected', field).val();
                 break;
             case 'language':

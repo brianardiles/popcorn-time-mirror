@@ -492,6 +492,15 @@
             <span>
                 <input class="settings-checkbox" name="automaticUpdating" id="cb5" type="checkbox" <%=(Settings.automaticUpdating? "checked='checked'":"")%>>
                 <label class="settings-label" for="cb5"><%= i18n.__("Activate automatic updating") %></label>
+                <span class="dropdown update-channel">
+                    <p><%= i18n.__("Choose channel update") %></p>
+                    <select name="update-channel">                        
+                        <option <%=(Settings.updateChannel == "beta"? "selected='selected'":"") %> value="beta"><%= i18n.__("Beta") %></option>
+                        <option <%=(Settings.updateChannel == "nightly"? "selected='selected'":"") %> value="nightly"><%= i18n.__("Experimental") %></option>
+                    </select>
+                    <div class="dropdown-arrow"></div>
+                </span>
+            </span>
             </span>
             <span>
                 <input class="settings-checkbox" name="events" id="cb6" type="checkbox" <%=(Settings.events? "checked='checked'":"")%>>

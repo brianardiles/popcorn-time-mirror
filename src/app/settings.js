@@ -73,6 +73,7 @@ Settings.tmpLocation = path.join(os.tmpDir(), 'Popcorn-Time');
 Settings.databaseLocation = path.join(data_path, 'data');
 Settings.deleteTmpOnClose = true;
 Settings.automaticUpdating = true;
+Settings.updateChannel = 'beta';
 Settings.events = true;
 Settings.minimizeToTray = false;
 Settings.bigPicture = false;

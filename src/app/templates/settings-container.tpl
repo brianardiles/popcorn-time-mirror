@@ -498,9 +498,9 @@
                 </select>
                 <div class="dropdown-arrow"></div>
             </span>
-            <span class="dropdown updatechannel">
+            <span class="dropdown updatechannel" <%=(Settings.automaticUpdating == "disable" ? 'style="display:none"' : '')%>>
                 <p><%= i18n.__("Update Channel:") %></p>
-                <select name="updatechannel" <%=(Settings.automaticUpdating == "disable" ? "disabled" : "")%>>                        
+                <select name="updatechannel" >                        
                     <option <%=(Settings.updatechannel == "desktop"? "selected='selected'":"") %> value="desktop"><%= i18n.__("Stable") %></option>
                     <option <%=(Settings.updatechannel == "desktop_experimental"? "selected='selected'":"") %> value="desktop_experimental"><%= i18n.__("Experimental") %></option>
                     <option <%=(Settings.updatechannel == "desktop_nightly"? "selected='selected'":"") %> value="desktop_nightly"><%= i18n.__("Nightly") %></option>

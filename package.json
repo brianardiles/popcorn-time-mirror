@@ -38,6 +38,7 @@
         "iconv-lite": "^0.4.10",
         "jschardet": "1.2.0",
         "json-rpc2": "^1.0.1",
+        "kat-api": "git+https://git.popcorntime.io/popcorntime/kat-api.git",
         "memoizee": "^0.3.8",
         "mkdirp": "*",
         "moment": "^2.10.2",

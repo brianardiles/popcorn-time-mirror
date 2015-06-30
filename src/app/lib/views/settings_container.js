@@ -195,7 +195,7 @@
                 break;
             case 'automaticUpdating':
                 value = $('option:selected', field).val();
-                $('.updatechannel select').prop('disabled', (value === 'disabled' ? true : false));
+                $('.updatechannel select').prop('disabled', (value === 'disable' ? true : false));
                 break;
             case 'language':
                 value = $('option:selected', field).val();

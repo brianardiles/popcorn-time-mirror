@@ -43,12 +43,18 @@
             .report-info
                 margin-bottom 15px
                 font-weight bold
+
+                a
+                    font-size 11px
+                    margin-left 6px
     
             #issue-auth
                 display block
     
                 input
                     margin-bottom 5px
+                    padding-right 5px
+                    line-height 16px
     
                 p
                     font-size 13px
@@ -60,6 +66,11 @@
                     margin-left 5px
                     &:before
                         content: '- '
+
+                .issue-loading-icon
+                    display none
+                    color #BBB
+                    margin-left 5px
 
             #issue-search
                 display none
@@ -86,6 +97,11 @@
         
             #issue-form
                 display none
+                
+                #issue-length
+                    font-size .9em
+                    margin-left 10px
+
             #issue-success
                 display none
 
@@ -119,7 +135,7 @@
                 margin-top 10px
                 margin-bottom 20px
                 border 0 !important
-                line-height 15px
+                line-height 16px
                 background-color $InputBoxBg
                 resize none
                 color $InputBoxText

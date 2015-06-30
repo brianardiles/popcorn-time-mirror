@@ -195,9 +195,7 @@
                 break;
             case 'automaticUpdating':
                 value = $('option:selected', field).val();
-                if ( value == "disabled" ) { 
-                    $('updatechannelsel').disabled = true;
-                }
+                $('.updatechannel select').prop('disabled', (value === 'disabled' ? true : false));
                 break;
             case 'language':
                 value = $('option:selected', field).val();

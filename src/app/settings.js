@@ -73,7 +73,7 @@ Settings.tmpLocation = path.join(os.tmpDir(), 'Popcorn-Time');
 Settings.databaseLocation = path.join(data_path, 'data');
 Settings.deleteTmpOnClose = true;
 Settings.automaticUpdating = 'checkandinstall'; //Possible values: [checkandinstall, checkandnotify, disable]
-Settings.updatechannel = 'desktop'; //Possible values: stable = 'desktop', experimental = 'desktop_experiemental', nightly = 'desktop_nightly'
+Settings.updatechannel = 'desktop'; //Possible values: stable = 'desktop', experimental = 'desktop_experimental', nightly = 'desktop_nightly'
 Settings.events = true;
 Settings.minimizeToTray = false;
 Settings.bigPicture = false;

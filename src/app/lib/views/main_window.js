@@ -170,7 +170,13 @@
                     }
                 });
             }
-
+            if (!fs.existsSync('./installdate')) {
+                fs.writeFile('./installdate', Date.now(), function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                });
+            }
 
             // Always on top
             win.setAlwaysOnTop(Settings.alwaysOnTop);

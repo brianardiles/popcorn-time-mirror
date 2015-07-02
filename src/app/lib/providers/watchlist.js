@@ -12,9 +12,9 @@
         var now = moment();
 
         //Checked when last fetched
-        App.db.getSetting({
-                key: 'watchlist-fetched'
-            })
+        App.Database.setting('get', {
+            key: 'watchlist-fetched'
+        })
             .then(function (doc) {
                 if (doc) {
                     var d = moment.unix(doc.value);
@@ -36,9 +36,9 @@
 
 
         function fetchWatchlist(update) {
-            App.db.getSetting({
-                    key: 'watchlist'
-                })
+            App.Database.setting('get', {
+                key: 'watchlist'
+            })
                 .then(function (doc) {
                     if (doc && !update) {
                         // Returning cached watchlist
@@ -47,12 +47,12 @@
                         win.info('Watchlist - Fetching new watchlist');
                         App.Trakt.calendars.myShows(moment().subtract(31, 'days').format('YYYY-MM-DD'), 30)
                             .then(function (data) {
-                                App.db.writeSetting({
-                                        key: 'watchlist',
-                                        value: data
-                                    })
+                                App.Database.setting('set', {
+                                    key: 'watchlist',
+                                    value: data
+                                })
                                     .then(function () {
-                                        App.db.writeSetting({
+                                        App.Database.setting('set', {
                                             key: 'watchlist-fetched',
                                             value: now.unix()
                                         });
@@ -79,10 +79,10 @@
 
             if (show.show_id && show.season !== 0) {
                 promisifyDb(db.watched.find({
-                        imdb_id: show.show_id.toString(),
-                        season: show.season.toString(),
-                        episode: show.episode.toString()
-                    }))
+                    imdb_id: show.show_id.toString(),
+                    season: show.season.toString(),
+                    episode: show.episode.toString()
+                }))
                     .then(function (data) {
                         if (data != null && data.length > 0) {
                             deferred.resolve(null);
@@ -110,7 +110,8 @@
 
             var deferred = Q.defer();
             //Try to find it on the shows database and attach the next_episode info
-            Database.getTVShowByImdb(show.show_id)
+
+            App.Database.show('get', show.show_id)
                 .then(function (data) {
                     if (data != null) {
                         data.type = 'show';
@@ -131,7 +132,7 @@
                                     data.type = 'show';
                                     data.next_episode = show.next_episode;
 
-                                    Database.addTVShow(data)
+                                    App.Database.show('add', data)
                                         .then(function (idata) {
                                             deferred.resolve(data);
                                         })
@@ -181,9 +182,9 @@
         App.Trakt.calendars.myShows(moment().subtract(31, 'days').format('YYYY-MM-DD'), 30)
             .then(function (data) {
                 App.db.writeSetting({
-                        key: 'watchlist',
-                        value: data
-                    })
+                    key: 'watchlist',
+                    value: data
+                })
                     .then(function () {
                         App.db.writeSetting({
                             key: 'watchlist-fetched',

@@ -393,9 +393,6 @@
 
         sendToTrakt: function (method) {
             var type = this.model.get('type');
-            if (type === 'show') {
-                type = 'episode';
-            }
             var id = type === 'movie' ? this.model.attributes.metadata.imdb_id : this.model.attributes.metadata.episode_id;
             var progress = this.video.currentTime() / this.video.duration() * 100 | 0;
             App.Trakt.scrobble(method, type, id, progress);
@@ -503,7 +500,6 @@
                 Streamer = App.PreloadStreamer;
             }
 
-
             var Stream = Streamer.client.swarm;
             if (!Stream) {
                 if (this.playing) {
@@ -566,7 +562,6 @@
             if (speed === 0) {
                 return util.format('%s %s', 0, 'B/s');
             }
-
             var converted = Math.floor(Math.log(speed) / Math.log(1024));
             return util.format('%s %s/s', (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
         },
@@ -727,9 +722,9 @@
             }
             var mult = (Settings.os === 'mac') ? -1 : 1; // up/down invert
             if ((event.wheelDelta * mult) > 0) { // Scroll up
-                this.adjustVolume(0.1);
+                this.adjustVolume(0.05);
             } else { // Scroll down
-                this.adjustVolume(-0.1);
+                this.adjustVolume(-0.05);
             }
         },
 

@@ -51,6 +51,7 @@
             var content = notification.content;
             var title = notification.title;
             var id = notification.id;
+            var link = notification.link;
             var options = {
                 body: content
             };

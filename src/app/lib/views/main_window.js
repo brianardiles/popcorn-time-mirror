@@ -235,10 +235,13 @@
             if (App.startupTime) {
                 win.debug('Popcorn Time %s startup time: %sms', Settings.version, (window.performance.now() - App.startupTime).toFixed(3)); // started in database.js;
             }
-            _.defer(function () {
-                App.vent.trigger('notifications');
-            });
 
+            function checkNewNotifcations() {
+                App.Notifier.check();
+                setTimeout(checkNewNotifcations, 600000); //ten minutes
+            }
+
+            checkNewNotifcations();
 
         },
 

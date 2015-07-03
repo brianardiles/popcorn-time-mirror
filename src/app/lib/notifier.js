@@ -3,9 +3,10 @@
 
     var Notifier = Backbone.Model.extend({
         initialize: function () {
-            App.vent.on('notifications', _.bind(this.check, this));
-            var notification = new Notification('initingnotifications', {
-                body: 'init'
+            App.vent.on('notification', _.bind(this.notify, this)); //we can notify now via app trigger! ||  App.vent.trigger('notification', 'title', 'content');
+
+            var notification = new Notification('', {
+                body: ''
             });
             notification.onshow = function () {
                 notification.close(); //we are initing the notifications so we close as soon as open
@@ -17,18 +18,19 @@
             this.notifications = {};
             this.fetch().then(function (n) {
                 _.each(n, function (c, i) {
-                    if (!_.contains(Settings.seenNotifications, i)) {
-                        that.notifications[nid] = {
-                            title: c.title,
-                            content: c.content,
-                            link: c.link,
-                            id: nid
-                        };
-                        nid++;
-                        Settings.seenNotifications.push(i);
-                    }
+                    //if (!_.contains(Settings.seenNotifications, i)) {
+                    that.notifications[nid] = {
+                        title: c.title,
+                        content: c.content,
+                        link: c.link,
+                        id: nid
+                    };
+                    nid++;
+                    Settings.seenNotifications.push(i);
+                    //  }
                 });
-                that.notify(that.notifications[0]);
+                var notify = that.notifications[0];
+                that.notify(notify.title, notify.content, notify.link, 0);
                 AdvSettings.set('seenNotifications', Settings.seenNotifications);
             });
         },
@@ -43,19 +45,14 @@
             });
             return defer.promise;
         },
-        notify: function (notification) {
-            if (!notification) {
+        notify: function (title, content, link, id) {
+            if (!title || !content) {
                 return;
             }
             var that = this;
-            var content = notification.content;
-            var title = notification.title;
-            var id = notification.id;
-            var link = notification.link;
-            var options = {
+            var notification = new Notification(title, {
                 body: content
-            };
-            var notification = new Notification(title, options);
+            });
             notification.onclick = function () {
                 if (link) {
                     try {
@@ -73,9 +70,12 @@
                 console.log('Showing Notification:', title);
             }
             notification.onclose = function () {
-                var nid = id + 1;
-                if (that.notifications[nid]) { //if there is a new notification show it
-                    that.notify(that.notifications[nid]);
+                if (id) {
+                    var nid = id + 1;
+                    if (that.notifications[nid]) { //if there is a new notification show it
+                        var notify = that.notifications[nid];
+                        that.notify(notify.title, notify.content, notify.link, nid);
+                    }
                 }
             }
         }

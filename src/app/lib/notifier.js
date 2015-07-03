@@ -43,11 +43,10 @@
             return defer.promise;
         },
         notify: function (notification) {
-            var that = this;
-            console.log(notification);
             if (!notification) {
                 return;
             }
+            var that = this;
             var content = notification.content;
             var title = notification.title;
             var id = notification.id;
@@ -58,7 +57,12 @@
             var notification = new Notification(title, options);
             notification.onclick = function () {
                 if (link) {
-                    gui.Shell.openExternal(link);
+                    try {
+                        gui.Shell.openExternal(link);
+                    } catch (err) {
+                        console.log(err)
+                    }
+
                 }
             }
             notification.onerror = function (e) {

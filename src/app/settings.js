@@ -201,10 +201,15 @@ var AdvSettings = {
         });
     },
     setup: function () {
+<<<<<<< HEAD
         AdvSettings.checkAdmin();
         AdvSettings.getHardwareInfo();
         AdvSettings.set('version', require('nw.gui').App.manifest.version);
         AdvSettings.set('releaseName', require('nw.gui').App.manifest.releaseName);
+=======
+        AdvSettings.performUpgrade();
+        return AdvSettings.getHardwareInfo();
+>>>>>>> parent of 5a20400... warn windows users not to use the app with admin rights
     },
     getHardwareInfo: function () {
         if (/64/.test(process.arch)) {
@@ -229,35 +234,6 @@ var AdvSettings = {
         }
 
         return Q();
-    },
-
-    checkAdmin: function () {
-        if (process.platform === 'win32') {
-            /* Doesn't work atm (june 2015), always returns an error
-            fs.access(process.env.SystemRoot, fs.W_OK, function (err) {
-                if (!err) {
-                    AdvSettings.set('admin', true);
-                    $('.notification_alert').show().text(i18n.__('Popcorn Time is not supposed to be run as administrator')).delay(6000).fadeOut(400);
-                    return;
-                }
-                AdvSettings.set('admin', false);
-            });*/
-
-            /* Using this redneck test instead */
-            try {
-                fs.writeFile(path.join(process.env.SystemRoot, 'popcorntime.txt'), '', function (err) {
-                    if (err) {
-                        AdvSettings.set('admin', false);
-                        return;
-                    }
-                    fs.unlinkSync(path.join(process.env.SystemRoot, 'popcorntime.txt'));
-                    AdvSettings.set('admin', true);
-                    $('.notification_alert').show().text(i18n.__('%s is not supposed to be run as administrator', 'Popcorn Time')).delay(6000).fadeOut(400);
-                });
-            } catch (e) {
-                console.error('Couldn\'t check admin privileges, continuing');
-            }
-        }
     },
 
     getNextApiEndpoint: function (endpoint) {

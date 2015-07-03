@@ -2,17 +2,27 @@
     'use strict';
 
     var Notifier = Backbone.Model.extend({
+        initialize: function () {
+            App.vent.on('notifications', _.bind(this.check, this));
+        },
         check: function () {
             var that = this;
-            var timing = 10000;
+            var nid = 0;
+            this.notifications = {};
             this.fetch().then(function (n) {
                 _.each(n, function (c, i) {
-                    if (!_.contains(Settings.seenNotifications, i)) {
-                        _.delay(that.notify, timing, c.title, c.content, c.link);
-                        timing = timing + 10000;
-                        Settings.seenNotifications.push(i);
-                    }
+                    // if (!_.contains(Settings.seenNotifications, i)) {
+                    that.notifications[nid] = {
+                        title: c.title,
+                        content: c.content,
+                        link: c.link,
+                        id: nid
+                    };
+                    nid++;
+                    Settings.seenNotifications.push(i);
+                    // }
                 });
+                that.notify(that.notifications[0]);
             });
         },
         fetch: function () {
@@ -26,15 +36,35 @@
             });
             return defer.promise;
         },
-        notify: function (title, content, link) {
-            console.log(title, content, link)
+        notify: function (notification) {
+            var that = this;
+            console.log(notification);
+            if (!notification) {
+                return;
+            }
+            var content = notification.content;
+
+            var title = notification.title;
+            var id = notification.id;
             var options = {
-                body: content.toString()
+                body: content
             };
-            var notification = new Notification(title.toString(), options);
+            var notification = new Notification(title, options);
             notification.onclick = function () {
                 if (link) {
-                    gui.Shell.openExternal(link.toString());
+                    gui.Shell.openExternal(link);
+                }
+            }
+            notification.onerror = function (e) {
+                console.log(e);
+            }
+            notification.onshow = function () {
+                console.log('Showing Notification:', title);
+            }
+            notification.onclose = function () {
+                var nid = id + 1;
+                if (that.notifications[nid]) { //if there is a new notification show it
+                    that.notify(that.notifications[nid]);
                 }
             }
         }

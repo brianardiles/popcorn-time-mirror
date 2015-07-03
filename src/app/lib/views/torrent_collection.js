@@ -32,7 +32,7 @@
                 win.debug('TorrentCollection: data directory created');
             }
             this.files = fs.readdirSync(collection);
-            this.searchEngine =  Settings.onlineSearchEngine || 'Strike';
+            this.searchEngine = Settings.onlineSearchEngine;
         },
 
         onShow: function () {

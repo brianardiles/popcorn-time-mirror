@@ -4,6 +4,12 @@
     var Notifier = Backbone.Model.extend({
         initialize: function () {
             App.vent.on('notifications', _.bind(this.check, this));
+            var notification = new Notification('initingnotifications', {
+                body: 'init'
+            });
+            notification.onshow = function () {
+                notification.close(); //we are initing the notifications so we close as soon as open
+            }
         },
         check: function () {
             var that = this;
@@ -43,7 +49,6 @@
                 return;
             }
             var content = notification.content;
-
             var title = notification.title;
             var id = notification.id;
             var options = {

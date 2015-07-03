@@ -235,6 +235,7 @@
             if (App.startupTime) {
                 win.debug('Popcorn Time %s startup time: %sms', Settings.version, (window.performance.now() - App.startupTime).toFixed(3)); // started in database.js;
             }
+            App.Notifier.check();
         },
 
         showMovies: function (e) {

@@ -2,40 +2,41 @@
     'use strict';
 
     var Notifier = Backbone.Model.extend({
-
-        initialize: function () {
-            this.notificationUrl = 'popcorntime.io/notifications/desktop';
-        },
         check: function () {
-            request
-                .get(this.notificationUrl)
-                .on('response', function (response) {
-
-                }).on('error', function (err) {
-                    console.log(err)
+            var that = this;
+            var timing = 10000;
+            this.fetch().then(function (n) {
+                _.each(n, function (c, i) {
+                    if (!_.contains(Settings.seenNotifications, i)) {
+                        _.delay(that.notify, timing, c.title, c.content, c.link);
+                        timing = timing + 10000;
+                        Settings.seenNotifications.push(i);
+                    }
                 });
+            });
         },
-        notify: function () {
+        fetch: function () {
+            var defer = Q.defer();
+            request('http://update.popcorntime.io/notifications/desktop', function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    defer.resolve(JSON.parse(body));
+                } else {
+                    defer.resolve({});
+                }
+            });
+            return defer.promise;
+        },
+        notify: function (title, content, link) {
+            console.log(title, content, link)
             var options = {
-                icon: 'file://images/icon.png',
-                body: "YTS (Movies) is currently unavailable for Popcorn Time release 0.3.7-2, but is still working for the experimental builds. We're looking into what the issue could be and why it's only affecting release 0.3.7-2"
+                body: content.toString()
             };
-
-            var notification = new Notification('PCT broadcast: YTS issues for Release 0.3.7-2', options);
+            var notification = new Notification(title.toString(), options);
             notification.onclick = function () {
-                console.log('Notification clicked');
+                if (link) {
+                    gui.Shell.openExternal(link.toString());
+                }
             }
-            /*
-            notification.onshow = function () {
-                // play sound on show
-                myAud = document.getElementById("audio1");
-                myAud.play();
-
-                // auto close after 1 second
-                setTimeout(function () {
-                    notification.close();
-                }, 1000);
-            }*/
         }
 
     });

@@ -318,18 +318,8 @@ Mousetrap.bind('mod+,', function (e) {
     App.vent.trigger('settings:show');
 });
 Mousetrap.bind('f11', function (e) {
-    var spawn = require('child_process').spawn,
-        argv = gui.App.fullArgv,
-        CWD = process.cwd();
-
-    argv.push(CWD);
-    spawn(process.execPath, argv, {
-        cwd: CWD,
-        detached: true,
-        stdio: ['ignore', 'ignore', 'ignore']
-    }).unref();
-    win.hide();
-    gui.App.quit();
+    App.settings.deleteTmpOnClose = false;
+    App.vent.trigger('restartPopcornTime');
 });
 Mousetrap.bind(['?', '/', '\''], function (e) {
     e.preventDefault();

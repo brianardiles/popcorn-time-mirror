@@ -202,15 +202,13 @@ var AdvSettings = {
         });
     },
     setup: function () {
-<<<<<<< HEAD
+
         AdvSettings.checkAdmin();
-        AdvSettings.getHardwareInfo();
         AdvSettings.set('version', require('nw.gui').App.manifest.version);
         AdvSettings.set('releaseName', require('nw.gui').App.manifest.releaseName);
-=======
         AdvSettings.performUpgrade();
         return AdvSettings.getHardwareInfo();
->>>>>>> parent of 5a20400... warn windows users not to use the app with admin rights
+
     },
     getHardwareInfo: function () {
         if (/64/.test(process.arch)) {

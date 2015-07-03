@@ -52,7 +52,7 @@ Settings.subtitle_font = 'Arial';
 Settings.httpApiPort = 8008;
 Settings.httpApiUsername = 'popcorn';
 Settings.httpApiPassword = 'popcorn';
-
+Settings.seenNotifications = [];
 // Trakt.tv
 Settings.traktToken = '';
 Settings.traktTokenRefresh = '';

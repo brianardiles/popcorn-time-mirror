@@ -65,11 +65,8 @@ win.error = function () {
 
 
 if (gui.App.fullArgv.indexOf('--reset') !== -1) {
-
     localStorage.clear();
-
 }
-
 
 // Set settings
 App.advsettings = AdvSettings;

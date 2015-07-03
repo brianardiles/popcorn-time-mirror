@@ -203,7 +203,6 @@ var AdvSettings = {
     },
     setup: function () {
 
-        AdvSettings.checkAdmin();
         AdvSettings.set('version', require('nw.gui').App.manifest.version);
         AdvSettings.set('releaseName', require('nw.gui').App.manifest.releaseName);
         AdvSettings.performUpgrade();

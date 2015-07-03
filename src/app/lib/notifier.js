@@ -17,18 +17,19 @@
             this.notifications = {};
             this.fetch().then(function (n) {
                 _.each(n, function (c, i) {
-                    // if (!_.contains(Settings.seenNotifications, i)) {
-                    that.notifications[nid] = {
-                        title: c.title,
-                        content: c.content,
-                        link: c.link,
-                        id: nid
-                    };
-                    nid++;
-                    Settings.seenNotifications.push(i);
-                    // }
+                    if (!_.contains(Settings.seenNotifications, i)) {
+                        that.notifications[nid] = {
+                            title: c.title,
+                            content: c.content,
+                            link: c.link,
+                            id: nid
+                        };
+                        nid++;
+                        Settings.seenNotifications.push(i);
+                    }
                 });
                 that.notify(that.notifications[0]);
+                AdvSettings.set('seenNotifications', Settings.seenNotifications);
             });
         },
         fetch: function () {

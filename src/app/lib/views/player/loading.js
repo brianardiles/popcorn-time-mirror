@@ -461,6 +461,7 @@
             }
         },
         onClose: function () {
+            this.playing = false;
             this.remove();
             this.unbind();
         },

@@ -46,7 +46,6 @@
 
         initialize: function () {
             var that = this;
-
             win.info('Loading torrent');
 
             function formatTwoDigit(n) {
@@ -63,6 +62,10 @@
                     imdbid: this.model.attributes.data.metadata.imdb_id,
                     season: this.model.attributes.data.metadata.season,
                     episode: this.model.attributes.data.metadata.episode
+                }).then(function (status) {
+                    if (status) {
+                        that.setupLocalSubs(Settings.subtitle_language, that.model.attributes.data.subtitles);
+                    }
                 });
                 var tvshowname = $.trim(this.model.attributes.data.metadata.showName.replace(/[\.]/g, ' '))
                     .replace(/^\[.*\]/, '') // starts with brackets
@@ -72,16 +75,12 @@
                     .replace(/\-$/, '') // ends with '-'
                     .replace(/^\./, '') // starts with '.'
                     .replace(/^\-/, ''); // starts with '-'
-
-                console.log(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode));
-
                 App.Trakt.episodes.summary(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode))
                     .then(function (episodeSummary) {
                         if (!episodeSummary) {
                             win.warn('Unable to fetch data from Trakt.tv');
                         } else {
                             var data = episodeSummary;
-                            console.log(data);
                             that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
                             that.loadBackground(data.images.screenshot.full, true);
                         }
@@ -90,34 +89,7 @@
                     });
                 break;
             case 'movie':
-                var subtitles = this.model.attributes.data.subtitles;
-                var defaultSubtitle = this.model.attributes.data.defaultSubtitle;
-                if (defaultSubtitle !== 'none' && subtitles) {
-                    var watchFileSelected = function () {
-                        console.log(subtitles[defaultSubtitle]);
-                        require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
-                        App.vent.trigger('subtitle:download', {
-                            url: subtitles[defaultSubtitle],
-                            path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
-                        });
-                        App.vent.on('subtitle:downloaded', function (sub) {
-                            if (sub) {
-                                App.vent.trigger('subtitle:convert', {
-                                    path: sub,
-                                    language: defaultSubtitle
-                                }, function (err, res) {
-                                    if (err) {
-                                        win.error('error converting subtitles', err);
-                                        that.model.attributes.data.subFile = null;
-                                    } else {
-                                        App.Subtitles.Server.start(res);
-                                    }
-                                });
-                            }
-                        });
-                    };
-                    require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
-                }
+                this.setupLocalSubs(false, this.model.attributes.data.subtitles);
                 break;
             default: //this is a dropped selection
                 this.waitForSelection();
@@ -137,6 +109,38 @@
                 this.player = 'local';
             }
             this.StateUpdate();
+        },
+        setupLocalSubs: function (defaultSubtitle, subtitles) {
+            var that = this;
+            if (!defaultSubtitle) {
+                defaultSubtitle = this.model.attributes.data.defaultSubtitle;
+            }
+            if (defaultSubtitle !== 'none' && subtitles) {
+                var watchFileSelected = function () {
+                    require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
+                    App.vent.trigger('subtitle:download', {
+                        url: subtitles[defaultSubtitle],
+                        path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
+                    });
+                    App.vent.on('subtitle:downloaded', function (sub) {
+                        if (sub) {
+                            that.extsubs = sub;
+                            App.vent.trigger('subtitle:convert', {
+                                path: sub,
+                                language: defaultSubtitle
+                            }, function (err, res) {
+                                if (err) {
+                                    that.extsubs = null;
+                                    win.error('error converting subtitles', err);
+                                } else {
+                                    App.Subtitles.Server.start(res);
+                                }
+                            });
+                        }
+                    });
+                };
+                require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
+            }
         },
         removeExtension: function (filename) {
             var lastDotPosition = filename.lastIndexOf('.');
@@ -199,6 +203,7 @@
             } else {
                 var externalPlayerModel = this.model.get('player');
                 externalPlayerModel.set('src', App.Streamer.src);
+                externalPlayerModel.set('subtitle', this.extsubs); //set subs if we have them; if not? well that boat has sailed.
                 App.vent.trigger('stream:ready', externalPlayerModel);
 
                 this.ui.player.text(this.model.get('player').get('name'));
@@ -307,22 +312,18 @@
         },
 
         waitForSelection: function () {
-
             var that = this;
-
-
             var watchFileSelected = function () {
                 require('watchjs').unwatch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
                 that.model.attributes.data.metadata.title = that.removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
                 that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
             };
             require('watchjs').watch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
-
         },
 
         fetchTVSubtitles: function (data) {
             var that = this;
-
+            var defer = Q.defer();
             // fix for anime
             if (data.imdbid.indexOf('mal') !== -1) {
                 data.imdbid = null;
@@ -336,19 +337,17 @@
                 if (subs && Object.keys(subs).length > 0) {
                     var subtitles = subs;
                     that.model.attributes.data.subtitles = subtitles;
-
+                    defer.resolve(true);
                     win.info(Object.keys(subs).length + ' subtitles found');
                 } else {
                     win.warn('No subtitles returned');
+                    defer.resolve(false);
                 }
             }).catch(function (err) {
+                defer.resolve(false);
                 console.log('subtitleProvider.fetch()', err);
             });
-        },
-
-
-        fetchMovieSubtitles: function (data) {
-
+            return defer.promise;
         },
 
 
@@ -433,6 +432,10 @@
                                             imdbid: summary.ids.imdb,
                                             season: data.season.toString(),
                                             episode: data.number.toString()
+                                        }).then(function (status) {
+                                            if (status) {
+                                                that.setupLocalSubs(Settings.subtitle_language, that.model.attributes.data.subtitles);
+                                            }
                                         });
                                     }
                                 }).catch(function (err) {

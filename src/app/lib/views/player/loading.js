@@ -124,11 +124,17 @@
             if (defaultSubtitle !== 'none' && subtitles) {
                 var watchFileSelected = function () {
                     require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
+                    if (!this.playing) {
+                        return;
+                    }
                     App.vent.trigger('subtitle:download', {
                         url: subtitles[defaultSubtitle],
                         path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
                     });
                     App.vent.on('subtitle:downloaded', function (sub) {
+                        if (!that.playing) {
+                            return;
+                        }
                         if (sub) {
                             that.extsubs = sub;
                             App.vent.trigger('subtitle:convert', {

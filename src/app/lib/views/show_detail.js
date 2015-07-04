@@ -61,7 +61,6 @@
             this.renameUntitled();
 
 
-            App.vent.on('watched', _.bind(this.onWatched, this));
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster, 'thumb');
@@ -84,7 +83,7 @@
         },
 
         onShow: function () {
-
+            App.vent.on('watched', _.bind(this.onWatched, this));
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
             } else {
@@ -291,6 +290,7 @@
                 var value = {
                     tvdb_id: tvdb_id,
                     imdb_id: imdb_id,
+                    episode_id: episode.tvdb_id,
                     season: episode.season,
                     episode: episode.episode
                 };
@@ -304,7 +304,10 @@
             });
         },
 
-        onWatched: function (method, type, data) {
+        onWatched: function (method, type, data, ignore) {
+            if (ignore) {
+                return;
+            }
             if (type !== 'show') {
                 return;
             }
@@ -318,6 +321,7 @@
         },
 
         markWatched: function (value, state) {
+
             state = (state === undefined) ? true : state;
             // we should never get any shows that aren't us, but you know, just in case.
             if (value.tvdb_id === _this.model.get('tvdb_id')) {

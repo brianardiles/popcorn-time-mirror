@@ -639,9 +639,8 @@
                 .addClass('disabled')
                 .prop('disabled', true);
 
-            Database.deleteWatched(); // Reset before sync
-
-            App.Trakt.syncTrakt.all()
+            App.Database.delete('watched')
+                .then(App.Trakt.syncTrakt.all)
                 .then(function () {
                     App.Providers.get('Watchlist').fetchWatchlist();
                 })

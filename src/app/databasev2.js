@@ -140,7 +140,7 @@ App.startupTime = window.performance.now();
             if (type && data) {
                 switch (type) {
                 case 'show':
-                    item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id + '-' + data.episode_id;
+                    item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id + '-' + data.season + '-' + data.episode;
                     break;
                 case 'movie':
                     item = 'watched-' + type + '-' + data;
@@ -163,7 +163,8 @@ App.startupTime = window.performance.now();
                                 'type': ktype,
                                 'imdb_id': imdb_id,
                                 'tvdb_id': tvdb_id,
-                                'episode_id': episode_id
+                                'season': season,
+                                'episode:': episode
                             };
                         } else {
                             watched = {

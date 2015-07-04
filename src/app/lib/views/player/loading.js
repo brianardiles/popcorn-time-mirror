@@ -57,6 +57,7 @@
                 this.loadBackground(this.model.get('data').metadata.backdrop);
             }
 
+
             switch (this.model.attributes.data.type) {
             case 'show':
                 this.fetchTVSubtitles({
@@ -108,6 +109,10 @@
                 this.player = this.model.get('player').get('id');
             } else {
                 this.player = 'local';
+            }
+            if (this.player !== 'local') {
+                this.ui.player.text(this.model.get('player').get('name'));
+                this.ui.streaming.css('visibility', 'visible');
             }
             this.StateUpdate();
         },
@@ -206,9 +211,6 @@
                 externalPlayerModel.set('src', App.Streamer.src);
                 externalPlayerModel.set('subtitle', this.extsubs); //set subs if we have them; if not? well that boat has sailed.
                 App.vent.trigger('stream:ready', externalPlayerModel);
-
-                this.ui.player.text(this.model.get('player').get('name'));
-                this.ui.streaming.css('visibility', 'visible');
                 this.playingExternally = true;
                 this.StateUpdate();
             }

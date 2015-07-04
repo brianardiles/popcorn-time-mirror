@@ -150,7 +150,17 @@
             this.restoreUserPref();
             this.processNext();
         },
-
+        detectscrubbing: function () {
+            var that = this;
+            this.scrubbing = false;
+            $('.vjs-control-bar').mousedown(function () {
+                that.scrubbing = true;
+            }).bind('mouseup mouseleave', function () {
+                _.delay(function () {
+                    that.scrubbing = false;
+                }, 200);
+            });
+        },
         prossessType: function () {
             if (this.model.get('type') === 'trailer') {
 
@@ -218,6 +228,7 @@
             // Force custom controls
             this.player.usingNativeControls(false);
             $('#player').bind('mousewheel', _.bind(this.mouseScroll, this)); //volume wheel control
+            this.detectscrubbing();
         },
 
         setUI: function () {
@@ -256,6 +267,7 @@
 
         setPlayerEvents: function () {
             var type = this.model.get('type');
+            var that = this;
             this.player.one('play', function () {
 
                 if (that.model.get('type') === 'trailer') {
@@ -310,8 +322,8 @@
 
                 // Trigger a resize so the subtitles are adjusted
                 $(window).trigger('resize');
-
-                if (!that.player.scrubbing) {
+                console.log(that.scrubbing);
+                if (!that.scrubbing) {
                     if (!that.firstplay) {
                         that.ui.pause.hide().dequeue();
                         that.ui.play.appendTo('div#video_player');
@@ -329,7 +341,8 @@
             });
 
             this.player.on('pause', function () {
-                if (!that.player.scrubbing) {
+                if (!that.scrubbing) {
+                    that.ui.play.hide().dequeue();
                     that.ui.pause.appendTo('div#video_player');
                     that.ui.pause.show().delay(1500).queue(function () {
                         that.ui.pause.hide().dequeue();
@@ -344,7 +357,6 @@
                 } else {
                     that.closePlayer();
                 }
-
             });
 
             this.player.on('error', function (error) {
@@ -355,7 +367,6 @@
                         App.vent.trigger('player:close');
                     }, 2000);
                 }
-
                 win.error('video.js error code: ' + $('#video_player').get(0).player.error().code, $('#video_player').get(0).player.error());
             });
 

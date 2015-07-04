@@ -48,6 +48,7 @@
             var that = this;
             win.info('Loading torrent');
             App.vent.on('player:close', _.bind(this.onClose, this));
+            this.SubtitlesLoaded = false;
 
             function formatTwoDigit(n) {
                 return n > 9 ? '' + n : '0' + n;
@@ -67,6 +68,8 @@
                 }).then(function (status) {
                     if (status) {
                         that.setupLocalSubs(that.model.attributes.data.defaultSubtitle, that.model.attributes.data.subtitles);
+                    } else {
+                        that.SubtitlesLoaded = true;
                     }
                 });
                 var tvshowname = $.trim(this.model.attributes.data.metadata.showName.replace(/[\.]/g, ' '))
@@ -118,23 +121,14 @@
         },
         setupLocalSubs: function (defaultSubtitle, subtitles) {
             var that = this;
-            if (!defaultSubtitle) {
-                defaultSubtitle = this.model.attributes.data.defaultSubtitle;
-            }
             if (defaultSubtitle !== 'none' && subtitles) {
-                var watchFileSelected = function () {
-                    require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
-                    if (!this.playing) {
-                        return;
-                    }
+                function initsubs() {
                     App.vent.trigger('subtitle:download', {
                         url: subtitles[defaultSubtitle],
                         path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
                     });
                     App.vent.on('subtitle:downloaded', function (sub) {
-                        if (!that.playing) {
-                            return;
-                        }
+                        console.log(sub);
                         if (sub) {
                             that.extsubs = sub;
                             App.vent.trigger('subtitle:convert', {
@@ -143,15 +137,27 @@
                             }, function (err, res) {
                                 if (err) {
                                     that.extsubs = null;
+                                    that.SubtitlesLoaded = true;
                                     win.error('error converting subtitles', err);
                                 } else {
                                     App.Subtitles.Server.start(res);
+                                    that.SubtitlesLoaded = true;
                                 }
                             });
+                        } else {
+                            that.SubtitlesLoaded = true;
                         }
                     });
-                };
-                require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
+                }
+                if (!App.Streamer.streamDir) {
+                    var watchFileSelected = function () {
+                        require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
+                        initsubs();
+                    };
+                    require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
+                } else {
+                    initsubs();
+                }
             }
         },
         removeExtension: function (filename) {
@@ -209,19 +215,35 @@
             };
         },
         initMainplayer: function () {
-            if (this.player === 'local') {
-                var playerModel = new Backbone.Model(this.model.get('data'));
-                App.vent.trigger('stream:local', playerModel);
-            } else {
-                var externalPlayerModel = this.model.get('player');
-                externalPlayerModel.set('src', App.Streamer.src);
-                externalPlayerModel.set('subtitle', this.extsubs); //set subs if we have them; if not? well that boat has sailed.
-                App.vent.trigger('stream:ready', externalPlayerModel);
-                this.playingExternally = true;
-                this.StateUpdate();
+            var that = this;
+
+            function begin() {
+                if (that.player === 'local') {
+                    var playerModel = new Backbone.Model(that.model.get('data'));
+                    App.vent.trigger('stream:local', playerModel);
+                } else {
+                    var externalPlayerModel = that.model.get('player');
+                    externalPlayerModel.set('src', App.Streamer.src);
+                    externalPlayerModel.set('subtitle', that.extsubs); //set subs if we have them; if not? well that boat has sailed.
+                    App.vent.trigger('stream:ready', externalPlayerModel);
+                    that.playingExternally = true;
+                    that.StateUpdate();
+                }
             }
-
-
+            if (this.SubtitlesLoaded || this.model.attributes.data.defaultSubtitle === 'none') {
+                begin();
+            } else {
+                win.info('Subtitles Not Yet Loaded, Waiting for them');
+                var watchSubsLoaded = function (forced) {
+                    require('watchjs').unwatch(this, 'SubtitlesLoaded', watchSubsLoaded);
+                    if (!forced) {
+                        win.info('Subtitles Retrived! Starting playback');
+                    }
+                    begin();
+                };
+                require('watchjs').watch(this, 'SubtitlesLoaded', watchSubsLoaded);
+                this.ui.stateTextDownload.text(i18n.__('Waiting For Subtitles'));
+            }
         },
         StateUpdate: function () {
             if (this.playing && !this.playingExternally) {

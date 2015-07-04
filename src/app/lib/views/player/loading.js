@@ -111,7 +111,6 @@
             this.StateUpdate();
         },
         setupLocalSubs: function (defaultSubtitle, subtitles) {
-            console.log(defaultSubtitle, subtitles)
             var that = this;
             if (!defaultSubtitle) {
                 defaultSubtitle = this.model.attributes.data.defaultSubtitle;

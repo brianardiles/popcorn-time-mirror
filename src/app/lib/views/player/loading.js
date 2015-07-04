@@ -47,6 +47,7 @@
         initialize: function () {
             var that = this;
             win.info('Loading torrent');
+            App.vent.on('player:close', _.bind(this.onClose, this));
 
             function formatTwoDigit(n) {
                 return n > 9 ? '' + n : '0' + n;
@@ -212,6 +213,7 @@
                 this.StateUpdate();
             }
 
+
         },
         StateUpdate: function () {
             if (this.playing && !this.playingExternally) {
@@ -221,6 +223,10 @@
 
             var Stream = App.Streamer.client.swarm;
             if (App.Streamer.fileindex !== null) {
+                if (typeof this.ui.stateTextDownload !== 'object') {
+                    this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 300);
+                    return;
+                }
                 this.ui.stateTextDownload.text(i18n.__('Connecting'));
 
                 this.ui.seedStatus.css('visibility', 'visible');
@@ -446,7 +452,10 @@
                     });
             }
         },
-
+        onClose: function () {
+            this.remove();
+            this.unbind();
+        },
         checkFreeSpace: function (size) {
             size = size / (1024 * 1024 * 1024);
             var reserved = size * 20 / 100;

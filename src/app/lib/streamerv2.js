@@ -1,6 +1,6 @@
 (function (App) {
     'use strict';
-
+    var mkdirp = require('mkdirp');
     var semver = require('semver');
     var peerflix = require('peerflix');
     var getPort = require('get-port');
@@ -76,7 +76,14 @@
                                 index = self.client.files.indexOf(index);
                                 var stream = self.client.files[index].createReadStream();
                                 self.fileindex = index;
-                                self.streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
+                                var streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
+                                mkdirp(streamDir, function (err) {
+                                    if (err) {
+                                        console.error(err)
+                                    } else {
+                                        self.streamDir = streamDir;
+                                    }
+                                });
                             });
                         }
                     }

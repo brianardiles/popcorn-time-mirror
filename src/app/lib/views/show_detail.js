@@ -386,6 +386,7 @@
                     streamer: 'main',
                     episodes_data: episodes_data
                 },
+                defaultSubtitle: Settings.subtitle_language,
                 status: that.model.get('status'),
                 device: App.Device.Collection.selected
             };

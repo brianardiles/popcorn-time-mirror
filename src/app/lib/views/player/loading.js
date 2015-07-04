@@ -64,7 +64,7 @@
                     episode: this.model.attributes.data.metadata.episode
                 }).then(function (status) {
                     if (status) {
-                        that.setupLocalSubs(Settings.subtitle_language, that.model.attributes.data.subtitles);
+                        that.setupLocalSubs(that.model.attributes.data.defaultSubtitle, that.model.attributes.data.subtitles);
                     }
                 });
                 var tvshowname = $.trim(this.model.attributes.data.metadata.showName.replace(/[\.]/g, ' '))

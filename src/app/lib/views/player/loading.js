@@ -90,7 +90,6 @@
                     });
                 break;
             case 'movie':
-                console.log(this.model.attributes.data);
                 var subtitles = this.model.attributes.data.subtitles;
                 var defaultSubtitle = this.model.attributes.data.defaultSubtitle;
                 if (defaultSubtitle !== 'none' && subtitles) {
@@ -100,6 +99,21 @@
                         App.vent.trigger('subtitle:download', {
                             url: subtitles[defaultSubtitle],
                             path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
+                        });
+                        App.vent.on('subtitle:downloaded', function (sub) {
+                            if (sub) {
+                                App.vent.trigger('subtitle:convert', {
+                                    path: sub,
+                                    language: defaultSubtitle
+                                }, function (err, res) {
+                                    if (err) {
+                                        win.error('error converting subtitles', err);
+                                        that.model.attributes.data.subFile = null;
+                                    } else {
+                                        App.Subtitles.Server.start(res);
+                                    }
+                                });
+                            }
                         });
                     };
                     require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);

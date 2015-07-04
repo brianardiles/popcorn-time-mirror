@@ -89,7 +89,7 @@
                     });
                 break;
             case 'movie':
-                this.setupLocalSubs(false, this.model.attributes.data.subtitles);
+                this.setupLocalSubs(this.model.attributes.data.defaultSubtitle, this.model.attributes.data.subtitles);
                 break;
             default: //this is a dropped selection
                 this.waitForSelection();
@@ -111,6 +111,7 @@
             this.StateUpdate();
         },
         setupLocalSubs: function (defaultSubtitle, subtitles) {
+            console.log(defaultSubtitle, subtitles)
             var that = this;
             if (!defaultSubtitle) {
                 defaultSubtitle = this.model.attributes.data.defaultSubtitle;
@@ -328,7 +329,6 @@
             if (data.imdbid.indexOf('mal') !== -1) {
                 data.imdbid = null;
             }
-            console.log(data);
             win.debug('Subtitles data request:', data);
 
             var subtitleProvider = App.Config.getProvider('tvshowsubtitle');

@@ -195,12 +195,15 @@ var AdvSettings = {
         return false;
     },
     set: function (variable, newValue) {
+        var defer = Q.defer();
         App.Database.setting('set', {
             key: variable,
             value: newValue
         }).then(function () {
             Settings[variable] = newValue;
+            defer.resolve(true);
         });
+        return defer.promise;
     },
     setup: function () {
         AdvSettings.set('version', require('nw.gui').App.manifest.version);

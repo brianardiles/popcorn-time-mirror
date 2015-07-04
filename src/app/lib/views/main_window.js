@@ -288,7 +288,7 @@
             var that = this;
             $('#nav-filters, .search, .items').hide();
             $('.spinner').show();
-            
+
             function waitForSync() {
                 if (!App.Trakt.syncTrakt.isSyncing()) {
                     that.Content.show(new App.View.WatchlistBrowser());
@@ -460,7 +460,7 @@
 
             var that = this;
 
-            var postersWidth = Settings.postersMinWidth;
+            var postersWidth = Settings.postersWidth;
             var postersHeight = Math.round(postersWidth * Settings.postersSizeRatio);
             var postersWidthPercentage = (postersWidth - Settings.postersMinWidth) / (Settings.postersMaxWidth - Settings.postersMinWidth) * 100;
             var fontSize = ((Settings.postersMaxFontSize - Settings.postersMinFontSize) * postersWidthPercentage / 100) + Settings.postersMinFontSize;

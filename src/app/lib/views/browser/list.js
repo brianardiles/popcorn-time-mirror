@@ -358,12 +358,8 @@
 
         increasePoster: function (e) {
             var postersWidthIndex = Settings.postersJump.indexOf(parseInt(Settings.postersWidth));
-
             if (postersWidthIndex !== -1 && postersWidthIndex + 1 in Settings.postersJump) {
-                App.Database.setting('set', {
-                    key: 'postersWidth',
-                    value: Settings.postersJump[postersWidthIndex + 1]
-                }).then(function () {
+                AdvSettings.set('postersWidth', Settings.postersJump[postersWidthIndex + 1]).then(function () {
                     App.vent.trigger('updatePostersSizeStylesheet');
                 });
             } else {
@@ -380,12 +376,11 @@
             } else {
                 postersWidth = Settings.postersJump[0];
             }
-            App.Database.setting('set', {
-                key: 'postersWidth',
-                value: postersWidth
-            }).then(function () {
+
+            AdvSettings.set('postersWidth', postersWidth).then(function () {
                 App.vent.trigger('updatePostersSizeStylesheet');
             });
+
         },
 
 

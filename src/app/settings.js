@@ -202,12 +202,9 @@ var AdvSettings = {
         });
     },
     setup: function () {
-
         AdvSettings.set('version', require('nw.gui').App.manifest.version);
         AdvSettings.set('releaseName', require('nw.gui').App.manifest.releaseName);
-        AdvSettings.performUpgrade();
-        return AdvSettings.getHardwareInfo();
-
+        AdvSettings.getHardwareInfo();
     },
     getHardwareInfo: function () {
         if (/64/.test(process.arch)) {

@@ -90,6 +90,20 @@
                     });
                 break;
             case 'movie':
+                console.log(this.model.attributes.data);
+                var subtitles = this.model.attributes.data.subtitles;
+                var defaultSubtitle = this.model.attributes.data.defaultSubtitle;
+                if (defaultSubtitle !== 'none' && subtitles) {
+                    var watchFileSelected = function () {
+                        console.log(subtitles[defaultSubtitle]);
+                        require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
+                        App.vent.trigger('subtitle:download', {
+                            url: subtitles[defaultSubtitle],
+                            path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
+                        });
+                    };
+                    require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
+                }
                 break;
             default: //this is a dropped selection
                 this.waitForSelection();
@@ -110,7 +124,14 @@
             }
             this.StateUpdate();
         },
-
+        removeExtension: function (filename) {
+            var lastDotPosition = filename.lastIndexOf('.');
+            if (lastDotPosition === -1) {
+                return filename;
+            } else {
+                return filename.substr(0, lastDotPosition);
+            }
+        },
         backupCountdown: function () {
             if (this.playing) {
                 return;
@@ -213,7 +234,6 @@
                 this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 100);
             }
 
-
         },
         prettySpeed: function (speed) {
             speed = speed || 0;
@@ -271,21 +291,15 @@
             };
 
         },
+
         waitForSelection: function () {
 
             var that = this;
 
-            function removeExtension(filename) {
-                var lastDotPosition = filename.lastIndexOf('.');
-                if (lastDotPosition === -1) {
-                    return filename;
-                } else {
-                    return filename.substr(0, lastDotPosition);
-                }
-            }
+
             var watchFileSelected = function () {
                 require('watchjs').unwatch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
-                that.model.attributes.data.metadata.title = removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
+                that.model.attributes.data.metadata.title = that.removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
                 that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
             };
             require('watchjs').watch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);

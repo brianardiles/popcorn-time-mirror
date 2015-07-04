@@ -1,4 +1,5 @@
 // Global App skeleton for backbone
+/* jshint ignore:start */
 var App = new Backbone.Marionette.Application();
 App.startupTime = window.performance.now();
 (function (App) {
@@ -29,23 +30,23 @@ App.startupTime = window.performance.now();
         delete: function (db) {
             switch (db) {
             case 'watched':
-                for (var key in localStorage) {
-                    if (key.toString().includes('watched')) {
-                        localStorage.removeItem(key);
+                for (var w in localStorage) {
+                    if (w.toString().includes('watched')) {
+                        localStorage.removeItem(w);
                     }
                 }
                 break;
             case 'bookmarks':
-                for (var key in localStorage) {
-                    if (key.includes('bookmark') || key.includes('movie') || key.includes('show')) {
-                        localStorage.removeItem(key);
+                for (var b in localStorage) {
+                    if (b.includes('bookmark') || b.includes('movie') || b.includes('show')) {
+                        localStorage.removeItem(b);
                     }
                 }
                 break;
             case 'settings':
-                for (var key in localStorage) {
-                    if (key.includes('setting')) {
-                        localStorage.removeItem(key);
+                for (var s in localStorage) {
+                    if (s.includes('setting')) {
+                        localStorage.removeItem(s);
                     }
                 }
                 break;
@@ -105,14 +106,14 @@ App.startupTime = window.performance.now();
                     for (var key in localStorage) {
                         if (key.toString().includes('bookmark')) {
                             var d = key.split('-');
-                            var type = d[1];
+                            var btype = d[1];
                             var imdb_id = d[2];
-                            bookmarked[imdb_id] = type;
+                            bookmarked[imdb_id] = btype;
                         }
                     }
                     toreturn = bookmarked;
                 } else {
-                    toreturn = JSON.parse(localStorage.getItem(item));
+                    toreturn = JSON.parse(localStorage.getItem(item)); // jshint ignore:line
                 }
                 break;
             case 'check':
@@ -123,8 +124,8 @@ App.startupTime = window.performance.now();
                 }
                 break;
             case 'add':
-                if (!localStorage.getItem(item)) {
-                    localStorage.setItem(item, JSON.stringify(data));
+                if (!localStorage.getItem(item)) { // jshint ignore:line
+                    localStorage.setItem(item, JSON.stringify(data)); // jshint ignore:line
                 }
                 toreturn = true;
                 break;
@@ -199,3 +200,4 @@ App.startupTime = window.performance.now();
 
     App.Database = new Database();
 })(window.App);
+/* jshint ignore:end */

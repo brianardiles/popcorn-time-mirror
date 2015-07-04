@@ -1,6 +1,6 @@
 (function (App) {
     'use strict';
-
+    var Q = require('q');
     var Notifier = Backbone.Model.extend({
         initialize: function () {
             App.vent.on('notification', _.bind(this.notify, this)); //we can notify now via app trigger! ||  App.vent.trigger('notification', 'title', 'content', 'linkurl', 'iconurl', 'customiconurl');
@@ -9,7 +9,7 @@
             });
             notification.onshow = function () {
                 notification.close(); //we are initing the notifications so we close as soon as open
-            }
+            };
         },
         check: function (devtest) {
             win.info('Checking for new notifications');
@@ -51,7 +51,7 @@
         fetch: function () {
             var defer = Q.defer();
             request('http://update.popcorntime.io/notifications/desktop', function (error, response, body) {
-                if (!error && response.statusCode == 200) {
+                if (!error && response.statusCode === 200) {
                     defer.resolve(JSON.parse(body));
                 } else {
                     defer.resolve({});
@@ -73,16 +73,16 @@
                     try {
                         gui.Shell.openExternal(link);
                     } catch (err) {
-                        console.log(err)
+                        console.log(err);
                     }
                 }
-            }
+            };
             notification.onerror = function (e) {
                 console.log(e);
-            }
+            };
             notification.onshow = function () {
                 win.info('Showing Notification:', title);
-            }
+            };
             notification.onclose = function () {
                 if (id) {
                     var nid = id + 1;
@@ -91,7 +91,7 @@
                         that.notify(notify.title, notify.content, notify.link, nid);
                     }
                 }
-            }
+            };
         }
 
     });

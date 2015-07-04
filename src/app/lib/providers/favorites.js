@@ -56,7 +56,7 @@
                     }).then(function (data) {
                         if (data) {
                             // Cache new show and return
-                            App.Database.show('add', data)
+                            App.Database.show('add', data);
                             data.type = 'bookmarkedshow';
                             data.imdb = data.imdb_id;
                             data.image = data.images.poster;

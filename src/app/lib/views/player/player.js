@@ -782,7 +782,7 @@
         },
 
         closePlayer: function (next) {
-            next = next == true ? true : false; // undefined|event trap
+            next = next === true ? true : false; // undefined|event trap
             $('#player').unbind('mousewheel', _.bind(this.mouseScroll, this));
 
             this.playing = false;
@@ -807,7 +807,7 @@
             }
 
             // clear last pos
-            if (!(this.video.currentTime() / this.video.duration() < 0.8) && type !== 'trailer') {
+            if (!(this.video.currentTime() / this.video.duration() < 0.8) && type !== 'trailer') { // jshint ignore:line
                 AdvSettings.set('lastWatchedTime', false);
             }
 

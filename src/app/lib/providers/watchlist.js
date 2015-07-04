@@ -13,8 +13,8 @@
 
         //Checked when last fetched
         App.Database.setting('get', {
-            key: 'watchlist-fetched'
-        })
+                key: 'watchlist-fetched'
+            })
             .then(function (doc) {
                 if (doc) {
                     var d = moment.unix(doc.value);
@@ -37,8 +37,8 @@
 
         function fetchWatchlist(update) {
             App.Database.setting('get', {
-                key: 'watchlist'
-            })
+                    key: 'watchlist'
+                })
                 .then(function (doc) {
                     if (doc && !update) {
                         // Returning cached watchlist
@@ -48,9 +48,9 @@
                         App.Trakt.calendars.myShows(moment().subtract(31, 'days').format('YYYY-MM-DD'), 30)
                             .then(function (data) {
                                 App.Database.setting('set', {
-                                    key: 'watchlist',
-                                    value: data
-                                })
+                                        key: 'watchlist',
+                                        value: data
+                                    })
                                     .then(function () {
                                         App.Database.setting('set', {
                                             key: 'watchlist-fetched',
@@ -79,10 +79,10 @@
 
             if (show.show_id && show.season !== 0) {
                 promisifyDb(db.watched.find({
-                    imdb_id: show.show_id.toString(),
-                    season: show.season.toString(),
-                    episode: show.episode.toString()
-                }))
+                        imdb_id: show.show_id.toString(),
+                        season: show.season.toString(),
+                        episode: show.episode.toString()
+                    }))
                     .then(function (data) {
                         if (data != null && data.length > 0) {
                             deferred.resolve(null);
@@ -182,9 +182,9 @@
         App.Trakt.calendars.myShows(moment().subtract(31, 'days').format('YYYY-MM-DD'), 30)
             .then(function (data) {
                 App.db.writeSetting({
-                    key: 'watchlist',
-                    value: data
-                })
+                        key: 'watchlist',
+                        value: data
+                    })
                     .then(function () {
                         App.db.writeSetting({
                             key: 'watchlist-fetched',

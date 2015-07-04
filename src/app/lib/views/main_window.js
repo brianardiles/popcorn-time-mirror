@@ -187,7 +187,7 @@
             win.setAlwaysOnTop(Settings.alwaysOnTop);
             require('nw.gui').Window.get().show();
             that.nativeWindow.focus();
-            splashwin.close(true);
+            splashwin.close(true); // jshint ignore:line
 
             // we check if the disclaimer is accepted
             if (!AdvSettings.get('disclaimerAccepted')) {

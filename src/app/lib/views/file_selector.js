@@ -98,7 +98,7 @@
                 file = Settings.droppedTorrent;
             } else if (Settings.droppedMagnet && !Settings.droppedStoredMagnet) {
                 _file = Settings.droppedMagnet,
-                file = formatMagnet(_file);
+                    file = formatMagnet(_file);
             } else if (Settings.droppedMagnet && Settings.droppedStoredMagnet) {
                 file = Settings.droppedStoredMagnet;
             }
@@ -134,7 +134,7 @@
                 }
             } else if (Settings.droppedMagnet) {
                 _file = Settings.droppedMagnet,
-                file = formatMagnet(_file);
+                    file = formatMagnet(_file);
 
                 if (this.isTorrentStored()) {
                     if (Settings.droppedStoredMagnet) {

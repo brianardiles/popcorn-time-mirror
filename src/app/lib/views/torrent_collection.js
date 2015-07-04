@@ -80,7 +80,7 @@
         },
 
         onlineSearch: function (e) {
-            if (e) { 
+            if (e) {
                 e.preventDefault();
             }
             var that = this;
@@ -120,7 +120,7 @@
                             peers: item.peers,
                             size: require('pretty-bytes')(parseInt(item.size))
                         };
-                        
+
                         that.onlineAddItem(itemModel);
                     });
 

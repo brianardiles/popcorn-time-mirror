@@ -18,9 +18,8 @@
             // "" So it behaves when spaces in path
             var url = streamModel.attributes.src;
             var cmd = path.normalize('"' + this.get('path') + '" ') + getPlayerSwitches(this.get('id')) + ' ';
-            var subtitle = streamModel.attributes.subFile || '';
+            var subtitle = streamModel.attributes.subtitle || '';
             if (subtitle !== '') {
-
                 if ((this.get('id') === 'mplayer') || (this.get('id') === 'MPlayer OSX Extended')) {
                     //detect charset
                     var dataBuff = fs.readFileSync(subtitle);

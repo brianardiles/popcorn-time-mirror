@@ -1,5 +1,4 @@
 // Global App skeleton for backbone
-/* jshint ignore:start */
 var App = new Backbone.Marionette.Application();
 App.startupTime = window.performance.now();
 (function (App) {
@@ -95,10 +94,10 @@ App.startupTime = window.performance.now();
             return Q(toreturn);
         },
         bookmark: function (action, type, data) {
+            var item, toreturn;
             if (data && type) {
-                var item = 'bookmark-' + type + '-' + data;
+                item = 'bookmark-' + type + '-' + data;
             }
-            var toreturn;
             switch (action) {
             case 'get':
                 if (type === 'all') { //we are fetching all bookmarks!
@@ -113,7 +112,7 @@ App.startupTime = window.performance.now();
                     }
                     toreturn = bookmarked;
                 } else {
-                    toreturn = JSON.parse(localStorage.getItem(item)); // jshint ignore:line
+                    toreturn = JSON.parse(localStorage.getItem(item));
                 }
                 break;
             case 'check':
@@ -124,8 +123,8 @@ App.startupTime = window.performance.now();
                 }
                 break;
             case 'add':
-                if (!localStorage.getItem(item)) { // jshint ignore:line
-                    localStorage.setItem(item, JSON.stringify(data)); // jshint ignore:line
+                if (!localStorage.getItem(item)) {
+                    localStorage.setItem(item, JSON.stringify(data));
                 }
                 toreturn = true;
                 break;
@@ -154,21 +153,21 @@ App.startupTime = window.performance.now();
                 for (var key in localStorage) {
                     if (key.toString().includes(item)) {
                         var d = key.split('-');
-                        var type = d[1];
+                        var ktype = d[1];
                         var imdb_id = d[2];
                         var tvdb_id, episode_id;
                         if (type === 'show') {
                             tvdb_id = d[3];
                             episode_id = d[4];
                             watched = {
-                                'type': type,
+                                'type': ktype,
                                 'imdb_id': imdb_id,
                                 'tvdb_id': tvdb_id,
                                 'episode_id': episode_id
                             };
                         } else {
                             watched = {
-                                'type': type,
+                                'type': ktype,
                                 'imdb_id': imdb_id
                             };
                         }
@@ -200,4 +199,3 @@ App.startupTime = window.performance.now();
 
     App.Database = new Database();
 })(window.App);
-/* jshint ignore:end */

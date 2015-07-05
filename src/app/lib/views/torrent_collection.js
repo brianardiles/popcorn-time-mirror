@@ -295,6 +295,7 @@
                 metadata: {
                     title: torrent.name,
                 },
+                defaultSubtitle: Settings.subtitle_language,
                 device: App.Device.Collection.selected
             };
             App.Streamer.start(torrentStart);

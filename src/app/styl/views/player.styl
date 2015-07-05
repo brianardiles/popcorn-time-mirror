@@ -138,6 +138,7 @@
 
 .vjs-subtitles-button {
     top: 12px
+    z-index: 2
 }
 
 .vjs_smallersub_button {
@@ -226,14 +227,14 @@
 
 .item-next
     color #ffffff !important
-    z-index 99 !important
+    z-index 1 !important
     position absolute
     width 800px !important
     height 220px !important
     padding-top 10px !important
     padding-left 10px !important
     padding-bottom 10px !important
-    left 40px !important 
+    left calc(100vw - 800px ) !important 
     background-color rgba(23, 24, 27, 0.75) !important
     bottom 55px !important
     .item-poster

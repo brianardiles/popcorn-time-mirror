@@ -96,7 +96,7 @@
                     var items = [];
                     _.each(strike, function (item) {
                         var itemModel = {
-                            title: item.torrent_title.replace(/\./g, ' '),
+                            title: item.torrent_title,
                             magnet: item.magnet_uri,
                             seeds: item.seeds,
                             peers: item.leeches,
@@ -110,7 +110,7 @@
                     var items = [];
                     _.each(kat, function (item) {
                         var itemModel = {
-                            title: item.title.replace(/\./g, ' '),
+                            title: item.title,
                             magnet: item.magnet,
                             seeds: item.seeds,
                             peers: item.peers,
@@ -194,7 +194,7 @@
             var health = Common.healthMap[h].capitalize();
             var ratio = item.peers > 0 ? item.seeds / item.peers : +item.seeds;
             $('.onlinesearch-info>ul.file-list').append(
-                '<li class="result-item" data-file="' + item.magnet + '"><a>' + item.title + '</a><div class="item-icon magnet-icon"></div><div data-toggle="tooltip" data-placement="left" title="" class="fa fa-circle health-icon ' + health + '"></div><i class="online-size tooltipped" data-toggle="tooltip" data-placement="left" title="' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + '<br>' + i18n.__('Seeds:') + ' ' + item.seeds + ' - ' + i18n.__('Peers:') + ' ' + item.peers + '">' + item.size + '</i></li>'
+                '<li class="result-item" data-file="' + item.magnet + '"><a>' + item.title.replace(/\./g, ' ') + '</a><div class="item-icon magnet-icon"></div><div data-toggle="tooltip" data-placement="left" title="" class="fa fa-circle health-icon ' + health + '"></div><i class="online-size tooltipped" data-toggle="tooltip" data-placement="left" title="' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + '<br>' + i18n.__('Seeds:') + ' ' + item.seeds + ' - ' + i18n.__('Peers:') + ' ' + item.peers + '">' + item.size + '</i></li>'
             );
         },
 
@@ -264,13 +264,13 @@
 
         openFileSelector: function (e) {
             var that = this;
-            var _file = $(e.currentTarget).context.innerText,
-                file = _file.substring(0, _file.length - 2); // avoid ENOENT
 
-            if (_file.indexOf('.torrent') !== -1) {
+            var file = path.join(collection, $(e.currentTarget).context.innerText);
+            file = file.substring(0, file.length - 2);
+            console.log(file);
 
-
-                readTorrent(file, function (err, torrent) {
+            App.cacheTorrent.cache(file).then(function (path) {
+                readTorrent(path, function (err, torrent) {
                     if (!err) {
                         var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
                         _.each(torrent.announce, function (value) {
@@ -282,26 +282,9 @@
                         win.error(err.stack);
                     }
                 });
+            });
 
 
-            } else { // assume magnet
-                var content = fs.readFileSync(collection + file, 'utf8');
-
-                readTorrent(content, function (err, torrent) {
-                    if (!err) {
-                        var torrentMagnet = 'magnet:?xt=urn:btih:' + torrent.infoHash + '&dn=' + torrent.name.replace(/ +/g, '+').toLowerCase();
-                        _.each(torrent.announce, function (value) {
-                            var announce = '&tr=' + encodeURIComponent(value);
-                            torrentMagnet += announce;
-                        });
-                        that.startStream(torrent, torrentMagnet);
-                    } else {
-                        win.error(err.stack);
-                    }
-                });
-
-
-            }
         },
         startStream: function (torrent, torrentsrc) {
 

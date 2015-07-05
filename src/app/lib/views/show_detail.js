@@ -191,7 +191,32 @@
             episodes = _.sortBy(episodes, 'id');
             unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
             var select;
-            if (Settings.tv_detail_jump_to !== 'next' && unWatchedEpisodes.length > 0) {
+
+            switch (Settings.tv_detail_jump_to) {
+            case 'next':
+                if (unWatchedEpisodes.length > 0) {
+                    select = _.last(unWatchedEpisodes);
+                } else {
+                    select = _.last(episodes);
+                }
+                break;
+            case 'firstUnwatched':
+                if (unWatchedEpisodes.length > 0) {
+                    select = _.first(unWatchedEpisodes);
+                } else {
+                    select = _.last(episodes);
+                }
+                break;
+            case 'first':
+                select = _.first(episodes);
+                break;
+            case 'last':
+                select = _.last(episodes);
+                break;
+            }
+
+
+            if (Settings.tv_detail_jump_to === 'next' && unWatchedEpisodes.length > 0) {
                 select = _.first(unWatchedEpisodes);
             } else {
                 select = _.last(episodes);
@@ -715,7 +740,9 @@
 
                 torrent = torrent.split('&tr')[0] + '&tr=udp://tracker.openbittorrent.com:80/announce' + '&tr=udp://open.demonii.com:1337/announce' + '&tr=udp://tracker.coppersurfer.tk:6969';
 
-                torrentHealth(torrent, {timeout: 1000}).then(function (res) {
+                torrentHealth(torrent, {
+                    timeout: 1000
+                }).then(function (res) {
 
                     if (cancelled) {
                         return;

@@ -476,8 +476,10 @@
                     <p><%= i18n.__("When Opening TV Series Detail Jump To") %></p>
                         <%
                             var tv_detail_jump_to = {
-                                "firstUnwatched": "First Unwatched Episode",
-                                "next": "Next Episode In Series"
+                                "firstUnwatched": "First Unwatched Episode In Series",
+                                "next": "Last Unwatched Episode In Series",
+                                "last": "Last Episode In Series",
+                                "first": "First Episode In Series"
                             };
 
                             var selected_tv_detail_jump = "";

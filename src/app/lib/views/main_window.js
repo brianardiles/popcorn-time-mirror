@@ -229,7 +229,7 @@
                 policy.ignore();
             });
 
-            App.vent.trigger('updatePostersSizeStylesheet');
+            this.updatePostersSizeStylesheet(true);
             App.vent.trigger('main:ready');
 
             if (App.startupTime) {
@@ -456,7 +456,7 @@
             $(window).trigger('resize');
         },
 
-        updatePostersSizeStylesheet: function () {
+        updatePostersSizeStylesheet: function (first) {
 
             var that = this;
 
@@ -490,10 +490,13 @@
             Settings.postersWidth = postersWidth;
 
             // Display PostersWidth
-            var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
-            if (typeof App.currentview !== 'undefined') {
+
+            if (!first) {
+                var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
                 that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
             }
+
+
             $('.cover-image').css('width', Settings.postersWidth);
 
         },

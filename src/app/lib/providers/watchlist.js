@@ -124,7 +124,7 @@
                     }
                 });
 
-            filtered.push(deferred.promise)
+            filtered.push(deferred.promise);
         });
 
         return Q.all(filtered);
@@ -136,10 +136,12 @@
 
         var items = [];
         list = list.filter(function (n) {
-            return n != undefined
+            return n !== undefined;
         });
         $.each(list, function (i, el) {
-            if ($.inArray(el, items) === -1) items.push(el);
+            if ($.inArray(el, items) === -1) {
+                items.push(el);
+            }
         });
 
         items.forEach(function (show) {

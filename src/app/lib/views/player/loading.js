@@ -1,6 +1,7 @@
 (function (App) {
     'use strict';
     var util = require('util');
+    var Q = require('q');
     var Loading = Backbone.Marionette.ItemView.extend({
         template: '#loading-tpl',
         className: 'app-overlay',
@@ -119,44 +120,44 @@
             }
             this.StateUpdate();
         },
-        setupLocalSubs: function (defaultSubtitle, subtitles) {
+        initsubs: function (defaultSubtitle, subtitles) {
             var that = this;
-            if (defaultSubtitle !== 'none' && subtitles) {
-                function initsubs() {
-                    App.vent.trigger('subtitle:download', {
-                        url: subtitles[defaultSubtitle],
-                        path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
-                    });
-                    App.vent.on('subtitle:downloaded', function (sub) {
-                        console.log(sub);
-                        if (sub) {
-                            that.extsubs = sub;
-                            App.vent.trigger('subtitle:convert', {
-                                path: sub,
-                                language: defaultSubtitle
-                            }, function (err, res) {
-                                if (err) {
-                                    that.extsubs = null;
-                                    that.SubtitlesLoaded = true;
-                                    win.error('error converting subtitles', err);
-                                } else {
-                                    App.Subtitles.Server.start(res);
-                                    that.SubtitlesLoaded = true;
-                                }
-                            });
+            App.vent.trigger('subtitle:download', {
+                url: subtitles[defaultSubtitle],
+                path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
+            });
+            App.vent.on('subtitle:downloaded', function (sub) {
+                console.log(sub);
+                if (sub) {
+                    that.extsubs = sub;
+                    App.vent.trigger('subtitle:convert', {
+                        path: sub,
+                        language: defaultSubtitle
+                    }, function (err, res) {
+                        if (err) {
+                            that.extsubs = null;
+                            that.SubtitlesLoaded = true;
+                            win.error('error converting subtitles', err);
                         } else {
+                            App.Subtitles.Server.start(res);
                             that.SubtitlesLoaded = true;
                         }
                     });
+                } else {
+                    that.SubtitlesLoaded = true;
                 }
+            });
+        },
+        setupLocalSubs: function (defaultSubtitle, subtitles) {
+            if (defaultSubtitle !== 'none' && subtitles) {
                 if (!App.Streamer.streamDir) {
                     var watchFileSelected = function () {
                         require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
-                        initsubs();
+                        this.initsubs(defaultSubtitle, subtitles);
                     };
                     require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
                 } else {
-                    initsubs();
+                    this.initsubs(defaultSubtitle, subtitles);
                 }
             }
         },

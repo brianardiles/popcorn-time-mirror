@@ -79,7 +79,7 @@
                                 var streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
                                 mkdirp(streamDir, function (err) {
                                     if (err) {
-                                        console.error(err)
+                                        console.error(err);
                                     } else {
                                         self.streamDir = streamDir;
                                     }

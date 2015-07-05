@@ -5,7 +5,7 @@
         readTorrent = require('read-torrent'),
         collection = path.join(require('nw.gui').App.dataPath + '/TorrentCollection/'),
         files;
-
+    var Q = require('q');
     var strike = require('strike-api');
     var kat = require('kat-api');
     var TorrentCollection = Backbone.Marionette.ItemView.extend({
@@ -134,7 +134,7 @@
 
                 // delete all duplicates from the array
                 for (var i = 0; i < items.length - 1; i++) {
-                    if (items[i].title == items[i + 1].title) {
+                    if (items[i].title === items[i + 1].title) {
                         delete items[i];
                     }
                 }

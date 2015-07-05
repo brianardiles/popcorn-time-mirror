@@ -163,8 +163,8 @@ App.startupTime = window.performance.now();
                                 'type': ktype,
                                 'imdb_id': imdb_id,
                                 'tvdb_id': tvdb_id,
-                                'season': season,
-                                'episode:': episode
+                                'season': data.season,
+                                'episode:': data.episode
                             };
                         } else {
                             watched = {

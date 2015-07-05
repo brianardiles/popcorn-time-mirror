@@ -110,10 +110,10 @@
                     var items = [];
                     _.each(kat, function (item) {
                         var itemModel = {
-                            title: item.torrent_title,
-                            magnet: item.magnet_uri,
+                            title: item.title,
+                            magnet: item.magnet,
                             seeds: item.seeds,
-                            peers: item.leeches,
+                            peers: item.peers,
                             size: require('pretty-bytes')(parseInt(item.size))
                         };
                         items.push(itemModel);
@@ -134,7 +134,13 @@
                 $('.notorrents-info,.torrents-info').hide();
                 $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
                 $('.onlinesearch-info').show();
-
+                that.$('.tooltipped').tooltip({
+                    html: true,
+                    delay: {
+                        'show': 50,
+                        'hide': 50
+                    }
+                });
             });
 
         },
@@ -168,9 +174,15 @@
 
 
         onlineAddItem: function (item) {
+
+            var h = Common.calcHealth({
+                seed: item.seeds,
+                peer: item.peers
+            });
+            var health = Common.healthMap[h].capitalize();
             var ratio = item.peers > 0 ? item.seeds / item.peers : +item.seeds;
             $('.onlinesearch-info>ul.file-list').append(
-                '<li class="result-item" data-file="' + item.magnet + '"><a>' + item.title + '</a><div class="item-icon magnet-icon"></div><i class="online-size tooltipped" data-toggle="tooltip" data-placement="left" title="' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + '<br>' + i18n.__('Seeds:') + ' ' + item.seeds + ' - ' + i18n.__('Peers:') + ' ' + item.peers + '">' + item.size + '</i></li>'
+                '<li class="result-item" data-file="' + item.magnet + '"><a>' + item.title + '</a><div class="item-icon magnet-icon"></div><div data-toggle="tooltip" data-placement="left" title="" class="fa fa-circle health-icon ' + health + '"></div><i class="online-size tooltipped" data-toggle="tooltip" data-placement="left" title="' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + '<br>' + i18n.__('Seeds:') + ' ' + item.seeds + ' - ' + i18n.__('Peers:') + ' ' + item.peers + '">' + item.size + '</i></li>'
             );
         },
 

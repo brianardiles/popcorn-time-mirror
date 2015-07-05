@@ -149,11 +149,12 @@
             });
         },
         setupLocalSubs: function (defaultSubtitle, subtitles) {
+            var that = this;
             if (defaultSubtitle !== 'none' && subtitles) {
                 if (!App.Streamer.streamDir) {
                     var watchFileSelected = function () {
                         require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
-                        this.initsubs(defaultSubtitle, subtitles);
+                        that.initsubs(defaultSubtitle, subtitles);
                     };
                     require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
                 } else {

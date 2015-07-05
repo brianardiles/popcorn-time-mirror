@@ -77,7 +77,6 @@
             var deferred = Q.defer();
             App.Database.show('get', show.show_id)
                 .then(function (data) {
-
                     if (data) {
                         var value = {
                             tvdb_id: data.tvdb_id,
@@ -94,7 +93,6 @@
                                 }
                             });
                     } else {
-                        console.log(data, show.show_id);
                         //If not found, then get the details from Eztv and add it to the DB
                         data = Eztv.detail(show.show_id, show, false)
                             .then(function (data) {
@@ -138,7 +136,7 @@
 
         var items = [];
         list = list.filter(function (n) {
-            return n !== undefined;
+            return n !== null;
         });
         $.each(list, function (i, el) {
             if ($.inArray(el, items) === -1) {
@@ -152,7 +150,7 @@
 
             App.Database.show('get', show)
                 .then(function (data) {
-                    if (data != null) {
+                    if (data) {
                         data.type = 'show';
                         data.image = data.images.poster;
                         data.imdb = data.imdb_id;
@@ -163,14 +161,13 @@
                         }
                         deferred.resolve(data);
                     } else {
-                        //If not found, then get the details from Eztv and add it to the DB
+                        //If not found, then get the details from Eztv and add it to the DB should never get to this stage
                         data = Eztv.detail(show, show, false)
                             .then(function (data) {
                                 if (data) {
                                     data.provider = 'Eztv';
                                     data.type = 'show';
                                     data.next_episode = show.next_episode;
-
                                     App.Database.show('add', data)
                                         .then(function (idata) {
                                             deferred.resolve(data);

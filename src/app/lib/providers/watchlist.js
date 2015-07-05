@@ -17,12 +17,10 @@
             })
             .then(function (doc) {
                 if (doc) {
-                    var d = moment.unix(doc.value);
-
+                    var d = moment.unix(doc);
                     if (Math.abs(now.diff(d, 'hours')) >= 12) {
                         win.info('Watchlist - last update was %s hour(s) ago', Math.abs(now.diff(d, 'hours')));
                         fetchWatchlist(true);
-
                     } else {
                         // Last fetch is fresh (< 12h)
                         win.info('Watchlist - next update in %s hour(s)', 12 - Math.abs(now.diff(d, 'hours')));

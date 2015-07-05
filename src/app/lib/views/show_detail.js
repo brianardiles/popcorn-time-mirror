@@ -229,6 +229,10 @@
         },
 
         toggleWatched: function (e) {
+            if (e.type) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             var edata = e.currentTarget.id.split('-');
             setTimeout(function () {
                 var value = {

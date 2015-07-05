@@ -77,7 +77,8 @@
             var deferred = Q.defer();
             App.Database.show('get', show.show_id)
                 .then(function (data) {
-                    if (data != null) {
+
+                    if (data) {
                         var value = {
                             tvdb_id: data.tvdb_id,
                             imdb_id: data.imdb_id,
@@ -93,6 +94,7 @@
                                 }
                             });
                     } else {
+                        console.log(data, show.show_id);
                         //If not found, then get the details from Eztv and add it to the DB
                         data = Eztv.detail(show.show_id, show, false)
                             .then(function (data) {
@@ -106,7 +108,9 @@
                                     App.Database.watched('check', 'show', value)
                                         .then(function (watched) {
                                             if (!watched) {
-                                                deferred.resolve(show.show_id);
+                                                App.Database.show('add', data).then(function () {
+                                                    deferred.resolve(show.show_id);
+                                                });
                                             } else {
                                                 deferred.resolve(null);
                                             }

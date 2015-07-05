@@ -94,65 +94,84 @@
 
                 var strikes = function (strike) {
                     var items = [];
-                    _.each(strike, function (item) {
-                        var itemModel = {
-                            title: item.torrent_title,
-                            magnet: item.magnet_uri,
-                            seeds: item.seeds,
-                            peers: item.leeches,
-                            size: require('pretty-bytes')(parseInt(item.size))
-                        };
-                        items.push(itemModel);
-                    });
+                    if (strike.length > 0) {
+                        _.each(strike, function (item) {
+                            var itemModel = {
+                                title: item.torrent_title,
+                                magnet: item.magnet_uri,
+                                seeds: item.seeds,
+                                peers: item.leeches,
+                                size: require('pretty-bytes')(parseInt(item.size))
+                            };
+                            items.push(itemModel);
+                        });
+                    }
                     return Q(items);
                 };
                 var kats = function (kat) {
                     var items = [];
-                    _.each(kat, function (item) {
-                        var itemModel = {
-                            title: item.title,
-                            magnet: item.magnet,
-                            seeds: item.seeds,
-                            peers: item.peers,
-                            size: require('pretty-bytes')(parseInt(item.size))
-                        };
-                        items.push(itemModel);
-                    });
+                    if (kat.length > 0) {
+                        _.each(kat, function (item) {
+                            var itemModel = {
+                                title: item.title,
+                                magnet: item.magnet,
+                                seeds: item.seeds,
+                                peers: item.peers,
+                                size: require('pretty-bytes')(parseInt(item.size))
+                            };
+                            items.push(itemModel);
+                        });
+                    }
                     return Q(items);
                 };
 
                 Q.all([strikes(strike), kats(kat)]).spread(function (s, k) {
-                    defer.resolve(s.concat(k));
-                });
+                    var items = s.concat(k);
+                    if (items.length > 0) {
+                        items.sort(function (a, b) {
+                            return parseFloat(a.seeds) - parseFloat(b.seeds);
+                        }).reverse();
 
+                        // delete all duplicates from the array
+                        for (var i = 0; i < items.length - 1; i++) {
+                            if (items[i].title === items[i + 1].title) {
+                                delete items[i];
+                            }
+                        }
+                    }
+
+                    defer.resolve(items);
+                });
                 return defer.promise;
             }).then(function (items) {
+                console.log(items.length);
+                if (items.length > 0) {
+                    items.forEach(function (item) {
+                        that.onlineAddItem(item);
+                    });
+                    $('.notorrents-info,.torrents-info').hide();
+                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
+                    $('.onlinesearch-info').show();
+                    that.$('.tooltipped').tooltip({
+                        html: true,
+                        delay: {
+                            'show': 50,
+                            'hide': 50
+                        }
+                    });
+                } else {
 
-                items.sort(function (a, b) {
-                    return parseFloat(a.seeds) - parseFloat(b.seeds);
-                }).reverse();
+                    var error = 'No results found';
 
-                // delete all duplicates from the array
-                for (var i = 0; i < items.length - 1; i++) {
-                    if (items[i].title === items[i + 1].title) {
-                        delete items[i];
-                    }
+
+                    $('.onlinesearch-info>ul.file-list').html('<h2 class="error">' + i18n.__(error) + '</h2>');
+
+                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
+                    $('.notorrents-info,.torrents-info').hide();
+                    $('.onlinesearch-info').show();
                 }
 
-                console.log(items);
-                items.forEach(function (item) {
-                    that.onlineAddItem(item);
-                });
-                $('.notorrents-info,.torrents-info').hide();
-                $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
-                $('.onlinesearch-info').show();
-                that.$('.tooltipped').tooltip({
-                    html: true,
-                    delay: {
-                        'show': 50,
-                        'hide': 50
-                    }
-                });
+
             });
 
         },

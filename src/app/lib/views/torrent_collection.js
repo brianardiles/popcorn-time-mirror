@@ -96,7 +96,7 @@
                     var items = [];
                     _.each(strike, function (item) {
                         var itemModel = {
-                            title: item.torrent_title,
+                            title: item.torrent_title.replace(/\./g, ' '),
                             magnet: item.magnet_uri,
                             seeds: item.seeds,
                             peers: item.leeches,
@@ -110,7 +110,7 @@
                     var items = [];
                     _.each(kat, function (item) {
                         var itemModel = {
-                            title: item.title,
+                            title: item.title.replace(/\./g, ' '),
                             magnet: item.magnet,
                             seeds: item.seeds,
                             peers: item.peers,
@@ -127,6 +127,18 @@
 
                 return defer.promise;
             }).then(function (items) {
+
+                items.sort(function (a, b) {
+                    return parseFloat(a.seeds) - parseFloat(b.seeds);
+                }).reverse();
+
+                // delete all duplicates from the array
+                for (var i = 0; i < items.length - 1; i++) {
+                    if (items[i].title == items[i + 1].title) {
+                        delete items[i];
+                    }
+                }
+
                 console.log(items);
                 items.forEach(function (item) {
                     that.onlineAddItem(item);

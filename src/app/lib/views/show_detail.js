@@ -191,12 +191,11 @@
             episodes = _.sortBy(episodes, 'id');
             unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
             var select;
-            if (Settings.tv_detail_jump_to !== 'next') {
+            if (Settings.tv_detail_jump_to !== 'next' && unWatchedEpisodes.length > 0) {
                 select = _.first(unWatchedEpisodes);
             } else {
                 select = _.last(episodes);
             }
-            console.log(episodes);
             this.selectSeason($('li[data-tab="season-' + select.season + '"]'));
             var epselect = $('#watched-' + select.season + '-' + select.episode).parent();
             this.selectEpisode(epselect);

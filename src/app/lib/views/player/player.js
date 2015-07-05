@@ -717,7 +717,7 @@
                         that.ui.nextTitle.text(data.title);
                         that.loadBackground(data.images.screenshot.full);
                         that.ui.nextDiscription.text(data.overview);
-                        that.ui.nextSE.text('S' + data.season + ' - E' + data.number);
+                        that.ui.nextSE.text('S' + data.season + ' · E' + data.number);
                         $('.item-next').appendTo('div#video_player');
                     }
                 }).catch(function (err) {

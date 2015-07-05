@@ -132,8 +132,6 @@
                 bgCache = null;
             };
 
-            this.selectNextEpisode();
-
             if (!AdvSettings.get('ratingStars')) {
                 $('.star-container-tv').addClass('hidden');
                 $('.number-container-tv').removeClass('hidden');
@@ -189,20 +187,19 @@
                     });
             }
         },
-        selectNextEpisode: function () {
-            this.selectSeason($('.tab-season:first'));
-
-
-            this.selectEpisode($('#watched-' + 1 + '-' + 1).parent());
-
-
-            if (AdvSettings.get('tv_detail_jump_to') !== 'firstUnwatched') {
-
+        selectNextEpisode: function (episodes, unWatchedEpisodes) {
+            episodes = _.sortBy(episodes, 'id');
+            unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
+            var select;
+            if (Settings.tv_detail_jump_to !== 'next') {
+                select = _.first(unWatchedEpisodes);
             } else {
-
+                select = _.last(episodes);
             }
-
-
+            console.log(episodes);
+            this.selectSeason($('li[data-tab="season-' + select.season + '"]'));
+            var epselect = $('#watched-' + select.season + '-' + select.episode).parent();
+            this.selectEpisode(epselect);
         },
 
         openIMDb: function () {
@@ -254,10 +251,12 @@
         },
 
         isShowWatched: function () {
+            var unWatchedEpisodes = [];
             var tvdb_id = _this.model.get('tvdb_id');
             var imdb_id = _this.model.get('imdb_id');
             var that = this;
             var episodes = this.model.get('episodes');
+            var checkedEpisodes = [];
             episodes.forEach(function (episode, index, array) {
                 var value = {
                     tvdb_id: tvdb_id,
@@ -270,12 +269,31 @@
                     .then(function (watched) {
                         if (!watched) {
                             $('.show-watched-toggle').show();
+                            unWatchedEpisodes.push({
+                                id: parseInt(episode.season) * 100 + parseInt(episode.episode),
+                                season: episode.season,
+                                episode: episode.episode
+                            });
+                            return true;
                         } else {
                             that.markWatched(value, true);
+                            return true;
                         }
+                    }).then(function () {
+                        checkedEpisodes.push({
+                            id: parseInt(episode.season) * 100 + parseInt(episode.episode),
+                            season: episode.season,
+                            episode: episode.episode
+                        });
+                        if (checkedEpisodes.length === episodes.length) {
+                            that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes);
+                        }
+
                     });
 
             });
+
+
         },
 
         markShowAsWatched: function () {
@@ -313,7 +331,6 @@
             }
             if (method === 'add') {
                 this.markWatched(data, true);
-                this.selectNextEpisode();
             } else if (method === 'remove') {
                 this.markWatched(data, false);
             }
@@ -451,7 +468,6 @@
             this.ui.q720p.removeClass('active');
             this.ui.q480p.removeClass('active');
 
-            console.log(torrents);
             if (!torrents.q480) {
                 this.ui.q480p.addClass('disabled');
             } else {

@@ -106,11 +106,6 @@ App.addInitializer(function (options) {
     if (ScreenResolution.QuadHD) {
         zoom = 2;
     }
-    /*
-	if (ScreenResolution.UltraHD) {
-		zoom = 4;
-	}
-	*/
 
     var width = parseInt(localStorage.width ? localStorage.width : Settings.defaultWidth);
     var height = parseInt(localStorage.height ? localStorage.height : Settings.defaultHeight);
@@ -277,6 +272,7 @@ var delCache = function () {
 win.on('close', function () {
     if (App.settings.deleteTmpOnClose) {
         deleteFolder(App.settings.tmpLocation);
+        deleteFolder(path.join(os.tmpDir(), 'torrent-stream'));
     }
     if (fs.existsSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'))) {
         fs.unlinkSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'));

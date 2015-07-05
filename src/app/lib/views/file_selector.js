@@ -104,7 +104,7 @@
             var newfilename2 = App.Streamer.client.torrent.name.replace(/\./g, ' ') + '.torrent';
 
             var torrentlocation = path.join(os.tmpDir(), 'torrent-stream', oldfilename);
-            var newpath = path.join(target, newfilename);
+            var newpath = path.join(target, newfilename2);
 
 
             if (this.isTorrentStored()) {

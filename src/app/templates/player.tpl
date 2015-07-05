@@ -23,15 +23,15 @@
 
                     <div class="vjs-control-window item-next ">
                         <div class="item-poster">
-                            <h1><%= i18n.__("Playing Next").toUpperCase() %></h1>
+                            <h1><%= i18n.__("Up Next").toUpperCase() %></h1>
                                 <div class="media-poster">  </div>
                       
                         </div>
                         <div class="item-summary">
-                            <h1 class="media-title" style=" font-size: 18px; height: 38px;"></h1>
-                            <h2 class="media-subtitle-1" style=" font-size: 17px; "></h2>
-                            <h3 class="media-subtitle-2" style=" font-size: 17px; "></h3>
-                            <p class="media-subtitle-3"style=" font-size: 15px; "></p>
+                            <h1 class="media-title" ></h1>
+                            <h2 class="media-subtitle-1" ></h2>
+                            <h3 class="media-subtitle-2"></h3>
+                            <p class="media-subtitle-3"></p>
                         </div>
                     </div>
 

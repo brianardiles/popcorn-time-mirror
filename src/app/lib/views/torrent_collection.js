@@ -6,6 +6,8 @@
         collection = path.join(require('nw.gui').App.dataPath + '/TorrentCollection/'),
         files;
 
+    var strike = require('strike-api');
+    var kat = require('kat-api');
     var TorrentCollection = Backbone.Marionette.ItemView.extend({
         template: '#torrent-collection-tpl',
         className: 'torrent-collection',
@@ -47,8 +49,6 @@
         },
 
         onRender: function () {
-            $('.engine-icon').removeClass('active');
-            $('#' + this.searchEngine.toLowerCase() + '-icon').addClass('active');
             $('#online-input').focus();
             if (this.files[0]) {
                 $('.notorrents-info').css('display', 'none');
@@ -62,21 +62,6 @@
                     'hide': 100
                 }
             });
-        },
-
-        changeEngine: function (e) {
-            e.preventDefault();
-
-            Settings.onlineSearchEngine = this.searchEngine = e.currentTarget.dataset.id;
-            AdvSettings.set('onlineSearchEngine', this.searchEngine);
-
-            if ($('#online-input').val().length !== 0) {
-                $('.engine-icon').removeClass('active');
-                $('#' + this.searchEngine.toLowerCase() + '-icon').addClass('active');
-                this.onlineSearch();
-            } else {
-                this.render();
-            }
         },
 
         onlineSearch: function (e) {
@@ -100,61 +85,16 @@
             }
 
             $('.onlinesearch-info>ul.file-list').html('');
-
             $('.online-search').removeClass('fa-search').addClass('fa-spin fa-spinner');
+            Q.all([
+                this.strikeSearch(input, category),
+                this.katsearch(input, category)
+            ]).spread(function (strike, kat) {
+                var defer = Q.defer();
 
-            if (this.searchEngine === 'KAT') {
-
-                var kat = require('kat-api');
-                kat.search({
-                    query: input,
-                    min_seeds: 10,
-                    category: category
-                }).then(function (data) {
-                    win.debug('KAT search: %s results', data.results.length);
-                    data.results.forEach(function (item) {
-                        var itemModel = {
-                            title: item.title,
-                            magnet: item.magnet,
-                            seeds: item.seeds,
-                            peers: item.peers,
-                            size: require('pretty-bytes')(parseInt(item.size))
-                        };
-
-                        that.onlineAddItem(itemModel);
-                    });
-
-                    that.$('.tooltipped').tooltip({
-                        html: true,
-                        delay: {
-                            'show': 50,
-                            'hide': 50
-                        }
-                    });
-                    $('.notorrents-info,.torrents-info').hide();
-                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
-                    $('.onlinesearch-info').show();
-                }).catch(function (err) {
-                    win.debug('KAT search failed:', err.message);
-                    var error;
-                    if (err.message === 'No results') {
-                        error = 'No results found';
-                    } else {
-                        error = 'Failed!';
-                    }
-                    $('.onlinesearch-info>ul.file-list').html('<br><br><div style="text-align:center;font-size:30px">' + i18n.__(error) + '</div>');
-
-                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
-                    $('.notorrents-info,.torrents-info').hide();
-                    $('.onlinesearch-info').show();
-                });
-
-            } else {
-
-                var strike = require('strike-api');
-                strike.search(input, category).then(function (result) {
-                    win.debug('Strike search: %s results', result.results);
-                    result.torrents.forEach(function (item) {
+                var strikes = function (strike) {
+                    var items = [];
+                    _.each(strike, function (item) {
                         var itemModel = {
                             title: item.torrent_title,
                             magnet: item.magnet_uri,
@@ -162,36 +102,70 @@
                             peers: item.leeches,
                             size: require('pretty-bytes')(parseInt(item.size))
                         };
-
-                        that.onlineAddItem(itemModel);
+                        items.push(itemModel);
                     });
-
-                    that.$('.tooltipped').tooltip({
-                        html: true,
-                        delay: {
-                            'show': 50,
-                            'hide': 50
-                        }
+                    return Q(items);
+                };
+                var kats = function (kat) {
+                    var items = [];
+                    _.each(kat, function (item) {
+                        var itemModel = {
+                            title: item.torrent_title,
+                            magnet: item.magnet_uri,
+                            seeds: item.seeds,
+                            peers: item.leeches,
+                            size: require('pretty-bytes')(parseInt(item.size))
+                        };
+                        items.push(itemModel);
                     });
-                    $('.notorrents-info,.torrents-info').hide();
-                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
-                    $('.onlinesearch-info').show();
-                }).catch(function (err) {
-                    win.debug('Strike search failed:', err.message);
-                    var error;
-                    if (err.message === 'Not Found') {
-                        error = 'No results found';
-                    } else {
-                        error = 'Failed!';
-                    }
-                    $('.onlinesearch-info>ul.file-list').html('<br><br><div style="text-align:center;font-size:30px">' + i18n.__(error) + '</div>');
+                    return Q(items);
+                };
 
-                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
-                    $('.notorrents-info,.torrents-info').hide();
-                    $('.onlinesearch-info').show();
+                Q.all([strikes(strike), kats(kat)]).spread(function (s, k) {
+                    defer.resolve(s.concat(k));
                 });
-            }
+
+                return defer.promise;
+            }).then(function (items) {
+                console.log(items);
+                items.forEach(function (item) {
+                    that.onlineAddItem(item);
+                });
+                $('.notorrents-info,.torrents-info').hide();
+                $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
+                $('.onlinesearch-info').show();
+
+            });
+
         },
+
+        strikeSearch: function (input, category) {
+            var defer = Q.defer();
+            strike.search(input, category).then(function (result) {
+                win.debug('Strike search: %s results', result.results);
+                defer.resolve(result.torrents);
+            }).catch(function (err) {
+                win.debug('Strike search Error', err);
+                defer.resolve({});
+            });
+            return defer.promise;
+        },
+        katsearch: function (input, category) {
+            var defer = Q.defer();
+            kat.search({
+                query: input,
+                min_seeds: 10,
+                category: category
+            }).then(function (data) {
+                win.debug('KAT search: %s results', data.results.length);
+                defer.resolve(data.results);
+            }).catch(function (err) {
+                win.debug('KAT search Error', err);
+                defer.resolve({});
+            });
+            return defer.promise;
+        },
+
 
         onlineAddItem: function (item) {
             var ratio = item.peers > 0 ? item.seeds / item.peers : +item.seeds;

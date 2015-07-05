@@ -20,27 +20,18 @@
     </div>
 </div>
 <div class="trailer_mouse_catch"></div>
-<div class="playing_next vjs-control-window">
-    <p><%= i18n.__("Playing Next Episode in") %>: 
-        <span id="nextCountdown">60</span>
-    </p>
-    <div class="auto-next-btn playnownext"><%= i18n.__("Play Now") %></div>
-    <div class="auto-next-btn playnownextNOT"><%= i18n.__("No thank you") %></div>
-</div>
 
-                    <div class="item-next">
+                    <div class="vjs-control-window item-next ">
                         <div class="item-poster">
                             <h1><%= i18n.__("Playing Next") %></h1>
-
-                                <div class="media-poster" >                                    
-                                </div>
-                          
+                                <div class="media-poster">  </div>
+                      
                         </div>
                         <div class="item-summary">
-                            <h1 class="media-title"></h1>
-                            <h2 class="media-subtitle-1"></h2>
-                            <h3 class="media-subtitle-2"></h3>
-                            <p></p>
+                            <h1 class="media-title" style=" font-size: 18px; height: 38px;"></h1>
+                            <h2 class="media-subtitle-1" style=" font-size: 17px; "></h2>
+                            <h3 class="media-subtitle-2" style=" font-size: 17px; "></h3>
+                            <p class="media-subtitle-3"style=" font-size: 15px; "></p>
                         </div>
                     </div>
 

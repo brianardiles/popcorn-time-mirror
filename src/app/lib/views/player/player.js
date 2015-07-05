@@ -21,10 +21,10 @@
             play: '.fa-play',
             quality: '.quality-info-player',
             nextShow: '.media-title',
-            nextTitle: '.media-subtitle-1',
             nextPhoto: '.media-poster',
+            nextTitle: '.media-subtitle-1',
             nextSE: '.media-subtitle-2',
-            nextDiscription: '.item-summary p',
+            nextDiscription: '.media-subtitle-3'
         },
 
         events: {
@@ -244,6 +244,7 @@
             }
 
             $('.player-header-background').appendTo('div#video_player');
+
 
             $('li:contains("subtitles off")').text(i18n.__('Disabled'));
 
@@ -683,13 +684,12 @@
             }).then(function (subs) {
                 that.NextEpisode.subtitles = subs;
             });
-            this.checkAutoPlay();
+            //this.checkAutoPlay();
             this.loadPlayNextUI(metadata);
         },
         loadPlayNextUI: function (metadata) {
             var nextEpisode = metadata;
             var that = this;
-            console.log('DOING PLAY NEXT UI')
 
             function formatTwoDigit(n) {
                 return n > 9 ? '' + n : '0' + n;
@@ -715,6 +715,7 @@
                         that.loadBackground(data.images.screenshot.full);
                         that.ui.nextDiscription.text(data.overview);
                         that.ui.nextSE.text('S' + data.season + ' - E' + data.number);
+                        $('.item-next').appendTo('div#video_player');
                     }
                 }).catch(function (err) {
                     console.log(err);

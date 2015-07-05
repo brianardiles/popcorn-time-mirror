@@ -158,7 +158,7 @@
                     };
                     require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
                 } else {
-                    this.initsubs(defaultSubtitle, subtitles);
+                    that.initsubs(defaultSubtitle, subtitles);
                 }
             }
         },

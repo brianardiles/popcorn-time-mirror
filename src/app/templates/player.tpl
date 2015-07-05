@@ -23,7 +23,7 @@
 
                     <div class="vjs-control-window item-next ">
                         <div class="item-poster">
-                            <h1><%= i18n.__("Playing Next") %></h1>
+                            <h1><%= i18n.__("Playing Next").toUpperCase() %></h1>
                                 <div class="media-poster">  </div>
                       
                         </div>
@@ -34,9 +34,6 @@
                             <p class="media-subtitle-3"style=" font-size: 15px; "></p>
                         </div>
                     </div>
-
-
-
 
 <%
             if(type === 'trailer'){

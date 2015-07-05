@@ -315,8 +315,11 @@
                     App.Trakt.sync.playback(type, id).then(function (position_percent) {
                         var total = that.video.duration();
                         var position = (position_percent / 100) * total | 0;
-                        win.debug('Resuming position to', position.toFixed(), 'secs (reported by Trakt)');
-                        that.player.currentTime(position);
+                        
+                        if (position > 0) {
+                            win.debug('Resuming position to', position.toFixed(), 'secs (reported by Trakt)');
+                            that.player.currentTime(position);
+                        }
                     });
                 }
 

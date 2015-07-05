@@ -23,7 +23,7 @@
 
                     <div class="vjs-control-window item-next ">
                         <div class="item-poster">
-                            <h1><%= i18n.__("Up Next").toUpperCase() %></h1>
+                            <h1><%= i18n.__("Playing Next").toUpperCase() %></h1>
                                 <div class="media-poster">  </div>
                       
                         </div>

@@ -19,7 +19,12 @@
             title: '.player-title',
             pause: '.fa-pause',
             play: '.fa-play',
-            quality: '.quality-info-player'
+            quality: '.quality-info-player',
+            nextShow: '.media-title',
+            nextTitle: '.media-subtitle-1',
+            nextPhoto: '.media-poster',
+            nextSE: '.media-subtitle-2',
+            nextDiscription: '.item-summary p',
         },
 
         events: {
@@ -649,39 +654,91 @@
             } else {
                 autoPlayDataNext.streamer = 'main';
             }
-
+            var metadata = {
+                title: this.model.attributes.metadata.showName + ' - ' + i18n.__('Season') + ' ' + nextEpisodeData.season + ', ' + i18n.__('Episode') + ' ' + nextEpisodeData.episode + ' - ' + nextEpisodeData.title,
+                showName: this.model.attributes.metadata.showName,
+                season: nextEpisodeData.season,
+                episode: nextEpisodeData.episode,
+                cover: this.model.attributes.metadata.cover,
+                tvdb_id: this.model.attributes.metadata.tvdb_id,
+                episode_id: nextEpisodeData.episode_id,
+                imdb_id: this.model.attributes.metadata.imdb_id,
+                backdrop: this.model.attributes.metadata.backdrop,
+                quality: quality
+            };
             var torrentStartNext = {
                 torrent: nextEpisodeTorrent,
                 type: 'show',
-                metadata: {
-                    title: this.model.attributes.metadata.showName + ' - ' + i18n.__('Season') + ' ' + nextEpisodeData.season + ', ' + i18n.__('Episode') + ' ' + nextEpisodeData.episode + ' - ' + nextEpisodeData.title,
-                    showName: this.model.attributes.metadata.showName,
-                    season: nextEpisodeData.season,
-                    episode: nextEpisodeData.episode,
-                    cover: this.model.attributes.metadata.cover,
-                    tvdb_id: this.model.attributes.metadata.tvdb_id,
-                    episode_id: nextEpisodeData.episode_id,
-                    imdb_id: this.model.attributes.metadata.imdb_id,
-                    backdrop: this.model.attributes.metadata.backdrop,
-                    quality: quality
-                },
+                metadata: metadata,
                 autoPlayData: autoPlayDataNext,
                 status: this.model.attributes.status,
                 device: App.Device.Collection.selected
             };
+            this.NextEpisode = torrentStartNext;
 
             this.fetchTVSubtitles({
                 imdbid: this.model.attributes.metadata.imdb_id,
                 season: nextEpisodeData.season,
                 episode: nextEpisodeData.episode
             }).then(function (subs) {
-                torrentStartNext.subtitles = subs;
-                that.NextEpisode = torrentStartNext;
-                that.checkAutoPlay();
+                that.NextEpisode.subtitles = subs;
             });
+            this.checkAutoPlay();
+            this.loadPlayNextUI(metadata);
+        },
+        loadPlayNextUI: function (metadata) {
+            var nextEpisode = metadata;
+            var that = this;
+            console.log('DOING PLAY NEXT UI')
+
+            function formatTwoDigit(n) {
+                return n > 9 ? '' + n : '0' + n;
+            }
+            var tvshowname = $.trim(this.model.attributes.metadata.showName.replace(/[\.]/g, ' '))
+                .replace(/^\[.*\]/, '') // starts with brackets
+                .replace(/[^\w ]+/g, '') // remove brackets
+                .replace(/ +/g, '-') // has spaces
+                .replace(/_/g, '-') // has '_'
+                .replace(/\-$/, '') // ends with '-'
+                .replace(/^\./, '') // starts with '.'
+                .replace(/^\-/, ''); // starts with '-'
+            console.log(tvshowname)
+            App.Trakt.episodes.summary(tvshowname, formatTwoDigit(nextEpisode.season), formatTwoDigit(nextEpisode.episode))
+                .then(function (episodeSummary) {
+                    if (!episodeSummary) {
+                        win.warn('Unable to fetch data from Trakt.tv');
+                    } else {
+                        var data = episodeSummary;
+                        console.log(data);
+                        that.ui.nextShow.text(that.model.attributes.metadata.showName);
+                        that.ui.nextTitle.text(data.title);
+                        that.loadBackground(data.images.screenshot.full);
+                        that.ui.nextDiscription.text(data.overview);
+                        that.ui.nextSE.text('S' + data.season + ' - E' + data.number);
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+        },
+        loadBackground: function (data) {
+            var backgroundUrl = data;
+            var that = this;
+            var bgError = false;
+            var bgCache = new Image();
+            bgCache.src = backgroundUrl;
+            bgCache.onload = function () {
+                try {
+                    that.ui.nextPhoto.css('background-image', 'url(' + backgroundUrl + ')').addClass('fadein');
+
+                } catch (e) {}
+                bgCache = null;
+            };
+            bgCache.onerror = function () {
+                bgError = true;
+                bgCache = null;
+            };
 
         },
-
         fetchTVSubtitles: function (data) {
             var deferred = Q.defer();
             var that = this;

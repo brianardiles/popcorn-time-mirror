@@ -27,6 +27,26 @@
     <div class="auto-next-btn playnownext"><%= i18n.__("Play Now") %></div>
     <div class="auto-next-btn playnownextNOT"><%= i18n.__("No thank you") %></div>
 </div>
+
+                    <div class="item-next">
+                        <div class="item-poster">
+                            <h1><%= i18n.__("Playing Next") %></h1>
+
+                                <div class="media-poster" >                                    
+                                </div>
+                          
+                        </div>
+                        <div class="item-summary">
+                            <h1 class="media-title"></h1>
+                            <h2 class="media-subtitle-1"></h2>
+                            <h3 class="media-subtitle-2"></h3>
+                            <p></p>
+                        </div>
+                    </div>
+
+
+
+
 <%
             if(type === 'trailer'){
                 var videosrc = src;

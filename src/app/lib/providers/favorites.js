@@ -40,6 +40,10 @@
                         data.type = 'bookmarkedshow';
                         data.imdb = data.imdb_id;
                         console.log(data);
+                        // Fallback for old bookmarks without provider in database or marked as Eztv
+                        if (typeof (data.provider) === 'undefined' || data.provider === 'Eztv') {
+                            data.provider = 'TVApi';
+                        }
                         // This is an old boxart, fetch the latest boxart
                         if (/slurm.trakt.us/.test(data.images.poster)) {
                             // Keep reference to old data in case of error

@@ -29,23 +29,23 @@ App.startupTime = window.performance.now();
         delete: function (db) {
             switch (db) {
             case 'watched':
-                for (var key in localStorage) {
-                    if (key.toString().includes('watched')) {
-                        localStorage.removeItem(key);
+                for (var w in localStorage) {
+                    if (w.toString().includes('watched')) {
+                        localStorage.removeItem(w);
                     }
                 }
                 break;
             case 'bookmarks':
-                for (var key in localStorage) {
-                    if (key.includes('bookmark') || key.includes('movie') || key.includes('show')) {
-                        localStorage.removeItem(key);
+                for (var b in localStorage) {
+                    if (b.includes('bookmark') || b.includes('movie') || b.includes('show')) {
+                        localStorage.removeItem(b);
                     }
                 }
                 break;
             case 'settings':
-                for (var key in localStorage) {
-                    if (key.includes('setting')) {
-                        localStorage.removeItem(key);
+                for (var s in localStorage) {
+                    if (s.includes('setting')) {
+                        localStorage.removeItem(s);
                     }
                 }
                 break;
@@ -94,10 +94,10 @@ App.startupTime = window.performance.now();
             return Q(toreturn);
         },
         bookmark: function (action, type, data) {
+            var item, toreturn;
             if (data && type) {
-                var item = 'bookmark-' + type + '-' + data;
+                item = 'bookmark-' + type + '-' + data;
             }
-            var toreturn;
             switch (action) {
             case 'get':
                 if (type === 'all') { //we are fetching all bookmarks!
@@ -105,9 +105,9 @@ App.startupTime = window.performance.now();
                     for (var key in localStorage) {
                         if (key.toString().includes('bookmark')) {
                             var d = key.split('-');
-                            var type = d[1];
+                            var btype = d[1];
                             var imdb_id = d[2];
-                            bookmarked[imdb_id] = type;
+                            bookmarked[imdb_id] = btype;
                         }
                     }
                     toreturn = bookmarked;
@@ -140,7 +140,7 @@ App.startupTime = window.performance.now();
             if (type && data) {
                 switch (type) {
                 case 'show':
-                    item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id + '-' + data.episode_id;
+                    item = 'watched-' + type + '-' + data.imdb_id + '-' + data.tvdb_id + '-' + data.season + '-' + data.episode;
                     break;
                 case 'movie':
                     item = 'watched-' + type + '-' + data;
@@ -153,21 +153,22 @@ App.startupTime = window.performance.now();
                 for (var key in localStorage) {
                     if (key.toString().includes(item)) {
                         var d = key.split('-');
-                        var type = d[1];
+                        var ktype = d[1];
                         var imdb_id = d[2];
                         var tvdb_id, episode_id;
                         if (type === 'show') {
                             tvdb_id = d[3];
                             episode_id = d[4];
                             watched = {
-                                'type': type,
+                                'type': ktype,
                                 'imdb_id': imdb_id,
                                 'tvdb_id': tvdb_id,
-                                'episode_id': episode_id
+                                'season': data.season,
+                                'episode:': data.episode
                             };
                         } else {
                             watched = {
-                                'type': type,
+                                'type': ktype,
                                 'imdb_id': imdb_id
                             };
                         }

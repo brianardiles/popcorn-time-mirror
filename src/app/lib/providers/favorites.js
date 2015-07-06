@@ -39,10 +39,7 @@
                     .then(function (data) {
                         data.type = 'bookmarkedshow';
                         data.imdb = data.imdb_id;
-                        // Fallback for old bookmarks without provider in database
-                        if (typeof (data.provider) === 'undefined') {
-                            data.provider = 'Eztv';
-                        }
+                        console.log(data);
                         // This is an old boxart, fetch the latest boxart
                         if (/slurm.trakt.us/.test(data.images.poster)) {
                             // Keep reference to old data in case of error
@@ -59,7 +56,7 @@
                     }).then(function (data) {
                         if (data) {
                             // Cache new show and return
-                            //Database.updateTVShow(data);
+                            App.Database.show('add', data);
                             data.type = 'bookmarkedshow';
                             data.imdb = data.imdb_id;
                             data.image = data.images.poster;

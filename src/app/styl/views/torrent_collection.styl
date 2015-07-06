@@ -9,6 +9,16 @@
     .margintop
         height 100px
 
+    .error
+        font-size 1.5em
+        text-align center
+        margin-top 180px
+        width 100%
+        font-family $MainFont
+        color $TextError
+        font-weight bold
+
+
     .content
         margin 0 auto
         width 85%
@@ -21,8 +31,8 @@
         .onlinesearch
             position relative
             top -10px
-            padding-left 100px
-            width 356px
+            padding-left 110px
+            width 384px
             margin 0 auto
 
             input[type="text"]
@@ -205,11 +215,28 @@
                         color: $TextError
                         font-style normal
                         font-size .9em
-                        left calc(100% - 32px)
+                        left calc(100% - 55px)
                         top -15px
 
+                    .health-icon
+                        position relative
+                        top -15px
+                        left calc(100% - 75px)
+                        font-size: 14px
+                        color: #737577
+                        cursor: pointer
+                        &.Bad
+                            color: #d53f3f
+                        &.Medium
+                            color: #ece523
+                        &.Good
+                            color: #a3e147
+                        &.Excellent
+                            color: #2ad942
+
+
                 li.result-item a
-                    width calc(100% - 50px)
+                    width calc(100% - 90px)
 
         .collection-actions
             display none

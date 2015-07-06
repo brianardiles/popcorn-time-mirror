@@ -1,9 +1,11 @@
 <div class="settings-container">
     <div class="fa fa-times close-icon"></div>
-    <div class="success_alert" style="display:none"><%= i18n.__("Saved") %>&nbsp;<span id="checkmark-notify"><div id="stem-notify"></div><div id="kick-notify"></div></span></div>
-
+    <div class="success_alert" style="display:none">
+        <%=i18n.__( "Saved") %>&nbsp;<span id="checkmark-notify"><div id="stem-notify"></div><div id="kick-notify"></div></span></div>
     <section id="title">
-        <div class="title"><%= i18n.__("Settings") %></div>
+        <div class="title">
+            <%=i18n.__( "Settings") %>
+        </div>
         <div class="content">
             <span>
                 <i class="fa fa-keyboard-o keyboard tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__("Keyboard Shortcuts") %>"></i>
@@ -13,9 +15,10 @@
             </span>
         </div>
     </section>
-
     <section id="user-interface">
-        <div class="title"><%= i18n.__("User Interface") %></div>
+        <div class="title">
+            <%=i18n.__( "User Interface") %>
+        </div>
         <div class="content">
             <span>
                 <div class="dropdown subtitles-language">
@@ -34,7 +37,6 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-
             <span>
                 <div class="dropdown pct-theme">
                     <p><%= i18n.__("Theme") %></p>
@@ -52,7 +54,6 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-
             <span class="advanced">
                 <div class="dropdown start-screen">
                     <p><%= i18n.__("Start Screen") %></p>
@@ -68,7 +69,6 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-
             <span class="advanced">
                 <input class="settings-checkbox" name="translateSynopsis" id="translateSynopsis" type="checkbox" <%=(Settings.translateSynopsis? "checked='checked'":"")%>>
                 <label class="settings-label" for="translateSynopsis"><%= i18n.__("Translate Synopsis") %></label>
@@ -77,12 +77,10 @@
                 <input class="settings-checkbox" name="coversShowRating" id="cb3" type="checkbox" <%=(Settings.coversShowRating? "checked='checked'":"")%>>
                 <label class="settings-label" for="cb3"><%= i18n.__("Show rating over covers") %></label>
             </span>
-
             <span class="advanced">
                 <input class="settings-checkbox" name="alwaysOnTop" id="cb4" type="checkbox" <%=(Settings.alwaysOnTop? "checked='checked'":"")%>>
                 <label class="settings-label" for="cb4"><%= i18n.__("Always On Top") %></label>
             </span>
-
             <span class="advanced">
                 <div class="dropdown watchedCovers">
                     <p><%= i18n.__("Watched Items") %></p>
@@ -102,12 +100,12 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-
         </div>
     </section>
-
     <section id="subtitles">
-        <div class="title"><%= i18n.__("Subtitles") %></div>
+        <div class="title">
+            <%=i18n.__( "Subtitles") %>
+        </div>
         <div class="content">
             <span>
                 <div class="dropdown subtitles-language-default">
@@ -127,7 +125,6 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-
             <span class="advanced">
                 <div class="dropdown subtitles-font">
                     <p><%= i18n.__("Font") %></p>
@@ -195,7 +192,6 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-
             <span class="advanced">
                 <div class="dropdown subtitles-decoration">
                     <p><%= i18n.__("Decoration") %></p>
@@ -211,7 +207,6 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-
             <span>
                 <div class="dropdown subtitles-size">
                     <p><%= i18n.__("Size") %></p>
@@ -227,7 +222,6 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-
             <span class="advanced">
                 <div class="subtitles-custom">
                     <p><%= i18n.__("Color") %></p>
@@ -242,12 +236,12 @@
                         </datalist>
                 </div>
             </span>
-
         </div>
     </section>
-
     <section id="quality" class="advanced">
-        <div class="title"><%= i18n.__("Quality") %></div>
+        <div class="title">
+            <%=i18n.__( "Quality") %>
+        </div>
         <div class="content">
             <span>
                 <div class="dropdown movies-quality">
@@ -267,7 +261,9 @@
         </div>
     </section>
     <section id="playback">
-        <div class="title"><%= i18n.__("Playback") %></div>
+        <div class="title">
+            <%=i18n.__( "Playback") %>
+        </div>
         <div class="content">
             <span class="advanced">
                 <input class="settings-checkbox" name="alwaysFullscreen" id="alwaysFullscreen" type="checkbox" <%=(Settings.alwaysFullscreen? "checked='checked'":"")%>>
@@ -279,11 +275,12 @@
             </span>
         </div>
     </section>
-
     <section id="trakt-tv">
-        <div class="title"><%= i18n.__("Trakt.tv") %></div>
+        <div class="title">
+            <%=i18n.__( "Trakt.tv") %>
+        </div>
         <div class="content">
-            <div class="trakt-options<%= App.Trakt.authenticated ? " authenticated" : "" %>">
+            <div class="trakt-options<%= App.Trakt.authenticated ? " authenticated " : " " %>">
                 <% if(App.Trakt.authenticated) { %>
                     <span>
                         <%= i18n.__("You are currently connected to %s", "Trakt.tv") %>.
@@ -303,46 +300,46 @@
                             <%= i18n.__("Sync With Trakt") %>
                         </div>
                     </span>
-                <% } else { %>
-                    <span>
+                    <% } else { %>
+                        <span>
                         <%= i18n.__("Connect to %s to automatically 'scrobble' episodes you watch in %s", "Trakt.tv", "Popcorn Time") %>
                     </span>
-                    <span>
+                        <span>
                         <div class="btn-settings syncTrakt" id="authTrakt">
                             <i class="fa fa-user-plus">&nbsp;&nbsp;</i>
                             <%= i18n.__("Connect To %s", "Trakt") %>
                         </div>
                         <div class="loading-spinner" style="display: none"></div>
                     </span>
-                <% } %>
+                        <% } %>
             </div>
         </div>
     </section>
-
-	<section id="tvshowtime">
-		<div class="title">TVShow Time</div>
-		<div class="content">
-			<div class="tvshowtime-options <%= App.TVShowTime.authenticated ? " authenticated" : "" %>">
-				<% if(App.TVShowTime.authenticated) { %>
+    <section id="tvshowtime">
+        <div class="title">TVShow Time</div>
+        <div class="content">
+            <div class="tvshowtime-options <%= App.TVShowTime.authenticated ? " authenticated " : " " %>">
+                <% if(App.TVShowTime.authenticated) { %>
                     <span>
                         <%= i18n.__("You are currently connected to %s", "TVShow Time") %>.
                         <a id="disconnect-tvst" class="unauthtext" href="#"><%= i18n.__("Disconnect account") %></a>
                     </span>
-				<% } else { %>
-                    <span>
+                    <% } else { %>
+                        <span>
                         <div class="btn-settings" id="connect-with-tvst">
                             <i class="fa fa-user-plus">&nbsp;&nbsp;</i>
                             <%= i18n.__("Connect To %s", "TVShow Time") %>
                         </div>
                         <div class="tvst-loading-spinner" style="display: none"></div>
                     </span>
-				<% } %>
-			</div>
-		</div>
-	</section>
-
+                        <% } %>
+            </div>
+        </div>
+    </section>
     <section id="features">
-        <div class="title"><%= i18n.__("Features") %></div>
+        <div class="title">
+            <%=i18n.__( "Features") %>
+        </div>
         <div class="content">
             <span>
                 <input class="settings-checkbox" name="activateTorrentCollection" id="activateTorrentCollection" type="checkbox" <%=(Settings.activateTorrentCollection? "checked='checked'":"")%>>
@@ -362,9 +359,10 @@
             </span>
         </div>
     </section>
-
     <section id="remote-control" class="advanced">
-        <div class="title"><%= i18n.__("Remote Control") %></div>
+        <div class="title">
+            <%=i18n.__( "Remote Control") %>
+        </div>
         <div class="content">
             <span>
                 <p><%= i18n.__("Local IP Address") %></p>
@@ -385,7 +383,7 @@
             <div class="btns advanced database">
                 <div class="btn-settings database qr-code">
                     <i class="fa fa-qrcode">&nbsp;&nbsp;</i>
-                    <%= i18n.__("Generate Pairing QR code") %>
+                    <%=i18n.__( "Generate Pairing QR code") %>
                 </div>
             </div>
             <div id="qrcode-overlay"></div>
@@ -395,12 +393,14 @@
                     <i class="fa fa-times fa-stack-1x" style="margin-top: -2px;"></i>
                 </span>
                 <canvas id="qrcode" width="200" height="200"></canvas>
-            </div><!-- /.modal -->
+            </div>
+            <!-- /.modal -->
         </div>
     </section>
-
     <section id="connection" class="advanced">
-        <div class="title"><%= i18n.__("Connection") %></div>
+        <div class="title">
+            <%=i18n.__( "Connection") %>
+        </div>
         <div class="content">
             <span>
                 <p><%= i18n.__("TV Show API Endpoint") %></p>
@@ -426,13 +426,14 @@
                     return ratio;
                    }
                 %>
-                <input type="text" size="20" name="overallRatio" value="<%= overallRatio() %>">&nbsp;&nbsp;<em><%= require('pretty-bytes')(Settings.totalDownloaded) %><i class="fa fa-arrow-circle-down"></i><%= require('pretty-bytes')(Settings.totalUploaded) %><i class="fa fa-arrow-circle-up"></i></em>
+                <input type="text" size="20" name="overallRatio" value="<%= overallRatio() %>">&nbsp;&nbsp;<em><%= Common.fileSize(Settings.totalDownloaded) %><i class="fa fa-arrow-circle-down"></i><%= Common.fileSize(Settings.totalUploaded) %><i class="fa fa-arrow-circle-up"></i></em>
             </span>
         </div>
     </section>
-
     <section id="cache" class="advanced">
-        <div class="title"><%= i18n.__("Cache Directory") %></div>
+        <div class="title">
+            <%=i18n.__( "Cache Directory") %>
+        </div>
         <div class="content">
             <span>
                 <p><%= i18n.__("Cache Directory") %></p>
@@ -446,9 +447,10 @@
             </span>
         </div>
     </section>
-
     <section id="database" class="advanced">
-        <div class="title"><%= i18n.__("Database") %></div>
+        <div class="title">
+            <%=i18n.__( "Database") %>
+        </div>
         <div class="content">
             <span>
                 <p><%= i18n.__("Database Directory") %></p>
@@ -459,25 +461,29 @@
             <div class="btns advanced database">
                 <div class="btn-settings database import-database">
                     <i class="fa fa-level-down">&nbsp;&nbsp;</i>
-                    <%= i18n.__("Import Database") %>
+                    <%=i18n.__( "Import Database") %>
                 </div>
                 <div class="btn-settings database export-database">
                     <i class="fa fa-level-up">&nbsp;&nbsp;</i>
-                    <%= i18n.__("Export Database") %>
+                    <%=i18n.__( "Export Database") %>
                 </div>
             </div>
         </div>
     </section>
     <section id="miscellaneous" class="advanced">
-        <div class="title"><%= i18n.__("Miscellaneous") %></div>
+        <div class="title">
+            <%=i18n.__( "Miscellaneous") %>
+        </div>
         <div class="content">
-            <span >
+            <span>
                 <div class="dropdown tv_detail_jump_to">
                     <p><%= i18n.__("When Opening TV Series Detail Jump To") %></p>
                         <%
                             var tv_detail_jump_to = {
-                                "firstUnwatched": "First Unwatched Episode",
-                                "next": "Next Episode In Series"
+                                "firstUnwatched": "First Unwatched Episode In Series",
+                                "next": "Last Unwatched Episode In Series",
+                                "last": "Last Episode In Series",
+                                "first": "First Episode In Series"
                             };
 
                             var selected_tv_detail_jump = "";
@@ -523,10 +529,17 @@
         </div>
     </section>
     <div class="btns">
-        <div class="btn-settings flush-bookmarks advanced"><%= i18n.__("Flush bookmarks database") %></div>
-        <div class="btn-settings flush-subtitles advanced"><%= i18n.__("Flush subtitles cache") %></div>
-        <div class="btn-settings flush-databases"><%= i18n.__("Flush all databases") %></div>
-        <div class="btn-settings default-settings"><%= i18n.__("Reset to Default Settings") %></div>
+        <div class="btn-settings flush-bookmarks advanced">
+            <%=i18n.__( "Flush bookmarks database") %>
+        </div>
+        <div class="btn-settings flush-subtitles advanced">
+            <%=i18n.__( "Flush subtitles cache") %>
+        </div>
+        <div class="btn-settings flush-databases">
+            <%=i18n.__( "Flush all databases") %>
+        </div>
+        <div class="btn-settings default-settings">
+            <%=i18n.__( "Reset to Default Settings") %>
+        </div>
     </div>
-
 </div>

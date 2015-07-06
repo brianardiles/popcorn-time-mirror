@@ -498,26 +498,25 @@
     };
 
     TraktTv.prototype.syncTrakt = {
+        isSyncing: function () {
+            return this.syncing && this.syncing.isPending();
+        },
         all: function () {
             var self = this;
             AdvSettings.set('traktLastSync', new Date().valueOf());
-            return Q.all([self.syncTrakt.movies(), self.syncTrakt.shows()]);
+            return this.syncing = Q.all([self.syncTrakt.movies(), self.syncTrakt.shows()]);
         },
         movies: function () {
             return this.sync.getWatched('movies')
                 .then(function (data) {
                     var watched = [];
-
                     if (data) {
                         var movie;
                         for (var m in data) {
                             try { //some movies don't have imdbid
                                 movie = data[m].movie;
-                                watched.push({
-                                    movie_id: movie.ids.imdb.toString(),
-                                    date: new Date(),
-                                    type: 'movie'
-                                });
+                                watched.push(movie.ids.imdb.toString());
+                                App.vent.trigger('watched', 'add', 'movie', movie.ids.imdb.toString());
                             } catch (e) {
                                 win.warn('Cannot sync a movie (' + data[m].movie.title + '), the problem is: ' + e.message + '. Continuing sync without this movie...');
                             }
@@ -528,7 +527,7 @@
                 })
                 .then(function (traktWatched) {
                     win.debug('Trakt: marked %s movie(s) as watched', traktWatched.length);
-                    return Database.markMoviesWatched(traktWatched);
+                    return true;
                 });
         },
         shows: function () {
@@ -546,14 +545,15 @@
                                 season = show.seasons[s];
                                 try { //some shows don't return IMDB
                                     for (var e in season.episodes) {
-                                        watched.push({
+
+                                        var value = {
                                             tvdb_id: show.show.ids.tvdb.toString(),
                                             imdb_id: show.show.ids.imdb.toString(),
                                             season: season.number.toString(),
-                                            episode: season.episodes[e].number.toString(),
-                                            type: 'episode',
-                                            date: new Date()
-                                        });
+                                            episode: season.episodes[e].number.toString()
+                                        };
+                                        watched.push(value);
+                                        App.vent.trigger('watched', 'add', 'show', value, true);
                                     }
                                 } catch (e) {
                                     win.warn('Cannot sync a show (' + show.show.title + '), the problem is: ' + e.message + '. Continuing sync without this show...');
@@ -568,7 +568,7 @@
                 .then(function (traktWatched) {
                     // Insert them locally
                     win.debug('Trakt: marked %s episode(s) as watched', traktWatched.length);
-                    return Database.markEpisodesWatched(traktWatched);
+                    return true;
                 });
         }
     };

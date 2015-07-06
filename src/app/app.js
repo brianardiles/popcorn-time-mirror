@@ -65,11 +65,8 @@ win.error = function () {
 
 
 if (gui.App.fullArgv.indexOf('--reset') !== -1) {
-
     localStorage.clear();
-
 }
-
 
 // Set settings
 App.advsettings = AdvSettings;
@@ -85,7 +82,7 @@ App.addRegions({
     Window: '.main-window-region'
 });
 
-// Menu for mac 
+// Menu for mac
 if (os.platform() === 'darwin') {
     var nativeMenuBar = new gui.Menu({
         type: 'menubar'
@@ -109,11 +106,6 @@ App.addInitializer(function (options) {
     if (ScreenResolution.QuadHD) {
         zoom = 2;
     }
-    /*
-	if (ScreenResolution.UltraHD) {
-		zoom = 4;
-	}
-	*/
 
     var width = parseInt(localStorage.width ? localStorage.width : Settings.defaultWidth);
     var height = parseInt(localStorage.height ? localStorage.height : Settings.defaultHeight);
@@ -175,6 +167,7 @@ var initApp = function () {
                 Settings.tvshowAPI,
                 Settings.updateEndpoint
             ]).then(function () {
+                App.Updaterv2.check();
                 try {
                     require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
                 } catch (e) {
@@ -280,6 +273,7 @@ var delCache = function () {
 win.on('close', function () {
     if (App.settings.deleteTmpOnClose) {
         deleteFolder(App.settings.tmpLocation);
+        deleteFolder(path.join(os.tmpDir(), 'torrent-stream'));
     }
     if (fs.existsSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'))) {
         fs.unlinkSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'));
@@ -318,7 +312,8 @@ Mousetrap.bind('mod+,', function (e) {
     App.vent.trigger('settings:show');
 });
 Mousetrap.bind('f11', function (e) {
-    win.reloadIgnoringCache();
+    App.settings.deleteTmpOnClose = false;
+    App.vent.trigger('restartPopcornTime');
 });
 Mousetrap.bind(['?', '/', '\''], function (e) {
     e.preventDefault();
@@ -508,7 +503,7 @@ if (gui.App.fullArgv.indexOf('-m') !== -1) {
 }
 
 
-// Show 404 page on uncaughtException
+// On uncaught exceptions, log to console.
 process.on('uncaughtException', function (err) {
     try {
         if (err.message.indexOf('[sprintf]') !== -1) {

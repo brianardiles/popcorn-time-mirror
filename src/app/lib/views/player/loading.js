@@ -1,6 +1,7 @@
 (function (App) {
     'use strict';
     var util = require('util');
+    var Q = require('q');
     var Loading = Backbone.Marionette.ItemView.extend({
         template: '#loading-tpl',
         className: 'app-overlay',
@@ -46,8 +47,9 @@
 
         initialize: function () {
             var that = this;
-
             win.info('Loading torrent');
+            App.vent.on('player:close', _.bind(this.onClose, this));
+            this.SubtitlesLoaded = false;
 
             function formatTwoDigit(n) {
                 return n > 9 ? '' + n : '0' + n;
@@ -57,12 +59,19 @@
                 this.loadBackground(this.model.get('data').metadata.backdrop);
             }
 
+
             switch (this.model.attributes.data.type) {
             case 'show':
                 this.fetchTVSubtitles({
                     imdbid: this.model.attributes.data.metadata.imdb_id,
                     season: this.model.attributes.data.metadata.season,
                     episode: this.model.attributes.data.metadata.episode
+                }).then(function (status) {
+                    if (status) {
+                        that.setupLocalSubs(that.model.attributes.data.defaultSubtitle, that.model.attributes.data.subtitles);
+                    } else {
+                        that.SubtitlesLoaded = true;
+                    }
                 });
                 var tvshowname = $.trim(this.model.attributes.data.metadata.showName.replace(/[\.]/g, ' '))
                     .replace(/^\[.*\]/, '') // starts with brackets
@@ -72,16 +81,12 @@
                     .replace(/\-$/, '') // ends with '-'
                     .replace(/^\./, '') // starts with '.'
                     .replace(/^\-/, ''); // starts with '-'
-
-                console.log(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode));
-
                 App.Trakt.episodes.summary(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode))
                     .then(function (episodeSummary) {
                         if (!episodeSummary) {
                             win.warn('Unable to fetch data from Trakt.tv');
                         } else {
                             var data = episodeSummary;
-                            console.log(data);
                             that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
                             that.loadBackground(data.images.screenshot.full, true);
                         }
@@ -90,6 +95,7 @@
                     });
                 break;
             case 'movie':
+                this.setupLocalSubs(this.model.attributes.data.defaultSubtitle, this.model.attributes.data.subtitles);
                 break;
             default: //this is a dropped selection
                 this.waitForSelection();
@@ -108,9 +114,62 @@
             } else {
                 this.player = 'local';
             }
+            if (this.player !== 'local') {
+                this.ui.player.text(this.model.get('player').get('name'));
+                this.ui.streaming.css('visibility', 'visible');
+            }
             this.StateUpdate();
         },
-
+        initsubs: function (defaultSubtitle, subtitles) {
+            var that = this;
+            App.vent.trigger('subtitle:download', {
+                url: subtitles[defaultSubtitle],
+                path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
+            });
+            App.vent.on('subtitle:downloaded', function (sub) {
+                console.log(sub);
+                if (sub) {
+                    that.extsubs = sub;
+                    App.vent.trigger('subtitle:convert', {
+                        path: sub,
+                        language: defaultSubtitle
+                    }, function (err, res) {
+                        if (err) {
+                            that.extsubs = null;
+                            that.SubtitlesLoaded = true;
+                            win.error('error converting subtitles', err);
+                        } else {
+                            App.Subtitles.Server.start(res);
+                            that.SubtitlesLoaded = true;
+                        }
+                    });
+                } else {
+                    that.SubtitlesLoaded = true;
+                }
+            });
+        },
+        setupLocalSubs: function (defaultSubtitle, subtitles) {
+            var that = this;
+            if (defaultSubtitle !== 'none' && subtitles) {
+                if (!App.Streamer.streamDir) {
+                    var watchFileSelected = function () {
+                        require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
+                        that.initsubs(defaultSubtitle, subtitles);
+                    };
+                    require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
+                } else {
+                    that.initsubs(defaultSubtitle, subtitles);
+                }
+            }
+        },
+        removeExtension: function (filename) {
+            var lastDotPosition = filename.lastIndexOf('.');
+            if (lastDotPosition === -1) {
+                return filename;
+            } else {
+                return filename.substr(0, lastDotPosition);
+            }
+        },
         backupCountdown: function () {
             if (this.playing) {
                 return;
@@ -158,20 +217,35 @@
             };
         },
         initMainplayer: function () {
-            if (this.player === 'local') {
-                var playerModel = new Backbone.Model(this.model.get('data'));
-                App.vent.trigger('stream:local', playerModel);
-            } else {
-                var externalPlayerModel = this.model.get('player');
-                externalPlayerModel.set('src', App.Streamer.src);
-                App.vent.trigger('stream:ready', externalPlayerModel);
+            var that = this;
 
-                this.ui.player.text(this.model.get('player').get('name'));
-                this.ui.streaming.css('visibility', 'visible');
-                this.playingExternally = true;
-                this.StateUpdate();
+            function begin() {
+                if (that.player === 'local') {
+                    var playerModel = new Backbone.Model(that.model.get('data'));
+                    App.vent.trigger('stream:local', playerModel);
+                } else {
+                    var externalPlayerModel = that.model.get('player');
+                    externalPlayerModel.set('src', App.Streamer.src);
+                    externalPlayerModel.set('subtitle', that.extsubs); //set subs if we have them; if not? well that boat has sailed.
+                    App.vent.trigger('stream:ready', externalPlayerModel);
+                    that.playingExternally = true;
+                    that.StateUpdate();
+                }
             }
-
+            if (this.SubtitlesLoaded || this.model.attributes.data.defaultSubtitle === 'none') {
+                begin();
+            } else {
+                win.info('Subtitles Not Yet Loaded, Waiting for them');
+                var watchSubsLoaded = function (forced) {
+                    require('watchjs').unwatch(this, 'SubtitlesLoaded', watchSubsLoaded);
+                    if (!forced) {
+                        win.info('Subtitles Retrived! Starting playback');
+                    }
+                    begin();
+                };
+                require('watchjs').watch(this, 'SubtitlesLoaded', watchSubsLoaded);
+                this.ui.stateTextDownload.text(i18n.__('Waiting For Subtitles'));
+            }
         },
         StateUpdate: function () {
             if (this.playing && !this.playingExternally) {
@@ -181,6 +255,10 @@
 
             var Stream = App.Streamer.client.swarm;
             if (App.Streamer.fileindex !== null) {
+                if (typeof this.ui.stateTextDownload !== 'object') {
+                    this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 300);
+                    return;
+                }
                 this.ui.stateTextDownload.text(i18n.__('Connecting'));
 
                 this.ui.seedStatus.css('visibility', 'visible');
@@ -199,8 +277,8 @@
                         this.ui.stateTextDownload.text(i18n.__('Downloading'));
                     }
                     this.ui.progressTextPeers.text(Stream.wires.length);
-                    this.ui.downloadSpeed.text(this.prettySpeed(Stream.downloadSpeed()));
-                    this.ui.uploadSpeed.text(this.prettySpeed(Stream.uploadSpeed()));
+                    this.ui.downloadSpeed.text(Common.fileSize(Stream.downloadSpeed()) + '/s');
+                    this.ui.uploadSpeed.text(Common.fileSize(Stream.uploadSpeed()) + '/s');
                 }
                 if (this.playingExternally) {
                     this.ui.stateTextDownload.text(i18n.__('Downloaded'));
@@ -213,16 +291,6 @@
                 this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 100);
             }
 
-
-        },
-        prettySpeed: function (speed) {
-            speed = speed || 0;
-            if (speed === 0) {
-                return util.format('%s %s', 0, 'B/s');
-            }
-
-            var converted = Math.floor(Math.log(speed) / Math.log(1024));
-            return util.format('%s %s/s', (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
         },
         cancelStreaming: function () {
             this.playing = true; // stop text update
@@ -271,35 +339,24 @@
             };
 
         },
+
         waitForSelection: function () {
-
             var that = this;
-
-            function removeExtension(filename) {
-                var lastDotPosition = filename.lastIndexOf('.');
-                if (lastDotPosition === -1) {
-                    return filename;
-                } else {
-                    return filename.substr(0, lastDotPosition);
-                }
-            }
             var watchFileSelected = function () {
                 require('watchjs').unwatch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
-                that.model.attributes.data.metadata.title = removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
+                that.model.attributes.data.metadata.title = that.removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
                 that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
             };
             require('watchjs').watch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
-
         },
 
         fetchTVSubtitles: function (data) {
             var that = this;
-
+            var defer = Q.defer();
             // fix for anime
             if (data.imdbid.indexOf('mal') !== -1) {
                 data.imdbid = null;
             }
-            console.log(data);
             win.debug('Subtitles data request:', data);
 
             var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
@@ -308,19 +365,17 @@
                 if (subs && Object.keys(subs).length > 0) {
                     var subtitles = subs;
                     that.model.attributes.data.subtitles = subtitles;
-
+                    defer.resolve(true);
                     win.info(Object.keys(subs).length + ' subtitles found');
                 } else {
                     win.warn('No subtitles returned');
+                    defer.resolve(false);
                 }
             }).catch(function (err) {
+                defer.resolve(false);
                 console.log('subtitleProvider.fetch()', err);
             });
-        },
-
-
-        fetchMovieSubtitles: function (data) {
-
+            return defer.promise;
         },
 
 
@@ -375,7 +430,8 @@
                     .replace(/ +/g, '-') // has spaces
                     .replace(/_/g, '-') // has '_'
                     .replace(/\-$/, '') // ends with '-'
-                    .replace(/^\./, ''); // starts with '.'
+                    .replace(/^\./, '') // starts with '.'
+                    .replace(/^\-/, ''); // starts with '-'
                 App.Trakt.shows.summary(tvshowname)
                     .then(function (summary) {
                         if (!summary) {
@@ -405,6 +461,10 @@
                                             imdbid: summary.ids.imdb,
                                             season: data.season.toString(),
                                             episode: data.number.toString()
+                                        }).then(function (status) {
+                                            if (status) {
+                                                that.setupLocalSubs(Settings.subtitle_language, that.model.attributes.data.subtitles);
+                                            }
                                         });
                                     }
                                 }).catch(function (err) {
@@ -416,38 +476,45 @@
                     });
             }
         },
-
+        onClose: function () {
+            this.playing = false;
+            this.remove();
+            this.unbind();
+        },
         checkFreeSpace: function (size) {
-            var size = size / (1024 * 1024 * 1024);
+            size = size / (1024 * 1024 * 1024);
             var reserved = size * 20 / 100;
-            reserved = reserved > 0.25 ? 0.25: reserved;
+            reserved = reserved > 0.25 ? 0.25 : reserved;
             var minspace = size + reserved;
-
+            var exec = require('child_process').exec;
+            var cmd;
             if (process.platform === 'win32') {
-                var drive = Settings.tmpLocation.substr(0,2);
+                var drive = Settings.tmpLocation.substr(0, 2);
 
-                var exec = require('child_process').exec;
-                var cmd = 'wmic logicaldisk "' + drive +'" get freespace';
 
-                exec(cmd, function(error, stdout, stderr) {
-                    if (error) return;
+                cmd = 'wmic logicaldisk "' + drive + '" get freespace';
+
+                exec(cmd, function (error, stdout, stderr) {
+                    if (error) {
+                        return;
+                    }
 
                     var stdoutObj = stdout.split('\n');
-                    var freespace = stdoutObj[1].replace(/\D/g, '') / (1024*1024*1024);
+                    var freespace = stdoutObj[1].replace(/\D/g, '') / (1024 * 1024 * 1024);
                     if (freespace < minspace) {
                         $('#player .warning-nospace').css('display', 'block');
                     }
                 });
             } else {
                 var path = Settings.tmpLocation;
+                cmd = 'df -Pk "' + path + '" | awk \'NR==2 {print $4}\'';
 
-                var exec = require('child_process').exec;
-                var cmd = 'df -Pk "' + path + '" | awk \'NR==2 {print $4}\'';
+                exec(cmd, function (error, stdout, stderr) {
+                    if (error) {
+                        return;
+                    }
 
-                exec(cmd, function(error, stdout, stderr) {
-                    if (error) return;
-
-                    var freespace = stdout.replace(/\D/g, '') / (1024*1024);
+                    var freespace = stdout.replace(/\D/g, '') / (1024 * 1024);
                     if (freespace < minspace) {
                         $('#player .warning-nospace').css('display', 'block');
                     }

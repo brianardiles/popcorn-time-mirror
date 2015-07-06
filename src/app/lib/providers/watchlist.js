@@ -12,17 +12,15 @@
         var now = moment();
 
         //Checked when last fetched
-        App.db.getSetting({
+        App.Database.setting('get', {
                 key: 'watchlist-fetched'
             })
             .then(function (doc) {
                 if (doc) {
-                    var d = moment.unix(doc.value);
-
+                    var d = moment.unix(doc);
                     if (Math.abs(now.diff(d, 'hours')) >= 12) {
                         win.info('Watchlist - last update was %s hour(s) ago', Math.abs(now.diff(d, 'hours')));
                         fetchWatchlist(true);
-
                     } else {
                         // Last fetch is fresh (< 12h)
                         win.info('Watchlist - next update in %s hour(s)', 12 - Math.abs(now.diff(d, 'hours')));
@@ -36,23 +34,23 @@
 
 
         function fetchWatchlist(update) {
-            App.db.getSetting({
+            App.Database.setting('get', {
                     key: 'watchlist'
                 })
                 .then(function (doc) {
                     if (doc && !update) {
                         // Returning cached watchlist
-                        deferred.resolve(doc.value || []);
+                        deferred.resolve(doc || []);
                     } else {
                         win.info('Watchlist - Fetching new watchlist');
                         App.Trakt.calendars.myShows(moment().subtract(31, 'days').format('YYYY-MM-DD'), 30)
                             .then(function (data) {
-                                App.db.writeSetting({
+                                App.Database.setting('set', {
                                         key: 'watchlist',
                                         value: data
                                     })
                                     .then(function () {
-                                        App.db.writeSetting({
+                                        App.Database.setting('set', {
                                             key: 'watchlist-fetched',
                                             value: now.unix()
                                         });
@@ -73,26 +71,58 @@
 
     var filterShows = function (items) {
         var filtered = [];
+        var deferred = Q.defer();
 
         items.forEach(function (show) {
             var deferred = Q.defer();
-
-            if (show.show_id && show.season !== 0) {
-                promisifyDb(db.watched.find({
-                        imdb_id: show.show_id.toString(),
-                        season: show.season.toString(),
-                        episode: show.episode.toString()
-                    }))
-                    .then(function (data) {
-                        if (data != null && data.length > 0) {
-                            deferred.resolve(null);
-                        } else {
-                            deferred.resolve(show);
-                        }
-                    });
-            } else {
-                deferred.resolve(null);
-            }
+            App.Database.show('get', show.show_id)
+                .then(function (data) {
+                    if (data) {
+                        var value = {
+                            tvdb_id: data.tvdb_id,
+                            imdb_id: data.imdb_id,
+                            season: show.season,
+                            episode: show.episode
+                        };
+                        App.Database.watched('check', 'show', value)
+                            .then(function (watched) {
+                                if (!watched) {
+                                    deferred.resolve(show.show_id);
+                                } else {
+                                    deferred.resolve(null);
+                                }
+                            });
+                    } else {
+                        //If not found, then get the details from Eztv and add it to the DB
+                        data = Eztv.detail(show.show_id, show, false)
+                            .then(function (data) {
+                                if (data) {
+                                    var value = {
+                                        tvdb_id: data.tvdb_id,
+                                        imdb_id: data.imdb_id,
+                                        season: show.season,
+                                        episode: show.episode
+                                    };
+                                    App.Database.watched('check', 'show', value)
+                                        .then(function (watched) {
+                                            if (!watched) {
+                                                App.Database.show('add', data).then(function () {
+                                                    deferred.resolve(show.show_id);
+                                                });
+                                            } else {
+                                                deferred.resolve(null);
+                                            }
+                                        });
+                                } else {
+                                    deferred.resolve(null);
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                deferred.resolve(null);
+                            });
+                    }
+                });
 
             filtered.push(deferred.promise);
         });
@@ -100,19 +130,27 @@
         return Q.all(filtered);
     };
 
-    var formatForPopcorn = function (items) {
+    var formatForPopcorn = function (list) {
+
         var showList = [];
 
-        items.forEach(function (show) {
-            if (show === null) {
-                return;
+        var items = [];
+        list = list.filter(function (n) {
+            return n !== null;
+        });
+        $.each(list, function (i, el) {
+            if ($.inArray(el, items) === -1) {
+                items.push(el);
             }
+        });
 
+        items.forEach(function (show) {
             var deferred = Q.defer();
             //Try to find it on the shows database and attach the next_episode info
-            Database.getTVShowByImdb(show.show_id)
+
+            App.Database.show('get', show)
                 .then(function (data) {
-                    if (data != null) {
+                    if (data) {
                         data.type = 'show';
                         data.image = data.images.poster;
                         data.imdb = data.imdb_id;
@@ -123,15 +161,14 @@
                         }
                         deferred.resolve(data);
                     } else {
-                        //If not found, then get the details from Eztv and add it to the DB
-                        data = Eztv.detail(show.show_id, show, false)
+                        //If not found, then get the details from Eztv and add it to the DB should never get to this stage
+                        data = Eztv.detail(show, show, false)
                             .then(function (data) {
                                 if (data) {
                                     data.provider = 'Eztv';
                                     data.type = 'show';
                                     data.next_episode = show.next_episode;
-
-                                    Database.addTVShow(data)
+                                    App.Database.show('add', data)
                                         .then(function (idata) {
                                             deferred.resolve(data);
                                         })

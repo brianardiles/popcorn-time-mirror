@@ -1,6 +1,6 @@
 (function (App) {
     'use strict';
-
+    var mkdirp = require('mkdirp');
     var semver = require('semver');
     var peerflix = require('peerflix');
     var getPort = require('get-port');
@@ -29,7 +29,13 @@
         start: function (data, preload) {
             this.hasStarted = true;
             var self = this;
-            var streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
+            var streamPath;
+            if (data.type === 'show') {
+                streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
+            } else {
+                streamPath = AdvSettings.get('tmpLocation');
+            }
+
             getPort(function (err, port) {
                 self.src = 'http://127.0.0.1:' + port;
 
@@ -76,7 +82,19 @@
                                 index = self.client.files.indexOf(index);
                                 var stream = self.client.files[index].createReadStream();
                                 self.fileindex = index;
-                                self.streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
+                                var streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
+                                if (fs.existsSync(streamDir)) {
+                                    self.streamDir = streamDir;
+                                } else {
+                                    mkdirp(streamDir, function (err) {
+                                        if (err) {
+                                            console.error(err);
+                                        } else {
+                                            self.streamDir = streamDir;
+                                        }
+                                    });
+                                }
+
                             });
                         }
                     }

@@ -8,7 +8,7 @@ var Q = require('q'),
 var Settings = {};
 
 // User interface
-Settings.language = 'english';
+Settings.language = 'en';
 Settings.translateSynopsis = true;
 Settings.coversShowRating = true;
 Settings.watchedCovers = 'fade';
@@ -52,13 +52,14 @@ Settings.subtitle_font = 'Arial';
 Settings.httpApiPort = 8008;
 Settings.httpApiUsername = 'popcorn';
 Settings.httpApiPassword = 'popcorn';
-
+Settings.seenNotifications = [];
 // Trakt.tv
 Settings.traktToken = '';
 Settings.traktTokenRefresh = '';
 Settings.traktTokenTTL = '';
 Settings.traktTvVersion = '0.0.2';
 Settings.traktLastSync = '';
+Settings.traktLastActivities = '';
 Settings.traktSyncOnStart = true;
 Settings.traktPlayback = true;
 
@@ -83,6 +84,7 @@ Settings.activateTorrentCollection = true;
 Settings.activateWatchlist = true;
 Settings.activateVpn = true;
 Settings.activateRandomize = true;
+Settings.onlineSearchEngine = 'KAT';
 
 // Ratio
 Settings.totalDownloaded = 0;
@@ -194,18 +196,20 @@ var AdvSettings = {
         return false;
     },
     set: function (variable, newValue) {
+        var defer = Q.defer();
         App.Database.setting('set', {
             key: variable,
             value: newValue
         }).then(function () {
             Settings[variable] = newValue;
+            defer.resolve(true);
         });
+        return defer.promise;
     },
     setup: function () {
-        AdvSettings.checkAdmin();
-        AdvSettings.getHardwareInfo();
         AdvSettings.set('version', require('nw.gui').App.manifest.version);
         AdvSettings.set('releaseName', require('nw.gui').App.manifest.releaseName);
+        AdvSettings.getHardwareInfo();
     },
     getHardwareInfo: function () {
         if (/64/.test(process.arch)) {
@@ -230,35 +234,6 @@ var AdvSettings = {
         }
 
         return Q();
-    },
-
-    checkAdmin: function () {
-        if (process.platform === 'win32') {
-            /* Doesn't work atm (june 2015), always returns an error
-            fs.access(process.env.SystemRoot, fs.W_OK, function (err) {
-                if (!err) {
-                    AdvSettings.set('admin', true);
-                    $('.notification_alert').show().text(i18n.__('Popcorn Time is not supposed to be run as administrator')).delay(6000).fadeOut(400);
-                    return;
-                }
-                AdvSettings.set('admin', false);
-            });*/
-
-            /* Using this redneck test instead */
-            try {
-                fs.writeFile(path.join(process.env.SystemRoot, 'popcorntime.txt'), '', function (err) {
-                    if (err) {
-                        AdvSettings.set('admin', false);
-                        return;
-                    }
-                    fs.unlinkSync(path.join(process.env.SystemRoot, 'popcorntime.txt'));
-                    AdvSettings.set('admin', true);
-                    $('.notification_alert').show().text(i18n.__('%s is not supposed to be run as administrator', 'Popcorn Time')).delay(6000).fadeOut(400);
-                });
-            } catch (e) {
-                console.error('Couldn\'t check admin privileges, continuing');
-            }
-        }
     },
 
     getNextApiEndpoint: function (endpoint) {

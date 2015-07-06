@@ -15,13 +15,14 @@
             FileSelector: '#file-selector-container',
             Player: '#player',
             Settings: '#settings-container',
-            InitModal: '#initializing',
             Disclaimer: '#disclaimer-container',
             About: '#about-container',
             Keyboard: '#keyboard-container',
             Help: '#help-container',
             TorrentCollection: '#torrent-collection-container',
-            Issue: '#issue-container'
+            UpdaterModel: '#updater-detail-container',
+            Issue: '#issue-container',
+            Notification: '#notification'
         },
 
         ui: {
@@ -117,6 +118,10 @@
             App.vent.on('torrentCollection:show', _.bind(this.showTorrentCollection, this));
             App.vent.on('torrentCollection:close', _.bind(this.TorrentCollection.destroy, this.TorrentCollection));
 
+            //Updater
+            App.vent.on('updater:show', _.bind(this.showUpdater, this));
+            App.vent.on('updater:close', _.bind(this.UpdaterModel.destroy, this.UpdaterModel));
+
             // Tv Shows
             App.vent.on('show:showDetail', _.bind(this.showShowDetail, this));
             App.vent.on('show:closeDetail', _.bind(this.closeShowDetail, this.MovieDetail));
@@ -124,6 +129,10 @@
             // Settings events
             App.vent.on('settings:show', _.bind(this.showSettings, this));
             App.vent.on('settings:close', _.bind(this.Settings.destroy, this.Settings));
+
+
+            App.vent.on('notification:show', _.bind(this.showNotification, this));
+            App.vent.on('notification:close', _.bind(this.closeNotification, this));
 
             App.vent.on('system:openFileSelector', _.bind(this.showFileSelector, this));
             App.vent.on('system:closeFileSelector', _.bind(this.FileSelector.destroy, this.FileSelector));
@@ -139,6 +148,7 @@
             App.vent.on('player:close', _.bind(this.Player.destroy, this.Player));
 
             App.vent.on('vpn:connect', _.bind(this.connectVpn, this));
+            App.vent.on('restartPopcornTime', _.bind(this.restartPopcornTime, this));
 
             App.vent.on('updatePostersSizeStylesheet', _.bind(this.updatePostersSizeStylesheet, this));
 
@@ -170,7 +180,13 @@
                     }
                 });
             }
-
+            if (!fs.existsSync('./installdate')) {
+                fs.writeFile('./installdate', Date.now(), function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                });
+            }
 
             // Always on top
             win.setAlwaysOnTop(Settings.alwaysOnTop);
@@ -218,12 +234,20 @@
                 policy.ignore();
             });
 
-            App.vent.trigger('updatePostersSizeStylesheet');
+            this.updatePostersSizeStylesheet(true);
             App.vent.trigger('main:ready');
 
             if (App.startupTime) {
                 win.debug('Popcorn Time %s startup time: %sms', Settings.version, (window.performance.now() - App.startupTime).toFixed(3)); // started in database.js;
             }
+
+            function checkNewNotifcations() {
+                App.Notifier.check();
+                setTimeout(checkNewNotifcations, 600000); //ten minutes
+            }
+
+            checkNewNotifcations();
+
         },
 
         showMovies: function (e) {
@@ -266,7 +290,18 @@
             this.Settings.destroy();
             this.MovieDetail.destroy();
 
-            this.Content.show(new App.View.WatchlistBrowser());
+            var that = this;
+            $('#nav-filters, .search, .items').hide();
+            $('.spinner').show();
+
+            function waitForSync() {
+                if (!App.Trakt.syncTrakt.isSyncing()) {
+                    that.Content.show(new App.View.WatchlistBrowser());
+                } else {
+                    setTimeout(waitForSync, 500);
+                }
+            }
+            waitForSync();
         },
 
         showDisclaimer: function (e) {
@@ -279,6 +314,13 @@
 
         showTorrentCollection: function (e) {
             this.TorrentCollection.show(new App.View.TorrentCollection());
+        },
+
+        showUpdater: function (model) {
+            console.log('showing updater')
+            this.UpdaterModel.show(new App.View.updaterModal({
+                model: model
+            }));
         },
 
         showKeyboard: function (e) {
@@ -324,6 +366,16 @@
             App.vent.trigger('shortcuts:list');
         },
 
+        showNotification: function (notificationModel) {
+            this.Notification.show(new App.View.Notification({
+                model: notificationModel
+            }));
+        },
+
+        closeNotification: function () {
+            this.Notification.destroy();
+        },
+
         showShowDetail: function (showModel) {
             this.MovieDetail.show(new App.View.ShowDetail({
                 model: showModel
@@ -350,9 +402,16 @@
 
         traktAuthenticated: function () {
             win.info('Trakt: authenticated');
-            if (Settings.traktSyncOnStart && (Settings.traktLastSync + 1200000 < new Date().valueOf())) { //only refresh every 20min
-                App.Database.delete('watched');
-                App.Trakt.syncTrakt.all();
+            if (Settings.traktSyncOnStart && (Settings.traktLastSync + 1800000 < new Date().valueOf())) { //only refresh every 30min
+                App.Trakt.sync.lastActivities()
+                    .then(function (activities) { // check if new activities
+                        var lastActivities = activities.movies.watched_at > activities.episodes.watched_at ? activities.movies.watched_at : activities.episodes.watched_at;
+                        if (lastActivities > Settings.traktLastActivities) {
+                            AdvSettings.set('traktLastActivities', lastActivities);
+                            App.Database.delete('watched');
+                            App.Trakt.syncTrakt.all();
+                        }
+                    });
             }
         },
 
@@ -409,11 +468,11 @@
             $(window).trigger('resize');
         },
 
-        updatePostersSizeStylesheet: function () {
+        updatePostersSizeStylesheet: function (first) {
 
             var that = this;
 
-            var postersWidth = Settings.postersMinWidth;
+            var postersWidth = Settings.postersWidth;
             var postersHeight = Math.round(postersWidth * Settings.postersSizeRatio);
             var postersWidthPercentage = (postersWidth - Settings.postersMinWidth) / (Settings.postersMaxWidth - Settings.postersMinWidth) * 100;
             var fontSize = ((Settings.postersMaxFontSize - Settings.postersMinFontSize) * postersWidthPercentage / 100) + Settings.postersMinFontSize;
@@ -443,10 +502,13 @@
             Settings.postersWidth = postersWidth;
 
             // Display PostersWidth
-            var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
-            if (typeof App.currentview !== 'undefined') {
+
+            if (!first) {
+                var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
                 that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
             }
+
+
             $('.cover-image').css('width', Settings.postersWidth);
 
         },
@@ -454,6 +516,20 @@
         links: function (e) {
             e.preventDefault();
             gui.Shell.openExternal($(e.currentTarget).attr('href'));
+        },
+
+        restartPopcornTime: function () {
+            var spawn = require('child_process').spawn,
+                argv = gui.App.fullArgv,
+                CWD = process.cwd();
+
+            argv.push(CWD);
+            spawn(process.execPath, argv, {
+                cwd: CWD,
+                detached: true,
+                stdio: ['ignore', 'ignore', 'ignore']
+            }).unref();
+            gui.App.quit();
         }
     });
 

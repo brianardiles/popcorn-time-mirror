@@ -20,6 +20,7 @@
                 metadata: {
                     title: torrent.name,
                 },
+                defaultSubtitle: Settings.subtitle_language,
                 device: App.Device.Collection.selected
             };
             App.Streamer.start(torrentStart);
@@ -30,8 +31,7 @@
 
         var file = e.dataTransfer.files[0];
 
-        if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
-
+        if (file != null && file.name.indexOf('.torrent') !== -1) {
             App.cacheTorrent.cache(file.path).then(function (path) {
                 readTorrent(path, function (err, torrent) {
                     if (!err) {
@@ -47,8 +47,16 @@
                 });
             });
 
-        } else {
-            var data = e.dataTransfer.getData('text/plain');
+        } else if (file.name.indexOf('.srt') !== -1) {
+            fs.writeFile(path.join(App.settings.tmpLocation, file.name), fs.readFileSync(file.path), function (err) {
+                if (err) {
+                    window.alert(i18n.__('Error Loading File') + ': ' + err);
+                } else {
+                    Settings.droppedSub = file.name;
+                    App.vent.trigger('videojs:drop_sub');
+                }
+            });
+
         }
 
     }

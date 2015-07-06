@@ -61,7 +61,6 @@
             this.renameUntitled();
 
 
-            App.vent.on('watched', _.bind(this.onWatched, this));
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster, 'thumb');
@@ -84,7 +83,7 @@
         },
 
         onShow: function () {
-
+            App.vent.on('watched', _.bind(this.onWatched, this));
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
             } else {
@@ -132,8 +131,6 @@
                 } catch (e) {}
                 bgCache = null;
             };
-
-            this.selectNextEpisode();
 
             if (!AdvSettings.get('ratingStars')) {
                 $('.star-container-tv').addClass('hidden');
@@ -190,20 +187,43 @@
                     });
             }
         },
-        selectNextEpisode: function () {
-            this.selectSeason($('.tab-season:first'));
+        selectNextEpisode: function (episodes, unWatchedEpisodes) {
+            episodes = _.sortBy(episodes, 'id');
+            unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
+            var select;
 
-
-            this.selectEpisode($('#watched-' + 1 + '-' + 1).parent());
-
-
-            if (AdvSettings.get('tv_detail_jump_to') !== 'firstUnwatched') {
-
-            } else {
-
+            switch (Settings.tv_detail_jump_to) {
+            case 'next':
+                if (unWatchedEpisodes.length > 0) {
+                    select = _.last(unWatchedEpisodes);
+                } else {
+                    select = _.last(episodes);
+                }
+                break;
+            case 'firstUnwatched':
+                if (unWatchedEpisodes.length > 0) {
+                    select = _.first(unWatchedEpisodes);
+                } else {
+                    select = _.last(episodes);
+                }
+                break;
+            case 'first':
+                select = _.first(episodes);
+                break;
+            case 'last':
+                select = _.last(episodes);
+                break;
             }
 
 
+            if (Settings.tv_detail_jump_to === 'next' && unWatchedEpisodes.length > 0) {
+                select = _.first(unWatchedEpisodes);
+            } else {
+                select = _.last(episodes);
+            }
+            this.selectSeason($('li[data-tab="season-' + select.season + '"]'));
+            var epselect = $('#watched-' + select.season + '-' + select.episode).parent();
+            this.selectEpisode(epselect);
         },
 
         openIMDb: function () {
@@ -234,6 +254,10 @@
         },
 
         toggleWatched: function (e) {
+            if (e.type) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             var edata = e.currentTarget.id.split('-');
             setTimeout(function () {
                 var value = {
@@ -255,10 +279,12 @@
         },
 
         isShowWatched: function () {
+            var unWatchedEpisodes = [];
             var tvdb_id = _this.model.get('tvdb_id');
             var imdb_id = _this.model.get('imdb_id');
             var that = this;
             var episodes = this.model.get('episodes');
+            var checkedEpisodes = [];
             episodes.forEach(function (episode, index, array) {
                 var value = {
                     tvdb_id: tvdb_id,
@@ -271,12 +297,31 @@
                     .then(function (watched) {
                         if (!watched) {
                             $('.show-watched-toggle').show();
+                            unWatchedEpisodes.push({
+                                id: parseInt(episode.season) * 100 + parseInt(episode.episode),
+                                season: episode.season,
+                                episode: episode.episode
+                            });
+                            return true;
                         } else {
                             that.markWatched(value, true);
+                            return true;
                         }
+                    }).then(function () {
+                        checkedEpisodes.push({
+                            id: parseInt(episode.season) * 100 + parseInt(episode.episode),
+                            season: episode.season,
+                            episode: episode.episode
+                        });
+                        if (checkedEpisodes.length === episodes.length) {
+                            that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes);
+                        }
+
                     });
 
             });
+
+
         },
 
         markShowAsWatched: function () {
@@ -291,6 +336,7 @@
                 var value = {
                     tvdb_id: tvdb_id,
                     imdb_id: imdb_id,
+                    episode_id: episode.tvdb_id,
                     season: episode.season,
                     episode: episode.episode
                 };
@@ -304,13 +350,15 @@
             });
         },
 
-        onWatched: function (method, type, data) {
+        onWatched: function (method, type, data, ignore) {
+            if (ignore) {
+                return;
+            }
             if (type !== 'show') {
                 return;
             }
             if (method === 'add') {
                 this.markWatched(data, true);
-                this.selectNextEpisode();
             } else if (method === 'remove') {
                 this.markWatched(data, false);
             }
@@ -318,6 +366,7 @@
         },
 
         markWatched: function (value, state) {
+
             state = (state === undefined) ? true : state;
             // we should never get any shows that aren't us, but you know, just in case.
             if (value.tvdb_id === _this.model.get('tvdb_id')) {
@@ -386,6 +435,7 @@
                     streamer: 'main',
                     episodes_data: episodes_data
                 },
+                defaultSubtitle: Settings.subtitle_language,
                 status: that.model.get('status'),
                 device: App.Device.Collection.selected
             };
@@ -446,7 +496,6 @@
             this.ui.q720p.removeClass('active');
             this.ui.q480p.removeClass('active');
 
-            console.log(torrents);
             if (!torrents.q480) {
                 this.ui.q480p.addClass('disabled');
             } else {
@@ -691,7 +740,9 @@
 
                 torrent = torrent.split('&tr')[0] + '&tr=udp://tracker.openbittorrent.com:80/announce' + '&tr=udp://open.demonii.com:1337/announce' + '&tr=udp://tracker.coppersurfer.tk:6969';
 
-                torrentHealth(torrent).then(function (res) {
+                torrentHealth(torrent, {
+                    timeout: 1000
+                }).then(function (res) {
 
                     if (cancelled) {
                         return;
@@ -709,8 +760,8 @@
                         var ratio = res.peers > 0 ? res.seeds / res.peers : +res.seeds;
 
                         $('.health-icon').tooltip({
-                            html: true
-                        })
+                                html: true
+                            })
                             .removeClass('Bad Medium Good Excellent')
                             .addClass(health)
                             .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + res.seeds + ' - ' + i18n.__('Peers:') + ' ' + res.peers)
@@ -722,8 +773,8 @@
 
         resetHealth: function () {
             $('.health-icon').tooltip({
-                html: true
-            })
+                    html: true
+                })
                 .removeClass('Bad Medium Good Excellent')
                 .attr('data-original-title', i18n.__('Health Unknown'))
                 .tooltip('fixTitle');

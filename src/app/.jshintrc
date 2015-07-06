@@ -52,6 +52,7 @@
         "minimizeToTray": true,
         "promisifyDb": true,
         "db": true,
+        "splashwin": true,
 
         // Third party
         "Backbone": true,

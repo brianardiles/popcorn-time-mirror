@@ -107,63 +107,6 @@
         right: 15px
         position: absolute
     }
-    .playing_next {
-        color: #fff
-        z-index: 23
-        bottom: 10vh !important
-        padding: 10px
-        font-size: 20px
-        left: 3vw !important
-        display: none
-        background-color: rgba(0, 0, 0, 0.48) !important
-        overflow: hidden
-
-        span {
-            font-weight: bold
-            color: rgb(0, 143, 255)
-        }
-    }
-    .auto-next-btn {
-        position relative
-        float right
-        margin 15px
-        padding 12px
-
-
-        border-radius $ButtonRadius
-        background-color $ButtonBg
-        text-align center
-        color $SettingsButtonText
-        font-family $ButtonFont, $AlternateFont
-        font-size 13px
-        cursor pointer
-        transition background-color .5s
-        &:hover {
-            background-color $ButtonBgHover
-            color $SettingsButtonTextHover
-            text-decoration none
-        }
-        &.disabled {
-            background-color $ButtonBgDisabled
-            &:hover{
-                background-color $ButtonBgDisabled
-            }
-            &:active{
-                background-color $ButtonBgDisabled
-            }
-        }
-
-        &.green{
-            background-color #27AE60
-        }
-        &.red{
-            background-color #F15153
-        }
-        &:active{
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.6)
-            background: $ButtonBgActive
-        }
-    }
 }
 
 .player-title {
@@ -195,6 +138,7 @@
 
 .vjs-subtitles-button {
     top: 12px
+    z-index: 2
 }
 
 .vjs_smallersub_button {
@@ -280,3 +224,76 @@
         }
     }
 }
+
+.item-next
+    color #ffffff !important
+    z-index 1 !important
+    position absolute
+    width 800px !important
+    height 220px !important
+    padding-top 10px !important
+    padding-left 10px !important
+    padding-bottom 10px !important
+    left calc(100vw - 800px ) !important 
+    background-color rgba(23, 24, 27, 0.75) !important
+    bottom 55px !important
+    .item-poster
+        position absolute !important
+        display inline-block !important
+        h1
+            font-size: 15px !important;
+            padding-top: 1px !important;
+            height: 35px !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            text-transform: capitalize !important;
+            font-family: 'Open Sans', sans-serif !important;
+
+        .media-poster
+            box-shadow 0 0 4px rgba(0, 0, 0, .3), inset 0 0 0 2px $ButtonBgActive !important
+            width 300px !important
+            height 160px !important
+            background-size cover !important
+    .item-summary
+        position absolute !important
+        right 0 !important
+        left 310px !important
+        padding 35px 20px 0 20px !important
+        h1
+            font-size: 18px !important;
+            height: 38px !important;
+        h2
+            float left !important
+            max-width 70% !important
+            font-family 'Open Sans', sans-serif !important
+            font-size 17px !important
+            height 35px !important
+        h3
+            float right !important
+            max-width 30% !important
+            height 35px !important
+            font-family 'Open Sans', sans-serif !important
+            font-size 17px !important
+        p
+            display block !important
+            display box !important
+            max-height 83px !important
+            font-family 'Open Sans', sans-serif !important
+            overflow hidden !important
+            clear right !important
+            line-height 20px !important
+            font-size 15px !important
+            text-overflow ellipsis !important
+            text-overflow ellipsis-lastline !important
+            line-clamp 4 !important
+            box-orient vertical !important
+
+.item-next .item-summary h1,
+.item-next .item-summary h2,
+.item-next .item-summary h3
+    overflow hidden !important
+    text-overflow ellipsis !important
+    white-space nowrap !important
+    font-family 'Open Sans', sans-serif !important
+

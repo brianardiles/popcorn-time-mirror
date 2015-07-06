@@ -5,13 +5,14 @@
         template: '#updater-detail-tpl',
         className: 'updater-detail-container',
         ui: {
-            title: '#updateName',
-            description: '#updateDescription',
-            changelog: '#updateChangeLog'
+            status: '#updateStatus',
+            updateinfo: '#update-info'
         },
 
         events: {
             'click .close-icon': 'closeUpdater',
+            'click #startUpdate': 'startupdate',
+            'click #dismissUpdate': 'dismissUpdate'
         },
 
         initialize: function () {
@@ -25,6 +26,15 @@
                 $('#filterbar-update').click();
             });
         },
+
+        startupdate: function () {
+            this.ui.status.text('Downloading Update...');
+            this.ui.updateinfo.hide();
+        },
+        dismissUpdate: function () {
+            App.vent.trigger('updater:close');
+        },
+
         onClose: function () {
 
         },

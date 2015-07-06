@@ -1,5 +1,6 @@
 <div class="fa fa-times close-icon"></div>
-<h1>Update Available!</h1>
+<h1 id="updateStatus">Update Available!</h1>
+<div id="update-info">
 <h2>Version</h2>
 
 <h2 id="updateName" style="font-size: 14px; text-decoration: none; padding-top: 10px;"><%= version %><span style="font-size: 13px;"> - <%= version_name %></span></h2>
@@ -14,11 +15,13 @@
 <% });%>
 
 </ul>
+
 <div class="btn-container">
-    <div class="btn-update ">
+    <div id="startUpdate" class="btn-update ">
             <%=i18n.__( "Install Update") %>
         </div>
-<div class="btn-update ">
+<div id="dismissUpdate" class="btn-update ">
             <%=i18n.__( "Dismiss") %>
  </div>
+</div>
 </div>

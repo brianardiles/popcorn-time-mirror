@@ -1,6 +1,11 @@
 (function (App) {
     'use strict';
 
+    /*
+    Updates: [Automatically update, Notify me when an update is available, Disabled]
+    Update Channel: [Stable, Experimental, Nightly]
+    */
+
     var request = require('request'),
         fs = require('fs'),
         Q = require('q'),
@@ -11,18 +16,43 @@
 
     var Updaterv2 = Backbone.Model.extend({
         initialize: function () {
-            this.updateEndpoint = 'http://update.popcorntime.io/desktop';
+
+            this.githash = App.git.commit;
+
+            this.gitHash = 'e4fdcc522f6a57882f1d7b716009f0099b920046'; //for debugging olny!
+
+            this.pubkey = '-----BEGIN PUBLIC KEY-----\n' +
+                'MIIBtjCCASsGByqGSM44BAEwggEeAoGBAPNM5SX+yR8MJNrX9uCQIiy0t3IsyNHs\n' +
+                'HWA180wDDd3S+DzQgIzDXBqlYVmcovclX+1wafshVDw3xFTJGuKuva7JS3yKnjds\n' +
+                'NXbvM9CrJ2Jngfd0yQPmSh41qmJXHHSwZfPZBxQnspKjbcC5qypM5DqX9oDSJm2l\n' +
+                'fM/weiUGnIf7AhUAgokTdF7G0USfpkUUOaBOmzx2RRkCgYAyy5WJDESLoU8vHbQc\n' +
+                'rAMnPZrImUwjFD6Pa3CxhkZrulsAOUb/gmc7B0K9I6p+UlJoAvVPXOBMVG/MYeBJ\n' +
+                '19/BH5UNeI1sGT5/Kg2k2rHVpuqzcvlS/qctIENgCNMo49l3LrkHbJPXKJ6bf+T2\n' +
+                '8lFWRP2kVlrx/cHdqSi6aHoGTAOBhAACgYBTNeXBHbWDOxzSJcD6q4UDGTnHaHHP\n' +
+                'JgeCrPkH6GBa9azUsZ+3MA98b46yhWO2QuRwmFQwPiME+Brim3tHlSuXbL1e5qKf\n' +
+                'GOm3OxA3zKXG4cjy6TyEKajYlT45Q+tgt1L1HuGAJjWFRSA0PP9ctC6nH+2N3HmW\n' +
+                'RTcms0CPio56gg==\n' +
+                '-----END PUBLIC KEY-----\n';
             this.UpdaterCacheDir = path.join(require('nw.gui').App.dataPath + '/UpdaterCache/');
             if (!fs.existsSync(this.UpdaterCacheDir)) {
                 fs.mkdirSync(this.UpdaterCacheDir);
                 win.debug('UpdaterCache: data directory created');
             }
-            this.information = {};
+
+            this.information = {
+                download: null,
+                verifyed: false,
+                installed: false
+            };
+
+
         },
         check: function () {
+            if (!this.updateEndpoint) {
+                this.updateEndpoint = 'http://update.popcorntime.io/' + 'stable' + '-desktop/' + Settings.os + '/' + this.gitHash;
+            }
             var defer = Q.defer();
             var responce = defer.promise;
-
             var that = this;
             request(this.updateEndpoint, {
                 json: true
@@ -33,30 +63,27 @@
                     defer.resolve(data);
                 }
             });
-
             responce.then(function (d) {
-                var data = d[Settings.os];
-                var upstreamCommit = Object.getOwnPropertyNames(data)[0];
-                if (App.git.commit !== upstreamCommit) {
-                    that.handelUpdate(data[upstreamCommit]);
+                if (!d['error']) {
+                    that.handelUpdate(d);
                 }
             });
-
         },
         handelUpdate: function (d) {
             if (!d[Settings.arch]) {
                 return console.log('Update Does not Contain Our Arch :(');
             }
             var data = d[Settings.arch];
-            console.log(data);
-            App.vent.trigger('notification', 'Update Available: Version ' + data.version, data.description, 'update'); //trigger notification of update
-
-            this.downloadUpdate(data.updateUrl, {
-                checksum: data.checksum,
-                signature: data.signature
-            });
+            App.vent.trigger('notification', 'Update Available: Version ' + data.meta.title, data.meta.description, 'update'); //trigger notification of update
+            var type = 'package';
+            var downloadURL = data.download.package;
+            if (_.pluck(data.download, 'installer')) {
+                type = 'installer';
+                downloadURL = data.download.installer;
+            }
+            this.downloadUpdate(downloadURL, data.verification, type);
         },
-        VerifyUpdate: function (update, secinfo) {
+        VerifyUpdate: function (update, verification) {
             var defer = Q.defer();
             var self = this;
 
@@ -69,23 +96,28 @@
             readStream.on('end', function () {
                 hash.end();
                 if (
-                    secinfo.checksum !== hash.read().toString('hex') ||
-                    verify.verify(VERIFY_PUBKEY, secinfo.signature, 'base64') === false
+                    verification.checksum !== hash.read().toString('hex') ||
+                    verify.verify(self.pubkey, verification.signature, 'base64') === false
                 ) {
-                    defer.reject('invalid hash or signature');
+                    defer.resolve(false);
                 } else {
                     defer.resolve(true);
                 }
             });
             return defer.promise;
         },
-        downloadUpdate: function (url, secinfo, override) {
+        downloadUpdate: function (url, verification, type, override) {
             var that = this;
             var updatePath = path.join(this.UpdaterCacheDir, path.basename(url));
 
             if (fs.existsSync(updatePath) && !override) {
-                this.VerifyUpdate(updatePath, secinfo).then(function (result) {
+                this.VerifyUpdate(updatePath, verification).then(function (result) {
                     console.log(result);
+                    if (result) {
+                        that.information.verifyed = true;
+                    } else {
+                        that.information.verifyed = 'failed';
+                    }
                 });
             } else {
                 progress(request(url), {
@@ -98,17 +130,33 @@
                             downloaded: state.received,
                             totalSize: state.total
                         };
-                        console.log(that.information.download)
+                        console.log(that.information.download);
                     })
                     .on('error', function (err) {
                         // Do something with err
                     }).on('close', function (err) {
-                        console.log('Update Downloaded!')
+                        that.information.download = {
+                            percentDone: '100',
+                            downloaded: state.received,
+                            totalSize: state.total
+                        };
+                        that.VerifyUpdate(updatePath, verification).then(function (result) {
+                            console.log(result);
+                            if (result) {
+                                that.information.verifyed = true;
+                            } else {
+                                that.information.verifyed = 'failed';
+                            }
+                        });
+                        console.log('Update Downloaded!');
                     })
                     .pipe(fs.createWriteStream(updatePath));
             }
         },
-        installUpdate: function (path, platform) {},
+        installUpdate: function (path, type) {
+
+
+        },
 
 
     });

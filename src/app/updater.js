@@ -12,9 +12,12 @@
         AdmZip = require('adm-zip'),
         spawn = require('child_process').spawn;
 
-    var UPDATE_ENDPOINT = AdvSettings.get('updateEndpoint').url + 'update.json',
-        CHANNELS = ['stable', 'beta', 'nightly'],
+    var UPDATE_ENDPOINT = 'http://update.popcorntime.io/',  //http://update.popcorntime.io/<channel>/<os>/<release>      
+        CHANNEL = App.settings.updatechannel, //Possible values: desktop, desktop_experimental, desktop_nightly
+        OS = App.settings.os,
+        RELEASE = null,
         FILENAME = 'package.nw.new',
+        UPDATESETTINGS = App.settings.automaticUpdating, //Possible values: [checkandinstall, checkandnotify, disable]
         VERIFY_PUBKEY =
         '-----BEGIN PUBLIC KEY-----\n' +
         'MIIBtjCCASsGByqGSM44BAEwggEeAoGBAPNM5SX+yR8MJNrX9uCQIiy0t3IsyNHs\n' +
@@ -44,11 +47,12 @@
         var self = this;
 
         this.options = _.defaults(options || {}, {
-            endpoint: UPDATE_ENDPOINT + '?version=' + App.settings.version,
-            channel: 'beta'
+            endpoint: UPDATE_ENDPOINT,
+            channel: CHANNEL,
+            os: OS
         });
 
-        this.outputDir = App.settings.os === 'linux' ? process.execPath : process.cwd();
+        this.outputDir = OS === 'linux' ? process.execPath : process.cwd();
         this.updateData = null;
     }
 
@@ -58,10 +62,18 @@
         var self = this;
 
         // Don't update if development or update disabled in Settings
-        if (_.contains(fs.readdirSync('.'), '.git') || !App.settings.automaticUpdating) {
-            win.debug(App.settings.automaticUpdating ? 'Not updating because we are running in a development environment' : 'Automatic updating disabled');
-            defer.resolve(false);
-            return defer.promise;
+        switch(UPDATESETTINGS) {
+            case 'checkandinstall':
+                //TODO  
+            break;
+            case 'checkandnotify':
+                //TODO
+            break;
+            case 'disable':
+                win.debug('Updates have been disabled from the settings.';
+                defer.resolve(false);
+                return defer.promise;
+            break;
         }
 
         request(this.options.endpoint, {

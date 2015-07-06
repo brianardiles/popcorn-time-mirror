@@ -5,7 +5,9 @@
         template: '#updater-detail-tpl',
         className: 'updater-detail-container',
         ui: {
-
+            title: '#updateName',
+            description: '#updateDescription',
+            changelog: '#updateChangeLog'
         },
 
         events: {
@@ -17,6 +19,12 @@
         },
 
         onShow: function () {
+            this.ui.title.html(this.model.get('version') + '<span style="font-size: 13px;"> - ' + this.model.get('version_name') + '</span>');
+            this.ui.description.text(this.model.get('description'));
+
+
+            console.log(this.model);
+
             Mousetrap.bind(['esc', 'backspace'], function (e) {
                 $('#filterbar-update').click();
             });

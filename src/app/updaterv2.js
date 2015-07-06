@@ -38,7 +38,6 @@
                 fs.mkdirSync(this.UpdaterCacheDir);
                 win.debug('UpdaterCache: data directory created');
             }
-
             this.information = {
                 download: null,
                 verifyed: false,
@@ -81,7 +80,16 @@
                 type = 'installer';
                 downloadURL = data.download.installer;
             }
-            this.downloadUpdate(downloadURL, data.verification, type);
+
+            this.updateModel = new Backbone.Model({
+                changelog: data.change_log,
+                version_name: data.meta.title,
+                description: data.meta.description,
+                version: data.meta.version,
+                blog_url: data.meta.blog_url
+            });
+            $('#filterbar-update-api').show();
+            //this.downloadUpdate(downloadURL, data.verification, type);
         },
         VerifyUpdate: function (update, verification) {
             var defer = Q.defer();

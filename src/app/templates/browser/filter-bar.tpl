@@ -107,7 +107,7 @@
                                                         <% } %>
                                                             <i id="filterbar-torrent-collection" class="fa fa-folder-open torrent-collection tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__(" Torrent Collection ") %>"></i>
                                                     </li>
-                                                    <li style="display:block">
+                                                    <li id="filterbar-update-api" style="display:none">
                                                         <i id="filterbar-update" style="color:green" class="fa fa-refresh fa-spin tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__(" Update Available ") %>"></i>
                                                     </li>
                                                     <!-- About -->

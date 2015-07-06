@@ -31,7 +31,6 @@
             'click #filterbar-favorites': 'showFavorites',
             'click #filterbar-watchlist': 'showWatchlist',
             'click #filterbar-torrent-collection': 'showTorrentCollection',
-            'click .triggerUpdate': 'updateDB',
             'click .vpn-connect': 'vpnConnect',
             'click #filterbar-update': 'showUpdater',
         },
@@ -305,7 +304,7 @@
                 App.previousview = App.currentview;
                 App.currentview = 'Updater';
                 App.vent.trigger('about:close');
-                App.vent.trigger('updater:show');
+                App.vent.trigger('updater:show', App.Updaterv2.updateModel);
                 this.setactive('Updater');
             } else {
                 App.currentview = App.previousview;
@@ -396,11 +395,6 @@
 
             }
             return false;
-        },
-
-        updateDB: function (e) {
-            e.preventDefault();
-            App.vent.trigger(this.type + ':update', []);
         },
 
         vpnConnect: function (e) {

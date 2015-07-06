@@ -316,9 +316,11 @@
             this.TorrentCollection.show(new App.View.TorrentCollection());
         },
 
-        showUpdater: function (e) {
+        showUpdater: function (model) {
             console.log('showing updater')
-            this.UpdaterModel.show(new App.View.updaterModal());
+            this.UpdaterModel.show(new App.View.updaterModal({
+                model: model
+            }));
         },
 
         showKeyboard: function (e) {

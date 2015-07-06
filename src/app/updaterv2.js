@@ -39,7 +39,12 @@
                 win.debug('UpdaterCache: data directory created');
             }
             this.information = {
-                download: null,
+                download: {
+                    status: 'Initializing',
+                    percentDone: 0,
+                    downloaded: 0,
+                    totalSize: 0
+                },
                 verifyed: false,
                 installed: false
             };
@@ -80,6 +85,9 @@
                 type = 'installer';
                 downloadURL = data.download.installer;
             }
+            this.downloadURL = downloadURL;
+            this.verificationinfo = data.verification;
+            this.updateType = type;
 
             this.updateModel = new Backbone.Model({
                 changelog: data.change_log,
@@ -114,11 +122,26 @@
             });
             return defer.promise;
         },
-        downloadUpdate: function (url, verification, type, override) {
+        downloadUpdate: function (override) {
+            var url = this.downloadURL;
+            var verification = this.verificationinfo;
+            var type = this.updateType;
             var that = this;
+
+
             var updatePath = path.join(this.UpdaterCacheDir, path.basename(url));
 
             if (fs.existsSync(updatePath) && !override) {
+
+                var stats = fs.statSync(updatePath);
+                var fileSizeInBytes = stats['size'];
+                that.information.download = {
+                    status: 'Verifying',
+                    percentDone: 100,
+                    downloaded: fileSizeInBytes,
+                    totalSize: fileSizeInBytes
+                };
+
                 this.VerifyUpdate(updatePath, verification).then(function (result) {
                     console.log(result);
                     if (result) {
@@ -134,6 +157,7 @@
                     })
                     .on('progress', function (state) {
                         that.information.download = {
+                            status: 'Downloading',
                             percentDone: state.percent,
                             downloaded: state.received,
                             totalSize: state.total
@@ -142,13 +166,14 @@
                     })
                     .on('error', function (err) {
                         // Do something with err
-                    }).on('close', function (err) {
+                    })
+                    .pipe(fs.createWriteStream(updatePath)).on('close', function (err) {
                         that.information.download = {
+                            status: 'Verifying',
                             percentDone: '100',
-                            downloaded: state.received,
-                            totalSize: state.total
+                            downloaded: that.information.download.totalSize,
+                            totalSize: that.information.download.totalSize
                         };
-                        cosnole.log('updateFunnihsedDownloading!!!!')
                         that.VerifyUpdate(updatePath, verification).then(function (result) {
                             console.log(result);
                             if (result) {
@@ -158,8 +183,7 @@
                             }
                         });
                         console.log('Update Downloaded!');
-                    })
-                    .pipe(fs.createWriteStream(updatePath));
+                    });
             }
         },
         installUpdate: function (path, type) {

@@ -24,6 +24,14 @@
         font-size 17px
         color: $Text1
         font-family $Font
+
+    h4
+        padding-top: 30px
+        width: 100vw;
+        text-align: center;
+        font-size 15px
+        color: $Text1
+        font-family $Font   
     ul
         margin-top: 10px
         margin-left: 60px;
@@ -50,6 +58,29 @@
         font-size 14px
         color: $Text1
         font-family $Font
+
+    #update-progress-contain
+        display none
+
+    .update-progressbar
+        position relative
+        margin-bottom 10px
+        margin-top 20px
+        margin-left: 60px;
+        margin-right: 60px;
+        background-color $ButtonBg
+        border-radius 13px
+
+        & > div
+            width 0%
+            background-color $ButtonBgActive
+            height 5px
+            border-radius 13px
+            left 0px
+            transition: background-color 0.5s
+
+
+
     .btn-container
         display: table;
         position: relative;

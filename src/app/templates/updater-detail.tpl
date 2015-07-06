@@ -25,3 +25,11 @@
  </div>
 </div>
 </div>
+<div id="update-progress-contain">
+
+<h4 id="update-progress-status"></h4>
+  <div class="update-progressbar">
+        <div id="update-contents"></div>
+    </div>
+
+</div>

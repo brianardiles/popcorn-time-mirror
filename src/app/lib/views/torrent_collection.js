@@ -191,7 +191,7 @@
             var defer = Q.defer();
             kat.search({
                 query: input,
-                min_seeds: 10,
+                min_seeds: 5,
                 category: category
             }).then(function (data) {
                 win.debug('KAT search: %s results', data.results.length);

@@ -35,7 +35,10 @@
             'click #filterbar-update': 'showUpdater',
         },
 
+        initialize: function () {
 
+            App.vent.on('enableUpdatericon', _.bind(this.showUpdate, this));
+        },
         focus: function (e) {
             e.focus();
         },
@@ -219,7 +222,11 @@
             this.ui.searchForm.removeClass('edited');
 
         },
+        showUpdate: function () {
+            App.updateAvailable = true;
+            $('#filterbar-update-api').show();
 
+        },
         sortBy: function (e) {
             App.vent.trigger('about:close');
             App.vent.trigger('torrentCollection:close');

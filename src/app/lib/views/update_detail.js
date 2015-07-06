@@ -29,15 +29,13 @@
         },
 
         startupdate: function () {
-
+            App.Updaterv2.downloadUpdate();
             this.ui.updateinfo.hide();
             this.ui.updateProgressContainer.show();
             this.updating = true;
-            App.Updaterv2.downloadUpdate();
             this.StateUpdate();
             this.ui.updateProgressStatus.text(0 + '%' + ' (' + Common.fileSize(0) + '/' + Common.fileSize(0) + ')');
         },
-
 
         StateUpdate: function () {
             if (!this.updating) {
@@ -45,16 +43,19 @@
             }
             var that = this;
             var updateInfo = App.Updaterv2.information.download;
-
-            if (updateInfo.percentDone) {
-                this.ui.status.text(updateInfo.status + ' Update...');
-
+            this.ui.status.text(updateInfo.status + ' Update...');
+            if (updateInfo.status === 'Downloading') {
                 this.ui.updateProgressStatus.text(updateInfo.percentDone + '%' + ' (' + Common.fileSize(updateInfo.downloaded) + '/' + Common.fileSize(updateInfo.totalSize) + ')')
                 this.ui.progressbarprogress.animate({
                     width: updateInfo.percentDone + '%'
                 }, 100, 'swing');
+                _.delay(_.bind(this.StateUpdate, this), 100);
+            } else if (updateInfo.status === 'Installing') {
+                this.ui.updateProgressStatus.text(updateInfo.percentDone)
+                _.delay(_.bind(this.StateUpdate, this), 100);
+            } else {
+                _.delay(_.bind(this.StateUpdate, this), 500);
             }
-            _.delay(_.bind(this.StateUpdate, this), 100);
 
         },
 

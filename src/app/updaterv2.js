@@ -97,7 +97,6 @@
                 blog_url: data.meta.blog_url
             });
             $('#filterbar-update-api').show();
-            //this.downloadUpdate(downloadURL, data.verification, type);
         },
         VerifyUpdate: function (update, verification) {
             var defer = Q.defer();
@@ -111,6 +110,7 @@
             readStream.pipe(verify);
             readStream.on('end', function () {
                 hash.end();
+                console.log(verification.checksum, hash.read().toString('hex'))
                 if (
                     verification.checksum !== hash.read().toString('hex') ||
                     verify.verify(self.pubkey, verification.signature, 'base64') === false
@@ -167,7 +167,8 @@
                     .on('error', function (err) {
                         // Do something with err
                     })
-                    .pipe(fs.createWriteStream(updatePath)).on('close', function (err) {
+                    .pipe(fs.createWriteStream(updatePath))
+                    .on('close', function (err) {
                         that.information.download = {
                             status: 'Verifying',
                             percentDone: '100',
@@ -177,12 +178,11 @@
                         that.VerifyUpdate(updatePath, verification).then(function (result) {
                             console.log(result);
                             if (result) {
-                                that.information.verifyed = true;
+
                             } else {
-                                that.information.verifyed = 'failed';
+
                             }
                         });
-                        console.log('Update Downloaded!');
                     });
             }
         },

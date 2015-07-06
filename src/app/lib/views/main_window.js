@@ -248,7 +248,7 @@
             }
 
             checkNewNotifcations();
-            App.vent.trigger('updater:show');
+
         },
 
         showMovies: function (e) {

@@ -32,7 +32,8 @@
             'click #filterbar-watchlist': 'showWatchlist',
             'click #filterbar-torrent-collection': 'showTorrentCollection',
             'click .triggerUpdate': 'updateDB',
-            'click .vpn-connect': 'vpnConnect'
+            'click .vpn-connect': 'vpnConnect',
+            'click #filterbar-update': 'showUpdater',
         },
 
 
@@ -41,7 +42,7 @@
         },
         setactive: function (set) {
 
-            if (AdvSettings.get('startScreen') === 'Last Open') {
+            if (AdvSettings.get('startScreen') === 'Last Open' && set !== 'Updater') {
                 AdvSettings.set('lastTab', set);
             }
             $('.right .search').show();
@@ -74,6 +75,9 @@
             case 'Torrent-collection':
                 $('.right .search').hide();
                 $('#filterbar-torrent-collection').addClass('active');
+                break;
+            case 'Updater':
+                $('.right .search').hide();
                 break;
             }
             $('.sorters .dropdown-menu a:nth(0)').addClass('active');
@@ -294,6 +298,22 @@
                 this.setactive(App.currentview);
             }
         },
+        showUpdater: function (e) {
+            e.preventDefault();
+
+            if (App.currentview !== 'Updater') {
+                App.previousview = App.currentview;
+                App.currentview = 'Updater';
+                App.vent.trigger('about:close');
+                App.vent.trigger('updater:show');
+                this.setactive('Updater');
+            } else {
+                App.currentview = App.previousview;
+                App.vent.trigger('updater:close');
+                this.setactive(App.currentview);
+            }
+        },
+
 
         showShows: function (e) {
             e.preventDefault();

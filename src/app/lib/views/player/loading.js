@@ -277,8 +277,8 @@
                         this.ui.stateTextDownload.text(i18n.__('Downloading'));
                     }
                     this.ui.progressTextPeers.text(Stream.wires.length);
-                    this.ui.downloadSpeed.text(this.prettySpeed(Stream.downloadSpeed()));
-                    this.ui.uploadSpeed.text(this.prettySpeed(Stream.uploadSpeed()));
+                    this.ui.downloadSpeed.text(Common.fileSize(Stream.downloadSpeed()) + '/s');
+                    this.ui.uploadSpeed.text(Common.fileSize(Stream.uploadSpeed()) + '/s');
                 }
                 if (this.playingExternally) {
                     this.ui.stateTextDownload.text(i18n.__('Downloaded'));
@@ -291,15 +291,6 @@
                 this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 100);
             }
 
-        },
-        prettySpeed: function (speed) {
-            speed = speed || 0;
-            if (speed === 0) {
-                return util.format('%s %s', 0, 'B/s');
-            }
-
-            var converted = Math.floor(Math.log(speed) / Math.log(1024));
-            return util.format('%s %s/s', (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
         },
         cancelStreaming: function () {
             this.playing = true; // stop text update

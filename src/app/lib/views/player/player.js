@@ -24,7 +24,8 @@
             nextPhoto: '.media-poster',
             nextTitle: '.media-subtitle-1',
             nextSE: '.media-subtitle-2',
-            nextDiscription: '.media-subtitle-3'
+            nextDiscription: '.media-subtitle-3',
+            nextUI: '.item-next'
         },
 
         events: {
@@ -342,10 +343,7 @@
                     } else {
                         that.firstplay = false;
                     }
-                } else {
-                    that.checkAutoPlay();
                 }
-
                 that.sendToTrakt('start');
             });
 
@@ -439,16 +437,14 @@
                         }
                     }
                     win.debug('Showing Auto Play message');
-
-                    $('.playing_next').show();
-                    $('.playing_next').appendTo('div#video_player');
+                    this.ui.nextUI.css('display', 'block !important');
                     if (!this.player.userActive()) {
                         this.player.userActive(true);
                     }
                 }
 
                 var count = Math.round(this.video.duration() - this.video.currentTime());
-                $('.playing_next span').text(count + ' ' + i18n.__('Seconds'));
+                $('#playnextcountdown').text(count + ' ' + i18n.__('Seconds'));
 
             } else {
                 if (this.autoplayisshown) {
@@ -677,7 +673,7 @@
             }).then(function (subs) {
                 that.NextEpisode.subtitles = subs;
             });
-            //this.checkAutoPlay();
+            this.checkAutoPlay();
             this.loadPlayNextUI(metadata);
         },
         loadPlayNextUI: function (metadata) {

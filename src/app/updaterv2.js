@@ -111,10 +111,7 @@
             readStream.pipe(verify);
             readStream.on('end', function () {
                 hash.end();
-                if (
-                    verification.checksum !== hash.read().toString('hex') ||
-                    verify.verify(self.pubkey, verification.signature, 'base64') === false
-                ) {
+                if (verification.checksum !== hash.read().toString('hex')) {
                     defer.resolve(false);
                 } else {
                     defer.resolve(true);

@@ -9,7 +9,7 @@
         },
 
         events: {
-
+            'click .close-icon': 'closeUpdater',
         },
 
         initialize: function () {
@@ -21,8 +21,11 @@
         },
         onClose: function () {
 
-        }
+        },
 
+        closeUpdater: function () {
+            App.vent.trigger('updater:close');
+        }
 
     });
 

@@ -3,8 +3,8 @@
 
     var that,
         util = require('util'),
-        Q = require('q'),
-        prettyBytes = require('pretty-bytes');
+        Q = require('q');
+
 
     var Player = Backbone.Marionette.ItemView.extend({
         template: '#player-tpl',
@@ -315,7 +315,7 @@
                     App.Trakt.sync.playback(type, id).then(function (position_percent) {
                         var total = that.video.duration();
                         var position = (position_percent / 100) * total | 0;
-                        
+
                         if (position > 0) {
                             win.debug('Resuming position to', position.toFixed(), 'secs (reported by Trakt)');
                             that.player.currentTime(position);
@@ -495,7 +495,7 @@
                 } else { //we just update
                     $('.remaining').html(this.remainingTime());
                 }
-                this.ui.percentCompleted.text(prettyBytes(downloadedsize) + ' / ' + prettyBytes(totalsize) + ' (' + percent.toFixed() + '%)');
+                this.ui.percentCompleted.text(Common.fileSize(downloadedsize) + ' / ' + Common.fileSize(totalsize) + ' (' + percent.toFixed() + '%)');
             } else {
                 if (!this.PreloadStarted) { //we create it
                     this.PreloadStarted = true;

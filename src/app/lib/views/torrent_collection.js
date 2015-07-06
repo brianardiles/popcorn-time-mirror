@@ -101,7 +101,7 @@
                                 magnet: item.magnet_uri,
                                 seeds: item.seeds,
                                 peers: item.leeches,
-                                size: require('pretty-bytes')(parseInt(item.size))
+                                size: Common.fileSize(parseInt(item.size))
                             };
                             items.push(itemModel);
                         });
@@ -117,7 +117,7 @@
                                 magnet: item.magnet,
                                 seeds: item.seeds,
                                 peers: item.peers,
-                                size: require('pretty-bytes')(parseInt(item.size))
+                                size: Common.fileSize(parseInt(item.size))
                             };
                             items.push(itemModel);
                         });

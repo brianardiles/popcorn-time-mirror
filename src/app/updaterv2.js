@@ -110,7 +110,6 @@
             readStream.pipe(verify);
             readStream.on('end', function () {
                 hash.end();
-                console.log(verification.checksum, hash.read().toString('hex'))
                 if (
                     verification.checksum !== hash.read().toString('hex') ||
                     verify.verify(self.pubkey, verification.signature, 'base64') === false

@@ -24,7 +24,12 @@
 <div class="vjs-control-window item-next" >
     <div class="item-poster">
         <h1><%= i18n.__("Playing Next").toUpperCase() %> IN: <span id="playnextcountdown">60</span></h1>
-        <div class="media-poster"> </div>
+        <div class="media-poster">
+        <div class="overlay">
+       
+      
+         </div>
+         </div>
     </div>
     <div class="item-summary">
         <h1 class="media-title"></h1>

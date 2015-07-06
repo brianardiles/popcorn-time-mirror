@@ -256,6 +256,13 @@
             width 300px !important
             height 160px !important
             background-size cover !important
+
+            .overlay
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.19);
+
+
     .item-summary
         position absolute !important
         right 0 !important
@@ -290,11 +297,10 @@
             line-clamp 4 !important
             box-orient vertical !important
 
-.item-next .item-summary h1,
-.item-next .item-summary h2,
-.item-next .item-summary h3
-    overflow hidden !important
-    text-overflow ellipsis !important
-    white-space nowrap !important
-    font-family 'Open Sans', sans-serif !important
-
+    .item-next .item-summary h1,
+    .item-next .item-summary h2,
+    .item-next .item-summary h3
+        overflow hidden !important
+        text-overflow ellipsis !important
+        white-space nowrap !important
+        font-family 'Open Sans', sans-serif !important

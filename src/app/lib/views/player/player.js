@@ -445,9 +445,17 @@
                     }
                 }
 
-                var count = Math.round(this.video.duration() - this.video.currentTime());
-                $('#playnextcountdown').text(count + ' ' + i18n.__('Seconds'));
+                var oldpercent = this.autoplaypercent;
+                this.autoplaypercent = 100 - (timeLeft / 60 * 100);
 
+                if (oldpercent !== this.autoplaypercent) {
+
+                    var count = Math.round(this.video.duration() - this.video.currentTime());
+                    $('#playnextcountdown').text(count + ' ' + i18n.__('Seconds'));
+
+                    var deg = 360 / 100 * this.autoplaypercent;
+
+                }
             } else {
                 if (this.autoplayisshown) {
                     win.debug('Hiding Auto Play message');
@@ -461,6 +469,8 @@
                 this.checkAutoPlayTimer = _.delay(_.bind(this.checkAutoPlay, this), 1000);
             }
         },
+
+
         playNextNow: function () {
             this.closePlayer(true);
         },

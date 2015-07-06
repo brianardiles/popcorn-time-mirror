@@ -49,6 +49,10 @@
                 installed: false
             };
 
+            this.automaticUpdating = Settings.automaticUpdating; //Possible values: desktop, desktop_experimental, desktop_nightly
+
+            this.channel = Settings.updatechannel; //Possible values: desktop, desktop_experimental, desktop_nightly
+
 
         },
         check: function () {
@@ -58,20 +62,33 @@
             var defer = Q.defer();
             var responce = defer.promise;
             var that = this;
-            request(this.updateEndpoint, {
-                json: true
-            }, function (err, res, data) {
-                if (err || !data) {
-                    defer.reject(err);
-                } else {
-                    defer.resolve(data);
-                }
-            });
-            responce.then(function (d) {
-                if (!d['error']) {
-                    that.handelUpdate(d);
-                }
-            });
+
+            switch(this.automaticUpdating) {
+                case 'checkandinstall':
+                    //TODO  
+                break;
+                case 'checkandnotify':
+                    request(this.updateEndpoint, {
+                        json: true
+                    }, function (err, res, data) {
+                        if (err || !data) {
+                            defer.reject(err);
+                        } else {
+                            defer.resolve(data);
+                        }
+                    });
+                    responce.then(function (d) {
+                        if (!d['error']) {
+                            that.handelUpdate(d);
+                        }
+                    });       
+                break;
+                case 'disable':
+                    win.debug('Updates have been disabled from the settings.';
+                    defer.resolve(false);
+                    return defer.promise;
+                break;
+            }
         },
         handelUpdate: function (d) {
             if (!d[Settings.arch]) {

@@ -15,7 +15,6 @@
             FileSelector: '#file-selector-container',
             Player: '#player',
             Settings: '#settings-container',
-            InitModal: '#initializing',
             Disclaimer: '#disclaimer-container',
             About: '#about-container',
             Keyboard: '#keyboard-container',

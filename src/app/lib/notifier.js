@@ -70,10 +70,16 @@
             });
             notification.onclick = function () {
                 if (link) {
-                    try {
-                        gui.Shell.openExternal(link);
-                    } catch (err) {
-                        console.log(err);
+                    if (link === 'update') { //this a update notification
+
+                        console.log('Update Notification Clicked do stuff here later!');
+
+                    } else {
+                        try {
+                            gui.Shell.openExternal(link);
+                        } catch (err) {
+                            console.log(err);
+                        }
                     }
                 }
             };

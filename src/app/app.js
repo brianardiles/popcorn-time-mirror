@@ -167,6 +167,7 @@ var initApp = function () {
                 Settings.tvshowAPI,
                 Settings.updateEndpoint
             ]).then(function () {
+                App.Updaterv2.check();
                 try {
                     require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
                 } catch (e) {

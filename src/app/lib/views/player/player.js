@@ -154,7 +154,7 @@
             this.setUI();
             this.setPlayerEvents();
             this.restoreUserPref();
-            this.processNext();
+
         },
         detectscrubbing: function () {
             var that = this;
@@ -295,6 +295,7 @@
                 } else {
                     that.playing = true;
                     that.progressDoneUI();
+                    that.processNext();
                 }
             });
 
@@ -435,9 +436,10 @@
                         } else {
                             App.Streamer.start(this.NextEpisode, true);
                         }
+                        $('.item-next').appendTo('div#video_player');
                     }
                     win.debug('Showing Auto Play message');
-                    this.ui.nextUI.css('display', 'block !important');
+                    //this.ui.nextUI.css('display', 'block !important');
                     if (!this.player.userActive()) {
                         this.player.userActive(true);
                     }
@@ -704,7 +706,6 @@
                         that.loadBackground(data.images.screenshot.full);
                         that.ui.nextDiscription.text(data.overview);
                         that.ui.nextSE.text('S' + data.season + ' · E' + data.number);
-                        $('.item-next').appendTo('div#video_player');
                     }
                 }).catch(function (err) {
                     console.log(err);

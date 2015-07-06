@@ -21,7 +21,7 @@
     </div>
 </div>
 <div class="trailer_mouse_catch"></div>
-<div class="vjs-control-window item-next " style="display: none !important">
+<div class="vjs-control-window item-next" >
     <div class="item-poster">
         <h1><%= i18n.__("Playing Next").toUpperCase() %> IN: <span id="playnextcountdown">60</span></h1>
         <div class="media-poster"> </div>

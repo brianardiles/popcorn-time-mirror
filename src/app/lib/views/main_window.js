@@ -21,6 +21,7 @@
             Keyboard: '#keyboard-container',
             Help: '#help-container',
             TorrentCollection: '#torrent-collection-container',
+            UpdaterModel: '#updater-detail-container',
             Issue: '#issue-container',
             Notification: '#notification'
         },
@@ -118,6 +119,10 @@
             App.vent.on('torrentCollection:show', _.bind(this.showTorrentCollection, this));
             App.vent.on('torrentCollection:close', _.bind(this.TorrentCollection.destroy, this.TorrentCollection));
 
+            //Updater
+            App.vent.on('updater:show', _.bind(this.showUpdater, this));
+            App.vent.on('updater:close', _.bind(this.UpdaterModel.destroy, this.UpdaterModel));
+
             // Tv Shows
             App.vent.on('show:showDetail', _.bind(this.showShowDetail, this));
             App.vent.on('show:closeDetail', _.bind(this.closeShowDetail, this.MovieDetail));
@@ -125,6 +130,7 @@
             // Settings events
             App.vent.on('settings:show', _.bind(this.showSettings, this));
             App.vent.on('settings:close', _.bind(this.Settings.destroy, this.Settings));
+
 
             App.vent.on('notification:show', _.bind(this.showNotification, this));
             App.vent.on('notification:close', _.bind(this.closeNotification, this));
@@ -242,7 +248,7 @@
             }
 
             checkNewNotifcations();
-
+            App.vent.trigger('updater:show');
         },
 
         showMovies: function (e) {
@@ -309,6 +315,11 @@
 
         showTorrentCollection: function (e) {
             this.TorrentCollection.show(new App.View.TorrentCollection());
+        },
+
+        showUpdater: function (e) {
+            console.log('showing updater')
+            this.UpdaterModel.show(new App.View.updaterModal());
         },
 
         showKeyboard: function (e) {

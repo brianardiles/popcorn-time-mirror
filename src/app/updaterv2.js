@@ -140,6 +140,7 @@
                             downloaded: state.received,
                             totalSize: state.total
                         };
+                        cosnole.log('updateFunnihsedDownloading!!!!')
                         that.VerifyUpdate(updatePath, verification).then(function (result) {
                             console.log(result);
                             if (result) {

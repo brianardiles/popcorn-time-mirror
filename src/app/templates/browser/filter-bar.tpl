@@ -56,6 +56,13 @@
         </div>
     </li>
 
+
+    <!-- Randomize -->
+
+    <li style="display:block">
+        <i id="filterbar-update" style="color:green" class="fa fa-refresh fa-spin tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__("Update Available") %>"></i>
+    </li>
+
     <!-- Randomize -->
     <% if (Settings.activateRandomize) { %>
     <li style="display:block">

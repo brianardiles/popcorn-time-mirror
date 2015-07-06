@@ -29,7 +29,13 @@
         start: function (data, preload) {
             this.hasStarted = true;
             var self = this;
-            var streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
+            var streamPath;
+            if (data.type === 'show') {
+                streamPath = path.join(AdvSettings.get('tmpLocation'), data.metadata.title);
+            } else {
+                streamPath = AdvSettings.get('tmpLocation');
+            }
+
             getPort(function (err, port) {
                 self.src = 'http://127.0.0.1:' + port;
 
@@ -77,13 +83,18 @@
                                 var stream = self.client.files[index].createReadStream();
                                 self.fileindex = index;
                                 var streamDir = path.dirname(path.join(streamPath, self.client.torrent.files[index].path));
-                                mkdirp(streamDir, function (err) {
-                                    if (err) {
-                                        console.error(err);
-                                    } else {
-                                        self.streamDir = streamDir;
-                                    }
-                                });
+                                if (fs.existsSync(streamDir)) {
+                                    self.streamDir = streamDir;
+                                } else {
+                                    mkdirp(streamDir, function (err) {
+                                        if (err) {
+                                            console.error(err);
+                                        } else {
+                                            self.streamDir = streamDir;
+                                        }
+                                    });
+                                }
+
                             });
                         }
                     }

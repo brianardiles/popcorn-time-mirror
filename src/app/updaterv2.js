@@ -96,7 +96,8 @@
                 version: data.meta.version,
                 blog_url: data.meta.blog_url
             });
-            $('#filterbar-update-api').show();
+            App.vent.trigger('enableUpdatericon');
+
         },
         VerifyUpdate: function (update, verification) {
             var defer = Q.defer();

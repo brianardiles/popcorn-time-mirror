@@ -336,7 +336,7 @@
                 App.vent.trigger('settings:show');
                 break;
             case 'tvshowAPI':
-                App.Providers.delete('Eztv');
+                App.Providers.delete('TVApi');
                 App.vent.trigger('movies:list');
                 App.vent.trigger('settings:show');
                 break;

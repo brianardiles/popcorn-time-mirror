@@ -2,7 +2,7 @@
     <li class="source active showMovies providerinfo" data-toggle="tooltip" data-placement="top" title="YTS">
         <%=i18n.__( "Movies") %>
     </li>
-    <li class="source showShows providerinfo" data-toggle="tooltip" data-placement="top" title="EZTV">
+    <li class="source showShows providerinfo" data-toggle="tooltip" data-placement="top" title="TVApi">
         <%=i18n.__( "TV Series") %>
     </li>
     <li class="source showAnime providerinfo" data-toggle="tooltip" data-placement="top" title="Haruhichan">

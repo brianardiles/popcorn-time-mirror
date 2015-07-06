@@ -202,43 +202,43 @@
             var defer = Q.defer();
             var installDir = Settings.os === 'linux' ? process.execPath : process.cwd();
 
-            switch(Settings.os) {
-                case 'windows':
+            switch (Settings.os) {
+            case 'windows':
 
-                
-                break;
-
-                case 'linux':
 
                 break;
 
-                case 'mac':
-                    rimraf(path, function (err) {
-                        if (err) {
-                            defer.reject(err);
-                        } else {
-                            var pack = new AdmZip(updatepath);
-                            pack.extractAllToAsync(installDir, true, function (err) {
-                                if (err) {
-                                    defer.reject(err);
-                                } else {
-                                    fs.unlink(installDir, function (err) {
-                                        if (err) {
-                                            defer.reject(err);
-                                        } else {
-                                            defer.resolve();
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                    return defer.promise;
+            case 'linux':
 
-                default:
-                    win.error('Operating system not found.');
-                    defer.resolve(false);
-                    return defer.promise;
+                break;
+
+            case 'mac':
+                rimraf(path, function (err) {
+                    if (err) {
+                        defer.reject(err);
+                    } else {
+                        var pack = new AdmZip(updatepath);
+                        pack.extractAllToAsync(installDir, true, function (err) {
+                            if (err) {
+                                defer.reject(err);
+                            } else {
+                                fs.unlink(installDir, function (err) {
+                                    if (err) {
+                                        defer.reject(err);
+                                    } else {
+                                        defer.resolve();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                return defer.promise;
+
+            default:
+                win.error('Operating system not found.');
+                defer.resolve(false);
+                return defer.promise;
             }
         },
 

@@ -53,7 +53,7 @@
             </p>
             <h2><%= i18n.__("How does Popcorn Time work?") %></h2>
             <p>
-                <%=i18n.__( "Popcorn Time streams video content through torrents. Our movies are provided by %s and our TV Series by %s, while getting all metadata from %s. We don't host any content ourselves.", 'YTS (http://yts.re)', 'EZTV (http://eztv.ch)', 'Trakt (http://trakt.tv)') %>
+                <%=i18n.__( "Popcorn Time streams video content through torrents. Our movies are provided by %s and our TV Series by %s, while getting all metadata from %s. We don't host any content ourselves.", 'YTS (http://yts.re)', 'TVApi (http://eztvapi.re)', 'Trakt (http://trakt.tv)') %>
                     <br>
                     <%=i18n.__( "Torrent streaming? Well, torrents use Bittorrent protocol, which basically means that you download small parts of the content from another user's computer, while sending the parts you already downloaded to another user. Then, you watch those parts, while the next ones are being downloaded in the background. This exchange allows the content to stay healthy.") %>
                         <br>

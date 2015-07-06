@@ -527,28 +527,6 @@
                     <div class="dropdown-arrow"></div>
                 </div>
             </span>
-<<<<<<< HEAD
-            <span class="dropdown automaticUpdating">
-                <p><%= i18n.__("Update Settings:") %></p>
-                <select name="automaticUpdating">                        
-                    <option <%=(Settings.automaticUpdating == "checkandinstall"? "selected='selected'":"") %> value="checkandinstall"><%= i18n.__("Install updates automatically") %></option>
-                    <option <%=(Settings.automaticUpdating == "checkandnotify"? "selected='selected'":"") %> value="checkandnotify"><%= i18n.__("Notify me when updates are available") %></option>
-                    <option <%=(Settings.automaticUpdating == "disable"? "selected='selected'":"") %> value="disable"><%= i18n.__("Never check for updates") %></option>
-                </select>
-                <div class="dropdown-arrow"></div>
-            </span>
-            <span class="dropdown updatechannel" <%=(Settings.automaticUpdating == "disable" ? 'style="display:none"' : '')%>>
-                <p><%= i18n.__("Update Channel:") %></p>
-                <select name="updatechannel" >                        
-                    <option <%=(Settings.updatechannel == "desktop"? "selected='selected'":"") %> value="desktop"><%= i18n.__("Stable") %></option>
-                    <option <%=(Settings.updatechannel == "desktop_experimental"? "selected='selected'":"") %> value="desktop_experimental"><%= i18n.__("Experimental") %></option>
-                    <option <%=(Settings.updatechannel == "desktop_nightly"? "selected='selected'":"") %> value="desktop_nightly"><%= i18n.__("Nightly") %></option>
-                </select>
-                <div class="dropdown-arrow"></div>
-            </span>
-            </span>
-=======
->>>>>>> 3e318a058ea5b056bc3815e78e895d350059489d
             <span>
                 <input class="settings-checkbox" name="events" id="cb6" type="checkbox" <%=(Settings.events? "checked='checked'":"")%>>
                 <label class="settings-label" for="cb6"><%= i18n.__("Celebrate various events") %></label>

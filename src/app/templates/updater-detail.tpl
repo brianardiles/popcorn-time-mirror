@@ -14,3 +14,11 @@
 <% });%>
 
 </ul>
+<div class="btn-container">
+    <div class="btn-update ">
+            <%=i18n.__( "Install Update") %>
+        </div>
+<div class="btn-update ">
+            <%=i18n.__( "Dismiss") %>
+ </div>
+</div>

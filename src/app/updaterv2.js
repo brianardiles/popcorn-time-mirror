@@ -197,7 +197,7 @@
                     });
             }
         },
-        installUpdate: function (updatepath, type) {
+        installUpdate: function (updatepath) {
             var defer = Q.defer();
             var installDir = (Settings.os === 'linux' ? process.execPath : process.cwd());
             var type = this.updateType;

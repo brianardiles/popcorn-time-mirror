@@ -493,8 +493,8 @@
                 </select>
                 <div class="dropdown-arrow"></div>
             </span>
-            <div class="btns advanced database">
-                <div class="btn-settings database check-updates">
+            <div class="btns advanced updates">
+                <div class="btn-settings updates check-updates">
                     <i class="fa fa-refresh">&nbsp;&nbsp;</i>
                     <%=i18n.__( "Check For Updates") %>
                 </div>

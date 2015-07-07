@@ -439,16 +439,16 @@
                         $('.item-next').appendTo('div#video_player');
                         $('.dial').each(function () {
 
-                            var hexDigits = new Array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
+                            var hexDigits = new Array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
 
                             //Function to convert hex format to a rgb color
                             function rgb2hex(rgb) {
                                 rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-                                return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+                                return '#' + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
                             }
 
                             function hex(x) {
-                                return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+                                return isNaN(x) ? '00' : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
                             }
                             var elm = $(this);
 
@@ -458,13 +458,13 @@
                                 'value': 0,
                                 'min': 0,
                                 'max': 60,
-                                "skin": "tron",
-                                "readOnly": true,
-                                "bgColor": "rgba(23, 24, 27, 0.75)",
-                                "thickness": .17,
-                                "fgColor": color,
+                                'skin': 'tron',
+                                'readOnly': true,
+                                'bgColor': 'rgba(23, 24, 27, 0.75)',
+                                'thickness': 0.17,
+                                'fgColor': color,
                                 'dynamicDraw': true,
-                                "displayInput": false
+                                'displayInput': false
                             });
 
                         });
@@ -494,7 +494,7 @@
                         }, {
                             duration: 0,
                             progress: function () {
-                                elm.val(Math.ceil(this.value)).trigger('change')
+                                elm.val(Math.ceil(this.value)).trigger('change');
                             }
                         });
 
@@ -747,7 +747,6 @@
                 .replace(/\-$/, '') // ends with '-'
                 .replace(/^\./, '') // starts with '.'
                 .replace(/^\-/, ''); // starts with '-'
-            console.log(tvshowname)
             App.Trakt.episodes.summary(tvshowname, formatTwoDigit(nextEpisode.season), formatTwoDigit(nextEpisode.episode))
                 .then(function (episodeSummary) {
                     if (!episodeSummary) {

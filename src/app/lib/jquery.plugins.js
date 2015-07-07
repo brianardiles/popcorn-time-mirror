@@ -2328,7 +2328,7 @@
 
 
 }());
-/* jshint ignore:end */
+
 (function (e) {
     if (typeof define === "function" && define.amd) {
         define(["jquery"], e)
@@ -2826,3 +2826,4 @@
         }).parent()
     }
 })
+/* jshint ignore:end */

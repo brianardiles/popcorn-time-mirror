@@ -317,7 +317,6 @@
         },
 
         showUpdater: function (model) {
-            console.log('showing updater')
             this.UpdaterModel.show(new App.View.updaterModal({
                 model: model
             }));

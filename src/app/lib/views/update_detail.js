@@ -45,13 +45,13 @@
             var updateInfo = App.Updaterv2.information.download;
             this.ui.status.text(updateInfo.status + ' Update...');
             if (updateInfo.status === 'Downloading') {
-                this.ui.updateProgressStatus.text(updateInfo.percentDone + '%' + ' (' + Common.fileSize(updateInfo.downloaded) + '/' + Common.fileSize(updateInfo.totalSize) + ')')
+                this.ui.updateProgressStatus.text(updateInfo.percentDone + '%' + ' (' + Common.fileSize(updateInfo.downloaded) + '/' + Common.fileSize(updateInfo.totalSize) + ')');
                 this.ui.progressbarprogress.animate({
                     width: updateInfo.percentDone + '%'
                 }, 100, 'swing');
                 _.delay(_.bind(this.StateUpdate, this), 100);
             } else if (updateInfo.status === 'Installing') {
-                this.ui.updateProgressStatus.text(updateInfo.percentDone)
+                this.ui.updateProgressStatus.text(updateInfo.percentDone);
                 _.delay(_.bind(this.StateUpdate, this), 100);
             } else {
                 _.delay(_.bind(this.StateUpdate, this), 500);

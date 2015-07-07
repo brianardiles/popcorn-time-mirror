@@ -12,7 +12,7 @@
         AdmZip = require('adm-zip'),
         spawn = require('child_process').spawn;
 
-    var UPDATE_ENDPOINT = 'http://update.popcorntime.io/',  //http://update.popcorntime.io/<channel>/<os>/<release>      
+    var UPDATE_ENDPOINT = 'http://update.popcorntime.io/', //http://update.popcorntime.io/<channel>/<os>/<release>      
         CHANNEL = App.settings.updatechannel, //Possible values: desktop, desktop_experimental, desktop_nightly
         OS = App.settings.os,
         RELEASE = null,
@@ -62,18 +62,18 @@
         var self = this;
 
         // Don't update if development or update disabled in Settings
-        switch(UPDATESETTINGS) {
-            case 'checkandinstall':
-                //TODO  
+        switch (UPDATESETTINGS) {
+        case 'checkandinstall':
+            //TODO  
             break;
-            case 'checkandnotify':
-                //TODO
+        case 'checkandnotify':
+            //TODO
             break;
-            case 'disable':
-                win.debug('Updates have been disabled from the settings.';
-                defer.resolve(false);
-                return defer.promise;
-            break;
+        case 'disable':
+            win.debug('Updates have been disabled from the settings.');
+            defer.resolve(false);
+            return defer.promise;
+            break; // jshint ignore:line
         }
 
         request(this.options.endpoint, {

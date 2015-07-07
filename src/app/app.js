@@ -78,7 +78,7 @@ fs.readFile('./.git.json', 'utf8', function (err, json) {
     }
 });
 if (!fs.existsSync('./installdate')) {
-    var date = Date.now();
+    var date = Math.floor(Date.now() / 1000);
     App.installDate = date;
     fs.writeFile('./installdate', date, function (err) {
         if (err) {

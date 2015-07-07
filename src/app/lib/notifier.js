@@ -50,9 +50,7 @@
         },
         fetch: function () {
             var defer = Q.defer();
-
             var url = 'http://update.popcorntime.io/notifications/desktop/' + App.installDate + '/' + App.clientID.getID();
-            console.log(url);
             request(url, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
                     defer.resolve(JSON.parse(body));

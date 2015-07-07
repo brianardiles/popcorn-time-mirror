@@ -93,10 +93,11 @@
             var type = 'package';
             var downloadURL = data.download.package;
 
-            if (_.contains(data.download, 'installer')) {
+            if (data.download['installer']) {
                 type = 'installer';
                 downloadURL = data.download.installer;
             }
+
             this.downloadURL = downloadURL;
             this.verificationinfo = data.verification;
             this.updateType = type;
@@ -134,7 +135,6 @@
         downloadUpdate: function (override) {
             var url = this.downloadURL;
             var verification = this.verificationinfo;
-            var type = this.updateType;
             var that = this;
 
 
@@ -144,7 +144,7 @@
 
                 var stats = fs.statSync(updatePath);
                 var fileSizeInBytes = stats['size'];
-                that.information.download = {
+                this.information.download = {
                     status: 'Verifying',
                     percentDone: 100,
                     downloaded: fileSizeInBytes,
@@ -153,13 +153,12 @@
 
                 this.VerifyUpdate(updatePath, verification).then(function (result) {
                     console.log(result);
-                    if (!result) { // ! for debug remove ! for production
-                        that.information.verifyed = true;
-                        that.installUpdate(updatePath, type).then(function (result) {
+                    if (result) { // ! for debug remove ! for production
+                        that.installUpdate(updatePath).then(function (result) {
                             console.log(result);
                         });
                     } else {
-                        that.information.verifyed = 'failed';
+
                     }
                 });
             } else {
@@ -188,28 +187,32 @@
                             totalSize: that.information.download.totalSize
                         };
                         that.VerifyUpdate(updatePath, verification).then(function (result) {
-                            console.log(result); 
-                            if (!result) { // ! for debug remove ! for production
-                                that.information.verifyed = true;
-                                that.installUpdate(updatePath, type).then(function (result) {
+                            console.log(result);
+                            if (result) { // ! for debug remove ! for production
+                                that.installUpdate(updatePath).then(function (result) {
                                     console.log(result);
                                 });
-                            } else {
-                                that.information.verifyed = 'failed';
-                            }
+                            } else {}
                         });
                     });
             }
         },
         installUpdate: function (updatepath, type) {
             var defer = Q.defer();
-            var installDir = ( Settings.os === 'linux' ? process.execPath : process.cwd() );
+            var installDir = (Settings.os === 'linux' ? process.execPath : process.cwd());
+            var type = this.updateType;
+
+            console.log(updatepath, type);
 
             this.information.download.status = 'Installing';
 
             switch (Settings.os) {
             case 'windows':
+                if (type === 'installer') {
+                    this.runExe(updatepath).then(this.closeApp);
+                } else {
 
+                }
 
                 break;
 
@@ -232,15 +235,28 @@
                         });
                     }
                 });
-                return defer.promise;
+                break;
 
             default:
                 win.error('Operating system not found.');
                 defer.resolve(false);
-                return defer.promise;
             }
-        },
 
+            return defer.promise;
+        },
+        closeApp: function () {
+            var gui = require('nw.gui');
+            gui.App.quit();
+        },
+        runExe: function (path) {
+            var exec = require('child_process').exec;
+            var child = exec(path, function (error, stdout, stderr) {
+                if (error) {
+                    console.log(error, stdout, stderr);
+                }
+            });
+            return Q(true);
+        }
 
     });
 

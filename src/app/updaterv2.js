@@ -44,9 +44,7 @@
                     percentDone: 0,
                     downloaded: 0,
                     totalSize: 0
-                },
-                verifyed: false,
-                installed: false
+                }
             };
 
         },
@@ -58,30 +56,30 @@
             var responce = defer.promise;
             var that = this;
 
-            switch(Settings.automaticUpdating) {
-                case 'checkandinstall':
-                    //TODO  
+            switch (Settings.automaticUpdating) {
+            case 'checkandinstall':
+                //TODO  
                 break;
-                case 'checkandnotify':
-                    request(this.updateEndpoint, {
-                        json: true
-                    }, function (err, res, data) {
-                        if (err || !data) {
-                            defer.reject(err);
-                        } else {
-                            defer.resolve(data);
-                        }
-                    });
-                    responce.then(function (d) {
-                        if (!d['error']) {
-                            that.handelUpdate(d);
-                        }
-                    });
+            case 'checkandnotify':
+                request(this.updateEndpoint, {
+                    json: true
+                }, function (err, res, data) {
+                    if (err || !data) {
+                        defer.reject(err);
+                    } else {
+                        defer.resolve(data);
+                    }
+                });
+                responce.then(function (d) {
+                    if (!d['error']) {
+                        that.handelUpdate(d);
+                    }
+                });
                 break;
-                case 'disable':
-                    win.debug('Updates have been disabled from the settings.');
-                    defer.resolve(false);
-                    return defer.promise;
+            case 'disable':
+                win.debug('Updates have been disabled from the settings.');
+                defer.resolve(false);
+                return defer.promise;
             }
         },
         handelUpdate: function (d) {
@@ -92,7 +90,7 @@
             App.vent.trigger('notification', 'Update Available: Version ' + data.meta.title, data.meta.description, 'update'); //trigger notification of update
             var type = 'package';
             var downloadURL = data.download.package;
-            
+
             if (_.contains(data.download, 'installer')) {
                 type = 'installer';
                 downloadURL = data.download.installer;

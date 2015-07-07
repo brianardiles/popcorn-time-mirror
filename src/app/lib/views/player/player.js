@@ -716,6 +716,7 @@
                 type: 'show',
                 metadata: metadata,
                 autoPlayData: autoPlayDataNext,
+                defaultSubtitle: Settings.subtitle_language,
                 status: this.model.attributes.status,
                 device: App.Device.Collection.selected
             };

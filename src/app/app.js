@@ -77,7 +77,21 @@ fs.readFile('./.git.json', 'utf8', function (err, json) {
         App.git = JSON.parse(json);
     }
 });
-
+if (!fs.existsSync('./installdate')) {
+    var date = Date.now();
+    App.installDate = date;
+    fs.writeFile('./installdate', date, function (err) {
+        if (err) {
+            return console.log(err);
+        }
+    });
+} else {
+    fs.readFile('./installdate', 'utf8', function (err, date) {
+        if (!err) {
+            App.installDate = date;
+        }
+    });
+}
 App.addRegions({
     Window: '.main-window-region'
 });

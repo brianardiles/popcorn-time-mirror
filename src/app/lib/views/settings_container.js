@@ -190,7 +190,16 @@
                 /* falls through */
             case 'watchedCovers':
             case 'theme':
+            case 'updatechannel':
                 value = $('option:selected', field).val();
+                break;
+            case 'automaticUpdating':
+                value = $('option:selected', field).val();
+                if (value === 'disable') {
+                    $('.updatechannel').hide('fast');
+                } else {
+                    $('.updatechannel').show('fast');
+                }
                 break;
             case 'language':
                 value = $('option:selected', field).val();
@@ -205,7 +214,6 @@
             case 'traktSyncOnStart':
             case 'traktPlayback':
             case 'playNextEpisodeAuto':
-            case 'automaticUpdating':
             case 'events':
             case 'alwaysFullscreen':
             case 'minimizeToTray':

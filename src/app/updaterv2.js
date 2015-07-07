@@ -3,7 +3,7 @@
 
     /*
     Updates: [Automatically update, Notify me when an update is available, Disabled]
-    Update Channel: [Stable, Experimental, Nightly]
+    Update Channel: [stable, expiremental, nightly]
     */
 
     var request = require('request'),
@@ -49,29 +49,40 @@
                 installed: false
             };
 
-
         },
         check: function () {
             if (!this.updateEndpoint) {
-                this.updateEndpoint = 'http://update.popcorntime.io/' + 'stable' + '-desktop/' + Settings.os + '/' + this.gitHash;
+                this.updateEndpoint = 'http://update.popcorntime.io/' + Settings.updatechannel + '-desktop/' + Settings.os + '/' + this.gitHash;
             }
             var defer = Q.defer();
             var responce = defer.promise;
             var that = this;
-            request(this.updateEndpoint, {
-                json: true
-            }, function (err, res, data) {
-                if (err || !data) {
-                    defer.reject(err);
-                } else {
-                    defer.resolve(data);
-                }
-            });
-            responce.then(function (d) {
-                if (!d['error']) {
-                    that.handelUpdate(d);
-                }
-            });
+
+            switch(Settings.automaticUpdating) {
+                case 'checkandinstall':
+                    //TODO  
+                break;
+                case 'checkandnotify':
+                    request(this.updateEndpoint, {
+                        json: true
+                    }, function (err, res, data) {
+                        if (err || !data) {
+                            defer.reject(err);
+                        } else {
+                            defer.resolve(data);
+                        }
+                    });
+                    responce.then(function (d) {
+                        if (!d['error']) {
+                            that.handelUpdate(d);
+                        }
+                    });
+                break;
+                case 'disable':
+                    win.debug('Updates have been disabled from the settings.');
+                    defer.resolve(false);
+                    return defer.promise;
+            }
         },
         handelUpdate: function (d) {
             if (!d[Settings.arch]) {
@@ -81,7 +92,8 @@
             App.vent.trigger('notification', 'Update Available: Version ' + data.meta.title, data.meta.description, 'update'); //trigger notification of update
             var type = 'package';
             var downloadURL = data.download.package;
-            if (_.pluck(data.download, 'installer')) {
+            
+            if (_.contains(data.download, 'installer')) {
                 type = 'installer';
                 downloadURL = data.download.installer;
             }

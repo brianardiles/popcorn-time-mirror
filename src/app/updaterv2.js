@@ -155,11 +155,11 @@
                     console.log(result);
                     if (result) {
                         that.information.verifyed = true;
-                    } else {
-                        that.information.verifyed = 'failed';
                         this.installUpdate(updatePath, type).then(function (result) {
                             console.log(result);
                         });
+                    } else {
+                        that.information.verifyed = 'failed';
                     }
                 });
             } else {

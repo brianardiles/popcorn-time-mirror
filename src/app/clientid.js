@@ -5,7 +5,7 @@
         algorithm = 'aes-256-ctr';
 
     var clientID = Backbone.Model.extend({
-        setup: function () {
+        initialize: function () {
             var that = this;
             this.getMac().then(function (mac) {
                 that.mac = mac;

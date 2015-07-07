@@ -178,21 +178,6 @@
                 });
             }
 
-            if (!fs.existsSync(path.join(Settings.tmpLocation, '.installdate'))) {
-                var date = Math.floor(Date.now() / 1000);
-                App.installDate = date;
-                fs.writeFile(path.join(Settings.tmpLocation, '.installdate'), date, function (err) {
-                    if (err) {
-                        return console.log(err);
-                    }
-                });
-            } else {
-                fs.readFile(path.join(Settings.tmpLocation, '.installdate'), 'utf8', function (err, date) {
-                    if (!err) {
-                        App.installDate = date;
-                    }
-                });
-            }
 
             // Always on top
             win.setAlwaysOnTop(Settings.alwaysOnTop);

@@ -163,9 +163,9 @@
                 });
             } else {
                 progress(request(url), {
-                        throttle: 500, // Throttle the progress event to 2000ms, defaults to 1000ms
-                        delay: 500 // Only start to emit after 1000ms delay, defaults to 0ms
-                    })
+                    throttle: 500, // Throttle the progress event to 2000ms, defaults to 1000ms
+                    delay: 500 // Only start to emit after 1000ms delay, defaults to 0ms
+                })
                     .on('progress', function (state) {
                         that.information.download = {
                             status: 'Downloading',
@@ -201,12 +201,13 @@
             var defer = Q.defer();
             var installDir = (Settings.os === 'linux' ? process.execPath : process.cwd());
             var type = this.updateType;
-
+            fs.unlinkSync(path.join(require('nw.gui').App.dataPath, '.installdate'));
             this.information.download.status = 'Installing';
             this.information.download.percentDone = 0; //for unzip installs update this
             switch (Settings.os) {
             case 'windows':
                 if (type === 'installer') {
+
                     this.runExe(updatepath).then(this.closeApp);
                 } else {
 

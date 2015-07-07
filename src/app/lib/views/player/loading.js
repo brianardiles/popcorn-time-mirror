@@ -151,14 +151,20 @@
         setupLocalSubs: function (defaultSubtitle, subtitles) {
             var that = this;
             if (defaultSubtitle !== 'none' && subtitles) {
-                if (!App.Streamer.streamDir) {
-                    var watchFileSelected = function () {
-                        require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
-                        that.initsubs(defaultSubtitle, subtitles);
-                    };
-                    require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
+                if (subtitles[defaultSubtitle]) {
+                    if (!App.Streamer.streamDir) {
+                        var watchFileSelected = function () {
+                            require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
+                            if (!that.playing) {
+                                that.initsubs(defaultSubtitle, subtitles);
+                            }
+                        };
+                        require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
+                    } else {
+                        this.initsubs(defaultSubtitle, subtitles);
+                    }
                 } else {
-                    that.initsubs(defaultSubtitle, subtitles);
+                    this.SubtitlesLoaded = true;
                 }
             }
         },
@@ -207,7 +213,6 @@
                     debugmetachunks = true;
                 }
                 if (loadingPlayer.currentTime > 3) {
-                    that.playing = true;
                     loadingPlayer.pause();
                     loadingPlayer.src = ''; // empty source
                     loadingPlayer.load();
@@ -220,6 +225,7 @@
             var that = this;
 
             function begin() {
+                that.playing = true;
                 if (that.player === 'local') {
                     var playerModel = new Backbone.Model(that.model.get('data'));
                     App.vent.trigger('stream:local', playerModel);
@@ -464,6 +470,8 @@
                                         }).then(function (status) {
                                             if (status) {
                                                 that.setupLocalSubs(Settings.subtitle_language, that.model.attributes.data.subtitles);
+                                            } else {
+                                                that.SubtitlesLoaded = true;
                                             }
                                         });
                                     }

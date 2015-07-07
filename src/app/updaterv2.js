@@ -202,10 +202,8 @@
             var installDir = (Settings.os === 'linux' ? process.execPath : process.cwd());
             var type = this.updateType;
 
-            console.log(updatepath, type);
-
             this.information.download.status = 'Installing';
-
+            this.information.download.percentDone = 0; //for unzip installs update this
             switch (Settings.os) {
             case 'windows':
                 if (type === 'installer') {

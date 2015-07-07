@@ -50,8 +50,12 @@
                 _.delay(_.bind(this.StateUpdate, this), 100);
             } else if (updateInfo.status === 'Installing') {
                 this.ui.updateProgressStatus.text('');
-                this.ui.progressbarprogress.hide();
-                _.delay(_.bind(this.StateUpdate, this), 100);
+
+                this.ui.progressbarprogress.animate({
+                    width: updateInfo.percentDone + '%'
+                }, 200, 'swing');
+
+                _.delay(_.bind(this.StateUpdate, this), 1200);
             } else if (updateInfo.status === 'Done') {
                 win.debug('Update completed');
             } else {

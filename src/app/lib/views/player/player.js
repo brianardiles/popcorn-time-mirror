@@ -24,7 +24,6 @@
             nextPhoto: '.media-poster',
             nextTitle: '.media-subtitle-1',
             nextSE: '.media-subtitle-2',
-            nextDiscription: '.media-subtitle-3',
             nextUI: '.item-next'
         },
 
@@ -757,7 +756,6 @@
                         that.ui.nextShow.text(that.model.attributes.metadata.showName);
                         that.ui.nextTitle.text(data.title);
                         that.loadBackground(data.images.screenshot.full);
-                        that.ui.nextDiscription.text(data.overview);
                         that.ui.nextSE.text('S' + data.season + ' · E' + data.number);
                     }
                 }).catch(function (err) {

@@ -229,14 +229,13 @@
     color #ffffff !important
     z-index 1 !important
     position absolute
-    width 800px !important
-    height 220px !important
-    padding-top 10px !important
+    width 650px !important
+    height 190px !important
+    padding-top 5px !important
     padding-left 10px !important
-    padding-bottom 10px !important
-    left calc(100vw - 800px ) !important 
+    left calc(100vw - 650px ) !important 
     background-color rgba(23, 24, 27, 0.75) !important
-    bottom 55px !important
+    bottom 48px !important
     display none
     .item-poster
         position absolute !important
@@ -244,7 +243,7 @@
         h1
             font-size: 15px !important;
             padding-top: 1px !important;
-            height: 35px !important;
+            height: 30px !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
             white-space: nowrap !important;
@@ -253,8 +252,8 @@
 
         .media-poster
             box-shadow 0 0 4px rgba(0, 0, 0, .3), inset 0 0 0 2px $ButtonBgActive !important
-            width 300px !important
-            height 160px !important
+            width 285px !important
+            height 150px !important
             background-size cover !important
 
             .overlay
@@ -275,17 +274,18 @@
     .item-summary
         position absolute !important
         right 0 !important
-        left 310px !important
-        padding 35px 20px 0 20px !important
+        left 295px !important
+        padding 30px 15px 0 15px !important
         h1
             font-size: 18px !important;
-            height: 38px !important;
+            height: 33px !important;
         h2
             float left !important
             max-width 70% !important
             font-family 'Open Sans', sans-serif !important
             font-size 17px !important
             height 35px !important
+            width: 100% !important;
         h3
             float right !important
             max-width 30% !important
@@ -314,13 +314,64 @@
         white-space nowrap !important
         font-family 'Open Sans', sans-serif !important
 
+
+
+   .auto-next-btn {
+        position relative
+        float right
+        margin-top: 43px;
+        margin-left 20px
+        padding 12px
+        border-radius $ButtonRadius
+        background-color $ButtonBg
+        text-align center
+        color $SettingsButtonText
+        font-family $ButtonFont, $AlternateFont
+        font-size 13px
+        cursor pointer
+        transition background-color .5s
+        &:hover {
+            background-color $ButtonBgHover
+            color $SettingsButtonTextHover
+            text-decoration none
+        }
+        &.disabled {
+            background-color $ButtonBgDisabled
+            &:hover{
+                background-color $ButtonBgDisabled
+            }
+            &:active{
+                background-color $ButtonBgDisabled
+            }
+        }
+
+        &.green{
+            background-color #27AE60
+        }
+        &.red{
+            background-color #F15153
+        }
+        &:active{
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.6)
+            background: $ButtonBgActive
+        }
+    }
+
+
+
+
+
+
+
+
+
 .circular-bar
     text-align center
     margin-top: 40px;
     background-color: rgba(0, 0, 0, 0.66);
     position: absolute;
     color $ButtonBgActive
-    margin-left: 110px;
+    margin-left: 100px;
     border-radius: 50px;
 
 

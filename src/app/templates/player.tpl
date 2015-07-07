@@ -40,7 +40,8 @@
         <h1 class="media-title"></h1>
         <h2 class="media-subtitle-1"></h2>
         <h3 class="media-subtitle-2"></h3>
-        <p class="media-subtitle-3"></p>
+    <div class="auto-next-btn playnownextNOT"><%= i18n.__("No thank you") %></div>
+            <div class="auto-next-btn playnownext"><%= i18n.__("Play Now") %></div>
     </div>
 </div>
 <% if(type==='trailer' ){ var videosrc=src; var videotype='video/youtube' ; }else{ if(App.Streamer.src){ var videosrc=App.Streamer.src; }else{ var videosrc=App.PreloadStreamer.src; } var videotype='video/mp4' ; } if(typeof subtitles !=="undefined" ){ var subArray=[ ]; for (var langcode in subtitles) { subArray.push({ "language": langcode, "languageName": (App.Localization.langcodes[langcode] !==undefined ? App.Localization.langcodes[langcode].nativeName : langcode), "sub": subtitles[langcode] }); } subArray.sort(function (sub1, sub2) { return sub1.language> sub2.language; }); var subtracks = ""; var defaultSub = "none"; if (typeof defaultSubtitle != "undefined") { defaultSub = defaultSubtitle; } for(var index in subArray ) { var imDefault = ""; if(defaultSub == subArray[index].language) imDefault = "default"; subtracks += '<track kind="subtitles" src="' + subArray[index].sub + '" srclang="'+ subArray[index].language +'" label="' + subArray[index].languageName + '" charset="utf-8" '+ imDefault +' />'; } } %>

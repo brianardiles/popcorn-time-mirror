@@ -77,21 +77,7 @@ fs.readFile('./.git.json', 'utf8', function (err, json) {
         App.git = JSON.parse(json);
     }
 });
-if (!fs.existsSync('./installdate')) {
-    var date = Math.floor(Date.now() / 1000);
-    App.installDate = date;
-    fs.writeFile('./installdate', date, function (err) {
-        if (err) {
-            return console.log(err);
-        }
-    });
-} else {
-    fs.readFile('./installdate', 'utf8', function (err, date) {
-        if (!err) {
-            App.installDate = date;
-        }
-    });
-}
+
 App.addRegions({
     Window: '.main-window-region'
 });
@@ -176,6 +162,7 @@ var initApp = function () {
 
     try {
         AdvSettings.init().then(function (f) { // Create the System Temp Folder. This is used to store temporary data like movie files.
+            App.clientID.setup();
             window.setLanguage(Settings.language);
             AdvSettings.setup();
             AdvSettings.checkApiEndpoints([

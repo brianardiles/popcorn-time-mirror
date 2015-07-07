@@ -41,14 +41,11 @@
             App.Trakt = App.Config.getProvider('metadata');
             App.TVShowTime = App.Config.getProvider('tvst');
 
-            window.setLanguage(Settings.language);
-
             App.vent.trigger('initHttpApi');
-
 
             _this = this;
 
-            _.each(_this.regionManager._regions, function (element, index) {
+            _.each(this.regionManager._regions, function (element, index) {
 
                 element.on('show', function (view) {
                     if (view.className && App.ViewStack[0] !== view.className) {
@@ -181,6 +178,21 @@
                 });
             }
 
+            if (!fs.existsSync(path.join(Settings.tmpLocation, '.installdate'))) {
+                var date = Math.floor(Date.now() / 1000);
+                App.installDate = date;
+                fs.writeFile(path.join(Settings.tmpLocation, '.installdate'), date, function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                });
+            } else {
+                fs.readFile(path.join(Settings.tmpLocation, '.installdate'), 'utf8', function (err, date) {
+                    if (!err) {
+                        App.installDate = date;
+                    }
+                });
+            }
 
             // Always on top
             win.setAlwaysOnTop(Settings.alwaysOnTop);
@@ -237,7 +249,7 @@
 
             function checkNewNotifcations() {
                 App.Notifier.check();
-                setTimeout(checkNewNotifcations, 600000); //ten minutes
+                setTimeout(checkNewNotifcations, 300000); //five minutes
             }
 
             checkNewNotifcations();

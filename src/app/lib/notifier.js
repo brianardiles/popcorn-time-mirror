@@ -72,9 +72,9 @@
             notification.onclick = function () {
                 if (link) {
                     if (link === 'update') { //this a update notification
-
-                        console.log('Update Notification Clicked do stuff here later!');
-
+                        if (App.currentview !== 'Updater') {
+                            $('#filterbar-update').click();
+                        }
                     } else {
                         try {
                             gui.Shell.openExternal(link);

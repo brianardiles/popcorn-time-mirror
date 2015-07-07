@@ -23,10 +23,15 @@
 <div class="trailer_mouse_catch"></div>
 <div class="vjs-control-window item-next" >
     <div class="item-poster">
-        <h1><%= i18n.__("Playing Next").toUpperCase() %> IN: <span id="playnextcountdown">60</span></h1>
+        <h1><%= i18n.__("Playing Next").toUpperCase() %></h1>
         <div class="media-poster">
         <div class="overlay">
-       
+        <span id="playnextcountdown">60</span>
+       <div class="circular-bar">
+  <input type="text" class="dial" data-width="85" data-height="85" data-linecap=round value="0">
+  <div class="circular-bar-content">
+  </div>
+</div>
       
          </div>
          </div>

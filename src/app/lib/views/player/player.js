@@ -437,24 +437,68 @@
                             App.Streamer.start(this.NextEpisode, true);
                         }
                         $('.item-next').appendTo('div#video_player');
+                        $('.dial').each(function () {
+
+                            var hexDigits = new Array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
+
+                            //Function to convert hex format to a rgb color
+                            function rgb2hex(rgb) {
+                                rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+                                return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+                            }
+
+                            function hex(x) {
+                                return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+                            }
+                            var elm = $(this);
+
+                            var perc = 0;
+                            var color = rgb2hex($('.circular-bar').css('color'));
+                            elm.knob({
+                                'value': 0,
+                                'min': 0,
+                                'max': 60,
+                                "skin": "tron",
+                                "readOnly": true,
+                                "bgColor": "rgba(23, 24, 27, 0.75)",
+                                "thickness": .17,
+                                "fgColor": color,
+                                'dynamicDraw': true,
+                                "displayInput": false
+                            });
+
+                        });
                     }
                     win.debug('Showing Auto Play message');
-                    //this.ui.nextUI.css('display', 'block !important');
                     if (!this.player.userActive()) {
                         this.player.userActive(true);
                     }
                 }
-
+                if (!this.autoplaypercent) {
+                    this.autoplaypercent = 0;
+                }
                 var oldpercent = this.autoplaypercent;
-                this.autoplaypercent = 100 - (timeLeft / 60 * 100);
+                this.autoplaypercent = 60 - timeLeft;
 
                 if (oldpercent !== this.autoplaypercent) {
-
+                    var percent = this.autoplaypercent;
                     var count = Math.round(this.video.duration() - this.video.currentTime());
-                    $('#playnextcountdown').text(count + ' ' + i18n.__('Seconds'));
+                    $('#playnextcountdown').text(count);
 
-                    var deg = 360 / 100 * this.autoplaypercent;
+                    $('.dial').each(function () {
+                        var elm = $(this);
+                        $({
+                            value: oldpercent
+                        }).animate({
+                            value: percent
+                        }, {
+                            duration: 0,
+                            progress: function () {
+                                elm.val(Math.ceil(this.value)).trigger('change')
+                            }
+                        });
 
+                    });
                 }
             } else {
                 if (this.autoplayisshown) {

@@ -162,6 +162,7 @@ var initApp = function () {
 
     try {
         AdvSettings.init().then(function (f) { // Create the System Temp Folder. This is used to store temporary data like movie files.
+            window.setLanguage(Settings.language);
             AdvSettings.setup();
             AdvSettings.checkApiEndpoints([
                 Settings.tvshowAPI,

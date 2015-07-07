@@ -2,6 +2,7 @@ var Q = require('q'),
     os = require('os'),
     path = require('path'),
     _ = require('underscore'),
+    uuid = require('node-uuid'),
     data_path = require('nw.gui').App.dataPath;
 
 /** Default settings **/
@@ -53,6 +54,9 @@ Settings.httpApiPort = 8008;
 Settings.httpApiUsername = 'popcorn';
 Settings.httpApiPassword = 'popcorn';
 Settings.seenNotifications = [];
+Settings.UUID = uuid.v4();
+
+
 // Trakt.tv
 Settings.traktToken = '';
 Settings.traktTokenRefresh = '';

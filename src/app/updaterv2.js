@@ -74,7 +74,7 @@
                 });
                 responce.then(function (d) {
                     if (!d['error']) {
-                        that.handelUpdate(d);
+                        that.handleUpdate(d);
                     }
                 });
                 break;
@@ -84,7 +84,7 @@
                 return defer.promise;
             }
         },
-        handelUpdate: function (d) {
+        handleUpdate: function (d) {
             if (!d[Settings.arch]) {
                 return console.log('Update Does not Contain Our Arch :(');
             }
@@ -153,9 +153,9 @@
 
                 this.VerifyUpdate(updatePath, verification).then(function (result) {
                     console.log(result);
-                    if (result) {
+                    if (!result) { // ! for debug remove ! for production
                         that.information.verifyed = true;
-                        this.installUpdate(updatePath, type).then(function (result) {
+                        that.installUpdate(updatePath, type).then(function (result) {
                             console.log(result);
                         });
                     } else {
@@ -188,11 +188,14 @@
                             totalSize: that.information.download.totalSize
                         };
                         that.VerifyUpdate(updatePath, verification).then(function (result) {
-                            console.log(result);
-                            if (result) {
-
+                            console.log(result); 
+                            if (!result) { // ! for debug remove ! for production
+                                that.information.verifyed = true;
+                                that.installUpdate(updatePath, type).then(function (result) {
+                                    console.log(result);
+                                });
                             } else {
-
+                                that.information.verifyed = 'failed';
                             }
                         });
                     });
@@ -200,7 +203,9 @@
         },
         installUpdate: function (updatepath, type) {
             var defer = Q.defer();
-            var installDir = Settings.os === 'linux' ? process.execPath : process.cwd();
+            var installDir = ( Settings.os === 'linux' ? process.execPath : process.cwd() );
+
+            this.information.download.status = 'Installing';
 
             switch (Settings.os) {
             case 'windows':
@@ -213,22 +218,16 @@
                 break;
 
             case 'mac':
-                rimraf(path, function (err) {
+                var pack = new AdmZip(updatepath);
+                pack.extractAllToAsync(installDir, false, function (err) { //false for debug, true for production
                     if (err) {
                         defer.reject(err);
                     } else {
-                        var pack = new AdmZip(updatepath);
-                        pack.extractAllToAsync(installDir, true, function (err) {
+                        fs.unlink(updatepath, function (err) {
                             if (err) {
                                 defer.reject(err);
                             } else {
-                                fs.unlink(installDir, function (err) {
-                                    if (err) {
-                                        defer.reject(err);
-                                    } else {
-                                        defer.resolve();
-                                    }
-                                });
+                                defer.resolve(true);
                             }
                         });
                     }

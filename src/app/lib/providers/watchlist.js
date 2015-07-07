@@ -43,7 +43,7 @@
                         deferred.resolve(doc || []);
                     } else {
                         win.info('Watchlist - Fetching new watchlist');
-                        App.Trakt.calendars.myShows(moment().subtract(31, 'days').format('YYYY-MM-DD'), 30)
+                        App.Trakt.calendars.myShows(moment().subtract(30, 'days').format('YYYY-MM-DD'), 30)
                             .then(function (data) {
                                 App.Database.setting('set', {
                                         key: 'watchlist',
@@ -215,7 +215,7 @@
         var deferred = Q.defer();
 
         win.info('Watchlist - Fetching new watchlist');
-        App.Trakt.calendars.myShows(moment().subtract(31, 'days').format('YYYY-MM-DD'), 30)
+        App.Trakt.calendars.myShows(moment().subtract(30, 'days').format('YYYY-MM-DD'), 30)
             .then(function (data) {
                 App.db.writeSetting({
                         key: 'watchlist',

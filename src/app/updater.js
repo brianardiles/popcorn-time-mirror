@@ -251,11 +251,13 @@
                         if (err) {
                             defer.reject(err);
                         } else {
-                            var extractor = tar.Extract({path: outputDir}) //extract files from tar
-                                .on('error', function(err) {
+                            var extractor = tar.Extract({
+                                    path: outputDir
+                                }) //extract files from tar
+                                .on('error', function (err) {
                                     defer.reject(err);
                                 })
-                                .on('end', function() {
+                                .on('end', function () {
                                     App.vent.trigger('notification:show', new App.Model.Notification({
                                         title: 'Update ' + this.updateData.version + ' Installed',
                                         body: this.updateData.description,
@@ -320,11 +322,13 @@
                         if (err) {
                             defer.reject(err);
                         } else {
-                            var extractor = tar.Extract({path: installDir}) //extract files from tar
-                                .on('error', function(err) {
+                            var extractor = tar.Extract({
+                                    path: installDir
+                                }) //extract files from tar
+                                .on('error', function (err) {
                                     defer.reject(err);
                                 })
-                                .on('end', function() {
+                                .on('end', function () {
                                     App.vent.trigger('notification:show', new App.Model.Notification({
                                         title: 'Update ' + this.updateData.version + ' Installed',
                                         body: this.updateData.description,
@@ -335,7 +339,7 @@
                                     win.debug('Extraction success!');
                                 });
                             fs.createReadStream(updateTAR)
-                                .on('error', function(err) {
+                                .on('error', function (err) {
                                     defer.reject(err);
                                 })
                                 .pipe(extractor);
@@ -348,7 +352,7 @@
 
             // Extended: false
             var outputDir = path.dirname(downloadPath);
-          
+
             var pack = new AdmZip(downloadPath);
             pack.extractAllToAsync(outputDir, true, function (err) {
                 if (err) {

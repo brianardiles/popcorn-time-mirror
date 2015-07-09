@@ -79,7 +79,6 @@
             App.vent.trigger('system:closeFileSelector');
         },
 
-
         isTorrentStored: function () {
             var target = require('nw.gui').App.dataPath + '/TorrentCollection/';
             var newpath = path.join(target, App.Streamer.client.torrent.name + '.torrent');
@@ -97,7 +96,6 @@
         storeTorrent: function () {
             var os = require('os');
             var target = require('nw.gui').App.dataPath + '/TorrentCollection/';
-
 
             var oldfilename = App.Streamer.client.infoHash + '.torrent';
             var newfilename = App.Streamer.client.torrent.name + '.torrent';

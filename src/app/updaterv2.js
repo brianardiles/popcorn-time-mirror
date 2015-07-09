@@ -163,9 +163,9 @@
                 });
             } else {
                 progress(request(url), {
-                    throttle: 500, // Throttle the progress event to 2000ms, defaults to 1000ms
-                    delay: 500 // Only start to emit after 1000ms delay, defaults to 0ms
-                })
+                        throttle: 500, // Throttle the progress event to 2000ms, defaults to 1000ms
+                        delay: 500 // Only start to emit after 1000ms delay, defaults to 0ms
+                    })
                     .on('progress', function (state) {
                         that.information.download = {
                             status: 'Downloading',
@@ -209,31 +209,75 @@
                 if (type === 'installer') {
 
                     this.runExe(updatepath).then(this.closeApp);
+
                 } else {
 
+                    var pack = new AdmZip(updatepath);
+                    win.debug('Extracting update files...');
+                    pack.extractAllToAsync(installDir, true, function (err) {
+                        if (err) {
+                            defer.reject(err);
+                        } else {
+                            fs.unlink(updatepath, function (err) {
+                                if (err) {
+                                    defer.reject(err);
+                                } else {
+                                    win.debug('Extraction success!');
+                                    defer.resolve(true);
+                                }
+                            });
+                        }
+                    });
                 }
 
                 break;
 
             case 'linux':
+                if (type === 'installer') {
 
+
+                } else {
+                    // Extended: false
+                    var pack = new AdmZip(updatepath);
+
+                    pack.extractAllToAsync(installDir, true, function (err) {
+                        if (err) {
+                            defer.reject(err);
+                        } else {
+                            fs.unlink(updatepath, function (err) {
+                                if (err) {
+                                    defer.reject(err);
+                                } else {
+                                    win.debug('Extraction success!');
+                                    defer.resolve(true);
+                                }
+                            });
+                        }
+                    });
+                }
                 break;
 
             case 'mac':
-                var pack = new AdmZip(updatepath);
-                pack.extractAllToAsync(installDir, false, function (err) { //false for debug, true for production
-                    if (err) {
-                        defer.reject(err);
-                    } else {
-                        fs.unlink(updatepath, function (err) {
-                            if (err) {
-                                defer.reject(err);
-                            } else {
-                                defer.resolve(true);
-                            }
-                        });
-                    }
-                });
+                if (type === 'installer') {
+
+
+                } else {
+                    var pack = new AdmZip(updatepath);
+                    pack.extractAllToAsync(installDir, false, function (err) { //false for debug, true for production
+                        if (err) {
+                            defer.reject(err);
+                        } else {
+                            fs.unlink(updatepath, function (err) {
+                                if (err) {
+                                    defer.reject(err);
+                                } else {
+                                    defer.resolve(true);
+                                }
+                            });
+                        }
+                    });
+
+                }
                 break;
 
             default:

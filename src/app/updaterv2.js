@@ -18,9 +18,9 @@
 
     var Updaterv2 = Backbone.Model.extend({
         initialize: function () {
-
-            this.githash = App.git.commit;
-
+            if (App.git.commit) {
+                this.githash = App.git.commit;
+            }
             this.gitHash = 'e4fdcc522f6a57882f1d7b716009f0099b920046'; //for debugging olny!
 
             this.pubkey = '-----BEGIN PUBLIC KEY-----\n' +

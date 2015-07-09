@@ -2,6 +2,7 @@ var Q = require('q'),
     os = require('os'),
     path = require('path'),
     _ = require('underscore'),
+    uuid = require('node-uuid'),
     data_path = require('nw.gui').App.dataPath;
 
 /** Default settings **/
@@ -26,10 +27,11 @@ Settings.postersJump = [134, 154, 174, 194, 214, 234, 254, 274, 294];
 Settings.alwaysFullscreen = false;
 Settings.playNextEpisodeAuto = true;
 Settings.chosenPlayer = 'local';
+Settings.disclaimerAccepted = false;
 
 // Advanced UI
 Settings.alwaysOnTop = false;
-Settings.theme = 'Official_-_Dark_theme';
+Settings.theme = 'Official_-_FlaX_theme';
 Settings.ratingStars = true; //trigger on click in details
 Settings.startScreen = 'Movies';
 Settings.lastTab = '';
@@ -51,6 +53,9 @@ Settings.subtitle_font = 'Arial';
 Settings.httpApiPort = 8008;
 Settings.httpApiUsername = 'popcorn';
 Settings.httpApiPassword = 'popcorn';
+Settings.seenNotifications = [];
+Settings.UUID = uuid.v4();
+
 
 // Trakt.tv
 Settings.traktToken = '';
@@ -72,7 +77,8 @@ Settings.streamPort = 0; // 0 = Random
 Settings.tmpLocation = path.join(os.tmpDir(), 'Popcorn-Time');
 Settings.databaseLocation = path.join(data_path, 'data');
 Settings.deleteTmpOnClose = true;
-Settings.automaticUpdating = true;
+Settings.automaticUpdating = 'checkandinstall'; //Possible values: [checkandinstall, checkandnotify, disable]
+Settings.updatechannel = 'stable'; //Possible values: stable = 'stable', experimental = 'experimental', nightly = 'nightly'
 Settings.events = true;
 Settings.minimizeToTray = false;
 Settings.bigPicture = false;
@@ -168,30 +174,51 @@ var ScreenResolution = {
 };
 
 var AdvSettings = {
-
+    init: function () {
+        var defer = Q.defer();
+        var total = Object.keys(Settings).length;
+        var count = 0;
+        _.each(Settings, function (v, k) {
+            var key = k;
+            var value = v;
+            App.Database.setting('get', {
+                key: key
+            }).then(function (i) {
+                count++;
+                if (!i) {
+                    AdvSettings.set(key, value);
+                } else {
+                    Settings[key] = i;
+                }
+                if (count === total) {
+                    defer.resolve(true);
+                }
+            });
+        });
+        return defer.promise;
+    },
     get: function (variable) {
         if (typeof Settings[variable] !== 'undefined') {
             return Settings[variable];
         }
-
         return false;
     },
-
     set: function (variable, newValue) {
-        Database.writeSetting({
-                key: variable,
-                value: newValue
-            })
-            .then(function () {
-                Settings[variable] = newValue;
-            });
+        var defer = Q.defer();
+        App.Database.setting('set', {
+            key: variable,
+            value: newValue
+        }).then(function () {
+            Settings[variable] = newValue;
+            defer.resolve(true);
+        });
+        return defer.promise;
     },
-
     setup: function () {
-        AdvSettings.performUpgrade();
-        return AdvSettings.getHardwareInfo();
+        AdvSettings.set('version', require('nw.gui').App.manifest.version);
+        AdvSettings.set('releaseName', require('nw.gui').App.manifest.releaseName);
+        AdvSettings.getHardwareInfo();
     },
-
     getHardwareInfo: function () {
         if (/64/.test(process.arch)) {
             AdvSettings.set('arch', 'x64');
@@ -245,12 +272,12 @@ var AdvSettings = {
         _.extend(endpoint, endpoint.proxies[endpoint.index]);
 
         var url = uri.parse(endpoint.url);
-        win.debug('Checking %s endpoint', url.hostname);
+        console.debug('Checking %s endpoint', url.hostname);
 
         if (endpoint.ssl === false) {
             var timeoutWrapper = function (req) {
                 return function () {
-                    win.warn('[%s] Endpoint timed out',
+                    console.warn('[%s] Endpoint timed out',
                         url.hostname);
                     req.abort();
                     tryNextEndpoint();
@@ -264,16 +291,16 @@ var AdvSettings = {
                     res.removeAllListeners('error');
                     // Doesn't match the expected response
                     if (!_.isRegExp(endpoint.fingerprint) || !endpoint.fingerprint.test(body.toString('utf8'))) {
-                        win.warn('[%s] Endpoint fingerprint %s does not match %s',
+                        console.warn('[%s] Endpoint fingerprint %s does not match %s',
                             url.hostname,
-                            endpoint.fingerprint,
+                            JSON.stringify(endpoint.fingerprint),
                             body.toString('utf8'));
                         tryNextEndpoint();
                     } else {
                         defer.resolve();
                     }
                 }).once('error', function (e) {
-                    win.warn('[%s] Endpoint failed [%s]',
+                    console.warn('[%s] Endpoint failed [%s]',
                         url.hostname,
                         e.message);
                     clearTimeout(timeout);
@@ -295,7 +322,7 @@ var AdvSettings = {
                     this.getPeerCertificate().fingerprint !== endpoint.fingerprint) {
                     // "These are not the certificates you're looking for..."
                     // Seems like they even got a certificate signed for us :O
-                    win.warn('[%s] Endpoint fingerprint %s does not match %s',
+                    console.warn('[%s] Endpoint fingerprint %s does not match %s',
                         url.hostname,
                         endpoint.fingerprint,
                         this.getPeerCertificate().fingerprint);
@@ -305,13 +332,13 @@ var AdvSettings = {
                 }
                 this.end();
             }).once('error', function (e) {
-                win.warn('[%s] Endpoint failed [%s]',
+                console.warn('[%s] Endpoint failed [%s]',
                     url.hostname,
                     e.message);
                 this.setTimeout(0);
                 tryNextEndpoint();
             }).once('timeout', function () {
-                win.warn('[%s] Endpoint timed out',
+                console.warn('[%s] Endpoint timed out',
                     url.hostname);
                 this.removeAllListeners('error');
                 this.end();
@@ -332,27 +359,7 @@ var AdvSettings = {
         }
 
         return defer.promise;
-    },
+    }
 
-    performUpgrade: function () {
-        // This gives the official version (the package.json one)
-        gui = require('nw.gui');
-        var currentVersion = gui.App.manifest.version;
 
-        if (currentVersion !== AdvSettings.get('version')) {
-            // Nuke the DB if there's a newer version
-            // Todo: Make this nicer so we don't lose all the cached data
-            var cacheDb = openDatabase('cachedb', '', 'Cache database', 50 * 1024 * 1024);
-
-            cacheDb.transaction(function (tx) {
-                tx.executeSql('DELETE FROM subtitle');
-                tx.executeSql('DELETE FROM metadata');
-            });
-
-            // Add an upgrade flag
-            window.__isUpgradeInstall = true;
-        }
-        AdvSettings.set('version', currentVersion);
-        AdvSettings.set('releaseName', gui.App.manifest.releaseName);
-    },
 };

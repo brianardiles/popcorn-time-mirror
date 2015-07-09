@@ -69,6 +69,82 @@
         },
 
 
+        keyboardEvents: {
+            'up': 'moveUp',
+            'down': 'moveDown',
+            'left': 'moveLeft',
+            'right': 'moveRight',
+            'f': 'toggleSelectedFavourite',
+            'w': 'toggleSelectedWatched',
+            'enter': 'selectItem',
+            'space': 'selectItem',
+            'ctrl+f': 'focusSearch',
+            'command+f': 'focusSearch',
+            'tab': 'switchTabs',
+            'ctrl+1': 'switchPointTab',
+            'ctrl+2': 'switchPointTab',
+            'ctrl+3': 'switchPointTab',
+            'i': function () {
+                if ((App.PlayerView === undefined || App.PlayerView.isDestroyed) && $('#player').children().length <= 0) {
+                    $('.about').click();
+                }
+            }
+        },
+
+        switchTabs: function (e, combo) {
+            if ((App.PlayerView === undefined || App.PlayerView.isDestroyed) && $('#about-container').children().length <= 0 && $('#player').children().length <= 0) {
+                if (combo === 'tab') {
+                    switch (App.currentview) {
+                    case 'movies':
+                        App.currentview = 'shows';
+                        break;
+                    case 'shows':
+                        App.currentview = 'anime';
+                        break;
+                    default:
+                        App.currentview = 'movies';
+                    }
+                } else if (combo === 'shift+tab') {
+                    switch (App.currentview) {
+                    case 'movies':
+                        App.currentview = 'anime';
+                        break;
+                    case 'anime':
+                        App.currentview = 'shows';
+                        break;
+                    default:
+                        App.currentview = 'movies';
+                    }
+                }
+
+                App.vent.trigger('torrentCollection:close');
+                App.vent.trigger(App.currentview + ':list', []);
+                $('.filter-bar').find('.active').removeClass('active');
+                $('.source.show' + App.currentview.charAt(0).toUpperCase() + App.currentview.slice(1)).addClass('active');
+            }
+        },
+
+        switchPointTab: function (e, combo) {
+            if ((App.PlayerView === undefined || App.PlayerView.isDestroyed) && $('#about-container').children().length <= 0 && $('#player').children().length <= 0) {
+                switch (combo) {
+                case 'ctrl+1':
+                    App.currentview = 'movies';
+                    break;
+                case 'ctrl+2':
+                    App.currentview = 'shows';
+                    break;
+                case 'ctrl+3':
+                    App.currentview = 'anime';
+                    break;
+                }
+
+                App.vent.trigger('torrentCollection:close');
+                App.vent.trigger(App.currentview + ':list', []);
+                $('.filter-bar').find('.active').removeClass('active');
+                $('.source.show' + App.currentview.charAt(0).toUpperCase() + App.currentview.slice(1)).addClass('active');
+            }
+        },
+
         isEmpty: function () {
             return !this.collection.length && this.collection.state !== 'loading';
         },
@@ -122,100 +198,9 @@
             this.listenTo(this.collection, 'loading', this.onLoading);
             this.listenTo(this.collection, 'loaded', this.onLoaded);
 
-            App.vent.on('shortcuts:list', _this.initKeyboardShortcuts);
-            _this.initKeyboardShortcuts();
-
             _this.initPosterResizeKeys();
         },
 
-        initKeyboardShortcuts: function () {
-            Mousetrap.bind('up', _this.moveUp);
-
-            Mousetrap.bind('down', _this.moveDown);
-
-            Mousetrap.bind('left', _this.moveLeft);
-
-            Mousetrap.bind('right', _this.moveRight);
-
-            Mousetrap.bind('f', _this.toggleSelectedFavourite);
-
-            Mousetrap.bind('w', _this.toggleSelectedWatched);
-
-            Mousetrap.bind(['enter', 'space'], _this.selectItem);
-
-            Mousetrap.bind(['ctrl+f', 'command+f'], _this.focusSearch);
-
-            Mousetrap(document.querySelector('input')).bind(['ctrl+f', 'command+f', 'esc'], function (e, combo) {
-                $('.search input').blur();
-            });
-
-            Mousetrap.bind(['tab', 'shift+tab'], function (e, combo) {
-                if ((App.PlayerView === undefined || App.PlayerView.isDestroyed) && $('#about-container').children().length <= 0 && $('#player').children().length <= 0) {
-                    if (combo === 'tab') {
-                        switch (App.currentview) {
-                        case 'movies':
-                            App.currentview = 'shows';
-                            break;
-                        case 'shows':
-                            App.currentview = 'anime';
-                            break;
-                        default:
-                            App.currentview = 'movies';
-                        }
-                    } else if (combo === 'shift+tab') {
-                        switch (App.currentview) {
-                        case 'movies':
-                            App.currentview = 'anime';
-                            break;
-                        case 'anime':
-                            App.currentview = 'shows';
-                            break;
-                        default:
-                            App.currentview = 'movies';
-                        }
-                    }
-
-                    App.vent.trigger('torrentCollection:close');
-                    App.vent.trigger(App.currentview + ':list', []);
-                    $('.filter-bar').find('.active').removeClass('active');
-                    $('.source.show' + App.currentview.charAt(0).toUpperCase() + App.currentview.slice(1)).addClass('active');
-                }
-            });
-
-            Mousetrap.bind(['ctrl+1', 'ctrl+2', 'ctrl+3'], function (e, combo) {
-                if ((App.PlayerView === undefined || App.PlayerView.isDestroyed) && $('#about-container').children().length <= 0 && $('#player').children().length <= 0) {
-                    switch (combo) {
-                    case 'ctrl+1':
-                        App.currentview = 'movies';
-                        break;
-                    case 'ctrl+2':
-                        App.currentview = 'shows';
-                        break;
-                    case 'ctrl+3':
-                        App.currentview = 'anime';
-                        break;
-                    }
-
-                    App.vent.trigger('torrentCollection:close');
-                    App.vent.trigger(App.currentview + ':list', []);
-                    $('.filter-bar').find('.active').removeClass('active');
-                    $('.source.show' + App.currentview.charAt(0).toUpperCase() + App.currentview.slice(1)).addClass('active');
-                }
-            });
-
-            Mousetrap.bind(['`', 'b'], function () {
-                if ((App.PlayerView === undefined || App.PlayerView.isDestroyed) && $('#about-container').children().length <= 0 && $('#player').children().length <= 0) {
-                    $('.favorites').click();
-                }
-            });
-
-            Mousetrap.bind('i', function () {
-                if ((App.PlayerView === undefined || App.PlayerView.isDestroyed) && $('#player').children().length <= 0) {
-                    $('.about').click();
-                }
-            });
-
-        },
 
         initPosterResizeKeys: function () {
             $(window)
@@ -377,15 +362,10 @@
 
         increasePoster: function (e) {
             var postersWidthIndex = Settings.postersJump.indexOf(parseInt(Settings.postersWidth));
-
             if (postersWidthIndex !== -1 && postersWidthIndex + 1 in Settings.postersJump) {
-                App.db.writeSetting({
-                        key: 'postersWidth',
-                        value: Settings.postersJump[postersWidthIndex + 1]
-                    })
-                    .then(function () {
-                        App.vent.trigger('updatePostersSizeStylesheet');
-                    });
+                AdvSettings.set('postersWidth', Settings.postersJump[postersWidthIndex + 1]).then(function () {
+                    App.vent.trigger('updatePostersSizeStylesheet');
+                });
             } else {
                 // do nothing for now
             }
@@ -401,13 +381,10 @@
                 postersWidth = Settings.postersJump[0];
             }
 
-            App.db.writeSetting({
-                    key: 'postersWidth',
-                    value: postersWidth
-                })
-                .then(function () {
-                    App.vent.trigger('updatePostersSizeStylesheet');
-                });
+            AdvSettings.set('postersWidth', postersWidth).then(function () {
+                App.vent.trigger('updatePostersSizeStylesheet');
+            });
+
         },
 
 

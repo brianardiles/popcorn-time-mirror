@@ -15,12 +15,12 @@
             FileSelector: '#file-selector-container',
             Player: '#player',
             Settings: '#settings-container',
-            InitModal: '#initializing',
             Disclaimer: '#disclaimer-container',
             About: '#about-container',
             Keyboard: '#keyboard-container',
             Help: '#help-container',
             TorrentCollection: '#torrent-collection-container',
+            UpdaterModel: '#updater-detail-container',
             Issue: '#issue-container',
             Notification: '#notification'
         },
@@ -37,9 +37,15 @@
         },
 
         initialize: function () {
+
+            App.Trakt = App.Config.getProvider('metadata');
+            App.TVShowTime = App.Config.getProvider('tvst');
+
+            App.vent.trigger('initHttpApi');
+
             _this = this;
 
-            _.each(_this.regionManager._regions, function (element, index) {
+            _.each(this.regionManager._regions, function (element, index) {
 
                 element.on('show', function (view) {
                     if (view.className && App.ViewStack[0] !== view.className) {
@@ -78,8 +84,6 @@
             App.vent.on('favorites:list', _.bind(this.showFavorites, this));
             App.vent.on('favorites:render', _.bind(this.renderFavorites, this));
             App.vent.on('watchlist:list', _.bind(this.showWatchlist, this));
-            App.vent.on('shows:update', _.bind(this.updateShows, this));
-            App.vent.on('shows:init', _.bind(this.initShows, this));
 
             // Add event to show disclaimer
             App.vent.on('disclaimer:show', _.bind(this.showDisclaimer, this));
@@ -111,6 +115,10 @@
             App.vent.on('torrentCollection:show', _.bind(this.showTorrentCollection, this));
             App.vent.on('torrentCollection:close', _.bind(this.TorrentCollection.destroy, this.TorrentCollection));
 
+            //Updater
+            App.vent.on('updater:show', _.bind(this.showUpdater, this));
+            App.vent.on('updater:close', _.bind(this.UpdaterModel.destroy, this.UpdaterModel));
+
             // Tv Shows
             App.vent.on('show:showDetail', _.bind(this.showShowDetail, this));
             App.vent.on('show:closeDetail', _.bind(this.closeShowDetail, this.MovieDetail));
@@ -118,6 +126,7 @@
             // Settings events
             App.vent.on('settings:show', _.bind(this.showSettings, this));
             App.vent.on('settings:close', _.bind(this.Settings.destroy, this.Settings));
+
 
             App.vent.on('notification:show', _.bind(this.showNotification, this));
             App.vent.on('notification:close', _.bind(this.closeNotification, this));
@@ -139,6 +148,8 @@
             App.vent.on('restartPopcornTime', _.bind(this.restartPopcornTime, this));
 
             App.vent.on('updatePostersSizeStylesheet', _.bind(this.updatePostersSizeStylesheet, this));
+
+
         },
 
         showSubtitles: function (model) {
@@ -153,147 +164,108 @@
             this.Header.show(new App.View.TitleBar());
             // Set the app title (for Windows mostly)
             this.nativeWindow.title = App.Config.title;
-
             // Show loading modal on startup
             var that = this;
-            this.Content.show(new App.View.InitModal());
-            App.db.initialize()
-                .then(function () {
 
-                    // Create the System Temp Folder. This is used to store temporary data like movie files.
-                    if (!fs.existsSync(Settings.tmpLocation)) {
-                        fs.mkdir(Settings.tmpLocation, function (err) {
-                            if (!err || err.errno === '-4075') {
-                                //success
-                            } else {
-                                Settings.tmpLocation = path.join(os.tmpDir(), 'Popcorn-Time');
-                                fs.mkdir(Settings.tmpLocation);
-                            }
-                        });
-                    }
-
-                    try {
-                        require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
-                    } catch (e) {
-                        Settings.theme = 'Official_-_Dark_theme';
-                        AdvSettings.set('theme', 'Official_-_Dark_theme');
-                    }
-
-                    $('link#theme').attr('href', 'themes/' + Settings.theme + '.css');
-                    // Always on top
-                    win.setAlwaysOnTop(App.settings.alwaysOnTop);
-
-                    // we check if the disclaimer is accepted
-                    if (!AdvSettings.get('disclaimerAccepted')) {
-                        that.showDisclaimer();
-                    }
-
-                    that.InitModal.destroy();
-
-                    var lastOpen = (Settings.startScreen === 'Last Open') ? true : false;
-
-                    if (Settings.startScreen === 'Watchlist' || (lastOpen && Settings.lastTab === 'Watchlist')) {
-                        that.showWatchlist();
-                    } else if (Settings.startScreen === 'Favorites' || (lastOpen && Settings.lastTab === 'Favorites')) {
-                        that.showFavorites();
-                    } else if (Settings.startScreen === 'TV Series' || (lastOpen && Settings.lastTab === 'TV Series')) {
-                        that.showShows();
-                    } else if (Settings.startScreen === 'Anime' || (lastOpen && Settings.lastTab === 'Anime')) {
-                        that.showAnime();
+            if (!fs.existsSync(Settings.tmpLocation)) {
+                fs.mkdir(Settings.tmpLocation, function (err) {
+                    if (!err || err.errno === '-4075') {
+                        //success
                     } else {
-                        that.showMovies();
+                        Settings.tmpLocation = path.join(os.tmpDir(), 'Popcorn-Time');
+                        fs.mkdir(Settings.tmpLocation);
                     }
-
-                    // do we celebrate events?
-                    if (AdvSettings.get('events')) {
-                        $('.events').css('display', 'block');
-                    }
-
-                    // set player from settings
-                    var players = App.Device.Collection.models;
-                    for (var i in players) {
-                        if (players[i].id === AdvSettings.get('chosenPlayer')) {
-                            App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
-                        }
-                    }
-
-                    // Focus the window when the app opens
-                    that.nativeWindow.focus();
-
                 });
+            }
+
+
+            // Always on top
+            win.setAlwaysOnTop(Settings.alwaysOnTop);
+            require('nw.gui').Window.get().show();
+            that.nativeWindow.focus();
+            splashwin.close(true);
+
+            // we check if the disclaimer is accepted
+            if (!AdvSettings.get('disclaimerAccepted')) {
+                that.showDisclaimer();
+            }
+
+            var lastOpen = (Settings.startScreen === 'Last Open') ? true : false;
+
+            if (Settings.startScreen === 'Watchlist' || (lastOpen && Settings.lastTab === 'Watchlist')) {
+                that.showWatchlist();
+            } else if (Settings.startScreen === 'Favorites' || (lastOpen && Settings.lastTab === 'Favorites')) {
+                that.showFavorites();
+            } else if (Settings.startScreen === 'TV Series' || (lastOpen && Settings.lastTab === 'TV Series')) {
+                that.showShows();
+            } else if (Settings.startScreen === 'Anime' || (lastOpen && Settings.lastTab === 'Anime')) {
+                that.showAnime();
+            } else {
+                that.showMovies();
+            }
+
+            // do we celebrate events?
+            if (AdvSettings.get('events')) {
+                $('.events').css('display', 'block');
+            }
+
+            // set player from settings
+            var players = App.Device.Collection.models;
+            for (var i in players) {
+                if (players[i].id === AdvSettings.get('chosenPlayer')) {
+                    App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
+                }
+            }
+
+            // Focus the window when the app opens
+
 
             // Cancel all new windows (Middle clicks / New Tab)
-            this.nativeWindow.on('new-win-policy', function (frame, url, policy) {
+            that.nativeWindow.on('new-win-policy', function (frame, url, policy) {
                 policy.ignore();
             });
 
-            App.vent.trigger('updatePostersSizeStylesheet');
+            this.updatePostersSizeStylesheet(true);
             App.vent.trigger('main:ready');
+
+            if (App.startupTime) {
+                win.debug('Popcorn Time %s startup time: %sms', Settings.version, (window.performance.now() - App.startupTime).toFixed(3)); // started in database.js;
+            }
+
+            function checkNewNotifcations() {
+                App.Notifier.check();
+                setTimeout(checkNewNotifcations, 300000); //five minutes
+            }
+
+            checkNewNotifcations();
 
         },
 
         showMovies: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
-
             this.Content.show(new App.View.MovieBrowser());
         },
 
         showShows: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
-
             this.Content.show(new App.View.ShowBrowser());
         },
 
         showAnime: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
-
             this.Content.show(new App.View.AnimeBrowser());
-        },
-
-        updateShows: function (e) {
-            var that = this;
-            App.vent.trigger('show:closeDetail');
-            this.Content.show(new App.View.InitModal());
-            App.db.syncDB(function () {
-                that.InitModal.destroy();
-                that.showShows();
-                // Focus the window when the app opens
-                that.nativeWindow.focus();
-
-            });
         },
 
         connectVpn: function (e) {
             App.VPNClient.launch();
         },
 
-        // used in app to re-triger a api resync
-        initShows: function (e) {
-            var that = this;
-            App.vent.trigger('settings:close');
-            this.Content.show(new App.View.InitModal());
-            App.db.initDB(function (err, data) {
-                that.InitModal.destroy();
-
-                if (!err) {
-                    // we write our new update time
-                    AdvSettings.set('tvshow_last_sync', +new Date());
-                }
-
-                App.vent.trigger('shows:list');
-                // Focus the window when the app opens
-                that.nativeWindow.focus();
-
-            });
-        },
-
         showFavorites: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
-
             this.Content.show(new App.View.FavoriteBrowser());
         },
 
@@ -333,6 +305,12 @@
 
         showTorrentCollection: function (e) {
             this.TorrentCollection.show(new App.View.TorrentCollection());
+        },
+
+        showUpdater: function (model) {
+            this.UpdaterModel.show(new App.View.updaterModal({
+                model: model
+            }));
         },
 
         showKeyboard: function (e) {
@@ -401,8 +379,6 @@
 
         showFileSelector: function (fileModel) {
             App.vent.trigger('about:close');
-            App.vent.trigger('stream:stop');
-            App.vent.trigger('player:close');
             this.FileSelector.show(new App.View.FileSelector({
                 model: fileModel
             }));
@@ -422,7 +398,7 @@
                         var lastActivities = activities.movies.watched_at > activities.episodes.watched_at ? activities.movies.watched_at : activities.episodes.watched_at;
                         if (lastActivities > Settings.traktLastActivities) {
                             AdvSettings.set('traktLastActivities', lastActivities);
-                            Database.deleteWatched();
+                            App.Database.delete('watched');
                             App.Trakt.syncTrakt.all();
                         }
                     });
@@ -482,52 +458,49 @@
             $(window).trigger('resize');
         },
 
-        updatePostersSizeStylesheet: function () {
+        updatePostersSizeStylesheet: function (first) {
 
             var that = this;
 
-            App.db.getSetting({
-                    key: 'postersWidth'
-                })
-                .then(function (doc) {
-                    var postersWidth = doc.value;
-                    var postersHeight = Math.round(postersWidth * Settings.postersSizeRatio);
-                    var postersWidthPercentage = (postersWidth - Settings.postersMinWidth) / (Settings.postersMaxWidth - Settings.postersMinWidth) * 100;
-                    var fontSize = ((Settings.postersMaxFontSize - Settings.postersMinFontSize) * postersWidthPercentage / 100) + Settings.postersMinFontSize;
+            var postersWidth = Settings.postersWidth;
+            var postersHeight = Math.round(postersWidth * Settings.postersSizeRatio);
+            var postersWidthPercentage = (postersWidth - Settings.postersMinWidth) / (Settings.postersMaxWidth - Settings.postersMinWidth) * 100;
+            var fontSize = ((Settings.postersMaxFontSize - Settings.postersMinFontSize) * postersWidthPercentage / 100) + Settings.postersMinFontSize;
 
-                    var stylesheetContents = [
-                        '.list .items .item {',
-                        'width:', postersWidth, 'px;',
-                        '}',
+            var stylesheetContents = [
+                '.list .items .item {',
+                'width:', postersWidth, 'px;',
+                '}',
+                '.list .items .item .cover,',
+                '.load-more {',
+                'background-size: cover;',
+                'width: ', postersWidth, 'px;',
+                'height: ', postersHeight, 'px;',
+                '}',
+                '.item {',
+                'font-size: ' + fontSize + 'em;',
+                '}'
+            ].join('');
 
-                        '.list .items .item .cover,',
-                        '.load-more {',
-                        'background-size: cover;',
-                        'width: ', postersWidth, 'px;',
-                        'height: ', postersHeight, 'px;',
-                        '}',
+            $('#postersSizeStylesheet').remove();
 
-                        '.item {',
-                        'font-size: ' + fontSize + 'em;',
-                        '}'
-                    ].join('');
+            $('<style>', {
+                'id': 'postersSizeStylesheet'
+            }).text(stylesheetContents).appendTo('head');
 
-                    $('#postersSizeStylesheet').remove();
+            // Copy the value to Settings so we can get it from templates
+            Settings.postersWidth = postersWidth;
 
-                    $('<style>', {
-                        'id': 'postersSizeStylesheet'
-                    }).text(stylesheetContents).appendTo('head');
+            // Display PostersWidth
 
-                    // Copy the value to Settings so we can get it from templates
-                    Settings.postersWidth = postersWidth;
+            if (!first) {
+                var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
+                that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
+            }
 
-                    // Display PostersWidth
-                    var humanReadableWidth = Number(postersWidthPercentage + 100).toFixed(0) + '%';
-                    if (typeof App.currentview !== 'undefined') {
-                        that.ui.posterswidth_alert.show().text(i18n.__('Posters Size') + ': ' + humanReadableWidth).delay(3000).fadeOut(400);
-                    }
-                    $('.cover-image').css('width', Settings.postersWidth);
-                });
+
+            $('.cover-image').css('width', Settings.postersWidth);
+
         },
 
         links: function (e) {

@@ -246,11 +246,20 @@
             .vpn-buttons
                 margin-bottom 10px
 
+        #miscellaneous
+            .updatechannel > select,
+            .automaticUpdating > select
+                width 158px
+
         .btns
             padding-top 10px
             padding-right 2%
             float right
             &.database
+                float left
+                padding-top 0
+                padding-bottom 13px
+            &.updates
                 float left
                 padding-top 0
                 padding-bottom 13px
@@ -273,6 +282,8 @@
             cursor pointer
             transition background-color .5s
             &.database
+                margin-top: 0
+            &.updates
                 margin-top: 0
             &:hover
                 background-color $ButtonBgHover

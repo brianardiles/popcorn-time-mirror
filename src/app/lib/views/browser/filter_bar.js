@@ -31,17 +31,20 @@
             'click #filterbar-favorites': 'showFavorites',
             'click #filterbar-watchlist': 'showWatchlist',
             'click #filterbar-torrent-collection': 'showTorrentCollection',
-            'click .triggerUpdate': 'updateDB',
-            'click .vpn-connect': 'vpnConnect'
+            'click .vpn-connect': 'vpnConnect',
+            'click #filterbar-update': 'showUpdater',
         },
 
+        initialize: function () {
 
+            App.vent.on('enableUpdatericon', _.bind(this.showUpdate, this));
+        },
         focus: function (e) {
             e.focus();
         },
         setactive: function (set) {
 
-            if (Settings.startScreen === 'Last Open') {
+            if (AdvSettings.get('startScreen') === 'Last Open' && set !== 'Updater') {
                 AdvSettings.set('lastTab', set);
             }
             $('.right .search').show();
@@ -74,6 +77,9 @@
             case 'Torrent-collection':
                 $('.right .search').hide();
                 $('#filterbar-torrent-collection').addClass('active');
+                break;
+            case 'Updater':
+                $('.right .search').hide();
                 break;
             }
             $('.sorters .dropdown-menu a:nth(0)').addClass('active');
@@ -216,7 +222,11 @@
             this.ui.searchForm.removeClass('edited');
 
         },
+        showUpdate: function () {
+            App.updateAvailable = true;
+            $('#filterbar-update-api').show();
 
+        },
         sortBy: function (e) {
             App.vent.trigger('about:close');
             App.vent.trigger('torrentCollection:close');
@@ -294,6 +304,22 @@
                 this.setactive(App.currentview);
             }
         },
+        showUpdater: function (e) {
+            e.preventDefault();
+
+            if (App.currentview !== 'Updater') {
+                App.previousview = App.currentview;
+                App.currentview = 'Updater';
+                App.vent.trigger('about:close');
+                App.vent.trigger('updater:show', App.Updaterv2.updateModel);
+                this.setactive('Updater');
+            } else {
+                App.currentview = App.previousview;
+                App.vent.trigger('updater:close');
+                this.setactive(App.currentview);
+            }
+        },
+
 
         showShows: function (e) {
             e.preventDefault();
@@ -376,11 +402,6 @@
 
             }
             return false;
-        },
-
-        updateDB: function (e) {
-            e.preventDefault();
-            App.vent.trigger(this.type + ':update', []);
         },
 
         vpnConnect: function (e) {

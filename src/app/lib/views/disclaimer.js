@@ -18,7 +18,7 @@
         acceptDisclaimer: function (e) {
             e.preventDefault();
             Mousetrap.unpause();
-            AdvSettings.set('disclaimerAccepted', 1);
+            AdvSettings.set('disclaimerAccepted', true);
             App.vent.trigger('disclaimer:close');
         },
 

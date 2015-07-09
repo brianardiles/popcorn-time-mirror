@@ -67,7 +67,7 @@
     }
     .details-info-player {
         display: none
-        width: 250px
+        width: 280px
         background: rgba(31,31,31,0.74)
         padding: 10px
         top: 32px
@@ -107,156 +107,6 @@
         right: 15px
         position: absolute
     }
-    .playing_next {
-        color: #fff
-        z-index: 23
-        bottom: 10vh !important
-        width: 450px;
-        height: 140px;
-        padding: 10px
-        font-size: 20px
-        left: 3vw !important
-        display: none
-        background-color: rgba(0, 0, 0, 0.54) !important
-        overflow: hidden
-        
-        .pn_poster {
-            width: 90px;
-            height: 120px;
-            float: left;
-
-            .playing_next_poster {
-                width: 80px;
-            }
-        }
-        .pn_epinfo {
-            width: 235px;
-            height: 80px;
-            float: left;
-            text-align: left;
-            
-            .playing_next_show {
-                font-size: 15px;
-                font-weight: bold;
-                line-height: 20px;
-                overflow: hidden; 
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            .playing_next_episode {
-                font-size: 11px;
-                line-height: 14px;
-                overflow: hidden; 
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            .playing_next_number {
-                font-size: 17px;
-                margin-top: 18px;
-                overflow: hidden; 
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-        }
-        .pn_counter {
-            width: 105px;
-            height: 80px;
-            float: left;
-
-            .playing_next_countertext {
-                font-size: 11px;
-                text-align: center;
-                text-transform: uppercase;
-            }
-
-            #nextCountdown {
-                color: rgb(0, 143, 255);
-                font-size: 38px;
-                text-align: center;
-                margin-top: 6px;
-            }
-        }
-        .pn_btns {
-            width: 340px;
-            height: 40px;
-            float: left;
-
-            .auto-next-btn {
-                position relative
-                float left
-                margin-top 3px
-                margin-left 15px
-                padding 12px
-
-                border-radius $ButtonRadius
-                background-color $ButtonBg
-                text-align center
-                color $SettingsButtonText
-                font-family $ButtonFont, $AlternateFont
-                font-size 12px
-                cursor pointer
-                transition background-color .5s
-                &:hover {
-                    background-color $ButtonBgHover
-                    color $SettingsButtonTextHover
-                    text-decoration none
-                }
-                &:active{
-                    box-shadow: inset 0 1px 4px rgba(0,0,0,0.6)
-                    background: $ButtonBgActive
-                }
-            }
-
-        }
-        
-    }
-
-/*        span {
-            font-weight: bold
-            color: rgb(0, 143, 255)
-        }
-    }
-    .auto-next-btn {
-        position relative
-        float right
-        margin 15px
-        padding 12px
-
-
-        border-radius $ButtonRadius
-        background-color $ButtonBg
-        text-align center
-        color $SettingsButtonText
-        font-family $ButtonFont, $AlternateFont
-        font-size 13px
-        cursor pointer
-        transition background-color .5s
-        &:hover {
-            background-color $ButtonBgHover
-            color $SettingsButtonTextHover
-            text-decoration none
-        }
-        &.disabled {
-            background-color $ButtonBgDisabled
-            &:hover{
-                background-color $ButtonBgDisabled
-            }
-            &:active{
-                background-color $ButtonBgDisabled
-            }
-        }
-
-        &.green{
-            background-color #27AE60
-        }
-        &.red{
-            background-color #F15153
-        }
-        &:active{
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.6)
-            background: $ButtonBgActive
-        }
-    }*/
 }
 
 .player-title {
@@ -288,6 +138,7 @@
 
 .vjs-subtitles-button {
     top: 12px
+    z-index: 2
 }
 
 .vjs_smallersub_button {
@@ -373,3 +224,154 @@
         }
     }
 }
+
+.item-next
+    color #ffffff !important
+    z-index 1 !important
+    position absolute
+    width 650px !important
+    height 190px !important
+    padding-top 5px !important
+    padding-left 10px !important
+    left calc(100vw - 650px ) !important 
+    background-color rgba(23, 24, 27, 0.75) !important
+    bottom 48px !important
+    display none
+    .item-poster
+        position absolute !important
+        display inline-block !important
+        h1
+            font-size: 15px !important;
+            padding-top: 2px !important;
+            height: 30px !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            text-transform: capitalize !important;
+            font-family: 'Open Sans', sans-serif !important;
+
+        .media-poster
+            box-shadow 0 0 4px rgba(0, 0, 0, .3), inset 0 0 0 2px $ButtonBgActive !important
+            width 285px !important
+            height 150px !important
+            background-size cover !important
+
+            .overlay
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.19);
+            span
+                font-size: 26px;
+                font-weight: bold;
+                width 100%
+                text-align: center;
+                margin-top: 69px;
+                font-family: 'Open Sans', sans-serif !important;
+                z-index: 2;
+                position: absolute;
+
+
+    .item-summary
+        position absolute !important
+        right 0 !important
+        left 295px !important
+        padding 30px 15px 0 15px !important
+        h1
+            font-size: 18px !important;
+            height: 33px !important;
+        h2
+            float left !important
+            max-width 70% !important
+            font-family 'Open Sans', sans-serif !important
+            font-size 17px !important
+            height 35px !important
+            width: 100% !important;
+        h3
+            float right !important
+            max-width 30% !important
+            height 35px !important
+            font-family 'Open Sans', sans-serif !important
+            font-size 17px !important
+        p
+            display block !important
+            display box !important
+            max-height 83px !important
+            font-family 'Open Sans', sans-serif !important
+            overflow hidden !important
+            clear right !important
+            line-height 20px !important
+            font-size 15px !important
+            text-overflow ellipsis !important
+            text-overflow ellipsis-lastline !important
+            line-clamp 4 !important
+            box-orient vertical !important
+
+    .item-next .item-summary h1,
+    .item-next .item-summary h2,
+    .item-next .item-summary h3
+        overflow hidden !important
+        text-overflow ellipsis !important
+        white-space nowrap !important
+        font-family 'Open Sans', sans-serif !important
+
+
+
+   .auto-next-btn {
+        position relative
+        float right
+        margin-top: 43px;
+        margin-left 20px
+        padding 12px
+        border-radius $ButtonRadius
+        background-color $ButtonBg
+        text-align center
+        color $SettingsButtonText
+        font-family $ButtonFont, $AlternateFont
+        font-size 13px
+        cursor pointer
+        transition background-color .5s
+        &:hover {
+            background-color $ButtonBgHover
+            color $SettingsButtonTextHover
+            text-decoration none
+        }
+        &.disabled {
+            background-color $ButtonBgDisabled
+            &:hover{
+                background-color $ButtonBgDisabled
+            }
+            &:active{
+                background-color $ButtonBgDisabled
+            }
+        }
+
+        &.green{
+            background-color #27AE60
+        }
+        &.red{
+            background-color #F15153
+        }
+        &:active{
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.6)
+            background: $ButtonBgActive
+        }
+    }
+
+
+
+
+
+
+
+
+
+.circular-bar
+    text-align center
+    margin-top: 40px;
+    background-color: rgba(0, 0, 0, 0.66);
+    position: absolute;
+    color $ButtonBgActive
+    margin-left: 100px;
+    border-radius: 50px;
+
+

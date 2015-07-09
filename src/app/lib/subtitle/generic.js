@@ -4,7 +4,6 @@
     var request = require('request');
     var AdmZip = require('adm-zip');
     var fs = require('fs');
-    var async = require('async');
     var path = require('path');
     var mkdirp = require('mkdirp');
     var captions = require('node-captions');

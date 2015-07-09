@@ -6,26 +6,22 @@
     Favorites.prototype.constructor = Favorites;
 
     var queryTorrents = function (filters) {
-        return App.db.getBookmarks(filters)
-            .then(function (data) {
-                    return data;
-                },
-                function (error) {
-                    return [];
-                });
+        var deferred = Q.defer();
+        App.Database.bookmark('get', 'all').then(function (data) {
+            deferred.resolve(data);
+        });
+        return deferred.promise;
     };
 
     var formatForPopcorn = function (items) {
-        var movieList = [];
-
-        items.forEach(function (movie) {
-
+        var ItemList = [];
+        _.each(items, function (t, i) {
             var deferred = Q.defer();
-            // we check if its a movie
-            // or tv show then we extract right data
-            if (movie.type === 'movie') {
+            var type = t;
+            var imdb_id = i;
+            if (type === 'movie') {
                 // its a movie
-                Database.getMovie(movie.imdb_id)
+                App.Database.movie('get', imdb_id)
                     .then(function (data) {
                             data.type = 'bookmarkedmovie';
                             if (/slurm.trakt.us/.test(data.image)) {
@@ -38,11 +34,12 @@
                         });
             } else {
                 // its a tv show
-                var _data = null;
-                Database.getTVShowByImdb(movie.imdb_id)
+                var _data = {};
+                App.Database.show('get', imdb_id)
                     .then(function (data) {
                         data.type = 'bookmarkedshow';
                         data.imdb = data.imdb_id;
+                        console.log(data);
                         // Fallback for old bookmarks without provider in database or marked as Eztv
                         if (typeof (data.provider) === 'undefined' || data.provider === 'Eztv') {
                             data.provider = 'TVApi';
@@ -63,7 +60,7 @@
                     }).then(function (data) {
                         if (data) {
                             // Cache new show and return
-                            Database.updateTVShow(data);
+                            App.Database.show('add', data);
                             data.type = 'bookmarkedshow';
                             data.imdb = data.imdb_id;
                             data.image = data.images.poster;
@@ -73,17 +70,15 @@
                         // Show no longer exists on provider
                         // Scrub bookmark and TV show
                         // But return previous data one last time
-                        // So error to erase database doesn't show
-                        Database.deleteBookmark(_data.imdb_id);
-                        Database.deleteTVShow(_data.imdb_id);
+                        App.Database.show('remove', _data.imdb_id);
+                        App.Database.bookmark('remove', 'show', _data.imdb_id);
                         deferred.resolve(_data);
                     });
             }
-
-            movieList.push(deferred.promise);
+            ItemList.push(deferred.promise);
         });
 
-        return Q.all(movieList);
+        return Q.all(ItemList);
     };
 
     Favorites.prototype.extractIds = function (items) {
@@ -91,8 +86,7 @@
     };
 
     Favorites.prototype.fetch = function (filters) {
-        return queryTorrents(filters)
-            .then(formatForPopcorn);
+        return queryTorrents(filters).then(formatForPopcorn);
     };
 
     App.Providers.Favorites = Favorites;

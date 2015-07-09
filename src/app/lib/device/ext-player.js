@@ -18,9 +18,8 @@
             // "" So it behaves when spaces in path
             var url = streamModel.attributes.src;
             var cmd = path.normalize('"' + this.get('path') + '" ') + getPlayerSwitches(this.get('id')) + ' ';
-            var subtitle = streamModel.attributes.subFile || '';
+            var subtitle = streamModel.attributes.subtitle || '';
             if (subtitle !== '') {
-
                 if ((this.get('id') === 'mplayer') || (this.get('id') === 'MPlayer OSX Extended')) {
                     //detect charset
                     var dataBuff = fs.readFileSync(subtitle);
@@ -51,13 +50,17 @@
             cmd += url;
             win.info('Launching External Player: ' + cmd);
             child.exec(cmd, function (error, stdout, stderr) {
-                if (streamModel.attributes.device.id === 'Bomi') {
+                if (streamModel.attributes.id === 'Bomi') {
                     // don't stop on exit, because Bomi could be already running in background and the command ends while the stream should continue
                     return;
                 }
-                App.vent.trigger('player:close');
-                App.vent.trigger('stream:stop');
-                App.vent.trigger('preload:stop');
+                $('.filter-bar').show();
+                $('#header').removeClass('header-shadow');
+                $('#movie-detail').show();
+                _.defer(function () {
+                    App.vent.trigger('streamer:stop');
+                    App.vent.trigger('player:close');
+                });
             });
         },
 
@@ -138,6 +141,12 @@
             subswitch: '/sub ',
             fs: '/fullscreen'
         },
+        'Beamer': {
+            type: 'Beamer',
+            switches: '',
+            subswitch: '',
+            cmd: '/Contents/MacOS/Beamer'
+        },
         'MPC-HC64': {
             type: 'mpc-hc',
             switches: '',
@@ -207,6 +216,7 @@
         folderName = path.resolve(folderName);
         win.info('Scanning: ' + folderName);
         var appIndex = -1;
+
         var fileStream = readdirp({
             root: folderName,
             depth: 3

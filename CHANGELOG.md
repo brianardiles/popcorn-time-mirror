@@ -1,4 +1,4 @@
-## 0.3.8 Beta - There's nothing on TV - 09 July 2015
+## 0.3.8 Beta - There's nothing on TV
 
 BugFixes: 
 

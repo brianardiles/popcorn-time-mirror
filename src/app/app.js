@@ -30,6 +30,15 @@ var
 
     Q = require('q');
 
+_.extend(App, {
+    Controller: {},
+    View: {},
+    Model: {},
+    Page: {},
+    Scrapers: {},
+    Providers: {},
+    Localization: {}
+});
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -56,54 +65,8 @@ win.error = function () {
 
 
 if (gui.App.fullArgv.indexOf('--reset') !== -1) {
-
-    var data_path = require('nw.gui').App.dataPath;
-
     localStorage.clear();
-
-    fs.unlinkSync(path.join(data_path, 'data/watched.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-    fs.unlinkSync(path.join(data_path, 'data/movies.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-    fs.unlinkSync(path.join(data_path, 'data/bookmarks.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-    fs.unlinkSync(path.join(data_path, 'data/shows.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-    fs.unlinkSync(path.join(data_path, 'data/settings.db'), function (err) {
-        if (err) {
-            throw err;
-        }
-    });
-
 }
-
-
-// Global App skeleton for backbone
-var App = new Backbone.Marionette.Application();
-_.extend(App, {
-    Controller: {},
-    View: {},
-    Model: {},
-    Page: {},
-    Scrapers: {},
-    Providers: {},
-    Localization: {}
-});
-
-// set database
-App.db = Database;
 
 // Set settings
 App.advsettings = AdvSettings;
@@ -115,6 +78,21 @@ fs.readFile('./.git.json', 'utf8', function (err, json) {
     }
 });
 
+if (!fs.existsSync(path.join(require('nw.gui').App.dataPath, '.installdate'))) {
+    var date = Math.floor(Date.now() / 1000);
+    App.installDate = date;
+    fs.writeFile(path.join(require('nw.gui').App.dataPath, '.installdate'), date, function (err) {
+        if (err) {
+            return console.log(err);
+        }
+    });
+} else {
+    fs.readFile(path.join(require('nw.gui').App.dataPath, '.installdate'), 'utf8', function (err, date) {
+        if (!err) {
+            App.installDate = date;
+        }
+    });
+}
 App.addRegions({
     Window: '.main-window-region'
 });
@@ -143,11 +121,6 @@ App.addInitializer(function (options) {
     if (ScreenResolution.QuadHD) {
         zoom = 2;
     }
-    /*
-	if (ScreenResolution.UltraHD) {
-		zoom = 4;
-	}
-	*/
 
     var width = parseInt(localStorage.width ? localStorage.width : Settings.defaultWidth);
     var height = parseInt(localStorage.height ? localStorage.height : Settings.defaultHeight);
@@ -201,10 +174,29 @@ var initTemplates = function () {
 
 var initApp = function () {
     var mainWindow = new App.View.MainWindow();
-    win.show();
 
     try {
-        App.Window.show(mainWindow);
+        AdvSettings.init().then(function (f) { // Create the System Temp Folder. This is used to store temporary data like movie files.
+            window.setLanguage(Settings.language);
+            AdvSettings.setup();
+            AdvSettings.checkApiEndpoints([
+                Settings.tvshowAPI,
+                Settings.updateEndpoint
+            ]).then(function () {
+                App.Updaterv2.check();
+                try {
+                    require('fs').statSync('src/app/themes/' + Settings.theme + '.css');
+                } catch (e) {
+                    console.log(e);
+                    Settings.theme = 'Official_-_FlaX_theme';
+                    AdvSettings.set('theme', Settings.theme);
+                }
+                $('link#theme').attr('href', 'themes/' + Settings.theme + '.css').load(function () {
+                    App.Window.show(mainWindow);
+                });
+
+            });
+        });
     } catch (e) {
         console.error('Couldn\'t start app: ', e, e.stack);
     }
@@ -278,7 +270,6 @@ win.on('resize', function (width, height) {
 win.on('move', function (x, y) {
     localStorage.posX = Math.round(x);
     localStorage.posY = Math.round(y);
-
 });
 
 var delCache = function () {
@@ -298,6 +289,7 @@ var delCache = function () {
 win.on('close', function () {
     if (App.settings.deleteTmpOnClose) {
         deleteFolder(App.settings.tmpLocation);
+        deleteFolder(path.join(os.tmpDir(), 'torrent-stream'));
     }
     if (fs.existsSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'))) {
         fs.unlinkSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'));
@@ -322,6 +314,7 @@ String.prototype.capitalizeEach = function () {
 String.prototype.endsWith = function (suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
+
 // Developer Shortcuts
 Mousetrap.bind(['shift+f12', 'f12', 'command+0'], function (e) {
     win.showDevTools();
@@ -335,7 +328,7 @@ Mousetrap.bind('mod+,', function (e) {
     App.vent.trigger('settings:show');
 });
 Mousetrap.bind('f11', function (e) {
-    Settings.deleteTmpOnClose = false;
+    App.settings.deleteTmpOnClose = false;
     App.vent.trigger('restartPopcornTime');
 });
 Mousetrap.bind(['?', '/', '\''], function (e) {
@@ -372,35 +365,6 @@ Mousetrap.bind('shift+b', function (e) {
     }
 });
 
-// Drag n' Drop Torrent Onto PT Window to start playing (ALPHA)
-window.ondragenter = function (e) {
-
-    $('#drop-mask').show();
-    var showDrag = true;
-    var timeout = -1;
-    $('#drop-mask').on('dragenter',
-        function (e) {
-            $('.drop-indicator').show();
-            win.debug('Drag init');
-        });
-    $('#drop-mask').on('dragover',
-        function (e) {
-            var showDrag = true;
-        });
-
-    $('#drop-mask').on('dragleave',
-        function (e) {
-            var showDrag = false;
-            clearTimeout(timeout);
-            timeout = setTimeout(function () {
-                if (!showDrag) {
-                    win.debug('Drag aborted');
-                    $('.drop-indicator').hide();
-                    $('#drop-mask').hide();
-                }
-            }, 100);
-        });
-};
 
 var minimizeToTray = function () {
     win.hide();
@@ -496,72 +460,13 @@ var handleVideoFile = function (file) {
     $('.eye-info-player').hide();
 };
 
-var handleTorrent = function (torrent) {
-    try {
-        App.PlayerView.closePlayer();
-    } catch (err) {
-        // The player wasn't running
-    }
-    App.Config.getProvider('torrentCache').resolve(torrent);
-};
-
-window.ondrop = function (e) {
-    e.preventDefault();
-    $('#drop-mask').hide();
-    win.debug('Drag completed');
-    $('.drop-indicator').hide();
-
-    var file = e.dataTransfer.files[0];
-
-    if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
-
-        fs.writeFile(path.join(App.settings.tmpLocation, file.name), fs.readFileSync(file.path), function (err) {
-            if (err) {
-                App.PlayerView.closePlayer();
-                window.alert(i18n.__('Error Loading File') + ': ' + err);
-            } else {
-                if (file.name.indexOf('.torrent') !== -1) {
-                    Settings.droppedTorrent = file.name;
-                    handleTorrent(path.join(App.settings.tmpLocation, file.name));
-                } else if (file.name.indexOf('.srt') !== -1) {
-                    Settings.droppedSub = file.name;
-                    App.vent.trigger('videojs:drop_sub');
-                }
-            }
-        });
-
-    } else if (file != null && isVideo(file.name)) {
-        handleVideoFile(file);
-    } else {
-        var data = e.dataTransfer.getData('text/plain');
-        Settings.droppedMagnet = data;
-        handleTorrent(data);
-    }
-
-    return false;
-};
-
-// Paste Magnet Link to start stream
-$(document).on('paste', function (e) {
-
-    if (e.target.nodeName === 'INPUT' || e.target.nodeName === 'TEXTAREA') {
-        return;
-    }
-
-    var data = (e.originalEvent || e).clipboardData.getData('text/plain');
-    e.preventDefault();
-    Settings.droppedMagnet = data;
-    handleTorrent(data);
-    return true;
-});
-
 
 // Pass magnet link as last argument to start stream
 var last_arg = gui.App.argv.pop();
 
 if (last_arg && (last_arg.substring(0, 8) === 'magnet:?' || last_arg.substring(0, 7) === 'http://' || last_arg.endsWith('.torrent'))) {
     App.vent.on('app:started', function () {
-        handleTorrent(last_arg);
+        // handleTorrent(last_arg);
     });
 }
 
@@ -597,7 +502,7 @@ gui.App.on('open', function (cmd) {
             };
             handleVideoFile(fileModel);
         } else if (file.endsWith('.torrent')) {
-            handleTorrent(file);
+            //  handleTorrent(file);
         }
     }
 });

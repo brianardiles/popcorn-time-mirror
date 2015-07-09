@@ -11,6 +11,15 @@
             watchedIcon: '.watched-toggle'
         },
 
+        keyboardEvents: {
+            'esc': 'closeDetails',
+            'backspace': 'closeDetails',
+            'q': 'toggleQuality',
+            'enter': 'startStreaming',
+            'space': 'startStreaming',
+            'f': 'toggleFavourite'
+        },
+
         events: {
             'click #watch-now': 'startStreaming',
             'click #watch-trailer': 'playTrailer',
@@ -28,26 +37,8 @@
         },
 
         initialize: function () {
-            var _this = this;
-
             //Handle keyboard shortcuts when other views are appended or removed
-
-            //If a child was removed from above this view
-            App.vent.on('viewstack:pop', function () {
-                if (_.last(App.ViewStack) === _this.className) {
-                    _this.initKeyboardShortcuts();
-                }
-            });
-
-            //If a child was added above this view
-            App.vent.on('viewstack:push', function () {
-                if (_.last(App.ViewStack) !== _this.className) {
-                    _this.unbindKeyboardShortcuts();
-                }
-            });
-
-            App.vent.on('shortcuts:movies', _this.initKeyboardShortcuts);
-
+            App.vent.on('watched', _.bind(this.onWatched, this));
             this.model.on('change:quality', this.renderHealth, this);
         },
 
@@ -138,15 +129,27 @@
             });
 
             // display stars or number
-            if (AdvSettings.get('ratingStars') === false) {
+            if (!AdvSettings.get('ratingStars')) {
                 $('.star-container').addClass('hidden');
                 $('.number-container').removeClass('hidden');
             }
 
-            this.initKeyboardShortcuts();
 
-            App.Device.Collection.setDevice(Settings.chosenPlayer);
+            App.Device.Collection.setDevice(AdvSettings.get('chosenPlayer'));
             App.Device.ChooserView('#player-chooser').render();
+        },
+        onWatched: function (method, type, data) {
+            if (type !== 'movie' || data.imdb_id !== this.model.get('imdb_id')) {
+                return;
+            }
+            if (method === 'add') {
+                this.model.set('watched', true);
+                this.ui.watchedIcon.addClass('selected').text(i18n.__('Seen'));
+            } else if (method === 'remove') {
+                this.model.set('watched', false);
+                this.ui.watchedIcon.removeClass('selected').text(i18n.__('Not Seen'));
+            }
+            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-watched').click();
         },
 
         handleAnime: function () {
@@ -156,28 +159,6 @@
 
             $('.movie-imdb-link, .rating-container, .magnet-link, .health-icon').hide();
             $('.dot').css('opacity', 0);
-        },
-
-        onDestroy: function () {
-            this.unbindKeyboardShortcuts();
-        },
-
-        initKeyboardShortcuts: function () {
-            Mousetrap.bind(['esc', 'backspace'], this.closeDetails);
-            Mousetrap.bind(['enter', 'space'], function (e) {
-                $('#watch-now').click();
-            });
-            Mousetrap.bind('q', this.toggleQuality);
-            Mousetrap.bind('f', function () {
-                $('.favourites-toggle').click();
-            });
-        },
-
-        unbindKeyboardShortcuts: function () { // There should be a better way to do this
-            Mousetrap.unbind(['esc', 'backspace']);
-            Mousetrap.unbind(['enter', 'space']);
-            Mousetrap.unbind('q');
-            Mousetrap.unbind('f');
         },
 
         switchRating: function () {
@@ -206,19 +187,21 @@
         },
 
         startStreaming: function () {
-            var torrentStart = new Backbone.Model({
-                imdb_id: this.model.get('imdb_id'),
+            var torrentStart = {
                 torrent: this.model.get('torrents')[this.model.get('quality')].magnet,
-                backdrop: this.model.get('backdrop'),
-                subtitle: this.model.get('subtitle'),
+                metadata: {
+                    backdrop: this.model.get('backdrop'),
+                    title: this.model.get('title'),
+                    cover: this.model.get('image'),
+                    imdb_id: this.model.get('imdb_id'),
+                    quality: this.model.get('quality')
+                },
+                subtitles: this.model.get('subtitle'),
                 defaultSubtitle: this.subtitle_selected,
-                title: this.model.get('title'),
-                quality: this.model.get('quality'),
                 type: 'movie',
-                device: App.Device.Collection.selected,
-                cover: this.model.get('cover')
-            });
-            App.vent.trigger('stream:start', torrentStart);
+                device: App.Device.Collection.selected
+            };
+            App.Streamer.start(torrentStart);
         },
 
         toggleDropdown: function (e) {
@@ -246,13 +229,12 @@
         },
 
         playTrailer: function () {
-
             var trailer = new Backbone.Model({
                 src: this.model.get('trailer'),
-                type: 'video/youtube',
-                subtitle: null,
-                quality: false,
-                title: this.model.get('title')
+                metadata: {
+                    title: this.model.get('title') + ' - ' + i18n.__('Trailer')
+                },
+                type: 'trailer'
             });
             var tmpPlayer = App.Device.Collection.selected.attributes.id;
             App.Device.Collection.setDevice('local');
@@ -293,8 +275,7 @@
 
             $('.health-icon').tooltip({
                     html: true
-                })
-                .removeClass('Bad Medium Good Excellent')
+                }).removeClass('Bad Medium Good Excellent')
                 .addClass(health)
                 .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + torrent.seed + ' - ' + i18n.__('Peers:') + ' ' + torrent.peer)
                 .tooltip('fixTitle');
@@ -308,17 +289,14 @@
             }
             var that = this;
             if (this.model.get('bookmarked') === true) {
-                Database.deleteBookmark(this.model.get('imdb_id'))
+                App.Database.bookmark('remove', 'movie', this.model.get('imdb_id'))
                     .then(function () {
-                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
-                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
                         that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
-                    })
-                    .then(function () {
-                        return Database.deleteMovie(that.model.get('imdb_id'));
-                    })
-                    .then(function () {
+                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
+                        App.Database.movie('remove', that.model.get('imdb_id'));
+
                         that.model.set('bookmarked', false);
+
                         var bookmark = $('.bookmark-item .' + that.model.get('imdb_id'));
                         if (bookmark.length > 0) {
                             bookmark.parents('.bookmark-item').remove();
@@ -350,34 +328,24 @@
                     watched: this.model.get('watched'),
                 };
 
-                Database.addMovie(movie)
-                    .then(function () {
-                        return Database.addBookmark(that.model.get('imdb_id'), 'movie');
-                    })
-                    .then(function () {
-                        win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
-                        that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
-                        App.userBookmarks.push(that.model.get('imdb_id'));
-                        that.model.set('bookmarked', true);
-                    });
+                App.Database.movie('add', movie).then(function () {
+                    return App.Database.bookmark('add', 'movie', that.model.get('imdb_id'));
+                }).then(function () {
+                    win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
+                    that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
+                    that.model.set('bookmarked', true);
+                });
             }
         },
 
-        toggleWatched: function (e) {
-
-            if (e.type) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
-            var that = this;
+        toggleWatched: function () {
             if (this.model.get('watched') === true) {
-                that.model.set('watched', false);
-                that.ui.watchedIcon.removeClass('selected').text(i18n.__('Not Seen'));
+                this.model.set('watched', false);
+                this.ui.watchedIcon.removeClass('selected').text(i18n.__('Not Seen'));
             } else {
-                that.model.set('watched', true);
-                that.ui.watchedIcon.addClass('selected').text(i18n.__('Seen'));
+                this.model.set('watched', true);
+                this.ui.watchedIcon.addClass('selected').text(i18n.__('Seen'));
             }
-
             $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-watched').click();
         },
 

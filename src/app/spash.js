@@ -9,3 +9,8 @@ var splashwin = require('nw.gui').Window.open('splash.html', {
     'transparent': true,
     'always-on-top': true // always on top
 });
+
+
+if (require('nw.gui').App.fullArgv.indexOf('--debug') !== -1) {
+    require('nw.gui').Window.get().showDevTools();
+}

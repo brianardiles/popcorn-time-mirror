@@ -438,4 +438,35 @@
 
     App.Updater = Updater;
 
+<<<<<<< HEAD
 })(window.App);
+=======
+    Updater.prototype.update = function () {
+        var outputFile = path.join(path.dirname(this.outputDir), FILENAME);
+
+        if (this.updateData) {
+            // If we have already checked for updates...
+            return this.download(this.updateData.updateUrl, outputFile)
+                .then(forcedBind(this.verify, this))
+                .then(forcedBind(this.install, this))
+                .then(forcedBind(this.displayNotification, this));
+        } else {
+            // Otherwise, check for updates then install if needed!
+            var self = this;
+            return this.check().then(function (updateAvailable) {
+                if (updateAvailable) {
+                    return self.download(self.updateData.updateUrl, outputFile)
+                        .then(forcedBind(self.verify, self))
+                        .then(forcedBind(self.install, self))
+                        .then(forcedBind(self.displayNotification, self));
+                } else {
+                    return false;
+                }
+            });
+        }
+    };
+
+    App.Updater = Updater;
+
+})(window.App);
+>>>>>>> 896e8da... Update to update3

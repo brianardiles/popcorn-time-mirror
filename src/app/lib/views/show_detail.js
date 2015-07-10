@@ -60,12 +60,9 @@
             _this = this;
             this.renameUntitled();
 
-
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster, 'thumb');
-
-
         },
         renameUntitled: function () {
             var episodes = this.model.get('episodes');
@@ -227,10 +224,6 @@
         },
 
         toggleWatched: function (e) {
-            if (e.type) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
             var edata = e.currentTarget.id.split('-');
             setTimeout(function () {
                 var value = {

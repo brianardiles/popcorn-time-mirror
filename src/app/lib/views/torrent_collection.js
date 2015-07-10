@@ -98,14 +98,16 @@
                     var items = [];
                     if (strike.length > 0) {
                         _.each(strike, function (item) {
-                            var itemModel = {
-                                title: item.torrent_title,
-                                magnet: item.magnet_uri,
-                                seeds: item.seeds,
-                                peers: item.leeches,
-                                size: Common.fileSize(parseInt(item.size))
-                            };
-                            items.push(itemModel);
+                            if (item.seeds > 5) {
+                                var itemModel = {
+                                    title: item.torrent_title,
+                                    magnet: item.magnet_uri,
+                                    seeds: item.seeds,
+                                    peers: item.leeches,
+                                    size: Common.fileSize(parseInt(item.size))
+                                };
+                                items.push(itemModel);
+                            }
                         });
                     }
                     return Q(items);
@@ -114,14 +116,16 @@
                     var items = [];
                     if (kat.length > 0) {
                         _.each(kat, function (item) {
-                            var itemModel = {
-                                title: item.title,
-                                magnet: item.magnet,
-                                seeds: item.seeds,
-                                peers: item.peers,
-                                size: Common.fileSize(parseInt(item.size))
-                            };
-                            items.push(itemModel);
+                            if (item.seeds > 5) {
+                                var itemModel = {
+                                    title: item.title,
+                                    magnet: item.magnet,
+                                    seeds: item.seeds,
+                                    peers: item.peers,
+                                    size: Common.fileSize(parseInt(item.size))
+                                };
+                                items.push(itemModel);
+                            }
                         });
                     }
                     return Q(items);
@@ -146,7 +150,6 @@
                 });
                 return defer.promise;
             }).then(function (items) {
-                console.log(items.length);
                 if (items.length > 0) {
                     items.forEach(function (item) {
                         that.onlineAddItem(item);

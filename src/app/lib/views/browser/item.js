@@ -223,6 +223,7 @@
             case 'movie':
                 var Type = type.charAt(0).toUpperCase() + type.slice(1);
                 this.model.set('health', false);
+                var that = this;
                 $('.spinner').show();
                 data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
                     .catch(function () {
@@ -231,6 +232,7 @@
                     })
                     .then(function (data) {
                         data.provider = provider.name;
+                        data.bookmarked = that.model.get('bookmarked');
                         $('.spinner').hide();
                         App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
                     });
@@ -280,9 +282,9 @@
             case 'bookmarkedshow':
                 App.Database.bookmark('remove', 'show', this.model.get('imdb_id'))
                     .then(function () {
-                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
-                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 
+                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
+                        that.model.set('bookmarked', false);
                         App.Database.show('remove', that.model.get('imdb_id'));
 
 
@@ -304,11 +306,10 @@
             case 'bookmarkedmovie':
                 App.Database.bookmark('remove', 'movie', this.model.get('imdb_id'))
                     .then(function () {
-                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
                         win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
 
                         App.Database.movie('remove', that.model.get('imdb_id'));
-
+                        that.model.set('bookmarked', false);
                         // we'll delete this element from our list view
                         $(e.currentTarget).closest('li').animate({
                             paddingLeft: '0px',
@@ -372,7 +373,6 @@
                                 }).then(function () {
                                     win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
                                     that.model.set('bookmarked', true);
-                                    App.userBookmarks.push(that.model.get('imdb_id'));
                                 });
 
                             });
@@ -401,7 +401,6 @@
                         }).then(function () {
                             win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
                             that.model.set('bookmarked', true);
-                            App.userBookmarks.push(that.model.get('imdb_id'));
                         });
 
                     }
@@ -414,7 +413,6 @@
 
                     App.Database.bookmark('remove', 'show', this.model.get('imdb_id')).then(function () {
                         win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
-                        App.userBookmarks.splice(App.userBookmarks.indexOf(that.model.get('imdb_id')), 1);
                         // we'll make sure we dont have a cached show
                         App.Database.show('remove', that.model.get('imdb_id'));
                     });

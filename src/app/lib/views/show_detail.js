@@ -5,7 +5,7 @@
     var cancelTorrentHealth = function () {};
     var torrentHealthRestarted = null;
 
-    var _this, bookmarked;
+    var _this;
     var ShowDetail = Backbone.Marionette.ItemView.extend({
         template: '#show-detail-tpl',
         className: 'shows-container-contain',
@@ -150,42 +150,15 @@
                 e.preventDefault();
                 e.stopPropagation();
             }
-            var that = this;
 
-            if (bookmarked !== true) {
-                bookmarked = true;
-
-                var provider = App.Providers.get(this.model.get('provider'));
-                var data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
-                    .then(function (data) {
-                            data.provider = that.model.get('provider');
-
-                            App.Database.show('add', data)
-                                .then(function (d) {
-                                    return App.Database.bookmark('add', 'show', that.model.get('imdb_id'));
-                                })
-                                .then(function () {
-                                    win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
-                                    that.model.set('bookmarked', true);
-                                    that.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
-                                });
-                        },
-                        function (err) {
-                            $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
-                        });
-
+            if (!this.model.get('bookmarked')) {
+                this.model.set('bookmarked', true);
+                this.ui.bookmarkIcon.addClass('selected').text(i18n.__('Remove from bookmarks'));
             } else {
-                that.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
-                bookmarked = false;
-                App.Database.bookmark('remove', 'show', this.model.get('imdb_id'))
-                    .then(function () {
-                        win.info('Bookmark deleted (' + that.model.get('imdb_id') + ')');
-                        App.Database.show('remove', that.model.get('imdb_id'));
-                        if (App.currentview === 'Favorites') {
-                            App.vent.trigger('favorites:render');
-                        }
-                    });
+                this.model.set('bookmarked', false);
+                this.ui.bookmarkIcon.removeClass('selected').text(i18n.__('Add to bookmarks'));
             }
+            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
         },
         selectNextEpisode: function (episodes, unWatchedEpisodes) {
             episodes = _.sortBy(episodes, 'id');

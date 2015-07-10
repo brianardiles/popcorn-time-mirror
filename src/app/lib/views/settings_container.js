@@ -552,15 +552,12 @@
         },
 
         exportDatabase: function (e) {
-            var zip = new AdmZip();
+            var db = localStorage;
+            db.ISVALIDPCTDATABASE = true;
+            var database = new Buffer(JSON.stringify(db), 'utf-8');
             var btn = $(e.currentTarget);
-            var databaseFiles = fs.readdirSync(App.settings['databaseLocation']);
 
-            databaseFiles.forEach(function (entry) {
-                zip.addLocalFile(App.settings['databaseLocation'] + '/' + entry);
-            });
-
-            fdialogs.saveFile(zip.toBuffer(), function (err, path) {
+            fdialogs.saveFile(database, function (err, path) {
                 that.alertMessageWait(i18n.__('Exporting Database...'));
                 win.info('Database exported to:', path);
                 that.alertMessageSuccess(false, btn, i18n.__('Export Database'), i18n.__('Database Successfully Exported'));
@@ -571,10 +568,19 @@
         importDatabase: function () {
             fdialogs.readFile(function (err, content, path) {
                 that.alertMessageWait(i18n.__('Importing Database...'));
+
+                var buf = new Buffer(content);
                 try {
-                    var zip = new AdmZip(content);
-                    zip.extractAllTo(App.settings['databaseLocation'] + '/', /*overwrite*/ true);
-                    that.alertMessageSuccess(true);
+                    var data = JSON.parse(buf);
+                    if (data[ISVALIDPCTDATABASE]) {
+                        for (var key in data) {
+                            localstorage[key] = data[key];
+                        }
+                        that.alertMessageSuccess(true);
+                    } else {
+                        that.alertMessageFailed(i18n.__('Invalid PCT Database File Selected'));
+                        win.warn('Failed to Import Database');
+                    }
                 } catch (err) {
                     that.alertMessageFailed(i18n.__('Invalid PCT Database File Selected'));
                     win.warn('Failed to Import Database');

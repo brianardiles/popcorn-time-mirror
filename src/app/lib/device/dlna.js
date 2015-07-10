@@ -26,7 +26,7 @@
 
         play: function (streamModel) {
             var url = streamModel.get('src');
-            var url_video = url;
+            var url_video = url + App.Streamer.client.torrent.files[App.Streamer.fileindex].name;
             var url_subtitle = 'http:' + url.split(':')[1] + ':9999/video.srt';
             var metadata = null;
             var subtitle = streamModel.get('subFile');

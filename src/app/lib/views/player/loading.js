@@ -59,7 +59,6 @@
                 this.loadBackground(this.model.get('data').metadata.backdrop);
             }
 
-
             switch (this.model.attributes.data.type) {
             case 'show':
                 this.fetchTVSubtitles({
@@ -122,12 +121,7 @@
         },
         initsubs: function (defaultSubtitle, subtitles) {
             var that = this;
-            App.vent.trigger('subtitle:download', {
-                url: subtitles[defaultSubtitle],
-                path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
-            });
             App.vent.on('subtitle:downloaded', function (sub) {
-                console.log(sub);
                 if (sub) {
                     that.extsubs = sub;
                     App.vent.trigger('subtitle:convert', {
@@ -136,36 +130,41 @@
                     }, function (err, res) {
                         if (err) {
                             that.extsubs = null;
-                            that.SubtitlesLoaded = true;
                             win.error('error converting subtitles', err);
                         } else {
                             App.Subtitles.Server.start(res);
-                            that.SubtitlesLoaded = true;
                         }
+                        that.SubtitlesLoaded = true;
                     });
                 } else {
                     that.SubtitlesLoaded = true;
                 }
             });
+            App.vent.trigger('subtitle:download', {
+                url: subtitles[defaultSubtitle],
+                path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
+            });
+
         },
         setupLocalSubs: function (defaultSubtitle, subtitles) {
             var that = this;
             if (defaultSubtitle !== 'none' && subtitles) {
                 if (subtitles[defaultSubtitle]) {
                     if (!App.Streamer.streamDir) {
-                        var watchFileSelected = function () {
-                            require('watchjs').unwatch(App.Streamer, 'streamDir', watchFileSelected);
-                            if (!that.playing) {
-                                that.initsubs(defaultSubtitle, subtitles);
-                            }
+                        var watchstreamDir = function () {
+                            require('watchjs').unwatch(App.Streamer, 'streamDir', watchstreamDir);
+                            that.initsubs(defaultSubtitle, subtitles);
+
                         };
-                        require('watchjs').watch(App.Streamer, 'streamDir', watchFileSelected);
+                        require('watchjs').watch(App.Streamer, 'streamDir', watchstreamDir);
                     } else {
                         this.initsubs(defaultSubtitle, subtitles);
                     }
                 } else {
                     this.SubtitlesLoaded = true;
                 }
+            } else {
+                this.SubtitlesLoaded = true;
             }
         },
         removeExtension: function (filename) {
@@ -177,17 +176,17 @@
             }
         },
         backupCountdown: function () {
-            if (this.playing) {
+            if (this.loadingFinnished) {
                 return;
             }
             if (!this.count) {
                 this.count = 60;
                 win.debug('Backup ' + this.count + ' Second timeout started for:', this.model.get('data').metadata.title);
             }
-            if (this.count === 1) {
+            if (this.count === 0) {
                 win.debug('Smart Loading timeout reached for :', this.model.get('data').metadata.title, 'Starting Playback Arbitrarily in 3 seconds');
                 var loadingPlayer = document.getElementById('loading_player');
-                this.playing = true;
+                this.loadingFinnished = true;
                 loadingPlayer.pause();
                 loadingPlayer.src = ''; // empty source
                 loadingPlayer.load();
@@ -211,6 +210,7 @@
                 if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
                     win.info('Initial Meta Chunks Received! Starting Playback in 3 seconds.');
                     debugmetachunks = true;
+                    that.loadingFinnished = true;
                 }
                 if (loadingPlayer.currentTime > 3) {
                     loadingPlayer.pause();
@@ -225,7 +225,6 @@
             var that = this;
 
             function begin() {
-                that.playing = true;
                 if (that.player === 'local') {
                     var playerModel = new Backbone.Model(that.model.get('data'));
                     App.vent.trigger('stream:local', playerModel);
@@ -254,7 +253,7 @@
             }
         },
         StateUpdate: function () {
-            if (this.playing && !this.playingExternally) {
+            if (this.loadingFinnished && !this.playingExternally) {
                 return;
             }
             var that = this;
@@ -290,7 +289,7 @@
                     this.ui.stateTextDownload.text(i18n.__('Downloaded'));
                     this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 1000);
                 }
-                if (!this.playing) {
+                if (!this.loadingFinnished) {
                     this.updateInfo = _.delay(_.bind(this.StateUpdate, this), 1000);
                 }
             } else {
@@ -299,7 +298,7 @@
 
         },
         cancelStreaming: function () {
-            this.playing = true; // stop text update
+            this.loadingFinnished = true; // stop text update
             this.playingExternally = false;
             clearInterval(this.updateInfo);
 
@@ -485,7 +484,6 @@
             }
         },
         onClose: function () {
-            this.playing = false;
             this.remove();
             this.unbind();
         },

@@ -566,12 +566,15 @@
         },
 
         importDatabase: function () {
+            var JSONB = require('json-buffer');
+
             fdialogs.readFile(function (err, content, path) {
                 that.alertMessageWait(i18n.__('Importing Database...'));
 
                 var buf = new Buffer(content);
                 try {
-                    var data = JSON.parse(buf);
+                    var data = JSONB.parse(buf);
+                    console.log(data);
                     if (data[ISVALIDPCTDATABASE]) {
                         for (var key in data) {
                             localstorage[key] = data[key];

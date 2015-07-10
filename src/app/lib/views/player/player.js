@@ -426,7 +426,7 @@
 
                 if (!this.autoplayisshown) {
                     this.autoplayisshown = true;
-
+                    $('.item-next').show();
                     if (!this.precachestarted) {
                         this.precachestarted = true;
                         console.log('Preload Streamer Started');
@@ -502,8 +502,7 @@
             } else {
                 if (this.autoplayisshown) {
                     win.debug('Hiding Auto Play message');
-                    $('.playing_next').hide();
-                    $('.playing_next span').text('');
+                    $('.item-next').hide();
                     this.autoplayisshown = false;
                 }
             }
@@ -753,7 +752,6 @@
                         win.warn('Unable to fetch data from Trakt.tv');
                     } else {
                         var data = episodeSummary;
-                        console.log(data);
                         that.ui.nextShow.text(that.model.attributes.metadata.showName);
                         that.ui.nextTitle.text(data.title);
                         that.loadBackground(data.images.screenshot.full);

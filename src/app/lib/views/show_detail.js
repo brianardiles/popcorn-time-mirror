@@ -225,23 +225,23 @@
 
         toggleWatched: function (e) {
             var edata = e.currentTarget.id.split('-');
-            setTimeout(function () {
-                var value = {
-                    tvdb_id: _this.model.get('tvdb_id'),
-                    imdb_id: _this.model.get('imdb_id'),
-                    episode_id: $('#watch-now').attr('data-episodeid'),
-                    season: edata[1],
-                    episode: edata[2]
-                };
-                App.Database.watched('check', 'show', value)
-                    .then(function (watched) {
-                        if (watched) {
-                            App.vent.trigger('watched', 'remove', 'show', value);
-                        } else {
-                            App.vent.trigger('watched', 'add', 'show', value);
-                        }
-                    });
-            }, 100);
+
+            var value = {
+                tvdb_id: this.model.get('tvdb_id'),
+                imdb_id: this.model.get('imdb_id'),
+                episode_id: $('#watch-now').attr('data-episodeid'),
+                season: edata[1],
+                episode: edata[2]
+            };
+            App.Database.watched('check', 'show', value)
+                .then(function (watched) {
+                    if (watched) {
+                        App.vent.trigger('watched', 'remove', 'show', value);
+                    } else {
+                        App.vent.trigger('watched', 'add', 'show', value);
+                    }
+                });
+
         },
 
         isShowWatched: function () {
@@ -286,7 +286,6 @@
                     });
 
             });
-
 
         },
 
@@ -536,7 +535,6 @@
             $('.episode-info-description').scrollTop(0);
 
             this.selectedTorrent = torrents;
-
             this.selectedTorrent.episodeid = tvdbid;
             this.selectedTorrent.season = $('.template-' + tvdbid + ' .season').html();
             this.selectedTorrent.episode = $('.template-' + tvdbid + ' .episode').html();
@@ -558,10 +556,11 @@
             this.ui.q480p.removeClass('active');
             $(e.currentTarget).addClass('active');
 
-            var tvdbid = $('.startStreaming').attr('data-episodeid'),
+            var tvdbid = this.selectedTorrent.episodeid,
                 torrent = $('.template-' + tvdbid + ' .' + quality.attr('id')).text();
-            $('.startStreaming').attr('data-torrent', torrent);
-            $('.startStreaming').attr('data-quality', quality.text());
+            this.selectedTorrent.def = torrent;
+            this.selectedTorrent.quality = quality.text();
+
             AdvSettings.set('shows_default_quality', quality.text());
             this.resetHealth();
         },

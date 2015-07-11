@@ -81,7 +81,7 @@
                                     }
                                     var episodeUIid = 'S'+ formatTwoDigit(season) + 'E'+ formatTwoDigit(episodeData.episode);
                             %>
-                              <li id="episodeTab-<%= episodeUIid %>" class="" >
+                       <li data-tvdb="<%=episodeData.tvdb_id %>" data-season="<%= season %>" data-episode="<%= episodeData.episode %>" id="episodeTab-<%= episodeUIid %>" class="" >
                         <p class="episode-id"><%=episodeUIid %></p>
                         <p class="episode-name"><%=episodeData.title %></p>
                         <i class="zmdi zmdi-info info-icon"></i><i class="zmdi zmdi-eye watched-icon"></i>

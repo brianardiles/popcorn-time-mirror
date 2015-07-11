@@ -19,7 +19,8 @@
             'click .watched-toggle': 'markShowAsWatched',
             'click .bookmark-toggle': 'toggleBookmarked',
             'click .seasons-container li': 'selectSeason',
-            'click .episode-container ul li': 'selectEpisode'
+            'click .episode-container ul li': 'selectEpisode',
+            'click .watched-icon': 'toggleWatched'
         },
 
 
@@ -48,7 +49,29 @@
             this.isShowWatched();
 
         },
+        toggleWatched: function (e) {
+            var season = $(e.currentTarget).parent().data('season');
+            var episode = $(e.currentTarget).parent().data('episode');
 
+            var episode_id = $(e.currentTarget).parent().data('tvdb');
+
+            var value = {
+                tvdb_id: this.model.get('tvdb_id'),
+                imdb_id: this.model.get('imdb_id'),
+                episode_id: $('#watch-now').attr('data-episodeid'),
+                season: season,
+                episode: episode
+            };
+            App.Database.watched('check', 'show', value)
+                .then(function (watched) {
+                    if (watched) {
+                        App.vent.trigger('watched', 'remove', 'show', value);
+                    } else {
+                        App.vent.trigger('watched', 'add', 'show', value);
+                    }
+                });
+
+        },
         onWatched: function (method, type, data, ignore) {
             if (ignore) {
                 return;
@@ -87,8 +110,6 @@
             }
             $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
         },
-
-
         markShowAsWatched: function () {
             var tvdb_id = this.model.get('tvdb_id');
             var imdb_id = this.model.get('imdb_id');
@@ -159,6 +180,7 @@
             return n > 9 ? '' + n : '0' + n;
         },
         markWatched: function (value, state) {
+            state = (state === undefined) ? true : state;
             // we should never get any shows that aren't us, but you know, just in case.
             if (value.tvdb_id === this.model.get('tvdb_id')) {
                 var episodeUIid = 'S' + this.formatTwoDigit(value.season) + 'E' + this.formatTwoDigit(value.episode);

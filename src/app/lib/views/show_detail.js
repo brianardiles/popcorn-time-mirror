@@ -26,7 +26,8 @@
             'click .watched-icon': 'toggleWatched',
             'click #imdb-link': 'openIMDb',
             'click #quality-toggle pt-selectable-element': 'toggleShowQuality',
-            'click .epsiode-tab': 'setStream'
+            'click .epsiode-tab': 'setStream',
+            'click .watchnow-btn': 'startStreaming'
         },
 
 

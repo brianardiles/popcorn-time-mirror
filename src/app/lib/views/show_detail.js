@@ -14,7 +14,7 @@
 
 
         events: {
-
+            'click .back': 'closeDetails'
         },
 
 
@@ -28,8 +28,21 @@
 
 
         onShow: function () {
+            //change option of player, with dropdown
+            $('#player-option p').on('click', function (e) {
+                $('#player-option ul').addClass('visable');
+            });
 
-
+            $('#player-option ul li').on('click', function (e) {
+                $('#player-option ul').removeClass('visable');
+                $('#player-option #current-player-name').text($(this).children('p').text());
+                $('#player-option #current-player-icon').removeClass().addClass($(this).children('i').attr('class'));
+            });
+            $('.quality-toggle p').on('click', function (e) {
+                e.preventDefault();
+                $('.quality-toggle p').removeClass('active');
+                $(this).addClass('active');
+            });
         },
 
 

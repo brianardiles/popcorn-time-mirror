@@ -26,9 +26,9 @@
                             seasontext = i18n.__("Special Features") ;
                         }
                         var seasonID = parseInt(season) +1;
-                        
+                        var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full);
                          %>
-                          <li id="seasonTab-<%= seasonID %>" data-type="<%= type %>" data-poster="<%= images.poster %>" data-id="<%= seasonID %>"> <%= seasontext %></li>
+                          <li id="seasonTab-<%= seasonID %>" data-type="<%= type %>" data-poster="<%= seasonPoster %>" data-id="<%= seasonID %>"> <%= seasontext %></li>
                         <% }); %>
                        
                     </ul>
@@ -60,8 +60,13 @@
                 <div id="imdb-link" class="meta-btn"><%=i18n.__( "Read More") %></div>
 
                 <div class="meta-divider"></div>
-                <section class="cast-crew">
-                </section>
+                 <% _.each(cast.cast, function(person) {%>
+                          <div class="people">
+                    <p><%= person.person.name %></p>
+                    <p class="status"><%=i18n.__( "as") %>&nbsp;<%= person.character %></p>
+                        </div>
+                  <% }); %>
+
             </div>
             <div class="episode-container">
 

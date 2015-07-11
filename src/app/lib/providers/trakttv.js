@@ -179,6 +179,9 @@
                 extended: 'full,images'
             });
         },
+        people: function (id) {
+            return this.get('movies/' + id + '/people');
+        },
         aliases: function (id) {
             return this.get('movies/' + id + '/aliases');
         },

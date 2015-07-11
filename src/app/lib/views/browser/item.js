@@ -231,17 +231,83 @@
                         $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
                     })
                     .then(function (data) {
+
                         data.provider = provider.name;
                         data.bookmarked = that.model.get('bookmarked');
-                        $('.spinner').hide();
-                        App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
+
+                        Q.all([
+                            that.getCast(),
+                            that.getSeasonImages()
+                        ]).spread(function (cast, images) {
+                            data.cast = cast;
+                            data.seasonImages = images;
+                            $('.spinner').hide();
+                            App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
+                        });
+
                     });
                 break;
 
             }
-
         },
+        getSeasonImages: function () {
+            var that = this;
+            var defer = Q.defer();
 
+            App.Trakt.seasons.summary(this.model.get('imdb_id'))
+                .then(function (images) {
+                    if (!images) {
+                        win.warn('Unable to fetch data from Trakt.tv');
+                        defer.resolve({});
+                    } else {
+                        defer.resolve(images);
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                    defer.resolve({});
+                });
+
+            return defer.promise;
+        },
+        getCast: function () {
+            var that = this;
+            var type = this.model.get('type');
+            var defer = Q.defer();
+            switch (type) {
+
+            case 'show':
+                App.Trakt.shows.people(this.model.get('imdb_id'))
+                    .then(function (people) {
+                        if (!people) {
+                            defer.resolve({});
+                            win.warn('Unable to fetch data from Trakt.tv');
+                        } else {
+                            defer.resolve(people);
+                        }
+                    }).catch(function (err) {
+                        console.log(err);
+                        defer.resolve({});
+                    });
+
+                break;
+            case 'movie':
+                App.Trakt.movies.people(this.model.get('imdb_id'))
+                    .then(function (people) {
+                        if (!people) {
+                            defer.resolve({});
+                            win.warn('Unable to fetch data from Trakt.tv');
+                        } else {
+                            defer.resolve(people);
+                        }
+                    }).catch(function (err) {
+                        console.log(err);
+                        defer.resolve({});
+                    });
+                break;
+
+            }
+            return defer.promise;
+        },
         toggleWatched: function (e) {
             e.stopPropagation();
             e.preventDefault();

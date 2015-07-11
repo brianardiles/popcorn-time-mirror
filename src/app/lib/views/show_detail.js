@@ -9,7 +9,6 @@
         className: 'show-detail',
 
         ui: {
-            cast_crew: '.cast-crew',
             qualitytoggles: '#quality-toggle',
             poster: '.poster',
             background: '.bg-backdrop',
@@ -38,8 +37,6 @@
 
         initialize: function () {
             this.renameUntitled();
-            this.getSeasonImages();
-            this.getCast();
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster);
@@ -50,34 +47,12 @@
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
             }
+            console.log(this.model)
             this.loadbackground();
             this.seasonsUI();
             this.playerQualityChooseUI();
             this.isShowWatched();
 
-        },
-        getCast: function () {
-            var that = this;
-            App.Trakt.shows.people(this.model.get('imdb_id'))
-                .then(function (people) {
-                    if (!people) {
-                        win.warn('Unable to fetch data from Trakt.tv');
-                    } else {
-
-                        var cast = people['cast'];
-                        cast.forEach(function (person) {
-                            that.AddPerson(person.person.name, person.character)
-                        });
-                    }
-
-                }).catch(function (err) {
-                    console.log(err);
-                });
-        },
-
-        AddPerson: function (name, job) {
-            var person = '<div class="people"><p>' + name + '</p><p class="status">as ' + job + '</p></div>';
-            $(person).appendTo(this.ui.cast_crew).addClass('fadein');
         },
         startStreaming: function (e) {
             var that = this;
@@ -202,13 +177,10 @@
             }
 
             if (select.season) {
-                this.getSeasonImages(select.season);
                 this.selectSeason(null, select.season);
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
                 this.selectEpisode(null, episodeUIid);
             } else {
-                this.seasonImagesLoaded = true;
-                this.getSeasonImages(0);
                 this.loadCover();
                 var season;
                 if ($('.owl-stage div:nth-child(2)').children().data('type') !== 'special') {
@@ -367,9 +339,6 @@
             }
         },
         loadCover: function (url) {
-            if (!this.seasonImagesLoaded) {
-                return;
-            }
             var that = this;
             if (!url) {
                 url = this.ui.poster.data('bgr');
@@ -533,31 +502,7 @@
             });
         },
 
-        getSeasonImages: function (season) {
-            var that = this;
-            App.Trakt.seasons.summary(this.model.get('imdb_id'))
-                .then(function (seasonsinfo) {
-                    if (!seasonsinfo) {
-                        win.warn('Unable to fetch data from Trakt.tv');
-                    } else {
-                        seasonsinfo.forEach(function (entry) {
-                            var seasonID = parseInt(entry.number) + 1;
-                            try {
-                                $('#seasonTab-' + seasonID).data('poster', App.Trakt.resizeImage(entry.images.poster.full));
-                            } catch (e) {}
-                        });
-                    }
-                    that.seasonImagesLoaded = true;
-                    var seasonID = parseInt(season) + 1;
-                    $('#seasonTab-' + seasonID).addClass('active');
-                    var seasonId = $('#seasonTab-' + seasonID).data('id');
-                    var posterURL = $('#seasonTab-' + seasonId).data('poster');
-                    that.loadCover(posterURL);
-                }).catch(function (err) {
-                    console.log(err);
 
-                });
-        },
         seasonsUI: function () {
 
             //owl.owlCarousel

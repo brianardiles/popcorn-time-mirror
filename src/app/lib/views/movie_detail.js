@@ -7,7 +7,7 @@
         tagName: 'section',
 
         ui: {
-
+            'click .back': 'closeDetails'
         },
 
         keyboardEvents: {
@@ -24,8 +24,10 @@
 
         onShow: function () {
 
+        },
+        closeDetails: function () {
+            App.vent.trigger('movie:closeDetail');
         }
-
 
     });
 })(window.App);

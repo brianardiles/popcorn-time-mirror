@@ -210,13 +210,11 @@
                 this.seasonImagesLoaded = true;
                 this.getSeasonImages(0);
                 this.loadCover();
-
+                var season;
                 if ($('.owl-stage div:nth-child(2)').children().data('type') !== 'special') {
-                    var season = parseInt($('.owl-stage div:nth-child(2)').children().data('id'));
-                    console.log(season)
+                    season = parseInt($('.owl-stage div:nth-child(2)').children().data('id'));
                 } else {
-                    var season = parseInt($('.owl-stage div:nth-child(3)').children().data('id'));
-                    console.log(season)
+                    season = parseInt($('.owl-stage div:nth-child(3)').children().data('id'));
                 }
                 $('#season-' + season + ' li:first').click();
             }

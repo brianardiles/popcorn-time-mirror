@@ -116,7 +116,9 @@
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
                 this.selectEpisode(null, episodeUIid);
             } else {
+                this.seasonImagesLoaded = true;
                 this.getSeasonImages(0);
+                this.loadCover();
             }
         },
 
@@ -271,6 +273,9 @@
                 return;
             }
             var that = this;
+            if (!url) {
+                url = this.ui.poster.data('bgr');
+            }
             var cbackground = url;
             var coverCache = new Image();
             coverCache.src = cbackground;
@@ -354,7 +359,10 @@
                         });
                     }
                     that.seasonImagesLoaded = true;
+
                     var seasonID = parseInt(season) + 1;
+
+
                     $('#seasonTab-' + seasonID).addClass('active');
                     var seasonId = $('#seasonTab-' + seasonID).data('id');
                     var posterURL = $('#seasonTab-' + seasonId).data('poster');

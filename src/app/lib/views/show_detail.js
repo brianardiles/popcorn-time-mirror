@@ -9,6 +9,7 @@
         className: 'show-detail',
 
         ui: {
+            qualitytoggles: '.quality-toggle',
             poster: '.poster',
             background: '.bg-backdrop',
             startStreamingUI: '.watchnow-btn span',
@@ -372,38 +373,62 @@
             switch (Settings.shows_default_quality) {
             case '1080p':
                 if (torrents['1080p']) {
-                    quality = '1080p';
+                    quality = '1080';
                 } else if (torrents['720p']) {
-                    quality = '720p';
+                    quality = '720';
                 } else if (torrents['480p']) {
-                    quality = '480p';
+                    quality = '480';
                 }
                 break;
             case '720p':
                 if (torrents['720p']) {
-                    quality = '720p';
+                    quality = '720';
                 } else if (torrents['480p']) {
-                    quality = '480p';
+                    quality = '480';
                 } else if (torrents['1080p']) {
-                    quality = '1080p';
+                    quality = '1080';
                 }
                 break;
             case '480p':
                 if (torrents['480p']) {
-                    quality = '480p';
+                    quality = '480';
                 } else if (torrents['720p']) {
-                    quality = '720p';
+                    quality = '720';
                 } else if (torrents['1080p']) {
-                    quality = '1080p';
+                    quality = '1080';
                 }
                 break;
             }
 
-            var torrent = torrents[quality].url;
+            var torrent = torrents[quality + 'p'].url;
+
+            console.log(torrents);
+            $('#quality-toggle *').removeAttr('selected');
+            if (!torrents['1080p']) {
+                $('#quality-toggle').children('[value="1080"]').hide();
+                console.log('hiding 1080p')
+            } else {
+                $('#quality-toggle').children('[value="1080"]').show();
+            }
+            if (!torrents['720p']) {
+                console.log('hiding 720p')
+                $('#quality-toggle').children('[value="720"]').hide();
+            } else {
+                $('#quality-toggle').children('[value="720"]').show();
+            }
+            if (!torrents['420p']) {
+                console.log('hiding 420p')
+
+                $('#quality-toggle').children('[value="480"]').hide();
+            } else {
+                $('#quality-toggle').children('[value="480"]').show();
+
+            }
+            $('#quality-toggle').children('[value="' + quality + '"]').click();
 
             this.Stream = {
                 torrent: torrent,
-                quality: quality,
+                quality: quality + 'p',
                 title: episodeData.title,
                 tvdb_id: episodeData.tvdb_id,
                 season: season,

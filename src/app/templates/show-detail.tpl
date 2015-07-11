@@ -108,8 +108,9 @@ var seasonID = parseInt(season) +1;
                 <div class="meta-container-c">
                     <li class="quality-toggle">
                         <pt-toggle id="quality-toggle" icon="av:high-quality">
-                            <pt-selectable-element value="720" label="720p"></pt-selectable-element>
-                            <pt-selectable-element value="1080" label="1080p" selected></pt-selectable-element>
+                            <pt-selectable-element id="q420" value="420" label="420p"></pt-selectable-element>
+                            <pt-selectable-element id="q720" value="720" label="720p"></pt-selectable-element>
+                            <pt-selectable-element id="q1080 "value="1080" label="1080p" selected></pt-selectable-element>
                         </pt-toggle>
                     </li>
                     <li class="subtitles-dropdown">

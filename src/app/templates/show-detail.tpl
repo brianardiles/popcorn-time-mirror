@@ -11,20 +11,24 @@
                     <ul class="seasons-container owl-carousel">
                         <li data-poster="<%= images.poster %>" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
                         <% var torrents = {},
-                                seasontext;
+                                seasontext,
+                                type;
                         _.each(episodes, function(value, currentEpisode) {
                             if (!torrents[value.season]) torrents[value.season] = {};
                             torrents[value.season][value.episode] = value;
                         });
                         _.each(torrents, function(value, season) {
                         if(season !== '0'){ 
+                            type = 'season';
                             seasontext = i18n.__("Season %s", season) ; 
                         } else{
+                             type = 'special';
                             seasontext = i18n.__("Special Features") ;
                         }
-var seasonID = parseInt(season) +1;
+                        var seasonID = parseInt(season) +1;
+                        
                          %>
-                          <li id="seasonTab-<%= seasonID %>" data-poster="<%= images.poster %>" data-id="<%= seasonID %>"> <%= seasontext %></li>
+                          <li id="seasonTab-<%= seasonID %>" data-type="<%= type %>" data-poster="<%= images.poster %>" data-id="<%= seasonID %>"> <%= seasontext %></li>
                         <% }); %>
                        
                     </ul>

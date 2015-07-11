@@ -210,6 +210,15 @@
                 this.seasonImagesLoaded = true;
                 this.getSeasonImages(0);
                 this.loadCover();
+
+                if ($('.owl-stage div:nth-child(2)').children().data('type') !== 'special') {
+                    var season = parseInt($('.owl-stage div:nth-child(2)').children().data('id'));
+                    console.log(season)
+                } else {
+                    var season = parseInt($('.owl-stage div:nth-child(3)').children().data('id'));
+                    console.log(season)
+                }
+                $('#season-' + season + ' li:first').click();
             }
         },
 
@@ -397,8 +406,10 @@
         },
 
         setStream: function (e) {
+
             var season = $(e.currentTarget).data('season');
             var episode = $(e.currentTarget).data('episode');
+
             var episodeData = _.findWhere(this.model.get('episodes'), {
                 season: season,
                 episode: episode

@@ -92,7 +92,7 @@
                                     }
                                     var episodeUIid = 'S'+ formatTwoDigit(season) + 'E'+ formatTwoDigit(episodeData.episode);
                             %>
-                              <li class="" >
+                              <li id="episodeTab-<%= episodeUIid %>" class="" >
                         <p class="episode-id"><%=episodeUIid %></p>
                         <p class="episode-name"><%=episodeData.title %></p>
                         <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>

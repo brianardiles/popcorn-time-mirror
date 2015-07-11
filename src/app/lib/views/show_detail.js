@@ -15,7 +15,9 @@
 
 
         events: {
-            'click .back': 'closeDetails'
+            'click .back': 'closeDetails',
+            'click .seasons-container li': 'selectSeason',
+            'click .episode-container ul li': 'selectEpisode'
         },
 
 
@@ -33,6 +35,20 @@
             this.getSeasonImages();
         },
 
+        selectEpisode: function (e) {
+            $('.episode-container ul li').removeClass('active');
+            $(e.currentTarget).addClass('active');
+        },
+        selectSeason: function (e) {
+            e.preventDefault();
+            $('.seasons-container li').removeClass('active');
+            $(e.currentTarget).addClass('active');
+            var seasonId = $(e.currentTarget).data('id');
+            var posterURL = $(e.currentTarget).data('poster');
+            $('.poster').attr('src', posterURL);
+            $('.episode-list-show').removeClass('episode-list-show');
+            $('#season-' + seasonId).addClass('episode-list-show').find('li.active').click();
+        },
 
         playerQualityChooseUI: function () {
             //change option of player, with dropdown
@@ -69,26 +85,6 @@
                 });
         },
         seasonsUI: function () {
-
-            //change season
-            $('.seasons-container li').on('click', function (e) {
-                e.preventDefault();
-                $('.seasons-container li').removeClass('active');
-                $(this).addClass('active');
-                var seasonId = $(this).data('id');
-                var posterURL = $(this).data('poster');
-                $('.poster').attr("src", posterURL);
-                $('.episode-list-show').removeClass('episode-list-show');
-                $('#season-' + seasonId).addClass('episode-list-show').find("li.active").click();
-
-            });
-
-            //change active episode on list
-            $('.episode-container ul li').on('click', function (e) {
-                $('.episode-container ul li').removeClass('active');
-                $(this).addClass('active');
-
-            });
 
 
             //owl.owlCarousel

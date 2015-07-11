@@ -20,10 +20,15 @@
                 <div class="seasons-wrapper">
                     <ul class="seasons-container owl-carousel">
                         <li data-poster="<%= images.poster %>" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
-                        <li data-poster="https://walter.trakt.us/images/seasons/000/003/963/posters/thumb/3b1d09801b.jpg" data-id="1">Season&nbsp;1</li>
-                        <li data-poster="https://walter.trakt.us/images/seasons/000/003/964/posters/thumb/7be9351659.jpg" data-id="2">Season&nbsp;2</li>
-                        <li data-poster="https://walter.trakt.us/images/seasons/000/003/965/posters/thumb/70375805b1.jpg" data-id="3">Season&nbsp;3</li>
-                        <li data-id="4">Season&nbsp;4</li>
+                        <% var torrents = {};
+                        _.each(episodes, function(value, currentEpisode) {
+                            if (!torrents[value.season]) torrents[value.season] = {};
+                            torrents[value.season][value.episode] = value;
+                        });
+                        _.each(torrents, function(value, season) { %>
+                          <li data-poster="" data-id="<%= season %>"><%= i18n.__("Season %s", season) %></li>
+                        <% }); %>
+                       
                     </ul>
                 </div>
                 <i class="md-chevron-right md-lg season-next"></i>
@@ -66,68 +71,35 @@
                 </div>
             </div>
             <div class="episode-container">
-                <ul id="season-1" class="">
-                    <li class="watched" >
-                        <p class="episode-id">s01e01</p>
-                        <p class="episode-name">Winter Is Coming</p>
+
+                <% _.each(torrents, function(value, season) { %>
+                  <ul id="season-<%=season %>" class="">
+                            <% _.each(value, function(episodeData, episode) {
+                                var first_aired = '';
+                                if (episodeData.first_aired !== undefined) {
+                                    first_aired = moment.unix(episodeData.first_aired).locale(Settings.language).format("LLLL");
+                                }
+                                function formatTwoDigit(n) {
+                                     return n > 9 ? '' + n : '0' + n;
+                                    }
+                                    var episodeUIid = 'S'+ formatTwoDigit(season) + 'E'+ formatTwoDigit(episodeData.episode);
+                            %>
+                              <li class="" >
+                        <p class="episode-id"><%=episodeUIid %></p>
+                        <p class="episode-name"><%=episodeData.title %></p>
                         <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li class="watched" >
-                        <p class="episode-id">s01e02</p>
-                        <p class="episode-name">The Kingsroad</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li  class="watched">
-                        <p class="episode-id">s01e03</p>
-                        <p class="episode-name">Lord Snow</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li class="active">
-                        <p class="episode-id">s01e04</p>
-                        <p class="episode-name">Cripples, Bastards, and Broken Things</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li class="">
-                        <p class="episode-id">s01e05</p>
-                        <p class="episode-name">The Wolf and the Lion</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li class="">
-                        <p class="episode-id">s01e06</p>
-                        <p class="episode-name">A Golden Crown</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li class="">
-                        <p class="episode-id">s01e07</p>
-                        <p class="episode-name">You Win or You Die</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li class="">
-                        <p class="episode-id">s01e08</p>
-                        <p class="episode-name">The Pointy End</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li class="">
-                        <p class="episode-id">s01e09</p>
-                        <p class="episode-name">Baelor</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                    <li class="">
-                        <p class="episode-id">s01e10</p>
-                        <p class="episode-name">Fire and Blood</p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
-                        <p class="episode-airdate">2014-04-07</p>
-                    </li>
-                </ul>
+                        <p class="episode-airdate"><%=first_aired %></p>
+                        </li>
+                            <% }); %>
+                        </ul>
+                <% }); %>
+
+
+
+
+
+
+           
             </div>
             <div class="controls-container">
                 <div class="meta-container-c">

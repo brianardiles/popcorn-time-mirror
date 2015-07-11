@@ -1,7 +1,7 @@
 .show-detail
-    font-family 'Roboto', sans-serif
     position absolute
     height 100vh
+    font-family 'Roboto', sans-serif
     width 100vw
     .bg-backdrop
         position fixed
@@ -152,11 +152,19 @@
             height 17px
             margin-bottom 5px
             .status
+                color #ffffff
+                font-size 15px
+                float left
                 margin-left 8px
                 color rgba(255, 255, 255, 0.45)
+            p
+                color #ffffff
+                font-size 15px
+                float left
     .episode-container
         bottom 10px
         position absolute
+        z-index 1
         top 0px
         right 0px
         height 56vh
@@ -180,11 +188,21 @@
                 background-color #3F51B5
                 borderleft-radius 1px
                 border box-shadow 0 2px 5px rgba(0, 0, 0, 0.39)
+                i
+                    visibility visible
+                p
+                    &.episode-airdate
+                        visibility visible
             &.watched
+                p
+                    &.episode-id
+                        color rgba(255, 255, 255, 0.4)
+                    &.episode-name
+                        color rgba(255, 255, 255, 0.4)
                 i
                     &.watched-icon
                         opacity 0.9
-                p
+            p
                 &.episode-id
                     text-transform uppercase
                     line-height 45px
@@ -333,12 +351,6 @@
                         line-height 32px
                         margin-left 15px
 
-.show-detail .info-wrapper .people .status,
-p
-    color #ffffff
-    font-size 15px
-    float left
-
 .show-detail .episode-container ul,
 .show-detail .show-info
     display none
@@ -349,14 +361,6 @@ p
 .show-detail .episode-list-show
     display block
     opacity 1
-
-.show-detail .episode-container li.active i,
-.show-detail .episode-container li.active p.episode-airdate
-    visibility visible
-
-.show-detail .episode-container li.watched p.episode-id,
-.show-detail .episode-container li.watched p.episode-name
-    color rgba(255, 255, 255, 0.4)
 
 .show-detail .episode-container li.active p.episode-id,
 .show-detail .episode-container li.active p.episode-name

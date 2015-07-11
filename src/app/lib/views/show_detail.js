@@ -6,17 +6,18 @@
     var ShowDetail = Backbone.Marionette.ItemView.extend({
         template: '#show-detail-tpl',
         tagName: 'section',
-
         className: 'show-detail',
 
         ui: {
-
+            startStreaming: '.watchnow-btn',
+            bookmarkedIcon: '.bookmark-toggle'
         },
 
 
         events: {
             'click .back': 'closeDetails',
             'click .watched-toggle': 'markShowAsWatched',
+            'click .bookmark-toggle': 'toggleBookmarked',
             'click .seasons-container li': 'selectSeason',
             'click .episode-container ul li': 'selectEpisode'
         },
@@ -28,6 +29,7 @@
 
         initialize: function () {
             this.renameUntitled();
+            App.vent.on('watched', _.bind(this.onWatched, this));
 
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
@@ -35,10 +37,31 @@
         },
 
         onShow: function () {
+
+            if (this.model.get('bookmarked')) {
+                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
+            }
+
             this.playerQualityChooseUI();
             this.seasonsUI();
             this.getSeasonImages();
             this.isShowWatched();
+
+        },
+
+        onWatched: function (method, type, data, ignore) {
+            if (ignore) {
+                return;
+            }
+            if (type !== 'show') {
+                return;
+            }
+            if (method === 'add') {
+                this.markWatched(data, true);
+            } else if (method === 'remove') {
+                this.markWatched(data, false);
+            }
+
         },
         renameUntitled: function () {
             var episodes = this.model.get('episodes');
@@ -54,14 +77,23 @@
                 }
             }
         },
+        toggleBookmarked: function () {
+            if (!this.model.get('bookmarked')) {
+                this.model.set('bookmarked', true);
+                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
+            } else {
+                this.model.set('bookmarked', false);
+                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark').addClass('zmdi-bookmark-outline');
+            }
+            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
+        },
+
 
         markShowAsWatched: function () {
-            $('.show-watched-toggle').addClass('selected');
+            var tvdb_id = this.model.get('tvdb_id');
+            var imdb_id = this.model.get('imdb_id');
 
-            var tvdb_id = _this.model.get('tvdb_id');
-            var imdb_id = _this.model.get('imdb_id');
-
-            var episodes = _this.model.get('episodes');
+            var episodes = this.model.get('episodes');
 
             episodes.forEach(function (episode, index, array) {
                 var value = {
@@ -75,7 +107,6 @@
                     .then(function (watched) {
                         if (!watched) {
                             App.vent.trigger('watched', 'add', 'show', value);
-                            $('.show-watched-toggle').hide();
                         }
                     });
             });

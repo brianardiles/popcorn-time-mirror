@@ -8,7 +8,7 @@
                 <i class="zmdi zmdi-arrow-left zmdi-hc-lg season-prev"></i>
                 <div class="seasons-wrapper">
                     <ul class="seasons-container owl-carousel">
-                        <li data-poster="<%= images.poster %>" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
+                        <li data-poster="<%= images.poster %>" data-id="0" class=""><%= i18n.__( "Show Info") %></li>
                         <% var torrents = {},
                                 seasontext;
                         _.each(episodes, function(value, currentEpisode) {

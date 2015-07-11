@@ -30,7 +30,7 @@
 
         initialize: function () {
             this.renameUntitled();
-            App.vent.on('watched', _.bind(this.onWatched, this));
+
 
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
@@ -38,7 +38,7 @@
         },
 
         onShow: function () {
-
+            App.vent.on('watched', _.bind(this.onWatched, this));
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
             }
@@ -89,8 +89,9 @@
             } else {
                 select = _.last(episodes);
             }
+
+            this.selectSeason(null, select.season);
             if (select.season !== 0) {
-                this.selectSeason(null, select.season);
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
                 this.selectEpisode(null, episodeUIid);
             }
@@ -246,6 +247,7 @@
             }
         },
         selectSeason: function (e, season) {
+            console.log(season);
             $('.seasons-container li').removeClass('active');
             if (!season) {
                 $(e.currentTarget).addClass('active');
@@ -256,7 +258,7 @@
                 }, 'fast');
             } else {
                 var seasonID = parseInt(season) + 1;
-                $('#seasonTab-' + season + 1).click();
+                $('#seasonTab-' + seasonID).click();
                 var seasonId = $('#seasonTab-' + seasonID).data('id');
                 var posterURL = $('#seasonTab-' + seasonID).data('poster');
             }

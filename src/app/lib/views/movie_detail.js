@@ -7,7 +7,7 @@
         tagName: 'section',
 
         ui: {
-            'click .back': 'closeDetails'
+
         },
 
         keyboardEvents: {
@@ -15,7 +15,7 @@
         },
 
         events: {
-
+            'click #exit-detail': 'closeDetails'
         },
 
         initialize: function () {

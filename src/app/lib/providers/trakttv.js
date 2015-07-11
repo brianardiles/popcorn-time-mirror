@@ -31,6 +31,9 @@
         _.each(this.shows, function (method, key) {
             self.shows[key] = method.bind(self);
         });
+        _.each(this.seasons, function (method, key) {
+            self.seasons[key] = method.bind(self);
+        });
         _.each(this.episodes, function (method, key) {
             self.episodes[key] = method.bind(self);
         });
@@ -240,6 +243,7 @@
         summary: function (id) {
             return this.get('shows/' + id);
         },
+
         aliases: function (id) {
             return this.get('shows/' + id + '/aliases');
         },
@@ -273,6 +277,14 @@
         summary: function (id, season, episode) {
             return this.get('shows/' + id + '/seasons/' + season + '/episodes/' + episode, {
                 extended: 'full,images'
+            });
+        }
+    };
+
+    TraktTv.prototype.seasons = {
+        summary: function (id) {
+            return this.get('shows/' + id + '/seasons', {
+                extended: 'images'
             });
         }
     };

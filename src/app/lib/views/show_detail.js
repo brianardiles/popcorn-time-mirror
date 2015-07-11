@@ -27,8 +27,14 @@
 
         },
 
-
         onShow: function () {
+            this.playerQualityChooseUI();
+            this.seasonsUI();
+            this.getSeasonImages();
+        },
+
+
+        playerQualityChooseUI: function () {
             //change option of player, with dropdown
             $('#player-option p').on('click', function (e) {
                 $('#player-option ul').addClass('visable');
@@ -44,7 +50,25 @@
                 $('.quality-toggle p').removeClass('active');
                 $(this).addClass('active');
             });
+        },
 
+        getSeasonImages: function () {
+
+            App.Trakt.seasons.summary(this.model.get('imdb_id'))
+                .then(function (seasonsinfo) {
+                    if (!seasonsinfo) {
+                        win.warn('Unable to fetch data from Trakt.tv');
+                    } else {
+                        seasonsinfo.forEach(function (entry) {
+                            console.log(entry);
+                            $('#seasonTab-' + entry.number + 1).attr('data-poster', entry.images.poster.full);
+                        });
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
+        },
+        seasonsUI: function () {
 
             //change season
             $('.seasons-container li').on('click', function (e) {
@@ -129,10 +153,7 @@
                     $(".season-next").show();
                 }
             });
-
-
         },
-
 
         closeDetails: function (e) {
             App.vent.trigger('show:closeDetail');

@@ -27,16 +27,14 @@
                             torrents[value.season][value.episode] = value;
                         });
                         _.each(torrents, function(value, season) {
-console.log(season);
                         if(season !== '0'){ 
                             seasontext = i18n.__("Season %s", season) ; 
                         } else{
                             seasontext = i18n.__("Special Features") ;
                         }
 
-
                          %>
-                          <li data-poster="<%= images.poster %>" data-id="<%= season + 1 %>"> <%= seasontext %></li>
+                          <li id="seasonTab-<%= season + 1 %>" data-poster="<%= images.poster %>" data-id="<%= season + 1 %>"> <%= seasontext %></li>
                         <% }); %>
                        
                     </ul>

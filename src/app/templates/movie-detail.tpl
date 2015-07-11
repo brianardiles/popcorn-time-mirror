@@ -1,95 +1,77 @@
-<% if(typeof backdrop==="undefined" ){ backdrop="" ; }; if(typeof synopsis==="undefined" ){ synopsis="Synopsis not available." ; }; if(typeof runtime==="undefined" ){ runtime="N/A" ; }; for(var i=0 ; i < genre.length; i++){ genre[i]=i18n.__(genre[i]); }; %>
-    <div data-bgr="<%= backdrop %>" class="backdrop"></div>
-    <div class="backdrop-overlay"></div>
-    <div class="fa fa-times close-icon"></div>
-    <section class="poster-box">
-        <img src="images/posterholder.png" data-cover="<%= cover %>" class="mcover-image" />
-    </section>
-    <section class="content-box">
-        <div class="meta-container">
-            <div class="title">
-                <%=title %>
-            </div>
-            <div class="metadatas">
-                <div class="metaitem">
-                    <%=year %>
-                </div>
-                <div class="dot"></div>
-                <div class="metaitem">
-                    <%=runtime %> min</div>
-                <div class="dot"></div>
-                <div class="metaitem">
-                    <%=genre.join( " / ") %>
-                </div>
-                <div class="dot"></div>
-                <div data-toggle="tooltip" data-placement="top" title="<%=i18n.__(" Open IMDb page ") %>" class="movie-imdb-link"></div>
-                <div class="dot"></div>
-                <div class="rating-container">
-                    <div class="star-container" data-toggle="tooltip" data-placement="right" title="<%= rating %>/10">
-                        <% var p_rating=Math.round(rating) / 2; %>
-                            <% for (var i=1 ; i <=Math.floor(p_rating); i++) { %>
-                                <i class="fa fa-star rating-star"></i>
-                                <% }; %>
-                                    <% if (p_rating % 1> 0) { %>
-                                        <span class="fa-stack rating-star-half-container">
-                                <i class="fa fa-star fa-stack-1x rating-star-half-empty"></i>
-                                <i class="fa fa-star-half fa-stack-1x rating-star-half"></i>
-                            </span>
-                                        <% }; %>
-                                            <% for (var i=Math.ceil(p_rating); i < 5; i++) { %>
-                                                <i class="fa fa-star rating-star-empty"></i>
-                                                <% }; %>
+ <div style="background-image: url(https://walter.trakt.us/images/movies/000/102/156/fanarts/original/18cbbaf604.jpg?1419815428);" class="summary-wrapper movie">
+            <div class="summary-overlay"> <i class="md md-arrow-back md-lg back"></i>
+                <div class="title">Interstellar</div>
+                <i class="md md-bookmark-outline md-lg bookmark-toggle"></i>
+                <i class="md md-remove-red-eye md-lg watched-toggle"></i>
+                <img src="https://walter.trakt.us/images/movies/000/102/156/posters/medium/d9cb9de8ed.jpg?1419815415" class="poster" />
+                <div class="meta">
+                    <div class="meta-item"><i class="md-star"></i><i class="md-star"></i><i class="md-star"></i><i class="md-star"></i><i class="md-star-outline"></i>
                     </div>
-                    <div class="number-container hidden">
-                        <%=rating %> <em>/10</em></div>
+                    <div class="meta-dot"></div>
+                    <div class="meta-item">
+                        <p>Drama, Science fiction</p>
+                    </div>
+                    <div class="meta-dot"></div>
+                    <div class="meta-item">
+                        <p>2014</p>
+                    </div>
+                    <div class="meta-dot"></div>
+                    <div class="meta-item">
+                        <p>60 min</p>
+                    </div>
+                    <div class="meta-synop">Interstellar chronicles the adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.</div>
+                    <div class="meta-btn">read more</div>
+                    <div class="meta-btn">Trailer</div>
+                    <div class="meta-divider"></div>
+                    <div class="people">
+                        <p>David Benioff, D.B. Weiss</p>
+                        <p class="status">Creators</p>
+                    </div>
+                    <div class="people">
+                        <p>Richard Madden</p>
+                        <p class="status">as Robb Stark</p>
+                    </div>
+                    <div class="people">
+                        <p>Peter Dinklage</p>
+                        <p class="status">as Tyrion Lannister</p>
+                    </div>
+                    <div class="people">
+                        <p>Nikolaj Coster-Waldau</p>
+                        <p class="status">as Jaime Lannister</p>
+                    </div>
                 </div>
-                <div data-toggle="tooltip" data-placement="left" title="<%=i18n.__(" Health false ") %>" class="fa fa-circle health-icon <%= health %>"></div>
-                <div data-toogle="tooltip" data-placement="left" title="<%=i18n.__(" Magnet link ") %>" class="fa fa-magnet magnet-link"></div>
-            </div>
-            <div class="overview">
-                <%=synopsis %>
             </div>
         </div>
-        <div class="bottom-container">
-            <div class="favourites-toggle">
-                <%=i18n.__( "Add to bookmarks") %>
+        <div class="controls-container">
+            <div class="meta-container-c">
+                <li class="quality-toggle"><i class="md-high-quality"></i>
+                    <p>480p</p>
+                    <p>720p</p>
+                    <p class="active">1080p</p>
+                </li>
+                <li><i class="md-closed-caption"></i>
+                    <p>English</p>
+                </li>
+                <li id="player-option"><i id="current-player-icon" class="md-cast-connected"></i>
+                    <p id="current-player-name">Living Room TV</p>
+                    <ul class="dropdown">
+                        <li class="active"><i class="md-tv"></i>
+                            <p>Living Room TV</p>
+                        </li>
+                        <li><i class="md-cast-connected"></i>
+                            <p>Chromecast</p>
+                        </li>
+                        <li><i class="md-desktop-windows"></i>
+                            <p>VLC</p>
+                        </li>
+                        <li><i class="md-cast-connected"></i>
+                            <p>Chromecast</p>
+                        </li>
+                        <li><i class="md-desktop-windows"></i>
+                            <p>VLC</p>
+                        </li>
+                    </ul>
+                </li>
             </div>
-            <div class="watched-toggle">
-                <%=i18n.__( "Not Seen") %>
-            </div>
-            <div class="sub-dropdown">
-                <%=i18n.__( "Subtitles") %>
-                    <div class="sub-flag-icon flag selected-lang none"></div>
-                    <div class="sub-dropdown-arrow"></div>
-            </div>
-            <div class="flag-container">
-                <div class="sub-flag-icon flag none" data-lang="none" title="<%= i18n.__(" Disabled ") %>"></div>
-                <% for(var lang in subtitle){ %>
-                    <div class="sub-flag-icon flag <%= lang %>" data-lang="<%= lang %>" title="<%= App.Localization.langcodes[lang].nativeName %>"></div>
-                    <% } %>
-            </div>
-            <br>
-            <div class="button dropup" id="player-chooser"></div>
-            <div id="watch-trailer" class="button">
-                <%=i18n.__( "Watch Trailer") %>
-            </div>
-            <div class="movie-quality-container">
-                <% if (torrents[ "720p"] !==undefined && torrents[ "1080p"] !==undefined) { %>
-                    <div class="q720">720p</div>
-                    <div class="q1080">1080p</div>
-                    <div class="quality switch white">
-                        <input data-toogle="tooltip" data-placement="top" title="720p - <%= Common.fileSize(torrents['720p'].size) %><br>1080p - <%= Common.fileSize(torrents['1080p'].size) %>" type="radio" name="switch" id="switch-hd-off">
-                        <input data-toogle="tooltip" data-placement="top" title="720p - <%= Common.fileSize(torrents['720p'].size) %><br>1080p - <%= Common.fileSize(torrents['1080p'].size) %>" type="radio" name="switch" id="switch-hd-on" checked>
-                        <span class="toggle"></span>
-                    </div>
-                    <% } else { %>
-                        <% if (torrents[ "720p"] !==undefined) { %>
-                            <div data-toogle="tooltip" data-placement="top" title="<%= Common.fileSize(torrents['720p'].size) %>" class="q720">720p</div>
-                            <% }else if (torrents[ "1080p"] !==undefined) { %>
-                                <div data-toogle="tooltip" data-placement="top" title="<%= Common.fileSize(torrents['1080p'].size) %>" class="q720">1080p</div>
-                                <% } else { %>HDRip
-                                    <% } %>
-                                        <% } %>
-            </div>
+            <div class="watchnow-btn"><i class="md-play-arrow"></i>Watch Now</div>
         </div>
-    </section>

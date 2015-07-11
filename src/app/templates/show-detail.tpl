@@ -1,7 +1,8 @@
 <div class="bg-backdrop" data-bgr="<%= images.fanart %>"></div>
         <div class="overlay"></div>
         <div class="summary-wrapper">
-            <div class="summary-overlay"> <i class="zmdi zmdi-arrow-left zmdi-hc-lg back"></i>
+            <div class="summary-overlay">
+            <paper-icon-button class="back" icon="arrow-back"></paper-icon-button>
                 <div class="title"><%= title %></div>
                 <i class="zmdi zmdi-bookmark-outline zmdi-hc-lg bookmark-toggle"></i>
                 <i class="zmdi zmdi-eye zmdi-hc-lg watched-toggle"></i>
@@ -51,6 +52,9 @@ var seasonID = parseInt(season) +1;
                     <p><%= runtime %> min</p>
                 </div>
                 <div class="meta-synop"><%= synopsis %></div>
+                
+                <div class="meta-btn"><%=i18n.__( "Read More") %></div>
+
                 <div class="meta-divider"></div>
                 <div class="people">
                     <p>David Benioff, D.B. Weiss</p>

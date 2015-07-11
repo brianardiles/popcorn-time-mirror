@@ -22,7 +22,7 @@
                         <p><%=runtime %> min</p>
                     </div>
                     <div class="meta-synop"><%=synopsis %></div>
-                    <div class="meta-btn">read more</div>
+                    <div class="meta-btn"><%=i18n.__( "Read More") %></div>
                     <div class="meta-btn"><%=i18n.__( "Watch Trailer") %></div>
                     <div class="meta-divider"></div>
                     <div class="people">

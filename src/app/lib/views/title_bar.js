@@ -12,11 +12,10 @@ var os = require('os');
 
     var TitleBar = Backbone.Marionette.ItemView.extend({
         template: '#header-tpl',
-
         events: {
-            'click .btn-os.os-max': 'maximize',
-            'click .btn-os.os-min': 'minimize',
-            'click .btn-os.os-close': 'closeWindow',
+            'click .max': 'maximize',
+            'click .min': 'minimize',
+            'click .close': 'closeWindow',
             'click .btn-os.fullscreen': 'toggleFullscreen'
         },
 
@@ -31,27 +30,9 @@ var os = require('os');
 
             fsTooltipPos: function () {
                 return App.Config.platform === 'darwin' ? 'left' : 'right';
-            },
-
-            events: function () {
-                var date = new Date();
-                var today = ('0' + (date.getMonth() + 　1)).slice(-2) + ('0' + (date.getDate())).slice(-2);
-                if (today === '1231' || today === '0101') {
-                    return 'newyear';
-                } else if (today >= '1218' || today <= '0103') {
-                    return 'xmas';
-                } else if (today >= '1027' && today <= '1103') {
-                    return 'halloween';
-                } else if (today === '0220') {
-                    return 'pt_anniv';
-                } else if (today === '0214') {
-                    return 'stvalentine';
-                } else if (today === '0317') {
-                    return 'stpatrick';
-                } else if (today === '0401') {
-                    return 'aprilsfool';
-                }
             }
+
+
         },
 
         maximize: function () {
@@ -87,21 +68,10 @@ var os = require('os');
 
         toggleFullscreen: function () {
             win.toggleFullscreen();
-            if (this.nativeWindow.isFullscreen) {
-                $('.os-min, .os-max').css('display', 'none');
-            } else {
-                $('.os-min, .os-max').css('display', 'block');
-            }
-            this.$el.find('.btn-os.fullscreen').toggleClass('active');
         },
 
         onShow: function () {
-            $('.tooltipped').tooltip({
-                delay: {
-                    'show': 800,
-                    'hide': 100
-                }
-            });
+
         }
 
     });

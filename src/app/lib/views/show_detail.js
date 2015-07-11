@@ -6,6 +6,7 @@
     var ShowDetail = Backbone.Marionette.ItemView.extend({
         template: '#show-detail-tpl',
         tagName: 'section',
+
         className: 'show-detail',
 
         ui: {

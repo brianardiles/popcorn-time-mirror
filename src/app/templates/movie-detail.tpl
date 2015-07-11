@@ -9,7 +9,7 @@
                     </div>
                     <div class="meta-dot"></div>
                     <div class="meta-item">
-                        <p><%=genre.join( " / ") %></p>
+                        <p><%=genre.join( " , ") %></p>
                     </div>
                     <div class="meta-dot"></div>
                     <div class="meta-item">

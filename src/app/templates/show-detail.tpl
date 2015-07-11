@@ -1,4 +1,4 @@
-<div class="bg-backdrop" style="background-image: url(https://walter.trakt.us/images/shows/000/001/390/fanarts/original/39f9936d62.jpg);"></div>
+<div class="bg-backdrop" style="background-image: url(<%= images.fanart %>);"></div>
         <div class="overlay"></div>
         <header>
             <span>Popcorn Time</span>
@@ -13,13 +13,13 @@
         </header>
         <div class="summary-wrapper">
             <div class="summary-overlay"> <i class="md-arrow-back md-lg back"></i>
-                <div class="title">Game of Thrones</div>
+                <div class="title"><%= title %></div>
                 <i class="md-bookmark-outline md-lg bookmark-toggle"></i>
                 <i class="md-remove-red-eye md-lg watched-toggle"></i>
                 <i class="md-chevron-left md-lg season-prev"></i>
                 <div class="seasons-wrapper">
                     <ul class="seasons-container owl-carousel">
-                        <li data-poster="https://walter.trakt.us/images/shows/000/001/390/posters/medium/e2e8d04f11.jpg" data-id="0" class="active">Show&nbsp;Info</li>
+                        <li data-poster="https://walter.trakt.us/images/shows/000/001/390/posters/medium/e2e8d04f11.jpg" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
                         <li data-poster="https://walter.trakt.us/images/seasons/000/003/963/posters/thumb/3b1d09801b.jpg" data-id="1">Season&nbsp;1</li>
                         <li data-poster="https://walter.trakt.us/images/seasons/000/003/964/posters/thumb/7be9351659.jpg" data-id="2">Season&nbsp;2</li>
                         <li data-poster="https://walter.trakt.us/images/seasons/000/003/965/posters/thumb/70375805b1.jpg" data-id="3">Season&nbsp;3</li>
@@ -30,23 +30,23 @@
             </div>
         </div>
         <div class="info-wrapper">
-            <img src="https://walter.trakt.us/images/shows/000/001/390/posters/medium/e2e8d04f11.jpg" class="poster" />
+            <img src="<%= images.poster %>" class="poster" />
             <div id="season-0" class="meta-container show-info episode-list-show">
                 <div class="meta-item"><i class="md-star"></i><i class="md-star"></i><i class="md-star"></i><i class="md-star"></i><i class="md-star-outline"></i>
                 </div>
                 <div class="meta-dot"></div>
                 <div class="meta-item">
-                    <p>Drama, Fanacy</p>
+                    <p><%= genres.join(" , ") %></p>
                 </div>
                 <div class="meta-dot"></div>
                 <div class="meta-item">
-                    <p>2011 - Ongoing</p>
+                    <p><%= year %> - Ongoing</p>
                 </div>
                 <div class="meta-dot"></div>
                 <div class="meta-item">
-                    <p>60 min</p>
+                    <p><%= runtime %> min</p>
                 </div>
-                <div class="meta-synop">Game of Thrones is an American fantasy drama television series created for HBO by David Benioff and D. B. Weiss. It is an adaptation of A Song of Ice and Fire, George R. R. Martin's series of fantasy novels, the first of which is titled A Game of Thrones. The series, set on the fictional continents of Westeros and Essos at the end of a decade-long summer, interweaves several plot lines. The first follows the members of several noble houses in a civil war for the Iron Throne of the Seven Kingdoms; the second covers the rising threat of the impending winter and the mythical creatures of the North; the third chronicles the attempts of the exiled last scion of the realm's deposed dynasty to reclaim the throne. Through its morally ambiguous characters, the series explores the issues of social hierarchy, religion, loyalty, corruption, sexuality, civil war, crime, and punishment.</div>
+                <div class="meta-synop"><%= synopsis %></div>
                 <div class="meta-divider"></div>
                 <div class="people">
                     <p>David Benioff, D.B. Weiss</p>
@@ -160,5 +160,5 @@
                         </ul>
                     </li>
                 </div>
-                <div class="watchnow-btn"><i class="md-play-arrow"></i>PLAY S01E01</div>
+                <div class="watchnow-btn"><i class="md-play-arrow"></i><%=i18n.__( "Play") %> S01E01</div>
             </div>

@@ -3,7 +3,9 @@
                 <div class="title"><%= title %></div>
                 <i class="zmdi zmdi-bookmark-outline zmdi-hc-lg bookmark-toggle"></i>
                 <i class="zmdi zmdi-eye zmdi-hc-lg watched-toggle"></i>
+                   <paper-shadow z="1">  
                 <img src="<%= cover %>" class="poster" />
+                 </paper-shadow>
                 <div class="meta">
                     <div class="meta-item"><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star-outline"></i>
                     </div>
@@ -76,5 +78,7 @@
                         </pt-dropdown>
                     </li>
                 </div>
-                <div class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %> S01E01</div>
+                 <paper-shadow z="1">  
+                <paper-button class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Watch Now") %></paper-button>
+                </paper-shadow>
             </div>

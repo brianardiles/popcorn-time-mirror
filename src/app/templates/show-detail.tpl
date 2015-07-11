@@ -19,14 +19,24 @@
                 <i class="md-chevron-left md-lg season-prev"></i>
                 <div class="seasons-wrapper">
                     <ul class="seasons-container owl-carousel">
-                        <li data-poster="<%= images.poster %>" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
-                        <% var torrents = {};
+                        <li data-poster="<%= images.poster %>" data-id="1" class="active"><%= i18n.__( "Show Info") %></li>
+                        <% var torrents = {},
+                                seasontext;
                         _.each(episodes, function(value, currentEpisode) {
                             if (!torrents[value.season]) torrents[value.season] = {};
                             torrents[value.season][value.episode] = value;
                         });
-                        _.each(torrents, function(value, season) { %>
-                          <li data-poster="" data-id="<%= season %>"><%= i18n.__("Season %s", season) %></li>
+                        _.each(torrents, function(value, season) {
+console.log(season);
+                        if(season !== '0'){ 
+                            seasontext = i18n.__("Season %s", season) ; 
+                        } else{
+                            seasontext = i18n.__("Special Features") ;
+                        }
+
+
+                         %>
+                          <li data-poster="<%= images.poster %>" data-id="<%= season + 1 %>"> <%= seasontext %></li>
                         <% }); %>
                        
                     </ul>
@@ -73,7 +83,7 @@
             <div class="episode-container">
 
                 <% _.each(torrents, function(value, season) { %>
-                  <ul id="season-<%=season %>" class="">
+                  <ul id="season-<%=season + 1 %>" class="">
                             <% _.each(value, function(episodeData, episode) {
                                 var first_aired = '';
                                 if (episodeData.first_aired !== undefined) {

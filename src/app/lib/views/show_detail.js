@@ -50,29 +50,35 @@
 
         },
 
-        selectNextEpisode: function (episodes, unWatchedEpisodes) {
+        selectNextEpisode: function (episodes, unWatchedEpisodes, watchedEpisodes) {
             episodes = _.sortBy(episodes, 'id');
             unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
             var select;
-
+            console.log(watchedEpisodes.length);
             switch (Settings.tv_detail_jump_to) {
             case 'info':
-                select = {
-                    season: 0 //info page season = 0
-                };
+                select = false;
                 break;
             case 'next':
-                if (unWatchedEpisodes.length > 0) {
-                    select = _.last(unWatchedEpisodes);
+                if (watchedEpisodes.length === 0) {
+                    select = false;
                 } else {
-                    select = _.last(episodes);
+                    if (unWatchedEpisodes.length > 0) {
+                        select = _.last(unWatchedEpisodes);
+                    } else {
+                        select = _.last(episodes);
+                    }
                 }
                 break;
             case 'firstUnwatched':
-                if (unWatchedEpisodes.length > 0) {
-                    select = _.first(unWatchedEpisodes);
+                if (watchedEpisodes.length === 0) {
+                    select = false;
                 } else {
-                    select = _.last(episodes);
+                    if (unWatchedEpisodes.length > 0) {
+                        select = _.first(unWatchedEpisodes);
+                    } else {
+                        select = _.last(episodes);
+                    }
                 }
                 break;
             case 'first':
@@ -83,15 +89,8 @@
                 break;
             }
 
-
-            if (Settings.tv_detail_jump_to === 'next' && unWatchedEpisodes.length > 0) {
-                select = _.first(unWatchedEpisodes);
-            } else {
-                select = _.last(episodes);
-            }
-
-            this.selectSeason(null, select.season);
-            if (select.season !== 0) {
+            if (select.season) {
+                this.selectSeason(null, select.season);
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
                 this.selectEpisode(null, episodeUIid);
             }
@@ -182,6 +181,7 @@
         },
         isShowWatched: function () {
             var unWatchedEpisodes = [];
+            var watchedEpisodes = [];
             var tvdb_id = this.model.get('tvdb_id');
             var imdb_id = this.model.get('imdb_id');
             var that = this;
@@ -206,6 +206,11 @@
                             });
                             return true;
                         } else {
+                            watchedEpisodes.push({
+                                id: parseInt(episode.season) * 100 + parseInt(episode.episode),
+                                season: episode.season,
+                                episode: episode.episode
+                            });
                             that.markWatched(value, true);
                             return true;
                         }
@@ -216,7 +221,7 @@
                             episode: episode.episode
                         });
                         if (checkedEpisodes.length === episodes.length) {
-                            that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes);
+                            that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes, watchedEpisodes);
                         }
 
                     });
@@ -247,7 +252,6 @@
             }
         },
         selectSeason: function (e, season) {
-            console.log(season);
             $('.seasons-container li').removeClass('active');
             if (!season) {
                 $(e.currentTarget).addClass('active');
@@ -368,6 +372,7 @@
                     $(".season-next").show();
                 }
             });
+
         },
 
         closeDetails: function (e) {

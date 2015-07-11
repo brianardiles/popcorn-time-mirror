@@ -44,33 +44,28 @@
         </div>
           <div class="controls-container">
                 <div class="meta-container-c">
-                    <li class="quality-toggle"><i class="zmdi zmdi-hd"></i>
-                        <p>480p</p>
-                        <p>720p</p>
-                        <p class="active">1080p</p>
+                    <li class="quality-toggle">
+                        <pt-toggle id="quality-toggle" icon="av:high-quality">
+                            <pt-selectable-element value="720" label="720p"></pt-selectable-element>
+                            <pt-selectable-element value="1080" label="1080p" selected></pt-selectable-element>
+                        </pt-toggle>
                     </li>
-                    <li><i class="zmdi zmdi-closed-caption"></i>
-                        <p>English</p>
+                    <li class="subtitles-dropdown">
+                        <pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles">
+                            <pt-selectable-element selected value="en" label="English"></pt-selectable-element>
+                            <pt-selectable-element value="es" label="Spanish"></pt-selectable-element>
+                            <pt-selectable-element value="de" label="German"></pt-selectable-element>
+                            <pt-selectable-element value="fr" label="French"></pt-selectable-element>
+                        </pt-dropdown>
                     </li>
-                    <li id="player-option"><i id="current-player-icon" class="zmdi zmdi-cast-connected"></i>
-                        <p id="current-player-name">Living Room TV</p>
-                        <ul class="dropdown">
-                            <li class="active"><i class="zmdi zmdi-tv"></i>
-                                <p>Living Room TV</p>
-                            </li>
-                            <li><i class="zmdi zmdi-cast-connected"></i>
-                                <p>Chromecast</p>
-                            </li>
-                            <li><i class="zmdi zmdi-desktop-windows"></i>
-                                <p>VLC</p>
-                            </li>
-                            <li><i class="zmdi zmdi-cast-connected"></i>
-                                <p>Chromecast</p>
-                            </li>
-                            <li><i class="zmdi zmdi-desktop-windows"></i>
-                                <p>VLC</p>
-                            </li>
-                        </ul>
+                    <li id="player-option" class="device-dropdown">
+                        <pt-dropdown id="device-selector" openDir="up">
+                            <pt-selectable-element selected value="pt" label="Popcorn Time" src="images/icons/local-icon.png"></pt-selectable-element>
+                            <pt-selectable-element value="vlc" label="VLC" src="images/icons/external-vlc-icon.png"></pt-selectable-element>
+                            <pt-selectable-element value="mplayer" label="Mplayer" src="images/icons/external-mplayer-icon.png"></pt-selectable-element>
+                            <pt-selectable-element value="airplay" label="Apple TV" src="images/icons/airplay-icon.png"></pt-selectable-element>
+                            <pt-selectable-element value="chromecast" label="Chromecast" src="images/icons/chromecast-icon.png">Chromecast</pt-selectable-element>
+                        </pt-dropdown>
                     </li>
                 </div>
                 <div class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %> S01E01</div>

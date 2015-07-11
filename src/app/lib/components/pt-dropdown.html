@@ -1,0 +1,241 @@
+<link href="../../vendor/polymer/polymer.html" rel="import">
+<link href="../../vendor/core-icons/core-icons.html" rel="import">
+
+<polymer-element name="pt-dropdown" attributes="selectedIndex openDir openedIcon closedIcon multiple conditional icon">
+    <template>
+        <style>
+            :host {
+                display: inline-block;
+                position: relative;
+                cursor: pointer;
+                margin-left: -1em;
+                transform: translateZ(0);
+            }
+
+            #options {
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding: 0;
+                margin: 0;
+                opacity: 0;
+                min-width: 100px;
+                transition: all 0.2s ease-out;
+                visibility: hidden;
+                background: #1c1d21;
+                box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+
+            }
+
+            #options.down {
+                transform: translateY(-50px);
+            }
+
+            #options.up {
+                top:auto;
+                bottom: 0;
+                transform: translateY(50px);
+            }
+
+            #options.open {
+                visibility: visible;
+                opacity: 1;
+                transform: translateY(0);
+                z-index: 1000;
+            }
+
+            #label #arrow {
+                position: absolute;
+                right: -12px;
+                top: 50%;
+                margin-top: -12px;
+                -webkit-filter: drop-shadow( 1px 0px 1px rgba(20, 19, 21, 0.7) );
+                filter: drop-shadow( 1px 0px 1px rgba(20, 19, 21, 0.7) );
+            }
+
+            #label #icon {
+                display: inline-block;
+            }
+
+            ::content pt-selectable-element, pt-selectable-element {
+                display: block;
+                position: relative;
+                white-space: nowrap;
+                padding: 0.7em 1em;
+            }
+
+            /*
+            ::content pt-selectable-element:hover {
+            background: rgba(255, 255, 255, 0.1);
+            }
+
+            ::content pt-selectable-element.selected {
+            background: rgba(255, 255, 255, 0.2);
+            }
+            */
+        </style>
+
+        <div id="label">
+            <template if="{{icon || src}}">
+                <core-icon id="icon" src="{{src}}" id="icon" icon="{{icon}}" hidden?="{{!src && !icon}}"></core-icon>
+            </template>
+            <template if="{{openedIcon || closedIcon}}">
+                <core-icon id="arrow" icon="{{opened ? openedIcon : closedIcon}}"></core-icon>
+            </template>
+        </div>
+        <div id="options" class="{{openDir}}">
+            <content select="pt-selectable-element"></content>
+        </div>
+    </template>
+    <script>
+        (function () {
+            Polymer({
+                selectedIndex: 0,
+                selected: '',
+                openDir: 'down',
+                openedIcon: 'arrow-drop-up',
+                closedIcon: 'arrow-drop-down',
+                opened: false,
+                multiple: false,
+                contitional: false,
+
+                ready: function() {
+                    var that = this,
+                        maxWidth = 0;
+
+                    if (this.multiple) {
+                        this.options = this.$.options.querySelector('content').getDistributedNodes();
+                        this.selected = [];
+                        this.label = document.createElement('pt-selectable-element');
+                        this.$.label.appendChild(this.label);
+
+                        for (var i = 0; i < this.options.length; i++) {
+                            var el = this.options[i];
+                            el.setAttribute('index', i);
+                            el.setAttribute('checkable', true);
+
+                            if (el.getAttribute('selected') !== null) {
+                                el.setAttribute('checked', true);
+                            }
+
+                            if (el.getAttribute('checked') !== null) {
+                                this.selected.push(el.getAttribute('label'));
+                            }
+
+                            el.addEventListener('change', this.elementChanged.bind(this));
+                        };
+
+                        this.setLabelElement();
+                    } else {
+                        this.options = this.$.options.querySelector('content').getDistributedNodes();
+                        this.optionSelected = this.options[this.selectedIndex];
+                        this.selected = this.options[this.selectedIndex].cloneNode();
+                        this.selected.setAttribute('selected', false);
+
+                        for (var i = 0; i < this.options.length; i++) {
+                            var el = this.options[i];
+                            el.setAttribute('index', i);
+                            if (this.selectedIndex === i) {
+                                el.setAttribute('selected', true);
+                            }
+                            el.addEventListener('click', this.elementClicked.bind(this));
+                        };
+
+                        this.setLabelElement();
+                    }
+
+                    this.$.label.addEventListener('click', function() {
+                        that.toggle();
+                        return false;
+                    });
+
+                    document.addEventListener('click', function(e) {
+                        var elNodes = ["pt-dropdown", "pt-selectable-element"],
+                            target = e.target.nodeName.toLowerCase();
+
+                        if (that.opened && elNodes.indexOf(target) === -1) {
+                            that.toggle();
+                        }
+                    });
+                },
+
+                setLabelElement: function() {
+                    if (this.multiple) {
+                        this.label.setAttribute('label', this.selected.join(', '));
+                    } else {   
+                        this.$.label.appendChild(this.selected);
+                    }
+
+                },
+
+                elementChanged: function(ev) {
+                    var target = ev.target,
+                        cond = false;
+
+                    if (target.getAttribute('value') == this.conditional && target.checked) {
+                        for (var i = 0; i < this.options.length; i++) {
+                            var el = this.options[i];
+
+                            if (this.conditional !== el.getAttribute('value')) {
+                                el.checked = false;
+                            }
+                        }
+                    }
+
+                    this.selected = [];
+                    for (var i = 0; i < this.options.length; i++) {
+                        var el = this.options[i];
+
+                        if (this.conditional == el.getAttribute('value')) {
+                            cond = el;
+                        }
+
+                        if (el.checked) {
+                            this.selected.push(el.getAttribute('label'));
+                        }
+                    }
+
+                    if (cond && this.selected.length > 1) {
+                        cond.checked = false;
+                        var index = this.selected.indexOf(cond.getAttribute('label'));
+                        if (index !== -1) {
+                            this.selected.splice(index, 1);
+                        }
+                    } else if (cond && this.selected.length == 0) {
+                        this.selected.push(cond.getAttribute('label'));
+                        cond.checked = true;
+                    }
+                    this.setLabelElement();
+                },
+
+                elementClicked: function(ev) {
+                    var el = ev.target,
+                        index = el.getAttribute('index');
+
+                    if (this.selectedIndex !== index) {
+                        this.options[this.selectedIndex].setAttribute('selected', false);
+                        this.selectedIndex = index;
+                        this.selected.parentNode.removeChild(this.selected);
+                        this.selected = el.cloneNode();
+                        el.setAttribute('selected', true);
+                        this.setLabelElement();
+                        this.fire('change', {value: el.getAttribute('value'), label: el.getAttribute('label') });
+                    }
+
+                    this.toggle();
+                },
+
+                toggle: function() {
+                    this.opened = !this.opened;
+
+                    if (this.opened) {
+                        this.$.options.className = this.openDir+' open';
+                    } else {
+                        this.$.options.className = this.openDir;
+                    }   
+                }
+            });
+        })();
+    </script>
+</polymer-element>

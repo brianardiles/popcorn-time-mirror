@@ -56,6 +56,11 @@
             var select;
 
             switch (Settings.tv_detail_jump_to) {
+            case 'info':
+                select = {
+                    season: 0 //info page season = 0
+                };
+                break;
             case 'next':
                 if (unWatchedEpisodes.length > 0) {
                     select = _.last(unWatchedEpisodes);
@@ -84,9 +89,11 @@
             } else {
                 select = _.last(episodes);
             }
-            this.selectSeason(null, select.season);
-            var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
-            this.selectEpisode(null, episodeUIid);
+            if (select.season !== 0) {
+                this.selectSeason(null, select.season);
+                var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
+                this.selectEpisode(null, episodeUIid);
+            }
         },
 
         toggleWatched: function (e) {
@@ -235,7 +242,7 @@
             if (!episodeUIid) {
                 $(e.currentTarget).addClass('active');
             } else {
-                $('#episodeTab-' + episodeUIid).addClass('active');
+                $('#episodeTab-' + episodeUIid).click();
             }
         },
         selectSeason: function (e, season) {

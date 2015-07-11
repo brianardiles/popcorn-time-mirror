@@ -22,7 +22,8 @@
             'click .bookmark-toggle': 'toggleBookmarked',
             'click .seasons-container li': 'selectSeason',
             'click .episode-container ul li': 'selectEpisode',
-            'click .watched-icon': 'toggleWatched'
+            'click .watched-icon': 'toggleWatched',
+            'click #imdb-link': 'openIMDb'
         },
 
 
@@ -48,6 +49,73 @@
             this.playerQualityChooseUI();
             this.isShowWatched();
 
+        },
+
+        startStreaming: function (e) {
+
+            if (e.type) {
+                e.preventDefault();
+            }
+            var that = this;
+            var title = that.model.get('title');
+            var episode = this.selectedTorrent.episode;
+            var episode_id = this.selectedTorrent.episodeid;
+            var season = this.selectedTorrent.season;
+            var name = this.selectedTorrent.title;
+
+            var episodes = [];
+            var episodes_data = [];
+            var selected_quality = this.selectedTorrent.quality;
+
+            if (AdvSettings.get('playNextEpisodeAuto') && this.model.get('imdb_id').indexOf('mal') === -1) {
+                _.each(this.model.get('episodes'), function (value) {
+                    var epaInfo = {
+                        id: parseInt(value.season) * 100 + parseInt(value.episode),
+                        title: value.title,
+                        torrents: value.torrents,
+                        season: value.season,
+                        episode: value.episode,
+                        episode_id: value.tvdb_id,
+                        tvdb_id: that.model.get('tvdb_id'),
+                        imdb_id: that.model.get('imdb_id')
+                    };
+                    episodes_data.push(epaInfo);
+                    episodes.push(parseInt(value.season) * 100 + parseInt(value.episode));
+                });
+                episodes.sort();
+                episodes_data = _.sortBy(episodes_data, 'id');
+
+            } else {
+                episodes = null;
+                episodes_data = null;
+            }
+
+            var torrentStart = {
+                torrent: this.selectedTorrent.def,
+                type: 'show',
+                metadata: {
+                    title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
+                    showName: title,
+                    season: season,
+                    episode: episode,
+                    cover: that.model.get('images').poster,
+                    tvdb_id: that.model.get('tvdb_id'),
+                    episode_id: episode_id,
+                    imdb_id: that.model.get('imdb_id'),
+                    backdrop: that.model.get('images').fanart,
+                    quality: selected_quality
+                },
+                autoPlayData: {
+                    episodes: episodes,
+                    streamer: 'main',
+                    episodes_data: episodes_data
+                },
+                defaultSubtitle: Settings.subtitle_language,
+                status: that.model.get('status'),
+                device: App.Device.Collection.selected
+            };
+
+            App.Streamer.start(torrentStart);
         },
         loadbackground: function () {
             var that = this;
@@ -432,7 +500,9 @@
             });
 
         },
-
+        openIMDb: function () {
+            gui.Shell.openExternal('http://www.imdb.com/title/' + this.model.get('imdb_id'));
+        },
         closeDetails: function (e) {
             App.vent.trigger('show:closeDetail');
         }

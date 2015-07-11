@@ -22,8 +22,8 @@
                         <p><%=runtime %> min</p>
                     </div>
                     <div class="meta-synop"><%=synopsis %></div>
-                    <div class="meta-btn"><%=i18n.__( "Read More") %></div>
-                    <div class="meta-btn"><%=i18n.__( "Watch Trailer") %></div>
+                    <div id="imdb-link" class="meta-btn"><%=i18n.__( "Read More") %></div>
+                    <div id="play-trailer" class="meta-btn"><%=i18n.__( "Watch Trailer") %></div>
                     <div class="meta-divider"></div>
                     <div class="people">
                         <p>David Benioff, D.B. Weiss</p>
@@ -70,7 +70,7 @@
                     </li>
                     <li id="player-option" class="device-dropdown">
                         <pt-dropdown id="device-selector" openDir="up">
-                            <pt-selectable-element selected value="pt" label="Popcorn Time" src="images/icons/local-icon.png"></pt-selectable-element>
+                            <pt-selectable-element selected value="local" label="Popcorn Time" src="images/icons/local-icon.png"></pt-selectable-element>
                             <pt-selectable-element value="vlc" label="VLC" src="images/icons/external-vlc-icon.png"></pt-selectable-element>
                             <pt-selectable-element value="mplayer" label="Mplayer" src="images/icons/external-mplayer-icon.png"></pt-selectable-element>
                             <pt-selectable-element value="airplay" label="Apple TV" src="images/icons/airplay-icon.png"></pt-selectable-element>

@@ -52,8 +52,8 @@ var seasonID = parseInt(season) +1;
                     <p><%= runtime %> min</p>
                 </div>
                 <div class="meta-synop"><%= synopsis %></div>
-                
-                <div class="meta-btn"><%=i18n.__( "Read More") %></div>
+
+                <div id="imdb-link" class="meta-btn"><%=i18n.__( "Read More") %></div>
 
                 <div class="meta-divider"></div>
                 <div class="people">

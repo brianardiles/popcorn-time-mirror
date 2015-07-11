@@ -89,7 +89,7 @@ var seasonID = parseInt(season) +1;
                                 var episodeUIid = 'S'+ formatTwoDigit(season) + 'E'+ formatTwoDigit(episodeData.episode);
                             %>
     
-                       <li data-tvdb="<%=episodeData.tvdb_id %>" data-season="<%= season %>" data-episode="<%= episodeData.episode %>" id="episodeTab-<%= episodeUIid %>" class="" >
+                       <li data-tvdb="<%=episodeData.tvdb_id %>" data-season="<%= season %>" data-episode="<%= episodeData.episode %>" id="episodeTab-<%= episodeUIid %>" class="epsiode-tab" >
             
                         <p class="episode-id"><%=episodeUIid %></p>
                         <p class="episode-name"><%=episodeData.title %></p>
@@ -131,6 +131,6 @@ var seasonID = parseInt(season) +1;
                     </li>
                 </div>
                  <paper-shadow z="1">  
-                <paper-button class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %> S01E01</paper-button>
+                <paper-button class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %>&nbsp;<span>S01E01</span></paper-button>
                 </paper-shadow>
             </div>

@@ -11,7 +11,7 @@
         ui: {
             poster: '.poster',
             background: '.bg-backdrop',
-            startStreaming: '.watchnow-btn',
+            startStreamingUI: '.watchnow-btn span',
             bookmarkedIcon: '.bookmark-toggle'
         },
 
@@ -23,7 +23,8 @@
             'click .seasons-container li': 'selectSeason',
             'click .episode-container ul li': 'selectEpisode',
             'click .watched-icon': 'toggleWatched',
-            'click #imdb-link': 'openIMDb'
+            'click #imdb-link': 'openIMDb',
+            'click .epsiode-tab': 'setStream'
         },
 
 
@@ -52,20 +53,16 @@
         },
 
         startStreaming: function (e) {
-
-            if (e.type) {
-                e.preventDefault();
-            }
             var that = this;
             var title = that.model.get('title');
-            var episode = this.selectedTorrent.episode;
-            var episode_id = this.selectedTorrent.episodeid;
-            var season = this.selectedTorrent.season;
-            var name = this.selectedTorrent.title;
+            var episode = this.Stream.episode;
+            var episode_id = this.Stream.tvdb_id;
+            var season = this.Stream.season;
+            var name = this.Stream.title;
 
             var episodes = [];
             var episodes_data = [];
-            var selected_quality = this.selectedTorrent.quality;
+            var selected_quality = this.Stream.quality;
 
             if (AdvSettings.get('playNextEpisodeAuto') && this.model.get('imdb_id').indexOf('mal') === -1) {
                 _.each(this.model.get('episodes'), function (value) {
@@ -91,18 +88,18 @@
             }
 
             var torrentStart = {
-                torrent: this.selectedTorrent.def,
+                torrent: this.Stream.torrent,
                 type: 'show',
                 metadata: {
                     title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
                     showName: title,
                     season: season,
                     episode: episode,
-                    cover: that.model.get('images').poster,
-                    tvdb_id: that.model.get('tvdb_id'),
+                    cover: this.model.get('images').poster,
+                    tvdb_id: this.model.get('tvdb_id'),
                     episode_id: episode_id,
-                    imdb_id: that.model.get('imdb_id'),
-                    backdrop: that.model.get('images').fanart,
+                    imdb_id: this.model.get('imdb_id'),
+                    backdrop: this.model.get('images').fanart,
                     quality: selected_quality
                 },
                 autoPlayData: {
@@ -360,6 +357,62 @@
                 coverCache = null;
             };
         },
+
+        setStream: function (e) {
+            var season = $(e.currentTarget).data('season');
+            var episode = $(e.currentTarget).data('episode');
+            var episodeData = _.findWhere(this.model.get('episodes'), {
+                season: season,
+                episode: episode
+            });
+
+            var torrents = episodeData.torrents,
+                quality;
+
+            switch (Settings.shows_default_quality) {
+            case '1080p':
+                if (torrents['1080p']) {
+                    quality = '1080p';
+                } else if (torrents['720p']) {
+                    quality = '720p';
+                } else if (torrents['480p']) {
+                    quality = '480p';
+                }
+                break;
+            case '720p':
+                if (torrents['720p']) {
+                    quality = '720p';
+                } else if (torrents['480p']) {
+                    quality = '480p';
+                } else if (torrents['1080p']) {
+                    quality = '1080p';
+                }
+                break;
+            case '480p':
+                if (torrents['480p']) {
+                    quality = '480p';
+                } else if (torrents['720p']) {
+                    quality = '720p';
+                } else if (torrents['1080p']) {
+                    quality = '1080p';
+                }
+                break;
+            }
+
+            var torrent = torrents[quality].url;
+
+            this.Stream = {
+                torrent: torrent,
+                quality: quality,
+                title: episodeData.title,
+                tvdb_id: episodeData.tvdb_id,
+                season: season,
+                episode: episode
+            };
+            var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
+            this.ui.startStreamingUI.text(episodeUIid)
+        },
+
         selectEpisode: function (e, episodeUIid) {
             $('.episode-container ul li').removeClass('active');
             if (!episodeUIid) {

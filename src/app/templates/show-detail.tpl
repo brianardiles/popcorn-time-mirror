@@ -1,4 +1,4 @@
-<div class="bg-backdrop" style="background-image: url(<%= images.fanart %>);"></div>
+<div class="bg-backdrop" data-bgr="<%= images.fanart %>"></div>
         <div class="overlay"></div>
         <div class="summary-wrapper">
             <div class="summary-overlay"> <i class="zmdi zmdi-arrow-left zmdi-hc-lg back"></i>
@@ -32,7 +32,7 @@ var seasonID = parseInt(season) +1;
             </div>
         </div>
         <div class="info-wrapper">
-            <img src="<%= images.poster %>" class="poster" />
+            <img data-bgr="<%= images.poster %>" src="" class="poster" />
             <div id="season-0" class="meta-container show-info episode-list-show">
                 <div class="meta-item"><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star-outline"></i>
                 </div>

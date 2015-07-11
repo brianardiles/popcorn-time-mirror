@@ -9,6 +9,8 @@
         className: 'show-detail',
 
         ui: {
+            poster: '.poster',
+            background: '.bg-backdrop',
             startStreaming: '.watchnow-btn',
             bookmarkedIcon: '.bookmark-toggle'
         },
@@ -30,11 +32,10 @@
 
         initialize: function () {
             this.renameUntitled();
-
-
+            this.getSeasonImages();
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
-            images.poster = App.Trakt.resizeImage(images.poster, 'thumb');
+            images.poster = App.Trakt.resizeImage(images.poster);
         },
 
         onShow: function () {
@@ -42,14 +43,50 @@
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
             }
-
-            this.playerQualityChooseUI();
+            this.loadImages();
             this.seasonsUI();
-            this.getSeasonImages();
+            this.playerQualityChooseUI();
             this.isShowWatched();
 
         },
+        loadImages: function () {
+            var that = this;
+            var cbackground = this.ui.poster.data('bgr');
+            var coverCache = new Image();
+            coverCache.src = cbackground;
+            coverCache.onload = function () {
+                try {
+                    that.ui.poster.addClass('fadein');
+                } catch (e) {}
+                coverCache = null;
+            };
+            coverCache.onerror = function () {
+                try {
+                    that.ui.poster.attr('src', 'url("images/posterholder.png")').addClass('fadein');
+                } catch (e) {}
+                coverCache = null;
+            };
 
+            var background = this.ui.background.data('bgr');
+            var bgCache = new Image();
+            bgCache.src = background;
+            bgCache.onload = function () {
+                try {
+                    that.ui.background.css('background-image', 'url(' + background + ')').addClass('fadein');
+                } catch (e) {
+                    console.log(e);
+                }
+                bgCache = null;
+            };
+            bgCache.onerror = function () {
+                try {
+                    that.ui.background.css('background-image', 'url("images/bg-header.jpg")').addClass('fadein');
+                } catch (e) {
+                    console.log(e);
+                }
+                bgCache = null;
+            };
+        },
         selectNextEpisode: function (episodes, unWatchedEpisodes, watchedEpisodes) {
             episodes = _.sortBy(episodes, 'id');
             unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
@@ -262,11 +299,12 @@
                 }, 'fast');
             } else {
                 var seasonID = parseInt(season) + 1;
-                $('#seasonTab-' + seasonID).click();
+                $('#seasonTab-' + seasonID).addClass('active');
                 var seasonId = $('#seasonTab-' + seasonID).data('id');
-                var posterURL = $('#seasonTab-' + seasonID).data('poster');
+                var posterURL = $('#seasonTab-' + seasonId).data('poster');
             }
-            $('.poster').attr('src', posterURL);
+            this.selectedSeason = seasonId;
+            this.ui.poster.attr('src', posterURL);
             $('.episode-list-show').removeClass('episode-list-show');
             $('#season-' + seasonId).addClass('episode-list-show');
 
@@ -292,23 +330,23 @@
         },
 
         getSeasonImages: function () {
-
+            var that = this;
             App.Trakt.seasons.summary(this.model.get('imdb_id'))
                 .then(function (seasonsinfo) {
                     if (!seasonsinfo) {
                         win.warn('Unable to fetch data from Trakt.tv');
                     } else {
                         seasonsinfo.forEach(function (entry) {
-                            console.log(entry);
-                            $('#seasonTab-' + entry.number + 1).attr('data-poster', entry.images.poster.full);
+                            var seasonID = parseInt(entry.number) + 1;
+                            $('#seasonTab-' + seasonID).data('poster', App.Trakt.resizeImage(entry.images.poster.full));
                         });
                     }
                 }).catch(function (err) {
                     console.log(err);
+
                 });
         },
         seasonsUI: function () {
-
 
             //owl.owlCarousel
             var owl = $(".seasons-container");

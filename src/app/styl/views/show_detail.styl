@@ -3,14 +3,20 @@
     height 100vh
     font-family 'Roboto', sans-serif
     width 100vw
+    background-color #17181b
     .bg-backdrop
         position fixed
         height 100vh
         width 100vw
         z-index 1
+        opacity 0
         background-position center
         background-size cover
         background-repeat no-repeat
+        &.fadein
+            transition: opacity .3s ease-in;
+            opacity: 1
+
     .overlay
         position absolute
         top 0
@@ -90,9 +96,13 @@
             margin-left 100px
             position relative
             width 45vh
+            opacity: 0
             z-index 3
             border-radius 2px
             box-shadow 0 1px 5px rgba(0, 0, 0, 0.39)
+            &.fadein
+                transition: opacity .3s ease-in;
+                opacity: 1
         .meta-container
             position absolute
             z-index 1

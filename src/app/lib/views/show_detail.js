@@ -75,7 +75,6 @@
             episodes = _.sortBy(episodes, 'id');
             unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
             var select;
-            console.log(watchedEpisodes.length);
             switch (Settings.tv_detail_jump_to) {
             case 'info':
                 select = false;
@@ -352,17 +351,13 @@
                     } else {
                         seasonsinfo.forEach(function (entry) {
                             var seasonID = parseInt(entry.number) + 1;
-                            console.log(seasonID);
                             try {
                                 $('#seasonTab-' + seasonID).data('poster', App.Trakt.resizeImage(entry.images.poster.full));
                             } catch (e) {}
                         });
                     }
                     that.seasonImagesLoaded = true;
-
                     var seasonID = parseInt(season) + 1;
-
-
                     $('#seasonTab-' + seasonID).addClass('active');
                     var seasonId = $('#seasonTab-' + seasonID).data('id');
                     var posterURL = $('#seasonTab-' + seasonId).data('poster');
@@ -417,7 +412,6 @@
 
             var seasons_container_width = $('.seasons-wrapper').width();
             var seasons_items_width = $('.seasons-wrapper ul li').width() * $('.seasons-wrapper ul li').length;
-            console.log(seasons_container_width, seasons_items_width);
             if (seasons_container_width > seasons_items_width) {
                 $(".season-prev").hide();
                 $(".season-next").hide();

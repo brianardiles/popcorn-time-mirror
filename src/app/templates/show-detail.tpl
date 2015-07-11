@@ -21,9 +21,9 @@
                         } else{
                             seasontext = i18n.__("Special Features") ;
                         }
-
+var seasonID = parseInt(season) +1;
                          %>
-                          <li id="seasonTab-<%= season + 1 %>" data-poster="<%= images.poster %>" data-id="<%= season + 1 %>"> <%= seasontext %></li>
+                          <li id="seasonTab-<%= seasonID %>" data-poster="<%= images.poster %>" data-id="<%= seasonID %>"> <%= seasontext %></li>
                         <% }); %>
                        
                     </ul>
@@ -69,8 +69,9 @@
             </div>
             <div class="episode-container">
 
-                <% _.each(torrents, function(value, season) { %>
-                  <ul id="season-<%=season + 1 %>" class="">
+                <% _.each(torrents, function(value, season) { 
+                    var seasonID = parseInt(season) +1; %>
+                  <ul id="season-<%= seasonID %>" class="">
                             <% _.each(value, function(episodeData, episode) {
                                 var first_aired = '';
                                 if (episodeData.first_aired !== undefined) {

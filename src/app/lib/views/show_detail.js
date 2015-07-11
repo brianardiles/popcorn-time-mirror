@@ -251,14 +251,20 @@
                 $(e.currentTarget).addClass('active');
                 var seasonId = $(e.currentTarget).data('id');
                 var posterURL = $(e.currentTarget).data('poster');
+                $('.episode-container').animate({
+                    scrollTop: 0
+                }, 'fast');
             } else {
+                var seasonID = parseInt(season) + 1;
                 $('#seasonTab-' + season + 1).click();
-                var seasonId = $('#seasonTab-' + season + 1).data('id');
-                var posterURL = $('#seasonTab-' + season + 1).data('poster');
+                var seasonId = $('#seasonTab-' + seasonID).data('id');
+                var posterURL = $('#seasonTab-' + seasonID).data('poster');
             }
             $('.poster').attr('src', posterURL);
             $('.episode-list-show').removeClass('episode-list-show');
-            $('#season-' + seasonId).addClass('episode-list-show').find('li.active').click();
+            $('#season-' + seasonId).addClass('episode-list-show');
+
+            $('#season-' + seasonId + ' li:first').click();
         },
 
         playerQualityChooseUI: function () {

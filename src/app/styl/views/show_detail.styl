@@ -342,10 +342,42 @@
                         &.visable
                             display block
                 &.quality-toggle
+                    pt-toggle::shadow #icon
+                        color: white
                     p
                         opacity 0.5
                         &.active
                             opacity 1
+                &.subtitles-dropdown
+                    padding-left: 1em
+                    color: white
+
+                    pt-dropdown
+                        z-index: 5
+                    pt-dropdown::shadow #label
+                        pt-selectable-element 
+                            display: inline-block
+                        #icon
+                            margin-right: 9px;
+                    
+                    pt-dropdown::shadow #options 
+                        right: 0
+                    
+                    pt-selectable-element.selected 
+                        font-weight: bold
+                    
+                    pt-selectable-element:hover 
+                        background: #3F51B5
+                            
+                &.device-dropdown
+                    color: white
+                    pt-dropdown
+                        z-index: 5
+                    pt-selectable-element.selected 
+                        font-weight: bold
+
+                    pt-selectable-element:hover 
+                        background: #3F51B5
             p
                 font-size 14px
                 text-shadow 1px 0px 2px rgba(20, 19, 21, 1)

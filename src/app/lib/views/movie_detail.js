@@ -34,16 +34,16 @@
         closeDetails: function () {
             App.vent.trigger('movie:closeDetail');
         },
-        qualityChanged: function(e) {
+        qualityChanged: function (e) {
             console.log('Quality Changed', e.originalEvent.detail);
         },
-        subtitlesChanged: function(e) {
-            console.log('Subtitles Changed',e.originalEvent.detail);
+        subtitlesChanged: function (e) {
+            console.log('Subtitles Changed', e.originalEvent.detail);
         },
-        deviceChanged: function(e) {
-            console.log('Device Changed',e.originalEvent.detail);
+        deviceChanged: function (e) {
+            console.log('Device Changed', e.originalEvent.detail);
         },
-        play: function(){
+        play: function () {
             console.log(this.ui);
             console.log('Options selected:', {
                 quality: this.ui.quality.get(0).selected.value,

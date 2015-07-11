@@ -36,6 +36,7 @@
         },
         qualityChanged: function (e) {
             console.log('Quality Changed', e.originalEvent.detail);
+            this.model.set('quality', e.originalEvent.detail.value);
         },
         subtitlesChanged: function (e) {
             console.log('Subtitles Changed', e.originalEvent.detail);

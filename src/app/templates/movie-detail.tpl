@@ -46,16 +46,24 @@
                 <div class="meta-container-c">
                     <li class="quality-toggle">
                         <pt-toggle id="quality-toggle" icon="av:high-quality">
-                            <pt-selectable-element value="720" label="720p"></pt-selectable-element>
-                            <pt-selectable-element value="1080" label="1080p" selected></pt-selectable-element>
+                            <% if (torrents["720p"] !== undefined) { %>
+                                <pt-selectable-element value="720p" label="720p" <%=Settings.movies_default_quality === '720p' ? 'selected':''%>></pt-selectable-element>
+                            <% } %>
+                            <% if (torrents["1080p"] !== undefined) { %>
+                                <pt-selectable-element value="1080p" label="1080p" <%=Settings.movies_default_quality === '1080p' ? 'selected':''%>></pt-selectable-element>
+                            <% } %>
+                            
+                            
                         </pt-toggle>
                     </li>
                     <li class="subtitles-dropdown">
                         <pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles">
-                            <pt-selectable-element selected value="en" label="English"></pt-selectable-element>
-                            <pt-selectable-element value="es" label="Spanish"></pt-selectable-element>
-                            <pt-selectable-element value="de" label="German"></pt-selectable-element>
-                            <pt-selectable-element value="fr" label="French"></pt-selectable-element>
+                            <pt-selectable-element value="none" label="<%= i18n.__("Disabled") %>"></pt-selectable-element>
+                          
+                            <% for(var lang in subtitle){ %>
+                                <pt-selectable-element value="<%= lang %>" label="<%= App.Localization.langcodes[lang].nativeName %>"  <%=Settings.subtitle_language === lang ? 'selected="true"':''%>></pt-selectable-element>
+                           <% } %>
+                            
                         </pt-dropdown>
                     </li>
                     <li id="player-option" class="device-dropdown">

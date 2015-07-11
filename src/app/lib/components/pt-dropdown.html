@@ -25,6 +25,8 @@
                 background: #1c1d21;
                 box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.5);
                 z-index: 9999;
+                max-height: 500px;
+                overflow: auto;
 
             }
 
@@ -129,18 +131,20 @@
                         this.setLabelElement();
                     } else {
                         this.options = this.$.options.querySelector('content').getDistributedNodes();
-                        this.optionSelected = this.options[this.selectedIndex];
-                        this.selected = this.options[this.selectedIndex].cloneNode();
-                        this.selected.setAttribute('selected', false);
+                        
 
                         for (var i = 0; i < this.options.length; i++) {
                             var el = this.options[i];
                             el.setAttribute('index', i);
-                            if (this.selectedIndex === i) {
-                                el.setAttribute('selected', true);
+                            if (el.getAttribute('selected') === 'true') {
+                                this.selectedIndex = i;
                             }
                             el.addEventListener('click', this.elementClicked.bind(this));
                         };
+                        
+                        this.optionSelected = this.options[this.selectedIndex];
+                        this.selected = this.options[this.selectedIndex].cloneNode();
+                        this.selected.setAttribute('selected', false);
 
                         this.setLabelElement();
                     }

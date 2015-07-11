@@ -25,22 +25,12 @@
                     <div id="imdb-link" class="meta-btn"><%=i18n.__( "Read More") %></div>
                     <div id="play-trailer" class="meta-btn"><%=i18n.__( "Watch Trailer") %></div>
                     <div class="meta-divider"></div>
-                    <div class="people">
-                        <p>David Benioff, D.B. Weiss</p>
-                        <p class="status">Creators</p>
-                    </div>
-                    <div class="people">
-                        <p>Richard Madden</p>
-                        <p class="status">as Robb Stark</p>
-                    </div>
-                    <div class="people">
-                        <p>Peter Dinklage</p>
-                        <p class="status">as Tyrion Lannister</p>
-                    </div>
-                    <div class="people">
-                        <p>Nikolaj Coster-Waldau</p>
-                        <p class="status">as Jaime Lannister</p>
-                    </div>
+                      <% _.each(cast.cast, function(person) {%>
+                          <div class="people">
+                    <p><%= person.person.name %></p>
+                    <p class="status"><%=i18n.__( "as") %>&nbsp;<%= person.character %></p>
+                        </div>
+                  <% }); %>
                 </div>
             </div>
         </div>

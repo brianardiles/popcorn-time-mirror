@@ -9,7 +9,7 @@
         className: 'show-detail',
 
         ui: {
-            qualitytoggles: '.quality-toggle',
+            qualitytoggles: '#quality-toggle',
             poster: '.poster',
             background: '.bg-backdrop',
             startStreamingUI: '.watchnow-btn span',
@@ -403,28 +403,27 @@
             var torrent = torrents[quality + 'p'].url;
 
             console.log(torrents);
-            $('#quality-toggle *').removeAttr('selected');
+            this.ui.qualitytoggles.children().removeClass('selected');
             if (!torrents['1080p']) {
-                $('#quality-toggle').children('[value="1080"]').hide();
+                this.ui.qualitytoggles.children('[value="1080"]').hide();
                 console.log('hiding 1080p')
             } else {
-                $('#quality-toggle').children('[value="1080"]').show();
+                this.ui.qualitytoggles.children('[value="1080"]').show();
             }
             if (!torrents['720p']) {
                 console.log('hiding 720p')
-                $('#quality-toggle').children('[value="720"]').hide();
+                this.ui.qualitytoggles.children('[value="720"]').hide();
             } else {
-                $('#quality-toggle').children('[value="720"]').show();
+                this.ui.qualitytoggles.children('[value="720"]').show();
             }
-            if (!torrents['420p']) {
-                console.log('hiding 420p')
-
-                $('#quality-toggle').children('[value="480"]').hide();
+            if (!torrents['480p']) {
+                console.log('hiding 480p')
+                this.ui.qualitytoggles.children('[value="480"]').hide();
             } else {
-                $('#quality-toggle').children('[value="480"]').show();
-
+                this.ui.qualitytoggles.children('[value="480"]').show();
             }
-            $('#quality-toggle').children('[value="' + quality + '"]').click();
+            console.log(quality);
+            this.ui.qualitytoggles.children('[value="' + quality + '"]').addClass('selected');
 
             this.Stream = {
                 torrent: torrent,

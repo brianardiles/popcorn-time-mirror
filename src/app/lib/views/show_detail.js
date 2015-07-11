@@ -43,30 +43,14 @@
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
             }
-            this.loadImages();
+            this.loadbackground();
             this.seasonsUI();
             this.playerQualityChooseUI();
             this.isShowWatched();
 
         },
-        loadImages: function () {
+        loadbackground: function () {
             var that = this;
-            var cbackground = this.ui.poster.data('bgr');
-            var coverCache = new Image();
-            coverCache.src = cbackground;
-            coverCache.onload = function () {
-                try {
-                    that.ui.poster.addClass('fadein');
-                } catch (e) {}
-                coverCache = null;
-            };
-            coverCache.onerror = function () {
-                try {
-                    that.ui.poster.attr('src', 'url("images/posterholder.png")').addClass('fadein');
-                } catch (e) {}
-                coverCache = null;
-            };
-
             var background = this.ui.background.data('bgr');
             var bgCache = new Image();
             bgCache.src = background;
@@ -127,9 +111,12 @@
             }
 
             if (select.season) {
+                this.getSeasonImages(select.season);
                 this.selectSeason(null, select.season);
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
                 this.selectEpisode(null, episodeUIid);
+            } else {
+                this.getSeasonImages(0);
             }
         },
 
@@ -279,7 +266,28 @@
                 win.error('something fishy happened with the watched signal', this.model, value);
             }
         },
-
+        loadCover: function (url) {
+            if (!this.seasonImagesLoaded) {
+                return;
+            }
+            var that = this;
+            var cbackground = url;
+            var coverCache = new Image();
+            coverCache.src = cbackground;
+            coverCache.onload = function () {
+                try {
+                    that.ui.poster.attr('src', url);
+                    that.ui.poster.addClass('fadein');
+                } catch (e) {}
+                coverCache = null;
+            };
+            coverCache.onerror = function () {
+                try {
+                    that.ui.poster.attr('src', 'url("images/posterholder.png")').addClass('fadein');
+                } catch (e) {}
+                coverCache = null;
+            };
+        },
         selectEpisode: function (e, episodeUIid) {
             $('.episode-container ul li').removeClass('active');
             if (!episodeUIid) {
@@ -304,7 +312,8 @@
                 var posterURL = $('#seasonTab-' + seasonId).data('poster');
             }
             this.selectedSeason = seasonId;
-            this.ui.poster.attr('src', posterURL);
+
+            this.loadCover(posterURL);
             $('.episode-list-show').removeClass('episode-list-show');
             $('#season-' + seasonId).addClass('episode-list-show');
 
@@ -329,7 +338,7 @@
             });
         },
 
-        getSeasonImages: function () {
+        getSeasonImages: function (season) {
             var that = this;
             App.Trakt.seasons.summary(this.model.get('imdb_id'))
                 .then(function (seasonsinfo) {
@@ -338,9 +347,18 @@
                     } else {
                         seasonsinfo.forEach(function (entry) {
                             var seasonID = parseInt(entry.number) + 1;
-                            $('#seasonTab-' + seasonID).data('poster', App.Trakt.resizeImage(entry.images.poster.full));
+                            console.log(seasonID);
+                            try {
+                                $('#seasonTab-' + seasonID).data('poster', App.Trakt.resizeImage(entry.images.poster.full));
+                            } catch (e) {}
                         });
                     }
+                    that.seasonImagesLoaded = true;
+                    var seasonID = parseInt(season) + 1;
+                    $('#seasonTab-' + seasonID).addClass('active');
+                    var seasonId = $('#seasonTab-' + seasonID).data('id');
+                    var posterURL = $('#seasonTab-' + seasonId).data('poster');
+                    that.loadCover(posterURL);
                 }).catch(function (err) {
                     console.log(err);
 

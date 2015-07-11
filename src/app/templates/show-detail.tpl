@@ -1,22 +1,11 @@
 <div class="bg-backdrop" style="background-image: url(<%= images.fanart %>);"></div>
         <div class="overlay"></div>
-        <header>
-            <span>Popcorn Time</span>
-            <div class="os-controls">
-                <div class="close"><i class="md-close"></i>
-                </div>
-                <div class="max"><i class="md-crop-landscape"></i>
-                </div>
-                <div class="min"><i class="md-remove"></i>
-                </div>
-            </div>
-        </header>
         <div class="summary-wrapper">
-            <div class="summary-overlay"> <i class="md-arrow-back md-lg back"></i>
+            <div class="summary-overlay"> <i class="zmdi zmdi-arrow-left zmdi-hc-lg back"></i>
                 <div class="title"><%= title %></div>
-                <i class="md-bookmark-outline md-lg bookmark-toggle"></i>
-                <i class="md-remove-red-eye md-lg watched-toggle"></i>
-                <i class="md-chevron-left md-lg season-prev"></i>
+                <i class="zmdi zmdi-bookmark-outline zmdi-hc-lg bookmark-toggle"></i>
+                <i class="zmdi zmdi-eye zmdi-hc-lg watched-toggle"></i>
+                <i class="zmdi zmdi-arrow-left zmdi-hc-lg season-prev"></i>
                 <div class="seasons-wrapper">
                     <ul class="seasons-container owl-carousel">
                         <li data-poster="<%= images.poster %>" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
@@ -39,13 +28,13 @@
                        
                     </ul>
                 </div>
-                <i class="md-chevron-right md-lg season-next"></i>
+                <i class="zmdi zmdi-arrow-right zmdi-hc-lg season-next"></i>
             </div>
         </div>
         <div class="info-wrapper">
             <img src="<%= images.poster %>" class="poster" />
             <div id="season-0" class="meta-container show-info episode-list-show">
-                <div class="meta-item"><i class="md-star"></i><i class="md-star"></i><i class="md-star"></i><i class="md-star"></i><i class="md-star-outline"></i>
+                <div class="meta-item"><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star-outline"></i>
                 </div>
                 <div class="meta-dot"></div>
                 <div class="meta-item">
@@ -95,7 +84,7 @@
                               <li id="episodeTab-<%= episodeUIid %>" class="" >
                         <p class="episode-id"><%=episodeUIid %></p>
                         <p class="episode-name"><%=episodeData.title %></p>
-                        <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
+                        <i class="zmdi zmdi-info info-icon"></i><i class="zmdi zmdi-eye watched-icon"></i>
                         <p class="episode-airdate"><%=first_aired %></p>
                         </li>
                             <% }); %>
@@ -103,42 +92,37 @@
                 <% }); %>
 
 
-
-
-
-
-           
             </div>
             <div class="controls-container">
                 <div class="meta-container-c">
-                    <li class="quality-toggle"><i class="md-high-quality"></i>
+                    <li class="quality-toggle"><i class="zmdi zmdi-hd"></i>
                         <p>480p</p>
                         <p>720p</p>
                         <p class="active">1080p</p>
                     </li>
-                    <li><i class="md-closed-caption"></i>
+                    <li><i class="zmdi zmdi-closed-caption"></i>
                         <p>English</p>
                     </li>
-                    <li id="player-option"><i id="current-player-icon" class="md-cast-connected"></i>
+                    <li id="player-option"><i id="current-player-icon" class="zmdi zmdi-cast-connected"></i>
                         <p id="current-player-name">Living Room TV</p>
                         <ul class="dropdown">
-                            <li class="active"><i class="md-tv"></i>
+                            <li class="active"><i class="zmdi zmdi-tv"></i>
                                 <p>Living Room TV</p>
                             </li>
-                            <li><i class="md-cast-connected"></i>
+                            <li><i class="zmdi zmdi-cast-connected"></i>
                                 <p>Chromecast</p>
                             </li>
-                            <li><i class="md-desktop-windows"></i>
+                            <li><i class="zmdi zmdi-desktop-windows"></i>
                                 <p>VLC</p>
                             </li>
-                            <li><i class="md-cast-connected"></i>
+                            <li><i class="zmdi zmdi-cast-connected"></i>
                                 <p>Chromecast</p>
                             </li>
-                            <li><i class="md-desktop-windows"></i>
+                            <li><i class="zmdi zmdi-desktop-windows"></i>
                                 <p>VLC</p>
                             </li>
                         </ul>
                     </li>
                 </div>
-                <div class="watchnow-btn"><i class="md-play-arrow"></i><%=i18n.__( "Play") %> S01E01</div>
+                <div class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %> S01E01</div>
             </div>

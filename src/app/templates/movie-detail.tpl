@@ -1,11 +1,11 @@
  <div style="background-image: url(<%= backdrop %>);" class="summary-wrapper movie">
-            <div class="summary-overlay"> <i id="exit-detail" class="md md-arrow-back md-lg back"></i>
+            <div class="summary-overlay"> <i id="exit-detail" class="zmdi zmdi-arrow-left zmdi-hc-lg back"></i>
                 <div class="title"><%= title %></div>
-                <i class="md md-bookmark-outline md-lg bookmark-toggle"></i>
-                <i class="md md-remove-red-eye md-lg watched-toggle"></i>
+                <i class="zmdi zmdi-bookmark-outline zmdi-hc-lg bookmark-toggle"></i>
+                <i class="zmdi zmdi-eye zmdi-hc-lg watched-toggle"></i>
                 <img src="<%= cover %>" class="poster" />
                 <div class="meta">
-                    <div class="meta-item"><i class="md-star"></i><i class="md-star"></i><i class="md-star"></i><i class="md-star"></i><i class="md-star-outline"></i>
+                    <div class="meta-item"><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star-outline"></i>
                     </div>
                     <div class="meta-dot"></div>
                     <div class="meta-item">
@@ -42,36 +42,36 @@
                 </div>
             </div>
         </div>
-        <div class="controls-container">
-            <div class="meta-container-c">
-                <li class="quality-toggle"><i class="md-high-quality"></i>
-                    <p>480p</p>
-                    <p>720p</p>
-                    <p class="active">1080p</p>
-                </li>
-                <li><i class="md-closed-caption"></i>
-                    <p>English</p>
-                </li>
-                <li id="player-option"><i id="current-player-icon" class="md-cast-connected"></i>
-                    <p id="current-player-name">Living Room TV</p>
-                    <ul class="dropdown">
-                        <li class="active"><i class="md-tv"></i>
-                            <p>Living Room TV</p>
-                        </li>
-                        <li><i class="md-cast-connected"></i>
-                            <p>Chromecast</p>
-                        </li>
-                        <li><i class="md-desktop-windows"></i>
-                            <p>VLC</p>
-                        </li>
-                        <li><i class="md-cast-connected"></i>
-                            <p>Chromecast</p>
-                        </li>
-                        <li><i class="md-desktop-windows"></i>
-                            <p>VLC</p>
-                        </li>
-                    </ul>
-                </li>
+          <div class="controls-container">
+                <div class="meta-container-c">
+                    <li class="quality-toggle"><i class="zmdi zmdi-hd"></i>
+                        <p>480p</p>
+                        <p>720p</p>
+                        <p class="active">1080p</p>
+                    </li>
+                    <li><i class="zmdi zmdi-closed-caption"></i>
+                        <p>English</p>
+                    </li>
+                    <li id="player-option"><i id="current-player-icon" class="zmdi zmdi-cast-connected"></i>
+                        <p id="current-player-name">Living Room TV</p>
+                        <ul class="dropdown">
+                            <li class="active"><i class="zmdi zmdi-tv"></i>
+                                <p>Living Room TV</p>
+                            </li>
+                            <li><i class="zmdi zmdi-cast-connected"></i>
+                                <p>Chromecast</p>
+                            </li>
+                            <li><i class="zmdi zmdi-desktop-windows"></i>
+                                <p>VLC</p>
+                            </li>
+                            <li><i class="zmdi zmdi-cast-connected"></i>
+                                <p>Chromecast</p>
+                            </li>
+                            <li><i class="zmdi zmdi-desktop-windows"></i>
+                                <p>VLC</p>
+                            </li>
+                        </ul>
+                    </li>
+                </div>
+                <div class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %> S01E01</div>
             </div>
-            <div class="watchnow-btn"><i class="md-play-arrow"></i><%=i18n.__( "Watch Now") %></div>
-        </div>

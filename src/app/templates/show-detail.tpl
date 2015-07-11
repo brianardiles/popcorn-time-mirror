@@ -19,7 +19,7 @@
                 <i class="md-chevron-left md-lg season-prev"></i>
                 <div class="seasons-wrapper">
                     <ul class="seasons-container owl-carousel">
-                        <li data-poster="<%= images.poster %>" data-id="1" class="active"><%= i18n.__( "Show Info") %></li>
+                        <li data-poster="<%= images.poster %>" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
                         <% var torrents = {},
                                 seasontext;
                         _.each(episodes, function(value, currentEpisode) {

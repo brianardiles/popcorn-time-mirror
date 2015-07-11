@@ -25,6 +25,7 @@
             'click .episode-container ul li': 'selectEpisode',
             'click .watched-icon': 'toggleWatched',
             'click #imdb-link': 'openIMDb',
+            'click #quality-toggle pt-selectable-element': 'toggleShowQuality',
             'click .epsiode-tab': 'setStream'
         },
 
@@ -358,6 +359,17 @@
                 coverCache = null;
             };
         },
+        toggleShowQuality: function (e) {
+            var quality = $(e.currentTarget).val();
+            var episodeData = _.findWhere(this.model.get('episodes'), {
+                season: this.Stream.season,
+                episode: this.Stream.episode
+            });
+            this.Stream.torrent = episodeData.torrents[quality + 'p'].url;
+            this.Stream.quality = quality + 'p';
+
+            AdvSettings.set('shows_default_quality', quality + 'p');
+        },
 
         setStream: function (e) {
             var season = $(e.currentTarget).data('season');
@@ -402,8 +414,6 @@
 
             var torrent = torrents[quality + 'p'].url;
 
-            console.log(torrents);
-            this.ui.qualitytoggles.children().removeClass('selected');
             if (!torrents['1080p']) {
                 this.ui.qualitytoggles.children('[value="1080"]').hide();
                 console.log('hiding 1080p')
@@ -422,7 +432,8 @@
             } else {
                 this.ui.qualitytoggles.children('[value="480"]').show();
             }
-            console.log(quality);
+            this.ui.qualitytoggles.children().removeClass('selected');
+            this.ui.qualitytoggles.children().removeAttr('selected');
             this.ui.qualitytoggles.children('[value="' + quality + '"]').addClass('selected');
 
             this.Stream = {

@@ -414,26 +414,27 @@
 
             var torrent = torrents[quality + 'p'].url;
 
+
+            this.ui.qualitytoggles.children().removeClass('selected');
+            this.ui.qualitytoggles.children().removeAttr('selected');
+
+
             if (!torrents['1080p']) {
                 this.ui.qualitytoggles.children('[value="1080"]').hide();
-                console.log('hiding 1080p')
             } else {
                 this.ui.qualitytoggles.children('[value="1080"]').show();
             }
             if (!torrents['720p']) {
-                console.log('hiding 720p')
                 this.ui.qualitytoggles.children('[value="720"]').hide();
             } else {
                 this.ui.qualitytoggles.children('[value="720"]').show();
             }
             if (!torrents['480p']) {
-                console.log('hiding 480p')
                 this.ui.qualitytoggles.children('[value="480"]').hide();
             } else {
                 this.ui.qualitytoggles.children('[value="480"]').show();
             }
-            this.ui.qualitytoggles.children().removeClass('selected');
-            this.ui.qualitytoggles.children().removeAttr('selected');
+
             this.ui.qualitytoggles.children('[value="' + quality + '"]').addClass('selected');
 
             this.Stream = {

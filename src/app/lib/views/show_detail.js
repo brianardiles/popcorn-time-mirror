@@ -49,6 +49,46 @@
             this.isShowWatched();
 
         },
+
+        selectNextEpisode: function (episodes, unWatchedEpisodes) {
+            episodes = _.sortBy(episodes, 'id');
+            unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
+            var select;
+
+            switch (Settings.tv_detail_jump_to) {
+            case 'next':
+                if (unWatchedEpisodes.length > 0) {
+                    select = _.last(unWatchedEpisodes);
+                } else {
+                    select = _.last(episodes);
+                }
+                break;
+            case 'firstUnwatched':
+                if (unWatchedEpisodes.length > 0) {
+                    select = _.first(unWatchedEpisodes);
+                } else {
+                    select = _.last(episodes);
+                }
+                break;
+            case 'first':
+                select = _.first(episodes);
+                break;
+            case 'last':
+                select = _.last(episodes);
+                break;
+            }
+
+
+            if (Settings.tv_detail_jump_to === 'next' && unWatchedEpisodes.length > 0) {
+                select = _.first(unWatchedEpisodes);
+            } else {
+                select = _.last(episodes);
+            }
+            this.selectSeason(null, select.season);
+            var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
+            this.selectEpisode(null, episodeUIid);
+        },
+
         toggleWatched: function (e) {
             var season = $(e.currentTarget).parent().data('season');
             var episode = $(e.currentTarget).parent().data('episode');
@@ -168,7 +208,7 @@
                             episode: episode.episode
                         });
                         if (checkedEpisodes.length === episodes.length) {
-                            //that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes);
+                            that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes);
                         }
 
                     });
@@ -190,16 +230,25 @@
             }
         },
 
-        selectEpisode: function (e) {
+        selectEpisode: function (e, episodeUIid) {
             $('.episode-container ul li').removeClass('active');
-            $(e.currentTarget).addClass('active');
+            if (!episodeUIid) {
+                $(e.currentTarget).addClass('active');
+            } else {
+                $('#episodeTab-' + episodeUIid).addClass('active');
+            }
         },
-        selectSeason: function (e) {
-            e.preventDefault();
+        selectSeason: function (e, season) {
             $('.seasons-container li').removeClass('active');
-            $(e.currentTarget).addClass('active');
-            var seasonId = $(e.currentTarget).data('id');
-            var posterURL = $(e.currentTarget).data('poster');
+            if (!season) {
+                $(e.currentTarget).addClass('active');
+                var seasonId = $(e.currentTarget).data('id');
+                var posterURL = $(e.currentTarget).data('poster');
+            } else {
+                $('#seasonTab-' + season + 1).click();
+                var seasonId = $('#seasonTab-' + season + 1).data('id');
+                var posterURL = $('#seasonTab-' + season + 1).data('poster');
+            }
             $('.poster').attr('src', posterURL);
             $('.episode-list-show').removeClass('episode-list-show');
             $('#season-' + seasonId).addClass('episode-list-show').find('li.active').click();

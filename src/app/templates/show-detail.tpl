@@ -79,7 +79,7 @@
                                 function formatTwoDigit(n) {
                                      return n > 9 ? '' + n : '0' + n;
                                     }
-                                    var episodeUIid = 'S'+ formatTwoDigit(season) + 'E'+ formatTwoDigit(episodeData.episode);
+                                var episodeUIid = 'S'+ formatTwoDigit(season) + 'E'+ formatTwoDigit(episodeData.episode);
                             %>
                        <li data-tvdb="<%=episodeData.tvdb_id %>" data-season="<%= season %>" data-episode="<%= episodeData.episode %>" id="episodeTab-<%= episodeUIid %>" class="" >
                         <p class="episode-id"><%=episodeUIid %></p>

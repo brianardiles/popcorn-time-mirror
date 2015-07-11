@@ -32,7 +32,7 @@ var seasonID = parseInt(season) +1;
             </div>
         </div>
         <div class="info-wrapper">
-            <paper-shadow z="1">    </paper-shadow>
+            <paper-shadow z="1">  
             <img data-bgr="<%= images.poster %>" src="<%= images.poster %>" class="poster" />
             </paper-shadow>
             <div id="season-0" class="meta-container show-info episode-list-show">
@@ -126,6 +126,7 @@ var seasonID = parseInt(season) +1;
                         </pt-dropdown>
                     </li>
                 </div>
+                 <paper-shadow z="1">  
                 <paper-button class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %> S01E01</paper-button>
-              
+                </paper-shadow>
             </div>

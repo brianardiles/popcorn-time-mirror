@@ -17,9 +17,11 @@ header
         font-weight 500
     .os-controls
         margin-top 11px
+        z-index 11
         -webkit-app-region no-drag
         margin-right 11px
-        float right
+        right 0px
+        position absolute
         div
             margin-right 6px
             cursor pointer
@@ -33,4 +35,7 @@ header
                 opacity 0.9
             &.min
                 line-height 25px
+            &.close
+                position relative
+                top -2px
 

@@ -19,7 +19,7 @@
                 <i class="md-chevron-left md-lg season-prev"></i>
                 <div class="seasons-wrapper">
                     <ul class="seasons-container owl-carousel">
-                        <li data-poster="https://walter.trakt.us/images/shows/000/001/390/posters/medium/e2e8d04f11.jpg" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
+                        <li data-poster="<%= images.poster %>" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
                         <li data-poster="https://walter.trakt.us/images/seasons/000/003/963/posters/thumb/3b1d09801b.jpg" data-id="1">Season&nbsp;1</li>
                         <li data-poster="https://walter.trakt.us/images/seasons/000/003/964/posters/thumb/7be9351659.jpg" data-id="2">Season&nbsp;2</li>
                         <li data-poster="https://walter.trakt.us/images/seasons/000/003/965/posters/thumb/70375805b1.jpg" data-id="3">Season&nbsp;3</li>
@@ -67,31 +67,31 @@
             </div>
             <div class="episode-container">
                 <ul id="season-1" class="">
-                    <li class="watched" data-screenshot="https://walter.trakt.us/images/episodes/000/073/640/screenshots/original/529938d3cd.jpg">
+                    <li class="watched" >
                         <p class="episode-id">s01e01</p>
                         <p class="episode-name">Winter Is Coming</p>
                         <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
                         <p class="episode-airdate">2014-04-07</p>
                     </li>
-                    <li class="watched" data-screenshot="https://walter.trakt.us/images/episodes/000/073/641/screenshots/original/e645d70001.jpg">
+                    <li class="watched" >
                         <p class="episode-id">s01e02</p>
                         <p class="episode-name">The Kingsroad</p>
                         <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
                         <p class="episode-airdate">2014-04-07</p>
                     </li>
-                    <li data-screenshot="https://walter.trakt.us/images/episodes/000/073/642/screenshots/original/238c3fabbf.jpg" class="watched">
+                    <li  class="watched">
                         <p class="episode-id">s01e03</p>
                         <p class="episode-name">Lord Snow</p>
                         <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
                         <p class="episode-airdate">2014-04-07</p>
                     </li>
-                    <li data-screenshot="https://walter.trakt.us/images/episodes/000/073/643/screenshots/original/592f2c70d1.jpg" class="active">
+                    <li class="active">
                         <p class="episode-id">s01e04</p>
                         <p class="episode-name">Cripples, Bastards, and Broken Things</p>
                         <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>
                         <p class="episode-airdate">2014-04-07</p>
                     </li>
-                    <li data-screenshot="https://walter.trakt.us/images/episodes/000/073/644/screenshots/original/411ba4a952.jpg" class="">
+                    <li class="">
                         <p class="episode-id">s01e05</p>
                         <p class="episode-name">The Wolf and the Lion</p>
                         <i class="md-info info-icon"></i><i class="md-remove-red-eye watched-icon"></i>

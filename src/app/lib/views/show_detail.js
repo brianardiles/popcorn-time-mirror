@@ -9,6 +9,7 @@
         className: 'show-detail',
 
         ui: {
+            cast_crew: '.cast-crew',
             qualitytoggles: '#quality-toggle',
             poster: '.poster',
             background: '.bg-backdrop',
@@ -38,6 +39,7 @@
         initialize: function () {
             this.renameUntitled();
             this.getSeasonImages();
+            this.getCast();
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster);
@@ -54,7 +56,29 @@
             this.isShowWatched();
 
         },
+        getCast: function () {
+            var that = this;
+            App.Trakt.shows.people(this.model.get('imdb_id'))
+                .then(function (people) {
+                    if (!people) {
+                        win.warn('Unable to fetch data from Trakt.tv');
+                    } else {
 
+                        var cast = people['cast'];
+                        cast.forEach(function (person) {
+                            that.AddPerson(person.person.name, person.character)
+                        });
+                    }
+
+                }).catch(function (err) {
+                    console.log(err);
+                });
+        },
+
+        AddPerson: function (name, job) {
+            var person = '<div class="people"><p>' + name + '</p><p class="status">as ' + job + '</p></div>';
+            $(person).appendTo(this.ui.cast_crew).addClass('fadein');
+        },
         startStreaming: function (e) {
             var that = this;
             var title = that.model.get('title');

@@ -56,22 +56,8 @@ var seasonID = parseInt(season) +1;
                 <div id="imdb-link" class="meta-btn"><%=i18n.__( "Read More") %></div>
 
                 <div class="meta-divider"></div>
-                <div class="people">
-                    <p>David Benioff, D.B. Weiss</p>
-                    <p class="status">Creators</p>
-                </div>
-                <div class="people">
-                    <p>Richard Madden</p>
-                    <p class="status">as Robb Stark</p>
-                </div>
-                <div class="people">
-                    <p>Peter Dinklage</p>
-                    <p class="status">as Tyrion Lannister</p>
-                </div>
-                <div class="people">
-                    <p>Nikolaj Coster-Waldau</p>
-                    <p class="status">as Jaime Lannister</p>
-                </div>
+                <section class="cast-crew">
+                </section>
             </div>
             <div class="episode-container">
 

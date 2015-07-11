@@ -243,7 +243,9 @@
         summary: function (id) {
             return this.get('shows/' + id);
         },
-
+        people: function (id) {
+            return this.get('shows/' + id + '/people');
+        },
         aliases: function (id) {
             return this.get('shows/' + id + '/aliases');
         },

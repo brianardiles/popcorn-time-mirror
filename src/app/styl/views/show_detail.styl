@@ -183,8 +183,12 @@
         .people
             position relative
             width 100%
+            opacity 0
             height 17px
             margin-bottom 5px
+            &.fadein
+                transition: opacity .5s ease-in;
+                opacity: 1
             .status
                 color #ffffff
                 font-size 15px

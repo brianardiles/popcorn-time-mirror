@@ -32,7 +32,9 @@ var seasonID = parseInt(season) +1;
             </div>
         </div>
         <div class="info-wrapper">
+            <paper-shadow z="1">    </paper-shadow>
             <img data-bgr="<%= images.poster %>" src="<%= images.poster %>" class="poster" />
+            </paper-shadow>
             <div id="season-0" class="meta-container show-info episode-list-show">
                 <div class="meta-item"><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star-outline"></i>
                 </div>
@@ -82,12 +84,16 @@ var seasonID = parseInt(season) +1;
                                     }
                                 var episodeUIid = 'S'+ formatTwoDigit(season) + 'E'+ formatTwoDigit(episodeData.episode);
                             %>
+    
                        <li data-tvdb="<%=episodeData.tvdb_id %>" data-season="<%= season %>" data-episode="<%= episodeData.episode %>" id="episodeTab-<%= episodeUIid %>" class="" >
+            
                         <p class="episode-id"><%=episodeUIid %></p>
                         <p class="episode-name"><%=episodeData.title %></p>
                         <i class="zmdi zmdi-info info-icon"></i><i class="zmdi zmdi-eye watched-icon"></i>
                         <p class="episode-airdate"><%=first_aired %></p>
+
                         </li>
+                  
                             <% }); %>
                         </ul>
                 <% }); %>
@@ -120,5 +126,6 @@ var seasonID = parseInt(season) +1;
                         </pt-dropdown>
                     </li>
                 </div>
-                <div class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %> S01E01</div>
+                <paper-button class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %> S01E01</paper-button>
+              
             </div>

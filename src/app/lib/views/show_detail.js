@@ -466,7 +466,7 @@
                 episode: episode
             }).then(function (subs) {
                 var index = 0;
-                var dropdown = '<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles">';
+                var dropdown = '<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '"></pt-selectable-element>';
                 //console.log(subs);
                 _.each(subs, function (sub, id) {
                     var subi = {

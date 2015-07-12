@@ -34,34 +34,6 @@
                             <paper-tab id="seasonTab-<%= seasonID %>" data-type="<%= type %>" data-id="<%= seasonID %>" data-poster="<%= seasonPoster %>" role="tab"><%= seasontext %></paper-tab>
                         <% }); %>
                    </paper-tabs>
-                    <!--<ul class="seasons-container owl-carousel">
-                        <li data-poster="<%= images.poster %>" data-id="0" class="active"><%= i18n.__( "Show Info") %></li>
-                        <% var torrents = {},
-                                seasontext,
-                                type;
-                        _.each(episodes, function(value, currentEpisode) {
-                            if (!torrents[value.season]) torrents[value.season] = {};
-                            torrents[value.season][value.episode] = value;
-                        });
-                        _.each(torrents, function(value, season) {
-                        if(season !== '0'){ 
-                            type = 'season';
-                            seasontext = i18n.__("Season %s", season) ; 
-                        } else{
-                             type = 'special';
-                            seasontext = i18n.__("Special Features") ;
-                        }
-                        var seasonID = parseInt(season) +1;
-                        if(seasonImages && seasonImages[season] && seasonImages[season].images.poster.full){
-                        var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full);
-                        }else{
-                            var seasonPoster = images.poster;
-                        }
-                         %>
-                          <li id="seasonTab-<%= seasonID %>" data-type="<%= type %>" data-poster="<%= seasonPoster %>" data-id="<%= seasonID %>"> <%= seasontext %></li>
-                        <% }); %>
-                       
-                    </ul>-->
                 </div>
             </div>
         </div>

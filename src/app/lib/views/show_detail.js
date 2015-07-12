@@ -544,7 +544,7 @@
                 $('.episode-container').animate({
                     scrollTop: 0
                 }, 'fast');
-                $('#season-' + seasonId + ' paper-tab:first').click();
+                $('#season-' + seasonId + ' li:first').click();
             } else {
                 var seasonID = parseInt(season) + 1;
                 var seasonId = $('#seasonTab-' + seasonID).data('id');

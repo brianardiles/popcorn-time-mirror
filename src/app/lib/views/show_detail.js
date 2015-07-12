@@ -469,7 +469,6 @@
                 var dropdown = '<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles">';
                 //console.log(subs);
                 _.each(subs, function (sub, id) {
-                    console.log(sub, id)
                     var subi = {
                         value: id,
                         label: (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id)

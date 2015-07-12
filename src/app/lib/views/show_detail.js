@@ -457,7 +457,8 @@
             };
             var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
             this.ui.startStreamingUI.text(episodeUIid);
-
+            var dropdown = '<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Loading") + '..."></pt-selectable-element></pt-dropdown>';
+            this.ui.SubtitlesList.html(dropdown);
             var that = this;
             this.fetchTVSubtitles({
                 imdbid: this.model.get('imdb_id'),

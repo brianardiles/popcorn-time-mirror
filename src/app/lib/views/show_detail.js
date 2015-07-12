@@ -21,12 +21,14 @@
             'click .back': 'closeDetails',
             'click .watched-toggle': 'markShowAsWatched',
             'click .bookmark-toggle': 'toggleBookmarked',
+            'change #quality-toggle': 'qualityChanged',
+            'change #subtitles-selector': 'toggleShowQuality',
+            'change #device-selector': 'deviceChanged',
             'click .seasons-container li': 'selectSeason',
             'click .episode-container ul li': 'selectEpisode',
             'click .watched-icon': 'toggleWatched',
             'click #imdb-link': 'openIMDb',
             'click .person': 'openPerson',
-            'click #quality-toggle pt-selectable-element': 'toggleShowQuality',
             'click .epsiode-tab': 'setStream',
             'click .watchnow-btn': 'startStreaming'
         },
@@ -361,6 +363,9 @@
                 coverCache = null;
             };
         },
+        subtitlesChanged: function (e) {
+            console.log('Subtitles Changed', e.originalEvent.detail);
+        },
         toggleShowQuality: function (e) {
             var quality = $(e.currentTarget).val();
             var episodeData = _.findWhere(this.model.get('episodes'), {
@@ -452,7 +457,15 @@
             var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
             this.ui.startStreamingUI.text(episodeUIid)
         },
-
+        deviceChanged: function (e) {
+            console.log('Device Changed', e.originalEvent.detail);
+            var player = e.originalEvent.detail.value;
+            this.model.set('device', player);
+            App.Device.Collection.setDevice(player);
+            if (!player.match(/[0-9]+.[0-9]+.[0-9]+.[0-9]/ig)) {
+                AdvSettings.set('chosenPlayer', player);
+            }
+        },
         selectEpisode: function (e, episodeUIid) {
             $('.episode-container ul li').removeClass('active');
             if (!episodeUIid) {

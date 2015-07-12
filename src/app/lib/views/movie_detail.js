@@ -55,6 +55,7 @@
             console.log('Device Changed', e.originalEvent.detail);
             var player = e.originalEvent.detail.value;
             this.model.set('device', player);
+            App.Device.Collection.setDevice(player);
             if (!player.match(/[0-9]+.[0-9]+.[0-9]+.[0-9]/ig)) {
                 AdvSettings.set('chosenPlayer', player);
             }
@@ -137,7 +138,7 @@
                 subtitles: this.ui.subtitles.get(0).selected.value,
                 defaultSubtitle: this.subtitle_selected,
                 type: 'movie',
-                device: this.ui.device.get(0).selected.value
+                device: App.Device.Collection.selected
             };
             App.Streamer.start(torrentStart);
 

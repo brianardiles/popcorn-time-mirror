@@ -3,14 +3,24 @@
     position absolute
     height 100vh
     width 100vw
+    background-color #17181b
     z-index 1
     overflow: hidden
-    
-    .summary-wrapper
-        position relative
+
+    .bg-backdrop
+        position fixed
+        height 100vh
+        width 100vw
+        opacity 0
         background-position center
         background-size cover
         background-repeat no-repeat
+        &.fadein
+            transition: opacity .3s ease-in;
+            opacity: 1
+
+    .summary-wrapper
+        position relative
         width 100vw
         height 78vh
         .summary-overlay
@@ -28,11 +38,11 @@
             cursor pointer
         .back
             float left
-            margin-top 58px
+            margin-top 50px
             margin-left 34px
             color #FFF
             cursor pointer
-            font-size 38px
+            font-size 42px
         .title
             color #FFF
             margin-top 44px
@@ -51,10 +61,14 @@
             width 53vh
             top 14vh
             left 90px
+            opacity 0
             z-index 3
             position absolute
             border-radius 2px
             box-shadow 0 1px 5px rgba(0, 0, 0, 0.39)
+            &.fadein
+                transition: opacity .3s ease-in;
+                opacity: 1
         .meta
             position absolute
             z-index 1
@@ -64,6 +78,15 @@
             height 63.9vh
             overflow-y auto
             overflow-x hidden
+            &::-webkit-scrollbar
+                width 5px
+            &::-webkit-scrollbar-track
+                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.3)
+                border-radius 10px
+            &::-webkit-scrollbar-thumb
+                border-radius 10px
+                background rgba(255, 255, 255, 0.58)
+                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.5)
             .meta-item
                 float left
                 color #ffffff
@@ -123,26 +146,16 @@
                 width 100%
                 height 17px
                 margin-bottom 5px
-                .status
-                    font-size 15px
-                    float left
-                    margin-left 8px
-                    color rgba(255, 255, 255, 0.45)
                 p
                     color #ffffff
                     font-size 15px
                     float left
-    .info-wrapper
-        .show-info
-            &::-webkit-scrollbar
-                width 5px
-            &::-webkit-scrollbar-track
-                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.3)
-                border-radius 10px
-            &::-webkit-scrollbar-thumb
-                border-radius 10px
-                background rgba(255, 255, 255, 0.58)
-                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.5)
+                .status
+                    color rgba(255, 255, 255, 0.45) !important
+                    font-size 15px
+                    float left
+                    margin-left 8px
+
     .controls-container
         bottom 0px
         background-color #111214

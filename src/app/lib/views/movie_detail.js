@@ -9,7 +9,9 @@
         ui: {
             quality: '#quality-toggle',
             subtitles: '#subtitles-selector',
-            device: '#device-selector'
+            device: '#device-selector',
+            poster: '.poster',
+            background: '.bg-backdrop'
         },
 
         keyboardEvents: {
@@ -17,7 +19,7 @@
         },
 
         events: {
-            'click #exit-detail': 'closeDetails',
+            'click .back': 'closeDetails',
             'change #quality-toggle': 'qualityChanged',
             'change #subtitles-selector': 'subtitlesChanged',
             'change #device-selector': 'deviceChanged',
@@ -31,7 +33,8 @@
         },
 
         onShow: function () {
-
+            this.loadCover();
+            this.loadbackground();
         },
         closeDetails: function () {
             App.vent.trigger('movie:closeDetail');
@@ -49,7 +52,49 @@
         openIMDb: function () {
             gui.Shell.openExternal('http://www.imdb.com/title/' + this.model.get('imdb_id'));
         },
+        loadCover: function () {
+            var that = this;
 
+            var url = this.ui.poster.prop('src');
+
+            var cbackground = url;
+            var coverCache = new Image();
+            coverCache.src = cbackground;
+            coverCache.onload = function () {
+                try {
+                    that.ui.poster.addClass('fadein');
+                } catch (e) {}
+                coverCache = null;
+            };
+            coverCache.onerror = function () {
+                try {
+                    that.ui.poster.attr('src', 'url("images/posterholder.png")').addClass('fadein');
+                } catch (e) {}
+                coverCache = null;
+            };
+        },
+        loadbackground: function () {
+            var that = this;
+            var background = this.ui.background.data('bgr');
+            var bgCache = new Image();
+            bgCache.src = background;
+            bgCache.onload = function () {
+                try {
+                    that.ui.background.css('background-image', 'url(' + background + ')').addClass('fadein');
+                } catch (e) {
+                    console.log(e);
+                }
+                bgCache = null;
+            };
+            bgCache.onerror = function () {
+                try {
+                    that.ui.background.css('background-image', 'url("images/bg-header.jpg")').addClass('fadein');
+                } catch (e) {
+                    console.log(e);
+                }
+                bgCache = null;
+            };
+        },
         playTrailer: function () {
             var trailer = new Backbone.Model({
                 src: this.model.get('trailer'),

@@ -1,5 +1,6 @@
- <div style="background-image: url(<%= backdrop %>);" class="summary-wrapper movie">
-            <div class="summary-overlay"> <i id="exit-detail" class="zmdi zmdi-arrow-left zmdi-hc-lg back"></i>
+ <div class="bg-backdrop" data-bgr="<%= backdrop %>"></div>
+ <div class="summary-wrapper movie">
+            <div class="summary-overlay">  <paper-icon-button class="back" icon="arrow-back"></paper-icon-button>
                 <div class="title"><%= title %></div>
                 <i class="zmdi zmdi-bookmark-outline zmdi-hc-lg bookmark-toggle"></i>
                 <i class="zmdi zmdi-eye zmdi-hc-lg watched-toggle"></i>

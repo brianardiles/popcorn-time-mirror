@@ -466,28 +466,33 @@
                 season: season,
                 episode: episode
             }).then(function (subs) {
-                if (_.isEqual(oldStream, that.Stream)) {
-                    var index = 0;
-                    var maxlength = 0;
-                    var dropdowncon = '';
-                    _.each(subs, function (sub, id) {
-                        var subi = {
-                            value: id,
-                            label: (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id)
-                        };
-                        if (subi.label.length > maxlength) {
-                            maxlength = subi.label.length;
+                if (subs && Object.keys(subs).length > 0) {
+                    if (_.isEqual(oldStream, that.Stream)) {
+                        var index = 0;
+                        var maxlength = 0;
+                        var dropdowncon = '';
+                        _.each(subs, function (sub, id) {
+                            var subi = {
+                                value: id,
+                                label: (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id)
+                            };
+                            if (subi.label.length > maxlength) {
+                                maxlength = subi.label.length;
+                            }
+                            var selected = (Settings.subtitle_language === id ? 'selected="true"' : '');
+                            dropdowncon = dropdowncon + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>';
+                            index++;
+                        });
+                        var toAdd = 0;
+                        if ((maxlength - parseInt(i18n.__("Disabled").length)) > 0) {
+                            toAdd = maxlength - parseInt(i18n.__("Disabled").length);
                         }
-                        var selected = (Settings.subtitle_language === id ? 'selected="true"' : '');
-                        dropdowncon = dropdowncon + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>';
-                        index++;
-                    });
-                    var toAdd = 0;
-                    if ((maxlength - parseInt(i18n.__("Disabled").length)) > 0) {
-                        toAdd = maxlength - parseInt(i18n.__("Disabled").length);
+                        var dropdown = '<li class="subtitles-dropdown"><pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '&nbsp;'.repeat(toAdd) + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown></li>';
+                        $('.subtitles-dropdown').replaceWith(dropdown)
                     }
-                    var dropdown = '<li class="subtitles-dropdown"><pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '&nbsp;'.repeat(toAdd) + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown></li>';
-                    $('.subtitles-dropdown').replaceWith(dropdown)
+                } else {
+                    var dropdownl = '<li class="subtitles-dropdown"><pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Subtitles Not Available") + '"></pt-selectable-element></pt-dropdown></li>';
+                    $('.subtitles-dropdown').replaceWith(dropdownl);
                 }
             });
         },

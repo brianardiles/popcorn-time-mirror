@@ -11,7 +11,8 @@
             subtitles: '#subtitles-selector',
             device: '#device-selector',
             poster: '.poster',
-            background: '.bg-backdrop'
+            background: '.bg-backdrop',
+            bookmarkedIcon: '.bookmark-toggle'
         },
 
         keyboardEvents: {
@@ -35,6 +36,9 @@
         onShow: function () {
             this.loadCover();
             this.loadbackground();
+            if (this.model.get('bookmarked')) {
+                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
+            }
         },
         closeDetails: function () {
             App.vent.trigger('movie:closeDetail');

@@ -129,10 +129,7 @@
                     </li>
                     <li class="subtitles-dropdown">
                         <pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles">
-                            <pt-selectable-element selected value="en" label="English"></pt-selectable-element>
-                            <pt-selectable-element value="es" label="Spanish"></pt-selectable-element>
-                            <pt-selectable-element value="de" label="German"></pt-selectable-element>
-                            <pt-selectable-element value="fr" label="French"></pt-selectable-element>
+                            <pt-selectable-element value="" selected label="<%=i18n.__( "Loading...") %>"></pt-selectable-element>
                         </pt-dropdown>
                     </li>
                     <li id="player-option" class="device-dropdown">

@@ -13,7 +13,8 @@
             poster: '.poster',
             background: '.bg-backdrop',
             startStreamingUI: '.watchnow-btn span',
-            bookmarkedIcon: '.bookmark-toggle'
+            bookmarkedIcon: '.bookmark-toggle',
+            SubtitlesList: '#subtitles-selector'
         },
 
 
@@ -455,7 +456,58 @@
                 episode: episode
             };
             var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
-            this.ui.startStreamingUI.text(episodeUIid)
+            this.ui.startStreamingUI.text(episodeUIid);
+
+            var that = this;
+            this.fetchTVSubtitles({
+                imdbid: this.model.get('imdb_id'),
+                season: season,
+                episode: episode
+            }).then(function (subs) {
+                var index = 0;
+
+                //console.log(subs);
+                _.each(subs, function (sub, id) {
+                    console.log(sub, id)
+                    var subi = {
+                        value: id,
+                        label: (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id)
+                    };
+                    that.ui.SubtitlesList.append(
+                        '<pt-selectable-element index="' + index + '" data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>'
+                    );
+                    index++;
+                })
+            });
+        },
+        Addsubs: function (sub) {
+            this.ui.SubtitlesList.append(
+                '<pt-selectable-element value="' + sub.value + '" label="' + sub.label + '"></pt-selectable-element>'
+            );
+        },
+
+        fetchTVSubtitles: function (data) {
+            var that = this;
+            var defer = Q.defer();
+
+            win.debug('Subtitles data request:', data);
+
+            var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
+
+            subtitleProvider.fetch(data).then(function (subs) {
+                if (subs && Object.keys(subs).length > 0) {
+                    var subtitles = subs;
+                    defer.resolve(subs);
+                    win.info(Object.keys(subs).length + ' subtitles found');
+                } else {
+                    win.warn('No subtitles returned');
+                    defer.resolve({});
+                }
+            }).catch(function (err) {
+                defer.resolve({});
+                console.log('subtitleProvider.fetch()', err);
+            });
+            return defer.promise;
         },
         deviceChanged: function (e) {
             console.log('Device Changed', e.originalEvent.detail);

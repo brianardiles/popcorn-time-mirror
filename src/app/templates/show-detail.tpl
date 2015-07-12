@@ -62,7 +62,7 @@
                 </div>
                 <div class="meta-dot"></div>
                 <div class="meta-item">
-                    <p><%= genres.join(" , ") %></p>
+                    <p><%= genres.splice(0,3).join(" , ") %></p>
                 </div>
                 <div class="meta-dot"></div>
                 <div class="meta-item">

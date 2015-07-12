@@ -473,20 +473,14 @@
                         value: id,
                         label: (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id)
                     };
-                    dropdown = dropdown + '<pt-selectable-element index="' + index + '" data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>';
-
+                    var selected = (Settings.subtitle_language === id ? 'selected="true"' : '');
+                    dropdown = dropdown + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>';
                     index++;
                 })
                 dropdown = dropdown + '</pt-dropdown>';
                 that.ui.SubtitlesList.html(dropdown)
             });
         },
-        Addsubs: function (sub) {
-            this.ui.SubtitlesList.append(
-                '<pt-selectable-element value="' + sub.value + '" label="' + sub.label + '"></pt-selectable-element>'
-            );
-        },
-
         fetchTVSubtitles: function (data) {
             var that = this;
             var defer = Q.defer();

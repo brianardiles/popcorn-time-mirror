@@ -26,7 +26,11 @@
                             seasontext = i18n.__("Special Features") ;
                         }
                         var seasonID = parseInt(season) +1;
+                        if(seasonImages[season].images.poster.full){
                         var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full);
+                        }else{
+                            var seasonPoster = images.poster;
+                        }
                          %>
                           <li id="seasonTab-<%= seasonID %>" data-type="<%= type %>" data-poster="<%= seasonPoster %>" data-id="<%= seasonID %>"> <%= seasontext %></li>
                         <% }); %>
@@ -41,7 +45,20 @@
             <img data-bgr="<%= images.poster %>" src="<%= images.poster %>" class="poster" />
             </paper-shadow>
             <div id="season-0" class="meta-container show-info episode-list-show">
-                <div class="meta-item"><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star-outline"></i>
+                <div class="meta-item">
+
+ <% p_rating = Math.round(rating.percentage) / 20; // Roundoff number to nearest 0.5  %>
+        
+            <% for (var i = 1; i <= Math.floor(p_rating); i++) { %>
+                    <i class="zmdi zmdi-star"></i>
+                <% }; %>
+                <% if (p_rating % 1 > 0) { %>
+       <i class="zmdi zmdi-star-half"></i>
+                <% }; %>
+                <% for (var i = Math.ceil(p_rating); i < 5; i++) { %>
+                   <i class="zmdi zmdi-star-outline"></i>
+            <% }; %>
+
                 </div>
                 <div class="meta-dot"></div>
                 <div class="meta-item">

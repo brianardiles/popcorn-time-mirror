@@ -48,6 +48,11 @@
         },
         deviceChanged: function (e) {
             console.log('Device Changed', e.originalEvent.detail);
+            var player = e.originalEvent.detail.value;
+            this.model.set('device', player);
+            if (!player.match(/[0-9]+.[0-9]+.[0-9]+.[0-9]/ig)) {
+                AdvSettings.set('chosenPlayer', player);
+            }
         },
         openIMDb: function () {
             gui.Shell.openExternal('http://www.imdb.com/title/' + this.model.get('imdb_id'));

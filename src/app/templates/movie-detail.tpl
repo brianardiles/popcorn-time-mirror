@@ -1,3 +1,4 @@
+ <% if(typeof backdrop==="undefined" ){ backdrop="" ; }; if(typeof synopsis==="undefined" ){ synopsis="Synopsis not available." ; }; if(typeof runtime==="undefined" ){ runtime="N/A" ; }; for(var i=0 ; i < genre.length; i++){ genre[i]=i18n.__(genre[i]); }; %>
  <div class="bg-backdrop" data-bgr="<%= backdrop %>"></div>
  <div class="summary-wrapper movie">
             <div class="summary-overlay">  <paper-icon-button class="back" icon="arrow-back"></paper-icon-button>
@@ -8,7 +9,18 @@
                 <img src="<%= cover %>" class="poster" />
                  </paper-shadow>
                 <div class="meta">
-                    <div class="meta-item"><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star"></i><i class="zmdi zmdi-star-outline"></i>
+                    <div class="meta-item">
+                     <% var p_rating=Math.round(rating) / 2; %>
+                            <% for (var i=1 ; i <= Math.floor(p_rating); i++) { %>
+                               <i class="zmdi zmdi-star"></i>
+                                <% }; %>
+                                    <% if (p_rating % 1> 0) { %>
+                                    <i class="zmdi zmdi-star-half"></i>
+                                        <% }; %>
+                                            <% for (var i= Math.ceil(p_rating); i < 5; i++) { %>
+                                           <i class="zmdi zmdi-star-outline"></i>
+                                                <% }; %>
+
                     </div>
                     <div class="meta-dot"></div>
                     <div class="meta-item">

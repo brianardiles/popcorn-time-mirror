@@ -13,7 +13,8 @@
             poster: '.poster',
             background: '.bg-backdrop',
             startStreamingUI: '.watchnow-btn span',
-            bookmarkedIcon: '.bookmark-toggle'
+            bookmarkedIcon: '.bookmark-toggle',
+            seasonsTabs: 'paper-tabs'
         },
 
 
@@ -178,18 +179,22 @@
                 select = _.last(episodes);
                 break;
             }
-
+            var season;
             if (select.season) {
-                this.selectSeason(null, select.season);
+                if ($('paper-tabs paper-tab:nth-child(2)').data('type') !== 'special') {
+                    season = select.season;
+                } else {
+                    season = select.season + 1;
+                }
+                this.selectSeason(null, season);
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
                 this.selectEpisode(null, episodeUIid);
             } else {
                 this.loadCover();
-                var season;
-                if ($('.owl-stage div:nth-child(2)').children().data('type') !== 'special') {
-                    season = parseInt($('.owl-stage div:nth-child(2)').children().data('id'));
+                if ($('paper-tabs paper-tab:nth-child(2)').data('type') !== 'special') {
+                    season = parseInt($('paper-tabs paper-tab:nth-child(2)').data('id'));
                 } else {
-                    season = parseInt($('.owl-stage div:nth-child(3)').children().data('id'));
+                    season = parseInt($('paper-tabs paper-tab:nth-child(3)').data('id'));
                 }
                 $('#season-' + season + ' li:first').click();
             }
@@ -537,16 +542,17 @@
             }
         },
         selectSeason: function (e, season) {
-
             if (!season) {
                 var seasonId = $(e.currentTarget).data('id');
                 var posterURL = $(e.currentTarget).data('poster');
                 $('.episode-container').animate({
                     scrollTop: 0
                 }, 'fast');
-                $('#season-' + seasonId + ' paper-tab:first').click();
+                $('#season-' + seasonId + ' li:first').click();
             } else {
-                var seasonID = parseInt(season) + 1;
+                var seasonID = parseInt(season);
+                var seasontabID = $('#seasonTab-' + seasonID).data('index');
+                this.ui.seasonsTabs.prop('selected', seasontabID);
                 var seasonId = $('#seasonTab-' + seasonID).data('id');
                 var posterURL = $('#seasonTab-' + seasonId).data('poster');
             }

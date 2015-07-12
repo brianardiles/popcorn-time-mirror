@@ -484,11 +484,11 @@
                             index++;
                         });
                         var toAdd = 0;
-                        if ((maxlength - parseInt(i18n.__("Disabled").length)) > 0) {
-                            toAdd = maxlength - parseInt(i18n.__("Disabled").length);
+                        if ((maxlength - parseInt(i18n.__('Disabled').length)) > 0) {
+                            toAdd = maxlength - parseInt(i18n.__('Disabled').length);
                         }
                         var dropdown = '<li class="subtitles-dropdown"><pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '&nbsp;'.repeat(toAdd) + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown></li>';
-                        $('.subtitles-dropdown').replaceWith(dropdown)
+                        $('.subtitles-dropdown').replaceWith(dropdown);
                     }
                 } else {
                     var dropdownl = '<li class="subtitles-dropdown"><pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Subtitles Not Available") + '"></pt-selectable-element></pt-dropdown></li>';

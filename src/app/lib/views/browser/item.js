@@ -241,6 +241,7 @@
                         ]).spread(function (cast, images) {
                             data.cast = cast;
                             data.seasonImages = images;
+                            console.log(data);
                             $('.spinner').hide();
                             App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
                         });
@@ -253,20 +254,23 @@
         getSeasonImages: function () {
             var that = this;
             var defer = Q.defer();
-
-            App.Trakt.seasons.summary(this.model.get('imdb_id'))
-                .then(function (images) {
-                    if (!images) {
-                        win.warn('Unable to fetch data from Trakt.tv');
+            var type = this.model.get('type');
+            if (type === 'show') {
+                App.Trakt.seasons.summary(this.model.get('imdb_id'))
+                    .then(function (images) {
+                        if (!images) {
+                            win.warn('Unable to fetch data from Trakt.tv');
+                            defer.resolve({});
+                        } else {
+                            defer.resolve(images);
+                        }
+                    }).catch(function (err) {
+                        console.log(err);
                         defer.resolve({});
-                    } else {
-                        defer.resolve(images);
-                    }
-                }).catch(function (err) {
-                    console.log(err);
-                    defer.resolve({});
-                });
-
+                    });
+            } else {
+                defer.resolve({});
+            }
             return defer.promise;
         },
         getCast: function () {

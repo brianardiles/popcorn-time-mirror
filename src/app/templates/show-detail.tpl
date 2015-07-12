@@ -47,7 +47,7 @@
             <div id="season-0" class="meta-container show-info episode-list-show">
                 <div class="meta-item">
 
- <% p_rating = Math.round(rating.percentage) / 20; // Roundoff number to nearest 0.5  %>
+ <% var p_rating = Math.round(rating.percentage) / 20; // Roundoff number to nearest 0.5  %>
         
             <% for (var i = 1; i <= Math.floor(p_rating); i++) { %>
                     <i class="zmdi zmdi-star"></i>
@@ -77,12 +77,14 @@
                 <div id="imdb-link" class="meta-btn"><%=i18n.__( "Read More") %></div>
 
                 <div class="meta-divider"></div>
-                 <% _.each(cast.cast, function(person) {%>
+                 <% if(cast.cast){
+
+                 _.each(cast.cast, function(person) {%>
                           <div class="people">
                     <p><%= person.person.name %></p>
                     <p class="status"><%=i18n.__( "as") %>&nbsp;<%= person.character %></p>
                         </div>
-                  <% }); %>
+                  <% }); } %>
 
             </div>
             <div class="episode-container">

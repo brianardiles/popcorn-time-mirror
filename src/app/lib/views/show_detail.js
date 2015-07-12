@@ -344,6 +344,7 @@
         },
         loadCover: function (url) {
             var that = this;
+            this.ui.poster.removeClass('fadein');
             if (!url) {
                 url = this.ui.poster.data('bgr');
             }
@@ -460,25 +461,28 @@
             var dropdown = '<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Loading") + '..."></pt-selectable-element></pt-dropdown>';
             this.ui.SubtitlesList.html(dropdown);
             var that = this;
+            var oldStream = this.Stream;
             this.fetchTVSubtitles({
                 imdbid: this.model.get('imdb_id'),
                 season: season,
                 episode: episode
             }).then(function (subs) {
-                var index = 0;
-                var dropdown = '<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '"></pt-selectable-element>';
-                //console.log(subs);
-                _.each(subs, function (sub, id) {
-                    var subi = {
-                        value: id,
-                        label: (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id)
-                    };
-                    var selected = (Settings.subtitle_language === id ? 'selected="true"' : '');
-                    dropdown = dropdown + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>';
-                    index++;
-                })
-                dropdown = dropdown + '</pt-dropdown>';
-                that.ui.SubtitlesList.html(dropdown)
+                if (_.isEqual(oldStream, that.Stream)) {
+                    var index = 0;
+                    var dropdown = '<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '"></pt-selectable-element>';
+                    //console.log(subs);
+                    _.each(subs, function (sub, id) {
+                        var subi = {
+                            value: id,
+                            label: (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id)
+                        };
+                        var selected = (Settings.subtitle_language === id ? 'selected="true"' : '');
+                        dropdown = dropdown + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>';
+                        index++;
+                    })
+                    dropdown = dropdown + '</pt-dropdown>';
+                    that.ui.SubtitlesList.html(dropdown)
+                }
             });
         },
         fetchTVSubtitles: function (data) {
@@ -522,7 +526,9 @@
             }
         },
         selectSeason: function (e, season) {
+
             $('.seasons-container li').removeClass('active');
+
             if (!season) {
                 $(e.currentTarget).addClass('active');
                 var seasonId = $(e.currentTarget).data('id');
@@ -530,19 +536,22 @@
                 $('.episode-container').animate({
                     scrollTop: 0
                 }, 'fast');
+                $('#season-' + seasonId + ' li:first').click();
             } else {
                 var seasonID = parseInt(season) + 1;
+
                 $('#seasonTab-' + seasonID).addClass('active');
+
                 var seasonId = $('#seasonTab-' + seasonID).data('id');
                 var posterURL = $('#seasonTab-' + seasonId).data('poster');
             }
+            var that = this;
             this.selectedSeason = seasonId;
 
             this.loadCover(posterURL);
+
             $('.episode-list-show').removeClass('episode-list-show');
             $('#season-' + seasonId).addClass('episode-list-show');
-
-            $('#season-' + seasonId + ' li:first').click();
         },
         openPerson: function (e) {
             var personid = $(e.currentTarget).parent().data('id');

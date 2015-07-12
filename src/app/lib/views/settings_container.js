@@ -119,6 +119,7 @@
             $('#header').removeClass('header-shadow');
             $('#movie-detail').show();
             clearInterval(waitComplete);
+            App.vent.trigger('nav:show');
         },
 
         closeSettings: function () {

@@ -10,6 +10,7 @@
 
         regions: {
             Header: '#header',
+            MainNav: '#main-nav',
             Content: '#content',
             MovieDetail: '#movie-detail',
             FileSelector: '#file-selector-container',
@@ -162,6 +163,7 @@
 
         onShow: function () {
             this.Header.show(new App.View.TitleBar());
+            this.MainNav.show(new App.View.MainNav());
             // Set the app title (for Windows mostly)
             this.nativeWindow.title = App.Config.title;
             // Show loading modal on startup
@@ -245,18 +247,21 @@
             this.Settings.destroy();
             this.MovieDetail.destroy();
             this.Content.show(new App.View.MovieBrowser());
+            App.vent.trigger('nav:show');
         },
 
         showShows: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
             this.Content.show(new App.View.ShowBrowser());
+            App.vent.trigger('nav:show');
         },
 
         showAnime: function (e) {
             this.Settings.destroy();
             this.MovieDetail.destroy();
             this.Content.show(new App.View.AnimeBrowser());
+            App.vent.trigger('nav:show');
         },
 
         connectVpn: function (e) {
@@ -267,6 +272,7 @@
             this.Settings.destroy();
             this.MovieDetail.destroy();
             this.Content.show(new App.View.FavoriteBrowser());
+            App.vent.trigger('nav:show');
         },
 
         renderFavorites: function (e) {
@@ -275,6 +281,7 @@
             $('.right .search').hide();
             $('.filter-bar').find('.active').removeClass('active');
             $('#filterbar-favorites').addClass('active');
+            App.vent.trigger('nav:show');
         },
 
         showWatchlist: function (e) {
@@ -293,6 +300,7 @@
                 }
             }
             waitForSync();
+            App.vent.trigger('nav:show');
         },
 
         showDisclaimer: function (e) {
@@ -301,10 +309,12 @@
 
         showAbout: function (e) {
             this.About.show(new App.View.About());
+            App.vent.trigger('nav:hide');
         },
 
         showTorrentCollection: function (e) {
             this.TorrentCollection.show(new App.View.TorrentCollection());
+            App.vent.trigger('nav:show');
         },
 
         showUpdater: function (model) {
@@ -349,11 +359,13 @@
             this.MovieDetail.show(new App.View.MovieDetail({
                 model: movieModel
             }));
+            App.vent.trigger('nav:hide');
         },
 
         closeMovieDetail: function (movieModel) {
             _this.MovieDetail.destroy();
             App.vent.trigger('shortcuts:list');
+            App.vent.trigger('nav:show');
         },
 
         showNotification: function (notificationModel) {
@@ -370,11 +382,13 @@
             this.MovieDetail.show(new App.View.ShowDetail({
                 model: showModel
             }));
+            App.vent.trigger('nav:hide');
         },
 
         closeShowDetail: function (showModel) {
             _this.MovieDetail.destroy();
             App.vent.trigger('shortcuts:list');
+            App.vent.trigger('nav:show');
         },
 
         showFileSelector: function (fileModel) {
@@ -388,6 +402,7 @@
             this.Settings.show(new App.View.Settings({
                 model: settingsModel
             }));
+            App.vent.trigger('nav:hide');
         },
 
         traktAuthenticated: function () {

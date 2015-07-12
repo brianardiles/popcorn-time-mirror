@@ -1,0 +1,76 @@
+main-background-color = rgb(17, 18, 20, 1)
+main-background-color-light = rgb(28, 29, 33, 1)
+main-text-color = rgb(255, 255, 255, 1)
+main-text-color-secondary = rgba(255, 255, 255, 0.6)
+main-text-color-inactive = rgba(255, 255, 255, 0.3)
+main-color-accent = rgb(63, 81, 181, 1)
+disabled-text-color = rgb(122, 122, 122, 1)
+
+lesscss-percentage(n)
+    (n * 100)%
+pre-show-text(wait)
+    opacity 0
+    transform translateY(-50px)
+    transition opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) wait, transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) wait
+    
+stagger(n)
+    for i in (1..n)
+        &:nth-of-type(i)
+            transition opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) (0.1s * i), transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) (0.1s * i)
+
+    
+nav#main-nav
+    position fixed
+    top 31px
+    left 0
+    bottom 0
+    width 100px
+    background-color main-background-color
+    padding-top 30px
+    font-size 1em
+    line-height 1.7em
+    transition width 0.4s ease-out, left 0.5s ease-out
+    overflow hidden
+    z-index 2
+    
+    &.hide
+        left: -100px
+    
+    ul
+        position absolute
+        overflow hidden
+        padding 0
+        margin 0
+        left 35px
+        height 95%
+        
+        li
+            display block
+            margin-bottom 2em
+            //transform translateX(70px)
+            
+            a
+                color main-text-color-secondary
+                white-space nowrap
+                text-decoration none
+                transition color 0.4s ease-out
+                .active
+                    color main-text-color
+                core-icon, i
+                    width 30px
+                    height 30px
+                    margin-right 60px
+                    vertical-align bottom
+                    transition margin-right 0.4s ease-out
+                    font-size 30px
+                &:hover, &.active
+                    color main-text-color
+                    
+        #nav-settings
+            position absolute
+            bottom 0
+            left 0
+    &:hover
+        width 200px
+        ul li a core-icon, ul li a i
+            margin-right 20px

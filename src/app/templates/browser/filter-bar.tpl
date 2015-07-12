@@ -1,14 +1,3 @@
-<ul class="nav nav-hor left">
-    <li class="source active showMovies providerinfo" data-toggle="tooltip" data-placement="top" title="YTS">
-        <%=i18n.__( "Movies") %>
-    </li>
-    <li class="source showShows providerinfo" data-toggle="tooltip" data-placement="top" title="TVApi">
-        <%=i18n.__( "TV Series") %>
-    </li>
-    <li class="source showAnime providerinfo" data-toggle="tooltip" data-placement="top" title="Haruhichan">
-        <%=i18n.__( "Anime") %>
-    </li>
-</ul>
 <ul id="nav-filters" class="nav nav-hor filters">
     <% if(typeof type !=='undefined' ){ %>
         <li class="dropdown filter types">
@@ -62,8 +51,6 @@
                     </ul>
                 </li>
                 <%}%>
-</ul>
-<ul class="nav nav-hor right">
     <li>
         <div class="right search">
             <form>
@@ -72,55 +59,4 @@
             </form>
         </div>
     </li>
-    <!-- Randomize -->
-    <% if (Settings.activateRandomize) { %>
-        <li style="display:block">
-            <% } else { %>
-                <li style="display:none">
-                    <% } %>
-                        <i id="filterbar-random" class="fa fa-random tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__(" Randomize ") %>"></i>
-                </li>
-                <!-- VPN -->
-                <% if(App.VPNClient.isDisabled()) { %>
-                    <% } else { %>
-                        <li>
-                            <i style="color:#CC0000" id="filterbar-vpn-connect" class="fa fa-unlock-alt vpn-connect tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__(" Connect VPN ") %>"></i>
-                        </li>
-                        <% } %>
-                            <!-- Watchlist -->
-                            <% if (Settings.activateWatchlist) { %>
-                                <li style="display:block">
-                                    <% } else { %>
-                                        <li style="display:none">
-                                            <% } %>
-                                                <i id="filterbar-watchlist" class="fa fa-inbox watchlist tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__(" Watchlist ") %>"></i>
-                                        </li>
-                                        <!-- Favorites -->
-                                        <li>
-                                            <i id="filterbar-favorites" class="fa fa-heart favorites tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__(" Favorites ") %>"></i>
-                                        </li>
-                                        <!-- Torrent Collection -->
-                                        <% if (Settings.activateTorrentCollection) { %>
-                                            <li id="torrent_col" style="display:block">
-                                                <% } else { %>
-                                                    <li id="torrent_col" style="display:none">
-                                                        <% } %>
-                                                            <i id="filterbar-torrent-collection" class="fa fa-folder-open torrent-collection tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__(" Torrent Collection ") %>"></i>
-                                                    </li>
-                                                    <% if (App.updateAvailable) { %>
-                                  <li id="filterbar-update-api" style="display:block">
-                                    <% } else { %>
-                                       <li id="filterbar-update-api" style="display:none">
-                                            <% } %>
-                                                 
-                                                        <i id="filterbar-update" style="color:green" class="fa fa-refresh fa-spin tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__("Update Available") %>"></i>
-                                                    </li>
-                                                    <!-- About -->
-                                                    <li>
-                                                        <i id="filterbar-about" class="fa fa-info-circle about tooltipped" data-toggle="tooltip" data-placement="bottom" title="<%= i18n.__(" About ") %>"></i>
-                                                    </li>
-                                                    <!-- Settings -->
-                                                    <li>
-                                                        <i id="filterbar-settings" class="fa fa-cog settings tooltipped" data-toggle="tooltip" data-placement="left" title="<%= i18n.__(" Settings ") %>"></i>
-                                                    </li>
 </ul>

@@ -33,6 +33,10 @@
             this.listenTo(this.filter, 'change', this.onFilterChange);
 
         },
+        
+        onClose: function() {
+            App.vent.trigger('nav:hide');  
+        },
 
         onShow: function () {
             this.bar = new App.View.FilterBar({
@@ -51,6 +55,7 @@
                 win.zoomLevel = zoom;
             }
             App.vent.trigger('app:started');
+            App.vent.trigger('nav:show');
 
         },
         onFilterChange: function () {

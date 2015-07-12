@@ -32,6 +32,7 @@
             $('.filter-bar').show();
             $('#header').removeClass('header-shadow');
             $('#movie-detail').show();
+            App.vent.trigger('nav:show');
         },
 
         closeAbout: function () {

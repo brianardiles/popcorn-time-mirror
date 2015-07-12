@@ -14,7 +14,7 @@
             background: '.bg-backdrop',
             startStreamingUI: '.watchnow-btn span',
             bookmarkedIcon: '.bookmark-toggle',
-            SubtitlesList: '#subtitles-selector'
+            SubtitlesList: '.subtitles-dropdown'
         },
 
 
@@ -465,7 +465,7 @@
                 episode: episode
             }).then(function (subs) {
                 var index = 0;
-
+                var dropdown = '<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles">';
                 //console.log(subs);
                 _.each(subs, function (sub, id) {
                     console.log(sub, id)
@@ -473,11 +473,12 @@
                         value: id,
                         label: (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id)
                     };
-                    that.ui.SubtitlesList.append(
-                        '<pt-selectable-element index="' + index + '" data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>'
-                    );
+                    dropdown = dropdown + '<pt-selectable-element index="' + index + '" data-url="' + sub + '" value="' + subi.value + '" label="' + subi.label + '"></pt-selectable-element>';
+
                     index++;
                 })
+                dropdown = dropdown + '</pt-dropdown>';
+                that.ui.SubtitlesList.html(dropdown)
             });
         },
         Addsubs: function (sub) {

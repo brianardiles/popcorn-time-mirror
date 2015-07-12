@@ -12,10 +12,7 @@
     "OwlCarousel2": "~2.0.0-beta.3",
     "material-design-iconic-font": "~2.1.1",
     "polymer": "Polymer/polymer#~0.5.2",
-    "paper-elements": "Polymer/paper-elements#~0.5.2",
-    "paper-shadow": "Polymer/paper-shadow#0.5",
-    "paper-ripple": "Polymer/paper-ripple#0.5",
-    "paper-icon-button": "Polymer/paper-icon-button#0.5"
+    "paper-elements": "Polymer/paper-elements#~0.5.2"
   },
   "dependenciesIgnore": {
     "backbone": [

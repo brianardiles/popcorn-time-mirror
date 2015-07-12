@@ -7,7 +7,7 @@
                 <i class="zmdi zmdi-bookmark-outline zmdi-hc-lg bookmark-toggle"></i>
                 <i class="zmdi zmdi-eye zmdi-hc-lg watched-toggle"></i>
                 <div class="seasons-wrapper">
-                   <paper-tabs class="seasons-container" selected="0" scrollable role="tablist" horizontal center layout>
+                   <paper-tabs class="seasons-container" selected="0" noink="true" scrollable role="tablist" horizontal center layout>
                        <paper-tab data-id="0" data-poster="<%= images.poster %>" role="tab" active class="active"><%= i18n.__( "Show Info") %></paper-tab>
                        <% var torrents = {},
                                 seasontext,

@@ -24,7 +24,7 @@
             'change #quality-toggle': 'qualityChanged',
             'change #subtitles-selector': 'toggleShowQuality',
             'change #device-selector': 'deviceChanged',
-            'click .seasons-container li': 'selectSeason',
+            'click .seasons-container paper-tab': 'selectSeason',
             'click .episode-container ul li': 'selectEpisode',
             'click .watched-icon': 'toggleWatched',
             'click #imdb-link': 'openIMDb',
@@ -52,7 +52,7 @@
             }
             console.log(this.model)
             this.loadbackground();
-            this.seasonsUI();
+            //this.seasonsUI();
             this.playerQualityChooseUI();
             this.isShowWatched();
 
@@ -538,21 +538,15 @@
         },
         selectSeason: function (e, season) {
 
-            $('.seasons-container li').removeClass('active');
-
             if (!season) {
-                $(e.currentTarget).addClass('active');
                 var seasonId = $(e.currentTarget).data('id');
                 var posterURL = $(e.currentTarget).data('poster');
                 $('.episode-container').animate({
                     scrollTop: 0
                 }, 'fast');
-                $('#season-' + seasonId + ' li:first').click();
+                $('#season-' + seasonId + ' paper-tab:first').click();
             } else {
                 var seasonID = parseInt(season) + 1;
-
-                $('#seasonTab-' + seasonID).addClass('active');
-
                 var seasonId = $('#seasonTab-' + seasonID).data('id');
                 var posterURL = $('#seasonTab-' + seasonId).data('poster');
             }

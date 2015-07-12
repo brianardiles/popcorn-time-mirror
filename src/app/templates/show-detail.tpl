@@ -26,7 +26,7 @@
                             seasontext = i18n.__("Special Features") ;
                         }
                         var seasonID = parseInt(season) +1;
-                        if(seasonImages[season].images.poster.full){
+                        if(seasonImages && seasonImages[season] && seasonImages[season].images.poster.full){
                         var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full);
                         }else{
                             var seasonPoster = images.poster;

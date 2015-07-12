@@ -137,11 +137,9 @@
                     </li>
                     <li id="player-option" class="device-dropdown">
                         <pt-dropdown id="device-selector" openDir="up">
-                            <pt-selectable-element selected value="pt" label="Popcorn Time" src="images/icons/local-icon.png"></pt-selectable-element>
-                            <pt-selectable-element value="vlc" label="VLC" src="images/icons/external-vlc-icon.png"></pt-selectable-element>
-                            <pt-selectable-element value="mplayer" label="Mplayer" src="images/icons/external-mplayer-icon.png"></pt-selectable-element>
-                            <pt-selectable-element value="airplay" label="Apple TV" src="images/icons/airplay-icon.png"></pt-selectable-element>
-                            <pt-selectable-element value="chromecast" label="Chromecast" src="images/icons/chromecast-icon.png">Chromecast</pt-selectable-element>
+                         <% _.each(App.Device.Collection.models, function(player) { %>
+                               <pt-selectable-element  <%= App.Device.Collection.selected.id === player.get('id') ? 'selected="true"':''%> value="<%= player.get('id') %>" label="<%= player.get('name') %>" src="images/icons/<%= player.get('type') %>-icon.png"></pt-selectable-element>
+                         <% });%>
                         </pt-dropdown>
                     </li>
                 </div>

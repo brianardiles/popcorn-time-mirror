@@ -73,7 +73,7 @@
                     </li>
                     <li id="player-option" class="device-dropdown">
                         <pt-dropdown id="device-selector" openDir="up">
-  <% _.each(App.Device.Collection.models, function(player) { %>
+                        <% _.each(App.Device.Collection.models, function(player) { %>
                                <pt-selectable-element  <%= App.Device.Collection.selected.id === player.get('id') ? 'selected="true"':''%> value="<%= player.get('id') %>" label="<%= player.get('name') %>" src="images/icons/<%= player.get('type') %>-icon.png"></pt-selectable-element>
                          <% });%>
                          

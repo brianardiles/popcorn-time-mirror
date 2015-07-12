@@ -105,7 +105,7 @@
             
                         <p class="episode-id"><%=episodeUIid %></p>
                         <p class="episode-name"><%=episodeData.title %></p>
-                        <i class="zmdi zmdi-info info-icon"></i><i class="zmdi zmdi-eye watched-icon"></i>
+                        <paper-icon-button class="info-icon" icon="info"></paper-icon-button><paper-icon-button class="watched-icon" icon="visibility"></paper-icon-button>
                         <p class="episode-airdate"><%=first_aired %></p>
 
                         </li>

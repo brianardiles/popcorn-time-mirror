@@ -80,10 +80,10 @@
                  <% if(cast.cast){
 
                  _.each(cast.cast, function(person) {%>
-                          <div class="people">
-                    <p><%= person.person.name %></p>
+                  <div data-id="<%= person.person.ids.imdb || person.person.ids.slug %>" class="people">
+                    <p class="person"><%= person.person.name %></p>
                     <p class="status"><%=i18n.__( "as") %>&nbsp;<%= person.character %></p>
-                        </div>
+                   </div>
                   <% }); } %>
 
             </div>

@@ -26,7 +26,8 @@
             'change #device-selector': 'deviceChanged',
             'click .watchnow-btn': 'play',
             'click #play-trailer': 'playTrailer',
-            'click #imdb-link': 'openIMDb'
+            'click #imdb-link': 'openIMDb',
+            'click .person': 'openPerson'
         },
 
         initialize: function () {
@@ -59,7 +60,11 @@
             }
         },
         openIMDb: function () {
-            gui.Shell.openExternal('http://www.imdb.com/title/' + this.model.get('imdb_id'));
+            gui.Shell.openExternal('http://trakt.tv/movies/' + this.model.get('imdb_id'));
+        },
+        openPerson: function (e) {
+            var personid = $(e.currentTarget).parent().data('id');
+            gui.Shell.openExternal('http://trakt.tv/people/' + personid);
         },
         loadCover: function () {
             var that = this;

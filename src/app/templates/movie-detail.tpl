@@ -39,8 +39,8 @@
                     <div id="play-trailer" class="meta-btn"><%=i18n.__( "Watch Trailer") %></div>
                     <div class="meta-divider"></div>
                       <% _.each(cast.cast, function(person) {%>
-                          <div class="people">
-                    <p><%= person.person.name %></p>
+                          <div data-id="<%= person.person.ids.imdb %>" class="people">
+                    <p class="person"><%= person.person.name %></p>
                     <p class="status"><%=i18n.__( "as") %>&nbsp;<%= person.character %></p>
                         </div>
                   <% }); %>

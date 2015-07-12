@@ -25,6 +25,7 @@
             'click .episode-container ul li': 'selectEpisode',
             'click .watched-icon': 'toggleWatched',
             'click #imdb-link': 'openIMDb',
+            'click .person': 'openPerson',
             'click #quality-toggle pt-selectable-element': 'toggleShowQuality',
             'click .epsiode-tab': 'setStream',
             'click .watchnow-btn': 'startStreaming'
@@ -483,7 +484,11 @@
 
             $('#season-' + seasonId + ' li:first').click();
         },
-
+        openPerson: function (e) {
+            var personid = $(e.currentTarget).parent().data('id');
+            console.log(personid);
+            gui.Shell.openExternal('http://trakt.tv/people/' + personid);
+        },
         playerQualityChooseUI: function () {
             //change option of player, with dropdown
             $('#player-option p').on('click', function (e) {

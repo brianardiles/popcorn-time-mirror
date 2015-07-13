@@ -261,7 +261,7 @@
             colorCache.src = this.model.get('coverURL');
             console.log(this.model.get('coverURL'));
             colorCache.onload = function () {
-                var color = colorThief.getColor(colorCache);
+                var color = colorThief.getColor(colorCache, 10);
                 var rgb = color[0] + ',' + color[1] + ',' + color[2];
                 colorCache = null;
                 defer.resolve(rgb);

@@ -102,7 +102,7 @@
             </li>
         </div>
         <paper-shadow z="1">
-            <paper-button class="watchnow-btn">
+            <paper-button style="background-color: rgb(<%=color %>)" class="watchnow-btn">
                 <i class="zmdi zmdi-play"></i><%=i18n.__( "Watch Now") %>
             </paper-button>
         </paper-shadow>

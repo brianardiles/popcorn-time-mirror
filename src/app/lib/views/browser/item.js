@@ -260,7 +260,11 @@
             img.addEventListener('load', function () {
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
-                defer.resolve(swatches['Vibrant'].getHex());
+                if (swatches['Vibrant']) {
+                    defer.resolve(swatches['Vibrant'].getHex());
+                } else {
+                    defer.resolve(null);
+                }
             });
             return defer.promise;
         },

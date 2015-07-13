@@ -482,26 +482,21 @@
 
             subtitleProvider.fetch(data).then(function (subs) {
                 if (subs && Object.keys(subs).length > 0) {
-                    if (subs && Object.keys(subs).length > 0) {
-                        var index = 0;
-                        var dropdowncon = '';
-                        _.each(subs, function (sub, id) {
-                            var selected = (Settings.subtitle_language === id ? 'selected="true"' : '');
-                            dropdowncon = dropdowncon + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + id + '" label="' + (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id) + '"></pt-selectable-element>';
-                            index++;
-                        });
-                        that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown>');
-                    } else {
-                        that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Subtitles Not Available") + '"></pt-selectable-element></pt-dropdown>');
-                    }
-                    win.info(Object.keys(subs).length + ' subtitles found');
+                    var index = 0;
+                    var dropdowncon = '';
+                    _.each(subs, function (sub, id) {
+                        var selected = (Settings.subtitle_language === id ? 'selected="true"' : '');
+                        dropdowncon = dropdowncon + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + id + '" label="' + (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id) + '"></pt-selectable-element>';
+                        index++;
+                    });
+                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown>');
                 } else {
-                    win.warn('No subtitles returned');
+                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Subtitles Not Available") + '"></pt-selectable-element></pt-dropdown>');
+                    win.info(Object.keys(subs).length + ' subtitles found');
                 }
             }).catch(function (err) {
                 console.log('subtitleProvider.fetch()', err);
             });
-
         },
         deviceChanged: function (e) {
             console.log('Device Changed', e.originalEvent.detail);

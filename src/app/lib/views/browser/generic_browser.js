@@ -33,9 +33,9 @@
             this.listenTo(this.filter, 'change', this.onFilterChange);
 
         },
-        
-        onClose: function() {
-            App.vent.trigger('nav:hide');  
+
+        onClose: function () {
+            App.vent.trigger('nav:hide');
         },
 
         onShow: function () {

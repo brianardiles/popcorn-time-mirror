@@ -1,10 +1,10 @@
 (function (App) {
     'use strict';
-    
+
     App.View.MainNav = Backbone.Marionette.ItemView.extend({
         template: '#main-nav-tpl',
         tagName: 'ul',
-        
+
         events: {
             'click #nav-settings a': 'settings',
             'click #nav-about a': 'about',
@@ -18,22 +18,22 @@
             'click #nav-vpn a': 'vpnConnect',
             'click #nav-update a': 'showUpdater',
         },
-        
-        initialize: function() {
+
+        initialize: function () {
             App.vent.on('enableUpdatericon', _.bind(this.showUpdate, this));
-            
+
             App.vent.on('nav:hide', _.bind(this.hideNav, this));
             App.vent.on('nav:show', _.bind(this.showNav, this));
         },
-        
-        hideNav: function() {
+
+        hideNav: function () {
             $('#main-nav').addClass('hide');
         },
-        
-        showNav: function() {
+
+        showNav: function () {
             $('#main-nav').removeClass('hide');
         },
-        
+
         setactive: function (set) {
             if (AdvSettings.get('startScreen') === 'Last Open' && set !== 'Updater') {
                 AdvSettings.set('lastTab', set);
@@ -42,39 +42,39 @@
             $('#nav-random').hide();
             $('nav').find('.active').removeClass('active');
             switch (set) {
-                case 'TV Series':
-                case 'shows':
-                    $('#nav-shows a').addClass('active');
-                    break;
-                case 'Movies':
-                case 'movies':
-                    $('#nav-random').show();
-                    $('#nav-movies a').addClass('active');
-                    break;
-                case 'Anime':
-                case 'anime':
-                    $('#nav-anime a').addClass('active');
-                    break;
-                case 'Favorites':
-                case 'favorites':
-                    $('.right .search').hide();
-                    $('#nav-favorites a').addClass('active');
-                    break;
-                case 'Watchlist':
-                case 'watchlist':
-                    $('.right .search').hide();
-                    $('#nav-watchlist a').addClass('active');
-                    break;
-                case 'Torrent-collection':
-                    $('.right .search').hide();
-                    $('#nav-collection a').addClass('active');
-                    break;
-                case 'Updater':
-                    $('.right .search').hide();
-                    break;
+            case 'TV Series':
+            case 'shows':
+                $('#nav-shows a').addClass('active');
+                break;
+            case 'Movies':
+            case 'movies':
+                $('#nav-random').show();
+                $('#nav-movies a').addClass('active');
+                break;
+            case 'Anime':
+            case 'anime':
+                $('#nav-anime a').addClass('active');
+                break;
+            case 'Favorites':
+            case 'favorites':
+                $('.right .search').hide();
+                $('#nav-favorites a').addClass('active');
+                break;
+            case 'Watchlist':
+            case 'watchlist':
+                $('.right .search').hide();
+                $('#nav-watchlist a').addClass('active');
+                break;
+            case 'Torrent-collection':
+                $('.right .search').hide();
+                $('#nav-collection a').addClass('active');
+                break;
+            case 'Updater':
+                $('.right .search').hide();
+                break;
             }
         },
-        
+
         onShow: function () {
 
             var activetab;

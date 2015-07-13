@@ -22,12 +22,12 @@
             'click .sorters .dropdown-menu a': 'sortBy',
             'click .genres .dropdown-menu a': 'changeGenre',
             'click .types .dropdown-menu a': 'changeType',
-            
+
         },
 
         initialize: function () {
 
-            
+
         },
         focus: function (e) {
             e.focus();

@@ -12,7 +12,8 @@
             device: '#device-selector',
             poster: '.poster',
             background: '.bg-backdrop',
-            bookmarkedIcon: '.bookmark-toggle'
+            bookmarkedIcon: '.bookmark-toggle',
+            watchedIcon: '.watched-toggle'
         },
 
         keyboardEvents: {
@@ -21,6 +22,8 @@
 
         events: {
             'click .back': 'closeDetails',
+            'click .bookmark-toggle': 'toggleBookmarked',
+            'click .watched-toggle': 'toggleWatched',
             'change #quality-toggle': 'qualityChanged',
             'change #subtitles-selector': 'subtitlesChanged',
             'change #device-selector': 'deviceChanged',
@@ -35,11 +38,14 @@
         },
 
         onShow: function () {
+            if (this.model.get('bookmarked')) {
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark');
+            }
+            if (this.model.get('watched')) {
+                this.ui.watchedIcon.prop('icon', 'visibility');
+            }
             this.loadCover();
             this.loadbackground();
-            if (this.model.get('bookmarked')) {
-                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
-            }
         },
         closeDetails: function () {
             App.vent.trigger('movie:closeDetail');
@@ -66,6 +72,27 @@
         openPerson: function (e) {
             var personid = $(e.currentTarget).parent().data('id');
             gui.Shell.openExternal('http://trakt.tv/people/' + personid);
+        },
+        toggleWatched: function () {
+            if (!this.model.get('watched')) {
+                this.model.set('watched', true);
+                this.ui.watchedIcon.prop('icon', 'visibility');
+            } else {
+                this.model.set('watched', false);
+                this.ui.watchedIcon.prop('icon', 'visibility-off');
+            }
+            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-watched').click();
+
+        },
+        toggleBookmarked: function () {
+            if (!this.model.get('bookmarked')) {
+                this.model.set('bookmarked', true);
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark');
+            } else {
+                this.model.set('bookmarked', false);
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark-outline');
+            }
+            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
         },
         loadCover: function () {
             var that = this;

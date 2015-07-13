@@ -9,7 +9,7 @@
             </div>
             <paper-icon-button icon="bookmark-outline" class="bookmark-toggle">
             </paper-icon-button>
-            <paper-icon-button icon="visibility" class="watched-toggle">
+            <paper-icon-button icon="visibility-off" class="watched-toggle">
             </paper-icon-button>
             <paper-shadow z="1" class="poster-shadow">
                 <img src="<%= cover %>" class="poster" />

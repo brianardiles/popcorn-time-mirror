@@ -165,8 +165,8 @@
                 title: this.ui.bookmarkIcon.hasClass('selected') ? i18n.__('Remove from bookmarks') : i18n.__('Add to bookmarks')
             });
 
+            this.model.set('coverURL', coverUrl);
             var this_ = this;
-
             var coverCache = new Image();
             coverCache.src = coverUrl;
             coverCache.onload = function () {
@@ -237,9 +237,11 @@
 
                         Q.all([
                             that.getCast(),
-                            that.getSeasonImages()
-                        ]).spread(function (cast, images) {
+                            that.getSeasonImages(),
+                            that.getColor()
+                        ]).spread(function (cast, images, color) {
                             data.cast = cast;
+                            data.color = color;
                             data.seasonImages = images;
                             console.log(data);
                             $('.spinner').hide();
@@ -251,6 +253,27 @@
 
             }
         },
+        getColor: function () {
+            var defer = Q.defer();
+
+            var colorThief = new ColorThief();
+            var colorCache = new Image();
+            colorCache.src = this.model.get('coverURL');
+            console.log(this.model.get('coverURL'));
+            colorCache.onload = function () {
+                var color = colorThief.getColor(colorCache);
+                var rgb = color[0] + ',' + color[1] + ',' + color[2];
+                colorCache = null;
+                defer.resolve(rgb);
+            };
+            colorCache.onerror = function () {
+                colorCache = null;
+                defer.resolve(null)
+            };
+            return defer.promise;
+        },
+
+
         getSeasonImages: function () {
             var that = this;
             var defer = Q.defer();

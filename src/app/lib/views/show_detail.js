@@ -561,10 +561,8 @@
                 $(this).addClass('active');
             });
         },
-
-
         openIMDb: function () {
-            gui.Shell.openExternal('http://www.imdb.com/title/' + this.model.get('imdb_id'));
+            gui.Shell.openExternal('http://trakt.tv/shows/' + this.model.get('imdb_id'));
         },
         closeDetails: function (e) {
             App.vent.trigger('show:closeDetail');

@@ -47,7 +47,7 @@
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster);
             this.getEpisodeSubs = _.throttle(this.getEpisodeSubs, 500);
-
+            this.isShowWatched();
         },
 
         onShow: function () {
@@ -58,8 +58,6 @@
             console.log(this.model)
             this.loadbackground();
             this.playerQualityChooseUI();
-            this.isShowWatched();
-
         },
         startStreaming: function (e) {
             var that = this;

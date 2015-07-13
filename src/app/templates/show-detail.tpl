@@ -29,7 +29,7 @@
                 }
                 var seasonID = parseInt(season) + 1;
                 if(seasonImages && seasonImages[season] && seasonImages[season].images.poster.full){
-                var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full);
+                var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full, 'medium');
                 }else{
                     var seasonPoster = images.poster;
                 }

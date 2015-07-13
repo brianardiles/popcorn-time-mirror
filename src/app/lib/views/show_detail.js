@@ -44,8 +44,8 @@
         initialize: function () {
             this.renameUntitled();
             var images = this.model.get('images');
-            images.fanart = App.Trakt.resizeImage(images.fanart);
-            images.poster = App.Trakt.resizeImage(images.poster);
+            images.fanart = App.Trakt.resizeImage(images.fanart, 'original');
+            images.poster = App.Trakt.resizeImage(images.poster, 'medium');
             this.isShowWatched();
         },
 

@@ -255,21 +255,13 @@
         },
         getColor: function () {
             var defer = Q.defer();
-
-            var colorThief = new ColorThief();
-            var colorCache = new Image();
-            colorCache.src = this.model.get('coverURL');
-            console.log(this.model.get('coverURL'));
-            colorCache.onload = function () {
-                var color = colorThief.getColor(colorCache, 10);
-                var rgb = color[0] + ',' + color[1] + ',' + color[2];
-                colorCache = null;
-                defer.resolve(rgb);
-            };
-            colorCache.onerror = function () {
-                colorCache = null;
-                defer.resolve(null)
-            };
+            var img = document.createElement('img');
+            img.setAttribute('src', this.model.get('coverURL'))
+            img.addEventListener('load', function () {
+                var vibrant = new Vibrant(img, 64, 4);
+                var swatches = vibrant.swatches();
+                defer.resolve(swatches['Vibrant'].getHex());
+            });
             return defer.promise;
         },
 

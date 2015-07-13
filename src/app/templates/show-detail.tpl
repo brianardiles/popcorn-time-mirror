@@ -143,6 +143,6 @@
                     </li>
                 </div>
                  <paper-shadow z="1">  
-                <paper-button style="background-color: rgb(<%=color %>)" class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %>&nbsp;<span>S01E01</span></paper-button>
+                <paper-button style="background-color: <%=color %>" class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %>&nbsp;<span>S01E01</span></paper-button>
                 </paper-shadow>
             </div>

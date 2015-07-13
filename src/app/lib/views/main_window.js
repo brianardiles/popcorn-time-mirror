@@ -167,6 +167,8 @@
             // Set the app title (for Windows mostly)
             this.nativeWindow.title = App.Config.title;
             // Show loading modal on startup
+
+            require('nw.gui').Window.get().show();
             var that = this;
 
             if (!fs.existsSync(Settings.tmpLocation)) {
@@ -183,9 +185,8 @@
 
             // Always on top
             win.setAlwaysOnTop(Settings.alwaysOnTop);
-            require('nw.gui').Window.get().show();
+
             that.nativeWindow.focus();
-            splashwin.close(true);
 
             // we check if the disclaimer is accepted
             if (!AdvSettings.get('disclaimerAccepted')) {

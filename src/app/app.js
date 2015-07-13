@@ -194,7 +194,6 @@ var initApp = function () {
                 $('link#theme').attr('href', 'themes/' + Settings.theme + '.css').load(function () {
                     App.Window.show(mainWindow);
                 });
-
             });
         });
     } catch (e) {

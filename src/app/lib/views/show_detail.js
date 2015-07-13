@@ -14,7 +14,9 @@
             background: '.bg-backdrop',
             startStreamingUI: '.watchnow-btn span',
             bookmarkedIcon: '.bookmark-toggle',
-            seasonsTabs: 'paper-tabs'
+            seasonsTabs: 'paper-tabs',
+            SubtitlesDropdown: '.subtitles-dropdown',
+            episodeContainer: '.episode-container'
         },
 
 
@@ -44,6 +46,8 @@
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart);
             images.poster = App.Trakt.resizeImage(images.poster);
+            this.getEpisodeSubs = _.throttle(this.getEpisodeSubs, 500);
+
         },
 
         onShow: function () {
@@ -53,7 +57,6 @@
             }
             console.log(this.model)
             this.loadbackground();
-            //this.seasonsUI();
             this.playerQualityChooseUI();
             this.isShowWatched();
 
@@ -181,14 +184,12 @@
             }
             var season;
             if (select.season) {
-                if ($('paper-tabs paper-tab:nth-child(2)').data('type') !== 'special') {
-                    season = select.season;
-                } else {
-                    season = select.season + 1;
-                }
+                season = select.season + 1;
                 this.selectSeason(null, season);
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
+                console.log(episodeUIid);
                 this.selectEpisode(null, episodeUIid);
+                this.ui.episodeContainer.scrollTop($('#episodeTab-' + episodeUIid).offset().top);
             } else {
                 this.loadCover();
                 if ($('paper-tabs paper-tab:nth-child(2)').data('type') !== 'special') {
@@ -383,7 +384,29 @@
 
             AdvSettings.set('shows_default_quality', quality + 'p');
         },
+        setQualityUI: function (torrents, quality) {
+            this.ui.qualitytoggles.children().removeClass('selected');
+            this.ui.qualitytoggles.children().removeAttr('selected');
 
+
+            if (!torrents['1080p']) {
+                this.ui.qualitytoggles.children('[value="1080"]').hide();
+            } else {
+                this.ui.qualitytoggles.children('[value="1080"]').show();
+            }
+            if (!torrents['720p']) {
+                this.ui.qualitytoggles.children('[value="720"]').hide();
+            } else {
+                this.ui.qualitytoggles.children('[value="720"]').show();
+            }
+            if (!torrents['480p']) {
+                this.ui.qualitytoggles.children('[value="480"]').hide();
+            } else {
+                this.ui.qualitytoggles.children('[value="480"]').show();
+            }
+
+            this.ui.qualitytoggles.children('[value="' + quality + '"]').addClass('selected');
+        },
         setStream: function (e) {
 
             var season = $(e.currentTarget).data('season');
@@ -429,28 +452,7 @@
 
             var torrent = torrents[quality + 'p'].url;
 
-
-            this.ui.qualitytoggles.children().removeClass('selected');
-            this.ui.qualitytoggles.children().removeAttr('selected');
-
-
-            if (!torrents['1080p']) {
-                this.ui.qualitytoggles.children('[value="1080"]').hide();
-            } else {
-                this.ui.qualitytoggles.children('[value="1080"]').show();
-            }
-            if (!torrents['720p']) {
-                this.ui.qualitytoggles.children('[value="720"]').hide();
-            } else {
-                this.ui.qualitytoggles.children('[value="720"]').show();
-            }
-            if (!torrents['480p']) {
-                this.ui.qualitytoggles.children('[value="480"]').hide();
-            } else {
-                this.ui.qualitytoggles.children('[value="480"]').show();
-            }
-
-            this.ui.qualitytoggles.children('[value="' + quality + '"]').addClass('selected');
+            this.setQualityUI(torrents, quality);
 
             this.Stream = {
                 torrent: torrent,
@@ -462,10 +464,17 @@
             };
             var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
             this.ui.startStreamingUI.text(episodeUIid);
-            var dropdownl = '<li class="subtitles-dropdown"><pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Loading") + '..."></pt-selectable-element></pt-dropdown></li>';
-            $('.subtitles-dropdown').replaceWith(dropdownl);
+
+            this.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Loading") + '..."></pt-selectable-element></pt-dropdown>')
+            this.getEpisodeSubs(season, episode);
+
+
+        },
+        getEpisodeSubs: function (season, episode) {
+
             var that = this;
             var oldStream = this.Stream;
+
             this.fetchTVSubtitles({
                 imdbid: this.model.get('imdb_id'),
                 season: season,
@@ -492,12 +501,10 @@
                         if ((maxlength - parseInt(i18n.__('Disabled').length)) > 0) {
                             toAdd = maxlength - parseInt(i18n.__('Disabled').length);
                         }
-                        var dropdown = '<li class="subtitles-dropdown"><pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '&nbsp;'.repeat(toAdd) + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown></li>';
-                        $('.subtitles-dropdown').replaceWith(dropdown);
+                        that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '&nbsp;'.repeat(toAdd) + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown>');
                     }
                 } else {
-                    var dropdownl = '<li class="subtitles-dropdown"><pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Subtitles Not Available") + '"></pt-selectable-element></pt-dropdown></li>';
-                    $('.subtitles-dropdown').replaceWith(dropdownl);
+                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Subtitles Not Available") + '"></pt-selectable-element></pt-dropdown>');
                 }
             });
         },
@@ -545,10 +552,10 @@
             if (!season) {
                 var seasonId = $(e.currentTarget).data('id');
                 var posterURL = $(e.currentTarget).data('poster');
-                $('.episode-container').animate({
+                $('#season-' + seasonId + ' li:first').click();
+                this.ui.episodeContainer.animate({
                     scrollTop: 0
                 }, 'fast');
-                $('#season-' + seasonId + ' li:first').click();
             } else {
                 var seasonID = parseInt(season);
                 var seasontabID = $('#seasonTab-' + seasonID).data('index');
@@ -588,71 +595,6 @@
         },
 
 
-        seasonsUI: function () {
-
-            //owl.owlCarousel
-            var owl = $(".seasons-container");
-            owl.owlCarousel({
-                pagination: false, //boolean   Show pagination.
-                responsive: false,
-                autoWidth: true
-            });
-
-            function recalcCarouselWidth(carousel) {
-                var stage = carousel.find('.owl-stage');
-                stage.width(Math.ceil(stage.width()) + 1);
-            }
-
-            $(window).on('resize', function (e) {
-                recalcCarouselWidth($('.owl-carousel'));
-            }).resize();
-
-            $('.seasons-container').on('refreshed.owl.carousel', function (event) {
-                recalcCarouselWidth($('.owl-carousel'));
-            });
-
-
-            // Custom Navigation Events
-            $(".season-next").click(function (e) {
-                e.preventDefault();
-                owl.trigger('next.owl.carousel');
-            });
-            $(".season-prev").click(function (e) {
-                e.preventDefault();
-                owl.trigger('prev.owl.carousel');
-            });
-            // possibility of scroll with the scroll wheel
-            owl.on('mousewheel', '.owl-stage', function (e) {
-                e.preventDefault();
-                if (e.deltaY > 0) {
-                    owl.trigger('next.owl');
-                } else {
-                    owl.trigger('prev.owl');
-                }
-            });
-
-            var seasons_container_width = $('.seasons-wrapper').width();
-            var seasons_items_width = $('.seasons-wrapper ul li').width() * $('.seasons-wrapper ul li').length;
-            if (seasons_container_width > seasons_items_width) {
-                $(".season-prev").hide();
-                $(".season-next").hide();
-            } else {
-                $(".season-prev").show();
-                $(".season-next").show();
-            }
-            $(window).resize(function () {
-                var seasons_container_width = $('.seasons-wrapper').width();
-                var seasons_items_width = $('.seasons-wrapper ul li').width() * $('.seasons-wrapper ul li').length;
-                if (seasons_container_width > seasons_items_width) {
-                    $(".season-prev").hide();
-                    $(".season-next").hide();
-                } else {
-                    $(".season-prev").show();
-                    $(".season-next").show();
-                }
-            });
-
-        },
         openIMDb: function () {
             gui.Shell.openExternal('http://www.imdb.com/title/' + this.model.get('imdb_id'));
         },

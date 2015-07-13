@@ -244,7 +244,9 @@
 
     TraktTv.prototype.shows = {
         summary: function (id) {
-            return this.get('shows/' + id);
+            return this.get('shows/' + id, {
+                extended: 'full,images'
+            });
         },
         people: function (id) {
             return this.get('shows/' + id + '/people');

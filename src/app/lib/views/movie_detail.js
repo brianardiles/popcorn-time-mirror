@@ -21,6 +21,7 @@
 
         events: {
             'click .back': 'closeDetails',
+            'click .bookmark-toggle': 'toggleBookmarked',
             'change #quality-toggle': 'qualityChanged',
             'change #subtitles-selector': 'subtitlesChanged',
             'change #device-selector': 'deviceChanged',
@@ -38,7 +39,7 @@
             this.loadCover();
             this.loadbackground();
             if (this.model.get('bookmarked')) {
-                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark');
             }
         },
         closeDetails: function () {
@@ -66,6 +67,16 @@
         openPerson: function (e) {
             var personid = $(e.currentTarget).parent().data('id');
             gui.Shell.openExternal('http://trakt.tv/people/' + personid);
+        },
+        toggleBookmarked: function () {
+            if (!this.model.get('bookmarked')) {
+                this.model.set('bookmarked', true);
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark');
+            } else {
+                this.model.set('bookmarked', false);
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark-outline');
+            }
+            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
         },
         loadCover: function () {
             var that = this;

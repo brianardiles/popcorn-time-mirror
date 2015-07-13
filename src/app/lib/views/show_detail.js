@@ -490,9 +490,10 @@
                         index++;
                     });
                     that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown>');
+                    win.info(Object.keys(subs).length + ' subtitles found');
                 } else {
                     that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Subtitles Not Available") + '"></pt-selectable-element></pt-dropdown>');
-                    win.info(Object.keys(subs).length + ' subtitles found');
+                    win.info('No subtitles found');
                 }
             }).catch(function (err) {
                 console.log('subtitleProvider.fetch()', err);

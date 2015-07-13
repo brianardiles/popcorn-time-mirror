@@ -48,10 +48,8 @@
             }
 
             #label #arrow {
-                position: absolute;
-                right: -12px;
-                top: 50%;
-                margin-top: -13px;
+                margin-top: -2px;
+                margin-left: -12px;
                 -webkit-filter: drop-shadow( 1px 0px 1px rgba(20, 19, 21, 0.7) );
                 filter: drop-shadow( 1px 0px 1px rgba(20, 19, 21, 0.7) );
             }
@@ -61,10 +59,14 @@
             }
 
             ::content pt-selectable-element, pt-selectable-element {
-                display: block;
+                display: inline-block;
                 position: relative;
                 white-space: nowrap;
                 padding: 0.7em 1em;
+            }
+
+            #options ::content pt-selectable-element, #options pt-selectable-element {
+                display: block;
             }
 
             /*
@@ -82,6 +84,7 @@
             <template if="{{icon || src}}">
                 <core-icon id="icon" src="{{src}}" id="icon" icon="{{icon}}" hidden?="{{!src && !icon}}"></core-icon>
             </template>
+            <pt-selectable-element></pt-selectable-element>
             <template if="{{openedIcon || closedIcon}}">
                 <core-icon id="arrow" icon="{{opened ? openedIcon : closedIcon}}"></core-icon>
             </template>
@@ -106,11 +109,11 @@
                     var that = this,
                         maxWidth = 0;
 
+                    this.label = this.$.label.querySelector("pt-selectable-element");
+
                     if (this.multiple) {
                         this.options = this.$.options.querySelector('content').getDistributedNodes();
                         this.selected = [];
-                        this.label = document.createElement('pt-selectable-element');
-                        this.$.label.appendChild(this.label);
 
                         for (var i = 0; i < this.options.length; i++) {
                             var el = this.options[i];
@@ -168,7 +171,10 @@
                     if (this.multiple) {
                         this.label.setAttribute('label', this.selected.join(', '));
                     } else {   
-                        this.$.label.appendChild(this.selected);
+                        for (var att, i = 0, atts = this.selected.attributes, n = atts.length; i < n; i++) {
+                            att = atts[i]
+                            this.label.setAttribute(att.nodeName, att.nodeValue);
+                        }
                     }
 
                 },
@@ -220,7 +226,6 @@
                     if (this.selectedIndex !== index) {
                         this.options[this.selectedIndex].setAttribute('selected', false);
                         this.selectedIndex = index;
-                        this.selected.parentNode.removeChild(this.selected);
                         this.selected = el.cloneNode();
                         el.setAttribute('selected', true);
                         this.setLabelElement();

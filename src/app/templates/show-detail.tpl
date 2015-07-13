@@ -1,3 +1,10 @@
+
+<style>
+.show-detail .episode-container li.active {
+  background-color: <%=color %>;
+}
+</style>
+
 <div class="bg-backdrop" data-bgr="<%= images.fanart %>"></div>
 <div class="overlay"></div>
 <div class="summary-wrapper">

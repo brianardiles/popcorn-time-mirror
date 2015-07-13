@@ -30,7 +30,7 @@
                 <div class="meta-dot"></div>
                 <div class="meta-item">
                     <p>
-                        <%=genre.join( " , ") %>
+                        <%=genre.join(", ") %>
                     </p>
                 </div>
                 <div class="meta-dot"></div>

@@ -5,12 +5,12 @@
     width 100vw
     background-color #17181b
     overflow: hidden
+    z-index 1
     
     .bg-backdrop
         position fixed
         height 100vh
         width 100vw
-        z-index 1
         opacity 0
         background-position center
         background-size cover
@@ -22,61 +22,57 @@
     .overlay
         position absolute
         top 0
-        z-index 1
         right 0
         bottom 0
         left 0
-        background-color rgba(13, 13, 13, 0.54)
+        background-color rgba(13, 13, 13, 0.67)
+
     .summary-wrapper
         position relative
         width 100vw
-        z-index 1
         height 25vh
-        .watched-toggle
-            margin-top 66px
-            margin-right 22px
-            color #fff
-            font-size 24.5px
-            width 22px
-            opacity .5
-            float right
-            cursor pointer
         .back
             float left
-            margin-top 50px
-            margin-left 34px
+            margin-top 54px
+            margin-left 28px
+            z-index 2
             color #FFF
             cursor pointer
             font-size 42px
+            &::shadow core-icon
+                height 36px
+                width 36px
         .title
             color #FFF
-            margin-top 44px
-            text-shadow 1px 0px 2px rgba(20, 19, 21, 1)
-            margin-left 17px
+            margin-top 60px
+            margin-left 27px
             float left
-            font-size 44px
-            font-weight 400
-        .bookmark-toggle
-            margin-top 66px
-            margin-right 66px
-            font-size 25px
+            font-size 42px
+            font-weight 500
+        .watched-toggle, .bookmark-toggle
+            position absolute
+            z-index 2
+            top 60px
+            right 140px
             color #fff
-            float right
-            cursor pointer
-    .seasons-container
-        width 100%
-        color: #fff
-        &::shadow #selectionBar
-            background-color: #fff;
+            &::shadow core-icon
+                width: 28px;
+                height: 28px;
+        .bookmark-toggle
+            right 80px
+
+        .seasons-container
+            width 100%
+            color: #fff
+            &::shadow #selectionBar
+                background-color: #fff;
                 
         paper-tab
             cursor pointer
-            letter-spacing 0.5px
-            font-size 16px
+            font-size 20px
             text-transform uppercase
             padding 16px 0
             font-weight 600
-            text-shadow 1px 0px 2px rgba(20, 19, 21, 1)
             opacity 0.5
             
             &::shadow #ink
@@ -87,35 +83,51 @@
                 
     .seasons-wrapper
         position absolute
-        top 16.5vh
-        height 30px
-        left 84px
-        right 67px
+        top 145px
+        height auto
+        left 20px
+        right 80px
     .info-wrapper
-        position relative
+        position absolute
         width 100vw
-        height 75vh
+        height calc(100vh - 240px)
+        top 240px
+        bottom 0
+        .poster-shadow
+            position absolute
+            width 100vw
+            height 100vh
         .poster
-            margin-left 100px
-            position relative
-            width 45vh
-            opacity: 0
+            position absolute
+            top 0
+            bottom 50px
+            left 110px
+            height calc(100vh - 240px - 50px)
+            opacity 0
             z-index 3
             border-radius 2px
-            box-shadow 0 1px 5px rgba(0, 0, 0, 0.39)
             &.fadein
                 transition: opacity .3s ease-in;
                 opacity: 1
         .meta-container
             position absolute
-            z-index 2
-            top 1px
-            left calc(45vh + 130px)
-            right 55px
-            height 56vh
-            padding-bottom 10px
+            top 0
+            bottom 0px
+            left calc(((100vh - 240px - 50px) * 2 / 3) + 150px)
+            right 60px
+            padding-left 20px
+            padding-right 20px
+            padding-bottom 30px
+            height calc(100% - 180px)
             overflow-y auto
             overflow-x hidden
+            z-index 1
+            &::-webkit-scrollbar
+                width 2px
+            &::-webkit-scrollbar-track
+                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.1)
+            &::-webkit-scrollbar-thumb
+                background rgba(255, 255, 255, 0.22)
         .meta-item
             float left
             color #ffffff
@@ -138,32 +150,11 @@
             font-size 15px
         .meta-btn
             color #ffffff
-            text-align center
-            letter-spacing .2px
-            text-transform uppercase
-            float left
             font-weight 500
-            margin-left 5px
-            transition border-color, color 100ms linear
-            padding-bottom 3px
-            margin-right 30px
-            margin-top 25px
-            cursor pointer
-            border-bottom 1px solid transparent
-            &:hover
-                border-color rgba(255, 255, 255, 0.7)
-                color rgba(255, 255, 255, 0.7)
-
-        .show-info
-            &::-webkit-scrollbar
-                width 5px
-            &::-webkit-scrollbar-track
-                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.3)
-                border-radius 10px
-            &::-webkit-scrollbar-thumb
-                border-radius 10px
-                background rgba(255, 255, 255, 0.58)
-                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.5)
+            padding-top 2px
+            margin-top 20px
+            &#imdb-link
+                margin-left -10px
         .meta-dot
             float left
             position relative
@@ -177,51 +168,50 @@
         .meta-divider
             width 100%
             position relative
-            margin-top 70px
-            margin-bottom 33px
-            background-color rgba(101, 101, 101, 0.55)
-            height 3px
+            margin-top 36px
+            margin-bottom 41px
+            background-color rgba(255, 255, 255, 0.12)
+            height 1px
         .people
             position relative
             width 100%
             height 17px
             margin-bottom 5px
-            .status
-                color #ffffff
-                font-size 15px
-                float left
-                margin-left 8px
-                color rgba(255, 255, 255, 0.45)
-            .person
-                padding-bottom 3px
-                cursor pointer
-                border-bottom 1px solid transparent
-                transition border-color, color 100ms linear
-                &:hover
-                    border-color rgba(255, 255, 255, 0.7)
-                    color rgba(255, 255, 255, 0.7)
             p
                 color #ffffff
                 font-size 15px
                 float left
+            .person
+                padding-bottom 3px
+                cursor pointer
+                transition border-color, color 100ms linear
+                &:hover
+                    color rgba(255, 255, 255, 0.7)
+                    text-decoration none
+            .status
+                color rgba(255, 255, 255, 0.45) !important
+                font-size 15px
+                float left
+                margin-left 8px
     .episode-container
-        bottom 10px
         position absolute
+        top 0
+        bottom 0px
+        left calc(((100vh - 240px - 50px) * 2 / 3) + 150px)
+        right 60px
+        padding-left 20px
+        padding-right 20px
+        padding-bottom 30px
+        height calc(100% - 180px)
+        overflow-y auto
+        overflow-x hidden
         z-index 1
-        top 0px
-        right 0px
-        height 56vh
-        overflow-y scroll
-        left calc(43vh + 120px)
         &::-webkit-scrollbar
-            width 5px
+            width 2px
         &::-webkit-scrollbar-track
-            box-shadow inset 0 0 6px rgba(0, 0, 0, 0.3)
-            border-radius 10px
+            box-shadow inset 0 0 6px rgba(0, 0, 0, 0.1)
         &::-webkit-scrollbar-thumb
-            border-radius 10px
-            background rgba(255, 255, 255, 0.58)
-            box-shadow inset 0 0 6px rgba(0, 0, 0, 0.5)
+            background rgba(255, 255, 255, 0.22)
         li
             height 45px
             list-style none
@@ -301,13 +291,13 @@
         width 19px
         margin-top 15.5vh
     .controls-container
-        bottom 0px
-        z-index 2
-        background-color #111214
         position absolute
-        height 19vh
-        right 0
+        height 180px
         width 100vw
+        right 0
+        bottom 0px
+        background-color #111214
+        z-index 2
         .watchnow-btn
             cursor pointer
             padding-left 17px
@@ -320,8 +310,8 @@
             border-radius 4px
             float right
             position absolute
-            top 10vh
-            right 60px
+            top 65px
+            right 80px
             transition 0.5s
             background-color #3F51B5
             &:hover
@@ -334,19 +324,15 @@
                 float left
                 line-height 25px
         .meta-container-c
-            top 3vh
+            top 29px
             position absolute
-            left calc(45vh + 140px)
-            i
-                font-size 25px
-                color #ffffff
-                float left
+            left calc(((100vh - 240px - 50px) * 2 / 3) + 170px)
+            width 300px
             li
                 width 100%
                 list-style none
-                margin-bottom 2vh
-                height 2.5vh
-                max-height 24px
+                margin 0
+                padding 0
                 ul
                     &.dropdown
                         display none
@@ -371,6 +357,9 @@
                             p
                                 padding-right 60px
                                 line-height 31px
+                            i
+                                line-height 32px
+                                margin-left 15px
                         &.visable
                             display block
                 &.quality-toggle
@@ -381,25 +370,26 @@
                         &.active
                             opacity 1
                 &.subtitles-dropdown
-                    padding-left: 1em
+                    padding-left 1em
                     color: white
 
                     pt-dropdown
-                        z-index: 5
+                        z-index 5
+                        width 100%
                     pt-dropdown::shadow #label
                         pt-selectable-element 
-                            display: inline-block
+                            display inline-block
                         #icon
-                            margin-right: 9px;
+                            margin-right 9px;
                     
                     pt-dropdown::shadow #options 
-                        right: 0
+                        right 0
                     
                     pt-selectable-element.selected 
-                        font-weight: bold
+                        font-weight bold
                     
                     pt-selectable-element:hover 
-                        background: #3F51B5
+                        background #3F51B5
                             
                 &.device-dropdown
                     color: white

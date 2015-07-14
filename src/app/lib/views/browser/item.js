@@ -260,9 +260,13 @@
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
                 if (swatches['Vibrant']) {
+                    var textcolors = swatches['Vibrant'].getBodyTextColor();
+                    if (textcolors === '#000') {
+                        textcolors = '#111214';
+                    }
                     defer.resolve({
                         color: swatches['Vibrant'].getHex(),
-                        textcolor: swatches['Vibrant'].getBodyTextColor()
+                        textcolor: textcolors
                     });
                 } else {
                     defer.resolve(null);

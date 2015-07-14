@@ -231,10 +231,8 @@
                         $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
                     })
                     .then(function (data) {
-
                         data.provider = provider.name;
                         data.bookmarked = that.model.get('bookmarked');
-
                         Q.all([
                             that.getCast(),
                             that.getSeasonImages(),
@@ -265,6 +263,10 @@
                 } else {
                     defer.resolve(null);
                 }
+                img.remove();
+            });
+            img.addEventListener('error', function () {
+                defer.resolve(null);
                 img.remove();
             });
             return defer.promise;

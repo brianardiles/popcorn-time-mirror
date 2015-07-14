@@ -353,9 +353,12 @@
             if (!url) {
                 url = this.ui.poster.data('bgr');
             }
-
             var img = document.createElement('img');
-            img.setAttribute('src', url)
+            img.setAttribute('src', url);
+            img.addEventListener('error', function () {
+                that.loadCover(); //load old cover in as custom season one is broken
+                img.remove();
+            });
             img.addEventListener('load', function () {
                 that.ui.poster.attr('src', url);
                 that.ui.poster.addClass('fadein');

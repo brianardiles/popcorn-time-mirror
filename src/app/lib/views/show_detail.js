@@ -365,12 +365,22 @@
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
                 if (swatches['Vibrant']) {
-                    var color = swatches['Vibrant'].getHex();
-                    var textColor = swatches['Vibrant'].getBodyTextColor();
-                    that.ui.startStreamBtn.css('background-color', color);
-                    that.ui.startStreamBtn.css('color', textColor);
-                    that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '  !important; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; } ');
+                    if(swatches['Vibrant'].getPopulation() < 20) {
+                        var color = swatches['Muted'].getHex();
+                        var textcolor = swatches['Muted'].getTitleTextColor();
+                    } else {
+                        var color = swatches['Vibrant'].getHex();
+                        var textColor = swatches['Vibrant'].getTitleTextColor();
+                    }
+                } else if(swatches['Muted']) {
+                    var color = swatches['Muted'].getHex();
+                    var textColor = swatches['Muted'].getTitleTextColor();
                 }
+
+                that.ui.startStreamBtn.css('background-color', color);
+                that.ui.startStreamBtn.css('color', textColor);
+                that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '  !important; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; } ');
+            
                 img.remove();
             });
         },

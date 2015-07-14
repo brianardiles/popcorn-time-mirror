@@ -259,10 +259,23 @@
             img.addEventListener('load', function () {
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
+                console.log(swatches);
                 if (swatches['Vibrant']) {
+                    if(swatches['Vibrant'].getPopulation() < 20) {
+                        defer.resolve({
+                            color: swatches['Muted'].getHex(),
+                            textcolor: swatches['Muted'].getTitleTextColor()
+                        });
+                    } else {
+                        defer.resolve({
+                            color: swatches['Vibrant'].getHex(),
+                            textcolor: swatches['Vibrant'].getTitleTextColor()
+                        });
+                    }
+                } else if(swatches['Muted']) {
                     defer.resolve({
-                        color: swatches['Vibrant'].getHex(),
-                        textcolor: swatches['Vibrant'].getBodyTextColor()
+                        color: swatches['Muted'].getHex(),
+                        textcolor: swatches['Muted'].getTitleTextColor()
                     });
                 } else {
                     defer.resolve(null);

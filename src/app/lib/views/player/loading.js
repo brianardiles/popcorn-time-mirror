@@ -8,7 +8,8 @@
 
         ui: {
             status: '.status',
-            backdrop: '.bg-backdrop'
+            backdrop: '.bg-backdrop',
+            progressStyle: '#loadingStyle'
         },
 
         events: {
@@ -22,15 +23,6 @@
         initialize: function () {},
         onShow: function () {
             this.getEpisodeDetails();
-            this.animateLoadingbar();
-        },
-        animateLoadingbar: function () {
-            var intObj = {
-                template: 3,
-                parent: '.progressbar' // to other position
-            };
-            var queryProgress = new Mprogress(intObj);
-            queryProgress.start();
         },
         cancelStreaming: function () {
             App.vent.trigger('streamer:stop');
@@ -44,25 +36,38 @@
                     that.loadbackground(episodeSummary.images.screenshot.full);
                 });
         },
+
         loadbackground: function (url) {
             var that = this;
-            var background = url;
-            var bgCache = new Image();
-            bgCache.src = background;
-            bgCache.onload = function () {
-                try {
-                    if (this.width >= 1920 && this.height >= 1080) { //ensure hd backdrop
-                        that.ui.backdrop.removeClass('fadein');
-                        _.delay(function () {
-                            that.ui.backdrop.css('background-image', 'url(' + background + ')').addClass('fadein');
-                        }, 300);
+
+            var img = document.createElement('img');
+            img.setAttribute('src', url);
+            img.addEventListener('load', function () {
+                that.ui.backdrop.removeClass('fadein');
+
+                var vibrant = new Vibrant(img, 64, 4);
+                var swatches = vibrant.swatches();
+                var color = null;
+                if (swatches['Vibrant']) {
+                    if (swatches['Vibrant'].getPopulation() < 20) {
+                        color = swatches['Muted'].getHex();
+                    } else {
+                        color = swatches['Vibrant'].getHex();
                     }
-                } catch (e) {
-                    console.log(e);
+                } else if (swatches['Muted']) {
+                    color = swatches['Muted'].getHex();
                 }
-                bgCache = null;
-            };
+                if (color) {
+                    that.model.set('color', color);
+                    _.delay(function () {
+                        that.ui.progressStyle.html('paper-progress::shadow #activeProgress {  background-color: ' + color + '; }');
+                        that.ui.backdrop.css('background-image', 'url(' + url + ')').addClass('fadein');
+                    }, 300);
+                }
+                img.remove();
+            });
         }
+
 
     });
 

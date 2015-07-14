@@ -109,7 +109,8 @@
                     episode_id: episode_id,
                     imdb_id: this.model.get('imdb_id'),
                     backdrop: this.model.get('images').fanart,
-                    quality: selected_quality
+                    quality: selected_quality,
+                    color: this.model.get('color')
                 },
                 autoPlayData: {
                     episodes: episodes,
@@ -383,8 +384,8 @@
                 if (textColor === '#000' || textColor === '#000000') {
                     textColor = '#111214';
                 }
-
                 if (textColor && color) {
+                    that.model.set('color', color);
                     that.ui.startStreamBtn.css('background-color', color);
                     that.ui.startStreamBtn.css('color', textColor);
                     that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '  !important; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; } ');

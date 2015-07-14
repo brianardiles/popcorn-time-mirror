@@ -12,7 +12,6 @@
         "material-design-iconic-font": "~2.1.1",
         "polymer": "Polymer/polymer#~0.5.2",
         "paper-elements": "Polymer/paper-elements#~0.5.2",
-        "mprogress": "~0.1.1",
         "vibrant": "*"
     },
     "dependenciesIgnore": {

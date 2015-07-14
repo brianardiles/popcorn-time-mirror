@@ -4,6 +4,11 @@ function formatTwoDigit(n) {
 }
 var episode = 'S' + formatTwoDigit(data.metadata.season) + 'E' + formatTwoDigit(data.metadata.episode) + ' ' + data.metadata.title;
 %>
+<style id="loadingStyle">
+paper-progress::shadow #activeProgress {
+  background-color: <%=data.metadata.color %>;
+}
+</style>
 
   <div class="bg-backdrop fadein" style="background-image: url(<%= data.metadata.backdrop %>);"></div>
         <div class="overlay"></div>
@@ -12,5 +17,5 @@ var episode = 'S' + formatTwoDigit(data.metadata.season) + 'E' + formatTwoDigit(
         <div class="episode-info"><%= episode %></div>
         <div class="meta-container">
             <div class="status">Connecting</div>
-            <div class="progressbar"></div>
+            <paper-progress class="progressbar" indeterminate ></paper-progress>
         </div>

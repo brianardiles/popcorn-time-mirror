@@ -16,7 +16,9 @@
             bookmarkedIcon: '.bookmark-toggle',
             seasonsTabs: 'paper-tabs',
             SubtitlesDropdown: '.subtitles-dropdown',
-            episodeContainer: '.episode-container'
+            episodeContainer: '.episode-container',
+            startStreamBtn: '.watchnow-btn',
+            episodeUistyle: '#showColorStyl'
         },
 
 
@@ -351,22 +353,22 @@
             if (!url) {
                 url = this.ui.poster.data('bgr');
             }
-            var cbackground = url;
-            var coverCache = new Image();
-            coverCache.src = cbackground;
-            coverCache.onload = function () {
-                try {
-                    that.ui.poster.attr('src', url);
-                    that.ui.poster.addClass('fadein');
-                } catch (e) {}
-                coverCache = null;
-            };
-            coverCache.onerror = function () {
-                try {
-                    that.ui.poster.attr('src', 'url("images/posterholder.png")').addClass('fadein');
-                } catch (e) {}
-                coverCache = null;
-            };
+
+            var img = document.createElement('img');
+            img.setAttribute('src', url)
+            img.addEventListener('load', function () {
+                that.ui.poster.attr('src', url);
+                that.ui.poster.addClass('fadein');
+                var vibrant = new Vibrant(img, 64, 4);
+                var swatches = vibrant.swatches();
+                if (swatches['Vibrant']) {
+                    var color = swatches['Vibrant'].getHex();
+                    that.ui.startStreamBtn.css('background-color', color);
+                    var stylesheetContents = '.show-detail .episode-container li.active { background-color: ' + color + '; }'
+                    that.ui.episodeUistyle.html(stylesheetContents);
+                }
+                img.remove();
+            });
         },
         subtitlesChanged: function (e) {
             console.log('Subtitles Changed', e.originalEvent.detail);

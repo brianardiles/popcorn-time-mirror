@@ -256,7 +256,7 @@
         getColor: function () {
             var defer = Q.defer();
             var img = document.createElement('img');
-            img.setAttribute('src', this.model.get('coverURL'))
+            img.setAttribute('src', App.Trakt.resizeImage(this.model.get('coverURL'), 'medium'));
             img.addEventListener('load', function () {
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
@@ -265,11 +265,10 @@
                 } else {
                     defer.resolve(null);
                 }
+                img.remove();
             });
             return defer.promise;
         },
-
-
         getSeasonImages: function () {
             var that = this;
             var defer = Q.defer();

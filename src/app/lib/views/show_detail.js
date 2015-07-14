@@ -370,7 +370,7 @@
                 if (swatches['Vibrant']) {
                     if(swatches['Vibrant'].getPopulation() < 20) {
                         color = swatches['Muted'].getHex();
-                        textcolor = swatches['Muted'].getTitleTextColor();
+                        textColor = swatches['Muted'].getTitleTextColor();
                     } else {
                         color = swatches['Vibrant'].getHex();
                         textColor = swatches['Vibrant'].getTitleTextColor();

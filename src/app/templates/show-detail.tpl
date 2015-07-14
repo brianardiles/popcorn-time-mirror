@@ -1,4 +1,3 @@
-
 <style id="showColorStyl">
 .show-detail .episode-container li.active {
   background-color: <%=color %>;

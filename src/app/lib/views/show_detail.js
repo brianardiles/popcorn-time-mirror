@@ -100,7 +100,7 @@
                 torrent: this.Stream.torrent,
                 type: 'show',
                 metadata: {
-                    title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
+                    title: name,
                     showName: title,
                     season: season,
                     episode: episode,
@@ -368,14 +368,14 @@
                 var textColor = null;
 
                 if (swatches['Vibrant']) {
-                    if(swatches['Vibrant'].getPopulation() < 20) {
+                    if (swatches['Vibrant'].getPopulation() < 20) {
                         color = swatches['Muted'].getHex();
                         textColor = swatches['Muted'].getTitleTextColor();
                     } else {
                         color = swatches['Vibrant'].getHex();
                         textColor = swatches['Vibrant'].getTitleTextColor();
                     }
-                } else if(swatches['Muted']) {
+                } else if (swatches['Muted']) {
                     color = swatches['Muted'].getHex();
                     textColor = swatches['Muted'].getTitleTextColor();
                 }
@@ -384,7 +384,7 @@
                     textColor = '#111214';
                 }
 
-                if(textColor && color) {
+                if (textColor && color) {
                     that.ui.startStreamBtn.css('background-color', color);
                     that.ui.startStreamBtn.css('color', textColor);
                     that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '  !important; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; } ');

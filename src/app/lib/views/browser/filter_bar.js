@@ -19,9 +19,9 @@
             'contextmenu @ui.searchInput': 'rightclick_search',
             'click  @ui.searchClear': 'clearSearch',
             'click  @ui.search': 'focusSearch',
-            'click .sorters .dropdown-menu a': 'sortBy',
-            'click .genres .dropdown-menu a': 'changeGenre',
-            'click .types .dropdown-menu a': 'changeType',
+            'change #filter-sorter': 'sortBy',
+            'change #filter-genre': 'changeGenre',
+            'change #filter-type': 'changeType',
 
         },
 
@@ -135,10 +135,8 @@
         sortBy: function (e) {
             App.vent.trigger('about:close');
             App.vent.trigger('torrentCollection:close');
-            this.$('.sorters .active').removeClass('active');
-            $(e.target).addClass('active');
 
-            var sorter = $(e.target).attr('data-value');
+            var sorter = $(e.target).val();
 
             if (this.previousSort === sorter) {
                 this.model.set('order', this.model.get('order') * -1);
@@ -147,7 +145,6 @@
             } else {
                 this.model.set('order', -1);
             }
-            this.ui.sorterValue.text(i18n.__(sorter.capitalizeEach()));
 
             this.model.set({
                 keyword: '',
@@ -159,11 +156,8 @@
         changeType: function (e) {
             App.vent.trigger('about:close');
             App.vent.trigger('torrentCollection:close');
-            this.$('.types .active').removeClass('active');
-            $(e.target).addClass('active');
 
-            var type = $(e.target).attr('data-value');
-            this.ui.typeValue.text(i18n.__(type));
+            var type = $(e.target).val();
 
             this.model.set({
                 keyword: '',
@@ -173,15 +167,14 @@
 
         changeGenre: function (e) {
             App.vent.trigger('about:close');
-            this.$('.genres .active').removeClass('active');
-            $(e.target).addClass('active');
 
-            var genre = $(e.target).attr('data-value');
-            this.ui.genreValue.text(i18n.__(genre));
+            var genres = $(e.target).val().split(',');
+            
+            console.log('GEnre', genres);;
 
             this.model.set({
                 keyword: '',
-                genre: genre
+                genres: genres
             });
         }
     });

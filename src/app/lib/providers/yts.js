@@ -77,8 +77,8 @@
             params.query_term = filters.keywords;
         }
 
-        if (filters.genre) {
-            params.genre = filters.genre;
+        if (filters.genres) {
+            params.genre = filters.genres;
         }
 
         if (filters.order === 1) {

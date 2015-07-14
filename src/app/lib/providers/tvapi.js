@@ -23,6 +23,7 @@
         var deferred = Q.defer();
 
         var params = {};
+        var genres = '';
         params.sort = 'seeds';
         params.limit = '50';
 
@@ -31,7 +32,12 @@
         }
 
         if (filters.genre) {
-            params.genre = filters.genre;
+//            filters.genres.forEach(function(g) {
+//                genres += '&genre[]='+g;
+//            });
+//            genres = genres.substring(0, genres.length - 1);
+//            win.info('genres', genres);
+            params.genre = filters.genres[0];
         }
 
         if (filters.order) {

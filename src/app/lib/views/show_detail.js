@@ -100,10 +100,11 @@
                 torrent: this.Stream.torrent,
                 type: 'show',
                 metadata: {
-                    title: name,
+                    title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
                     showName: title,
                     season: season,
                     episode: episode,
+                    episodeName: name,
                     cover: this.model.get('images').poster,
                     tvdb_id: this.model.get('tvdb_id'),
                     episode_id: episode_id,

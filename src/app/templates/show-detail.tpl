@@ -3,6 +3,12 @@
 .show-detail .episode-container li.active {
   background-color: <%=color %>;
 }
+.show-detail .episode-container li.active p { 
+  color: <%=textcolor %>; 
+}
+.show-detail .episode-container li.active paper-icon-button { 
+  color: <%=textcolor %>; 
+}
 </style>
 
 <div class="bg-backdrop" data-bgr="<%= images.fanart %>"></div>
@@ -150,6 +156,6 @@
                     </li>
                 </div>
                  <paper-shadow z="1">  
-                <paper-button style="background-color: <%=color %>" class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %>&nbsp;<span>S01E01</span></paper-button>
+                <paper-button style="background-color: <%=color %>; color: <%=textcolor %>; " class="watchnow-btn"><i class="zmdi zmdi-play"></i><%=i18n.__( "Play") %>&nbsp;<span>S01E01</span></paper-button>
                 </paper-shadow>
             </div>

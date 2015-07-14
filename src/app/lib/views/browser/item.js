@@ -239,7 +239,8 @@
                             that.getColor()
                         ]).spread(function (cast, images, color) {
                             data.cast = cast;
-                            data.color = color;
+                            data.color = color.color;
+                            data.textcolor = color.textcolor;
                             data.seasonImages = images;
                             console.log(data);
                             $('.spinner').hide();
@@ -259,7 +260,10 @@
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
                 if (swatches['Vibrant']) {
-                    defer.resolve(swatches['Vibrant'].getHex());
+                    defer.resolve({
+                        color: swatches['Vibrant'].getHex(),
+                        textcolor: swatches['Vibrant'].getBodyTextColor()
+                    });
                 } else {
                     defer.resolve(null);
                 }

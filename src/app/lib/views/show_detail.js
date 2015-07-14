@@ -367,8 +367,7 @@
                 if (swatches['Vibrant']) {
                     var color = swatches['Vibrant'].getHex();
                     that.ui.startStreamBtn.css('background-color', color);
-                    var stylesheetContents = '.show-detail .episode-container li.active { background-color: ' + color + '; }'
-                    that.ui.episodeUistyle.html(stylesheetContents);
+                    that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; }');
                 }
                 img.remove();
             });

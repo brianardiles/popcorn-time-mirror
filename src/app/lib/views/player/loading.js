@@ -11,21 +11,29 @@
         },
 
         events: {
-
+            'click .back': 'cancelStreaming',
         },
 
         keyboardEvents: {
 
         },
 
-        initialize: function () {
-
-        },
-
+        initialize: function () {},
         onShow: function () {
-
+            this.animateLoadingbar();
+        },
+        animateLoadingbar: function () {
+            var intObj = {
+                template: 3,
+                parent: '.progressbar' // to other position
+            };
+            var queryProgress = new Mprogress(intObj);
+            queryProgress.start();
+        },
+        cancelStreaming: function () {
+            App.vent.trigger('streamer:stop');
+            App.vent.trigger('player:close');
         }
-
 
     });
 

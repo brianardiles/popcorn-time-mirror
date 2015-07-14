@@ -18,7 +18,9 @@ var os = require('os');
             'click .close': 'closeWindow',
             'click .btn-os.fullscreen': 'toggleFullscreen'
         },
-
+        ui: {
+            maxtoggle: '.os-controls .max'
+        },
         initialize: function () {
             this.nativeWindow = require('nw.gui').Window.get();
         },
@@ -31,8 +33,6 @@ var os = require('os');
             fsTooltipPos: function () {
                 return App.Config.platform === 'darwin' ? 'left' : 'right';
             }
-
-
         },
 
         maximize: function () {
@@ -42,12 +42,12 @@ var os = require('os');
                 if (window.screen.availHeight <= this.nativeWindow.height) {
                     this.nativeWindow.unmaximize();
                     if (process.platform === 'win32') {
-                        $('.os-max').removeClass('os-is-max');
+                        this.ui.maxtoggle.removeClass('zmdi-window-restore').addClass('zmdi-window-maximize');
                     }
                 } else {
                     this.nativeWindow.maximize();
                     if (process.platform === 'win32') {
-                        $('.os-max').addClass('os-is-max');
+                        this.ui.maxtoggle.removeClass('zmdi-window-maximize').addClass('zmdi-window-restore');
                     }
                 }
             }

@@ -271,6 +271,7 @@
             });
             return defer.promise;
         },
+
         getSeasonImages: function () {
             var that = this;
             var defer = Q.defer();

@@ -39,30 +39,30 @@
 
         loadbackground: function (url) {
             var that = this;
-
             var img = document.createElement('img');
             img.setAttribute('src', url);
             img.addEventListener('load', function () {
-                that.ui.backdrop.removeClass('fadein');
-
-                var vibrant = new Vibrant(img, 64, 4);
-                var swatches = vibrant.swatches();
-                var color = null;
-                if (swatches['Vibrant']) {
-                    if (swatches['Vibrant'].getPopulation() < 20) {
+                if (this.width >= 1920 && this.height >= 1080) {
+                    that.ui.backdrop.removeClass('fadein');
+                    var vibrant = new Vibrant(img, 64, 4);
+                    var swatches = vibrant.swatches();
+                    var color = null;
+                    if (swatches['Vibrant']) {
+                        if (swatches['Vibrant'].getPopulation() < 20) {
+                            color = swatches['Muted'].getHex();
+                        } else {
+                            color = swatches['Vibrant'].getHex();
+                        }
+                    } else if (swatches['Muted']) {
                         color = swatches['Muted'].getHex();
-                    } else {
-                        color = swatches['Vibrant'].getHex();
                     }
-                } else if (swatches['Muted']) {
-                    color = swatches['Muted'].getHex();
-                }
-                if (color) {
-                    that.model.set('color', color);
-                    _.delay(function () {
-                        that.ui.progressStyle.html('paper-progress::shadow #activeProgress {  background-color: ' + color + '; }');
-                        that.ui.backdrop.css('background-image', 'url(' + url + ')').addClass('fadein');
-                    }, 300);
+                    if (color) {
+                        that.model.set('color', color);
+                        _.delay(function () {
+                            that.ui.backdrop.css('background-image', 'url(' + url + ')').addClass('fadein');
+                            that.ui.progressStyle.html('paper-progress::shadow #activeProgress {  background-color: ' + color + '; }');
+                        }, 300);
+                    }
                 }
                 img.remove();
             });

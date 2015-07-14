@@ -167,6 +167,7 @@
             // Set the app title (for Windows mostly)
             this.nativeWindow.title = App.Config.title;
             // Show loading modal on startup
+            splashwin.close(true);
 
             require('nw.gui').Window.get().show();
             var that = this;

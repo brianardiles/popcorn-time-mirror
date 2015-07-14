@@ -16,17 +16,19 @@ header
         font-size 16px
         font-weight 500
     .os-controls
+        -webkit-app-region no-drag
         margin-top 11px
         z-index 11
-        -webkit-app-region no-drag
-        margin-right 11px
-        right 0px
         position absolute
         div
-            margin-right 6px
             cursor pointer
-            opacity 0.6
             color #ffffff
+    .os-controls:not(.darwin)
+        margin-right 11px
+        right 0px
+        div
+            margin-right 6px
+            opacity 0.6
             height 16px
             width 16px
             float right
@@ -35,4 +37,33 @@ header
             &.close
                 position relative
                 top -2px
-
+    .os-controls.darwin
+        margin-left 13px
+        left 0
+        div
+            margin-right 8px
+            border-radius 20px
+            opacity 1
+            height 12px
+            width 12px
+            float left
+            background-image url(../images/icons/topbar_sprite.png)
+            background-size auto 12px
+            background-position -9999px center
+            background-repeat no-repeat
+            i
+                display none
+            &:hover
+                opacity 1
+        .max
+            background-color #2ED147
+            &:hover
+                background-position -52px center
+        .min
+            background-color #FCBC42
+            &:hover
+                background-position -39px center
+        .close
+            background-color #FB605B
+            &:hover
+                background-position -65px center

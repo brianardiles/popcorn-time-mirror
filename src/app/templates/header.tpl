@@ -1,9 +1,7 @@
 <span>Popcorn Time</span>
-<div class="os-controls">
-     <div class="close"><i class="zmdi zmdi-close"></i>
+<div class="os-controls <%= process.platform %>">
+	<% _.each(getButtons(), function(button) { %>
+    <div class="<%= button %>"><i class="zmdi zmdi-<%= (button != "close" ? "window-" + button + "imize" : button) %>"></i>
     </div>
-    <div class="max"><i class="zmdi zmdi-window-maximize"></i>
-    </div>
-    <div class="min"><i class="zmdi zmdi-window-minimize"></i>
-    </div>
+    <% }); %>
 </div>

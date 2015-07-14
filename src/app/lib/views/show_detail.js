@@ -52,7 +52,7 @@
         onShow: function () {
             App.vent.on('watched', _.bind(this.onWatched, this));
             if (this.model.get('bookmarked')) {
-                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark');
             }
             console.log(this.model)
             this.loadbackground();

@@ -364,23 +364,32 @@
                 that.ui.poster.addClass('fadein');
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
+                var color = null;
+                var textColor = null;
+
                 if (swatches['Vibrant']) {
                     if(swatches['Vibrant'].getPopulation() < 20) {
-                        var color = swatches['Muted'].getHex();
-                        var textcolor = swatches['Muted'].getTitleTextColor();
+                        color = swatches['Muted'].getHex();
+                        textcolor = swatches['Muted'].getTitleTextColor();
                     } else {
-                        var color = swatches['Vibrant'].getHex();
-                        var textColor = swatches['Vibrant'].getTitleTextColor();
+                        color = swatches['Vibrant'].getHex();
+                        textColor = swatches['Vibrant'].getTitleTextColor();
                     }
                 } else if(swatches['Muted']) {
-                    var color = swatches['Muted'].getHex();
-                    var textColor = swatches['Muted'].getTitleTextColor();
+                    color = swatches['Muted'].getHex();
+                    textColor = swatches['Muted'].getTitleTextColor();
                 }
 
-                that.ui.startStreamBtn.css('background-color', color);
-                that.ui.startStreamBtn.css('color', textColor);
-                that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '  !important; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; } ');
-            
+                if (textColor === '#000' || textColor === '#000000') {
+                    textColor = '#111214';
+                }
+
+                if(textColor && color) {
+                    that.ui.startStreamBtn.css('background-color', color);
+                    that.ui.startStreamBtn.css('color', textColor);
+                    that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '  !important; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; } ');
+                }
+
                 img.remove();
             });
         },

@@ -259,27 +259,37 @@
             img.addEventListener('load', function () {
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
-                console.log(swatches);
+                var color = null;
+                var textColor = null;
+
                 if (swatches['Vibrant']) {
                     if(swatches['Vibrant'].getPopulation() < 20) {
-                        defer.resolve({
-                            color: swatches['Muted'].getHex(),
-                            textcolor: swatches['Muted'].getTitleTextColor()
-                        });
+                        color = swatches['Muted'].getHex();
+                        textColor = swatches['Muted'].getTitleTextColor();
                     } else {
-                        defer.resolve({
-                            color: swatches['Vibrant'].getHex(),
-                            textcolor: swatches['Vibrant'].getTitleTextColor()
-                        });
+                        color = swatches['Vibrant'].getHex();
+                        textColor = swatches['Vibrant'].getTitleTextColor();
                     }
                 } else if(swatches['Muted']) {
+                    color = swatches['Muted'].getHex();
+                    textColor = swatches['Muted'].getTitleTextColor();
+                } else {
+                    defer.resolve(null);
+                }
+
+                if (textColor === '#000' || textColor === '#000000') {
+                    textColor = '#111214';
+                }
+
+                if(color && textColor) {
                     defer.resolve({
-                        color: swatches['Muted'].getHex(),
-                        textcolor: swatches['Muted'].getTitleTextColor()
+                        color: color,
+                        textcolor: textColor
                     });
                 } else {
                     defer.resolve(null);
                 }
+
                 img.remove();
             });
             img.addEventListener('error', function () {

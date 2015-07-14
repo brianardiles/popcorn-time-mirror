@@ -4,7 +4,7 @@
   background-color: <%=color %>;
 }
 .show-detail .episode-container li.active p { 
-  color: <%=textcolor %>; 
+  color: <%=textcolor %> !important; 
 }
 .show-detail .episode-container li.active paper-icon-button { 
   color: <%=textcolor %>; 

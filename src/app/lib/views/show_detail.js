@@ -366,12 +366,10 @@
                 var swatches = vibrant.swatches();
                 if (swatches['Vibrant']) {
                     var color = swatches['Vibrant'].getHex();
-
                     var textColor = swatches['Vibrant'].getBodyTextColor();
-
                     that.ui.startStreamBtn.css('background-color', color);
                     that.ui.startStreamBtn.css('color', textColor);
-                    that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; }');
+                    that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '  !important; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; } ');
                 }
                 img.remove();
             });

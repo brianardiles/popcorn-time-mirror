@@ -31,11 +31,11 @@
             this.ui.updateinfo.hide();
             this.ui.updateProgressContainer.show();
             this.updating = true;
-            this.StateUpdate();
+            this.stateUpdate();
             this.ui.updateProgressStatus.text(0 + '%' + ' (' + Common.fileSize(0) + '/' + Common.fileSize(0) + ')');
         },
 
-        StateUpdate: function () {
+        stateUpdate: function () {
             if (!this.updating) {
                 return;
             }
@@ -47,7 +47,7 @@
                 this.ui.progressbarprogress.animate({
                     width: updateInfo.percentDone + '%'
                 }, 100, 'swing');
-                _.delay(_.bind(this.StateUpdate, this), 100);
+                _.delay(_.bind(this.stateUpdate, this), 100);
             } else if (updateInfo.status === 'Installing') {
                 this.ui.updateProgressStatus.text('');
 
@@ -55,11 +55,11 @@
                     width: updateInfo.percentDone + '%'
                 }, 200, 'swing');
 
-                _.delay(_.bind(this.StateUpdate, this), 1200);
+                _.delay(_.bind(this.stateUpdate, this), 1200);
             } else if (updateInfo.status === 'Done') {
                 win.debug('Update completed');
             } else {
-                _.delay(_.bind(this.StateUpdate, this), 500);
+                _.delay(_.bind(this.stateUpdate, this), 500);
             }
 
         },

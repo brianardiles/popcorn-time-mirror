@@ -266,24 +266,25 @@
             var imdb_id = this.model.get('imdb_id');
 
             var episodes = this.model.get('episodes');
+            _.defer(function () {
+                episodes.forEach(function (episode, index, array) {
+                    var value = {
+                        tvdb_id: tvdb_id,
+                        imdb_id: imdb_id,
+                        episode_id: episode.tvdb_id,
+                        season: episode.season,
+                        episode: episode.episode
+                    };
+                    App.Database.watched('check', 'show', value)
+                        .then(function (watched) {
+                            if (!watched) {
+                                App.vent.trigger('watched', 'add', 'show', value);
+                            }
+                        });
+                });
+            })
 
             this.ui.watchedIcon.prop('icon', 'visibility');
-
-            episodes.forEach(function (episode, index, array) {
-                var value = {
-                    tvdb_id: tvdb_id,
-                    imdb_id: imdb_id,
-                    episode_id: episode.tvdb_id,
-                    season: episode.season,
-                    episode: episode.episode
-                };
-                App.Database.watched('check', 'show', value)
-                    .then(function (watched) {
-                        if (!watched) {
-                            App.vent.trigger('watched', 'add', 'show', value);
-                        }
-                    });
-            });
         },
         isShowWatched: function () {
             var unWatchedEpisodes = [];

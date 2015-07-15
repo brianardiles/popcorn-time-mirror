@@ -126,14 +126,14 @@
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();
                 var color = null;
-                if (swatches['Vibrant']) {
-                    if (swatches['Vibrant'].getPopulation() < 20) {
-                        color = swatches['Muted'].getHex();
+                if (swatches['DarkVibrant']) {
+                    if (swatches['DarkVibrant'].getPopulation() < 20) {
+                        color = swatches['DarkMuted'].getHex();
                     } else {
-                        color = swatches['Vibrant'].getHex();
+                        color = swatches['DarkVibrant'].getHex();
                     }
-                } else if (swatches['Muted']) {
-                    color = swatches['Muted'].getHex();
+                } else if (swatches['DarkMuted']) {
+                    color = swatches['DarkMuted'].getHex();
                 }
                 if (color) {
                     that.model.set('color', color);

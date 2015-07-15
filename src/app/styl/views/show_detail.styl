@@ -226,8 +226,12 @@
                 paper-icon-button
                     visibility visible
                 p
+                    &.episode-id, &.episode-name
+                        font-weight 500
                     &.episode-airdate
                         visibility visible
+                    &.episode-name
+                        max-width calc(100% - 488px)
                 &.watched
                     p
                         &.episode-id
@@ -255,7 +259,7 @@
                 &.episode-name
                     line-height 45px
                     font-size 14px
-                    max-width: 16vw
+                    max-width: calc(100% - 192px)
                     float left
                     white-space nowrap
                     overflow hidden
@@ -437,8 +441,4 @@
 .show-detail .episode-list-show
     display block
     opacity 1
-
-.show-detail .episode-container li.active p.episode-id,
-.show-detail .episode-container li.active p.episode-name
-    font-weight 500
 

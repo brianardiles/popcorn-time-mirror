@@ -127,7 +127,7 @@
                        <li data-tvdb="<%=episodeData.tvdb_id %>" data-season="<%= season %>" data-episode="<%= episodeData.episode %>" id="episodeTab-<%= episodeUIid %>" class="epsiode-tab" >
             
                         <p class="episode-id"><%=episodeUIid %></p>
-                        <p class="episode-name"><%=episodeData.title %></p>
+                        <p class="episode-name" title="<%=episodeData.title %>"><%=episodeData.title %></p>
                         <paper-icon-button class="info-icon" icon="info"></paper-icon-button><paper-icon-button class="watched-icon" icon="visibility"></paper-icon-button>
                         <p class="episode-airdate"><%=first_aired %></p>
 

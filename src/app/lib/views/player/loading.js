@@ -10,7 +10,8 @@
             status: '.status',
             stats: '.stats',
             backdrop: '.bg-backdrop',
-            progressStyle: '#loadingStyle'
+            progressStyle: '#loadingStyle',
+            progressbar: '.progressbar'
         },
 
         events: {
@@ -32,30 +33,26 @@
         },
 
 
-        initLoadingPlayer: function () {
-            var video = document.createElement('video');
-
-        },
-
         StateUpdate: function () {
             if (this.loadingStopped) {
                 return;
             }
-            console.log('stateupdate')
             var Stream = App.Streamer.client.swarm;
             if (App.Streamer.fileindex !== null) {
 
                 this.ui.status.text(i18n.__('Connecting'));
 
                 if (Stream.downloadSpeed()) {
-                    /*
-                       if (!this.initializedLoadingPlayer) {
-                           this.initializedLoadingPlayer = true;
-                           this.initializeLoadingPlayer();
-                       }*/
 
-                    this.ui.status.text(i18n.__('Downloading'));
-
+                    if (!this.initializedLoadingPlayer) {
+                        this.initializedLoadingPlayer = true;
+                        this.initializeLoadingPlayer();
+                    }
+                    if (this.BufferingStarted) {
+                        this.ui.status.text(i18n.__('Buffering'));
+                    } else {
+                        this.ui.status.text(i18n.__('Downloading'));
+                    }
                     this.updateStatsUI(Common.fileSize(Stream.downloadSpeed()) + '/s', Common.fileSize(Stream.uploadSpeed()) + '/s', Stream.wires.length)
                 }
                 if (!this.loadingStopped) {
@@ -67,8 +64,39 @@
 
         },
 
+        initializeLoadingPlayer: function () {
+            var that = this;
+            var loadingPlayer = document.getElementById('loading_player');
+            loadingPlayer.setAttribute('src', App.Streamer.src);
+            win.debug('Requesting Initial Meta Chunks For', this.model.get('data').metadata.title, '(Smart Loader)');
+            loadingPlayer.muted = true;
+            loadingPlayer.load();
+            loadingPlayer.play();
+            var debugmetachunks = false;
+            loadingPlayer.ontimeupdate = function () {
+                if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
+                    win.info('Initial Meta Chunks Received! Starting Playback in 3 seconds.');
+                    debugmetachunks = true;
+                    that.BufferingStarted = true;
+
+                    that.ui.progressbar.removeAttr('indeterminate');
+
+                }
+                var percent = loadingPlayer.currentTime / 3 * 100;
+                that.ui.progressbar.prop('value', percent);
+                /*
+                if (loadingPlayer.currentTime > 3) {
+                    loadingPlayer.pause();
+                    loadingPlayer.src = ''; // empty source
+                    loadingPlayer.load();
+                    that.initMainplayer();
+                }*/
+
+            };
+        },
+
+
         updateStatsUI: function (download, upload, peers) {
-            console.log(download, upload, peers);
             this.ui.stats.text(i18n.__('Download') + ': ' + download + ' • ' + i18n.__('Upload') + ': ' + upload + ' • ' + i18n.__('Peers') + ': ' + peers);
         },
 
@@ -114,8 +142,10 @@
                 }
                 img.remove();
             });
+        },
+        onDestroy: function () {
+            this.loadingStopped = true;
         }
-
 
     });
 

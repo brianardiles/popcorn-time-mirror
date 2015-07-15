@@ -15,8 +15,8 @@
             startStreamingUI: '.watchnow-btn span',
             bookmarkedIcon: '.bookmark-toggle',
             watchedIcon: '.watched-toggle',
-            seasonsTabs: 'paper-tabs',
-            SubtitlesDropdown: '.subtitles-dropdown',
+            seasonsTabs: '.seasons-container',
+            subtitlesDropdown: '.subtitles-dropdown',
             episodeContainer: '.episode-container',
             startStreamBtn: '.watchnow-btn',
             episodeUistyle: '#showColorStyl'
@@ -421,7 +421,7 @@
         },
         setStream: function (e) {
 
-            this.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Loading") + '..."></pt-selectable-element></pt-dropdown>')
+            this.ui.subtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Loading") + '..."></pt-selectable-element></pt-dropdown>')
 
             var season = $(e.currentTarget).data('season');
             var episode = $(e.currentTarget).data('episode');
@@ -522,10 +522,10 @@
                         dropdowncon = dropdowncon + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + id + '" label="' + (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id) + '"></pt-selectable-element>';
                         index++;
                     });
-                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("No subtitles") + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown>');
+                    that.ui.subtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("No subtitles") + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown>');
                     win.info(Object.keys(subs).length + ' subtitles found');
                 } else {
-                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("No subtitles available") + '"></pt-selectable-element></pt-dropdown>');
+                    that.ui.subtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("No subtitles available") + '"></pt-selectable-element></pt-dropdown>');
                     win.info('No subtitles found');
                 }
             }).catch(function (err) {

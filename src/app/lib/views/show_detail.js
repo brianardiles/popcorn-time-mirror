@@ -51,7 +51,7 @@
             this.isShowWatched();
 
             var status = this.model.get('status');
-            if(status === 'returning series' || status === 'in production') {
+            if (status === 'returning series' || status === 'in production') {
                 this.model.set('status', 'continuing')
             }
         },
@@ -161,37 +161,37 @@
 
             var select;
             switch (Settings.tv_detail_jump_to) {
-                case 'info':
+            case 'info':
+                select = false;
+                break;
+            case 'next':
+                if (watchedEpisodes.length === 0) {
                     select = false;
-                    break;
-                case 'next':
-                    if (watchedEpisodes.length === 0) {
-                        select = false;
+                } else {
+                    if (unWatchedEpisodes.length > 0) {
+                        select = _.last(unWatchedEpisodes);
                     } else {
-                        if (unWatchedEpisodes.length > 0) {
-                            select = _.last(unWatchedEpisodes);
-                        } else {
-                            select = _.last(episodes);
-                        }
+                        select = _.last(episodes);
                     }
-                    break;
-                case 'firstUnwatched':
-                    if (watchedEpisodes.length === 0) {
-                        select = false;
+                }
+                break;
+            case 'firstUnwatched':
+                if (watchedEpisodes.length === 0) {
+                    select = false;
+                } else {
+                    if (unWatchedEpisodes.length > 0) {
+                        select = _.first(unWatchedEpisodes);
                     } else {
-                        if (unWatchedEpisodes.length > 0) {
-                            select = _.first(unWatchedEpisodes);
-                        } else {
-                            select = _.last(episodes);
-                        }
+                        select = _.last(episodes);
                     }
-                    break;
-                case 'first':
-                    select = _.first(episodes);
-                    break;
-                case 'last':
-                    select = _.last(episodes);
-                    break;
+                }
+                break;
+            case 'first':
+                select = _.first(episodes);
+                break;
+            case 'last':
+                select = _.last(episodes);
+                break;
             }
 
             var season;
@@ -209,7 +209,7 @@
                     season = parseInt($('paper-tabs paper-tab:nth-child(3)').data('id'));
                 }
                 $('#season-' + season + ' li:first').click();
-            }     
+            }
         },
 
         toggleWatched: function (e) {
@@ -416,7 +416,7 @@
                     that.ui.startStreamBtn.css('color', textColor);
 
                     var invert = '';
-                    if(textColor === '#111214')
+                    if (textColor === '#111214')
                         invert = '-webkit-filter: invert(100%);';
 
                     that.ui.episodeUistyle.html('.show-detail .episode-container li.active { background-color: ' + color + '; } .show-detail .episode-container li.active p {  color: ' + textColor + '  !important; } .show-detail .episode-container li.active paper-icon-button {  color: ' + textColor + '; } .show-detail .controls-container .meta-container-c li pt-dropdown pt-selectable-element:hover { background-color: ' + color + ' !important; color: ' + textColor + ' !important; } .show-detail .controls-container .meta-container-c li.device-dropdown pt-selectable-element:hover::shadow #icon { ' + invert + ' }');
@@ -461,11 +461,11 @@
             var quality = null;
             var fallbackOrder = ['720p', '480p', '1080p'];
             console.log(Settings.shows_default_quality);
-            if(torrents[Settings.shows_default_quality]) {
+            if (torrents[Settings.shows_default_quality]) {
                 quality = Settings.shows_default_quality;
             } else {
-                $.each(fallbackOrder, function(index, value) {
-                    if(quality == null && torrents[value]) {
+                $.each(fallbackOrder, function (index, value) {
+                    if (quality == null && torrents[value]) {
                         quality = value;
                     }
                 });
@@ -473,8 +473,8 @@
 
             var supported = ['480p', '720p', '1080p'];
             var qualitys = '';
-            $.each(supported, function(index, label) {
-                if(torrents[label]) {
+            $.each(supported, function (index, label) {
+                if (torrents[label]) {
                     var value = label.slice(0, -1);
                     var selected = (label === quality ? 'select' : '');
                     qualitys += '<pt-selectable-element ' + selected + ' value="' + value + '" label="' + label + '"></pt-selectable-element>';
@@ -491,12 +491,13 @@
                 season: season,
                 episode: episode
             };
-
-            this.fetchTVSubtitles({
-                imdbid: this.model.get('imdb_id'),
-                season: season,
-                episode: episode
-            });
+            /*
+                        this.fetchTVSubtitles({
+                            imdbid: this.model.get('imdb_id'),
+                            season: season,
+                            episode: episode
+                        });
+            */
         },
 
         fetchTVSubtitles: function (data) {

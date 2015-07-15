@@ -495,7 +495,7 @@
             win.debug('Subtitles data request:', data);
             var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
 
-            subtitleProvider.fetch(data).delay(200).then(function (subs) {
+            subtitleProvider.fetch(data).delay(400).then(function (subs) {
                 if (subs && Object.keys(subs).length > 0) {
                     var index = 0;
                     var dropdowncon = '';

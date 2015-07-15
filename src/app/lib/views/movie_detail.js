@@ -133,22 +133,7 @@
                 img.remove();
             });
             img.addEventListener('load', function () {
-                var vibrant = new Vibrant(img, 64, 4);
-                var swatches = vibrant.swatches();
-                var color = null;
-                if (swatches['DarkVibrant']) {
-                    if (swatches['DarkVibrant'].getPopulation() < 20) {
-                        color = swatches['DarkMuted'].getHex();
-                    } else {
-                        color = swatches['DarkVibrant'].getHex();
-                    }
-                } else if (swatches['DarkMuted']) {
-                    color = swatches['DarkMuted'].getHex();
-                }
-                if (color) {
-                    that.model.set('color', color);
-                    that.ui.background.css('background-image', 'url(' + url + ')').addClass('fadein');
-                }
+                that.ui.background.css('background-image', 'url(' + url + ')').addClass('fadein');
                 img.remove();
             });
         },

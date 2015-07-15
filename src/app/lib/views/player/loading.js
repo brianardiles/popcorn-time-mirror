@@ -74,13 +74,17 @@
             loadingPlayer.play();
             var debugmetachunks = false;
             loadingPlayer.ontimeupdate = function () {
+                if (that.loadingStopped) {
+                    loadingPlayer.pause();
+                    loadingPlayer.src = ''; // empty source
+                    loadingPlayer.load();
+                    return;
+                }
                 if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
                     win.info('Initial Meta Chunks Received! Starting Playback in 3 seconds.');
                     debugmetachunks = true;
                     that.BufferingStarted = true;
-
                     that.ui.progressbar.removeAttr('indeterminate');
-
                 }
                 var percent = loadingPlayer.currentTime / 3 * 100;
                 that.ui.progressbar.prop('value', percent);

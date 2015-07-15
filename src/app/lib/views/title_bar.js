@@ -19,7 +19,7 @@ var os = require('os');
             'click .btn-os.fullscreen': 'toggleFullscreen'
         },
         ui: {
-            maxtoggle: '.os-controls .max'
+            maxtoggle: '.os-controls .max i'
         },
         initialize: function () {
             this.nativeWindow = require('nw.gui').Window.get();

@@ -145,6 +145,7 @@
                     if (!this.initializedLoadingPlayer) {
                         this.initializedLoadingPlayer = true;
                         this.initializeLoadingPlayer();
+                        this.backupCountdown();
                     }
                     if (this.BufferingStarted) {
                         this.ui.status.text(i18n.__('Buffering'));
@@ -161,7 +162,27 @@
             }
 
         },
-
+        backupCountdown: function () {
+            if (this.loadingStopped) {
+                return;
+            }
+            if (!this.count) {
+                this.count = 60;
+                win.debug('Backup ' + this.count + ' Second timeout started for:', this.model.get('data').metadata.title);
+            }
+            if (this.count === 0) {
+                win.debug('Smart Loading timeout reached for :', this.model.get('data').metadata.title, 'Starting Playback Arbitrarily');
+                var loadingPlayer = document.getElementById('loading_player');
+                this.loadingStopped = true;
+                loadingPlayer.pause();
+                loadingPlayer.src = ''; // empty source
+                loadingPlayer.load();
+                this.initMainplayer();
+                return;
+            }
+            this.count--;
+            _.delay(_.bind(this.backupCountdown, this), 1000);
+        },
         initializeLoadingPlayer: function () {
             var that = this;
             var loadingPlayer = document.getElementById('loading_player');
@@ -260,14 +281,14 @@
                     var vibrant = new Vibrant(img, 64, 4);
                     var swatches = vibrant.swatches();
                     var color = null;
-                    if (swatches['Vibrant']) {
-                        if (swatches['Vibrant'].getPopulation() < 20) {
-                            color = swatches['Muted'].getHex();
+                    if (swatches['DarkVibrant']) {
+                        if (swatches['DarkVibrant'].getPopulation() < 20) {
+                            color = swatches['DarkMuted'].getHex();
                         } else {
-                            color = swatches['Vibrant'].getHex();
+                            color = swatches['DarkVibrant'].getHex();
                         }
-                    } else if (swatches['Muted']) {
-                        color = swatches['Muted'].getHex();
+                    } else if (swatches['DarkMuted']) {
+                        color = swatches['DarkMuted'].getHex();
                     }
                     if (color) {
                         that.model.set('color', color);

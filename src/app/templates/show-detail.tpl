@@ -8,6 +8,20 @@
 .show-detail .episode-container li.active paper-icon-button { 
   color: <%=textcolor %>; 
 }
+.show-detail .controls-container .meta-container-c li pt-dropdown pt-selectable-element:hover {
+  background-color: <%=color %> !important;
+  color: <%=textcolor %> !important;
+}
+.show-detail .controls-container .meta-container-c li.device-dropdown pt-selectable-element:hover::shadow #icon {
+  <%
+    if(textcolor == "black" || textcolor == "#000" || textcolor == "#000000") {
+        invert = 100;
+    } else {
+        invert = 0;
+        }
+  %>
+    -webkit-filter: invert(<%=invert %>%);
+}
 </style>
 
 <div class="bg-backdrop" data-bgr="<%= images.fanart %>"></div>

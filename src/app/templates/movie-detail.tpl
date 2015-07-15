@@ -1,3 +1,19 @@
+<style>
+.controls-container .meta-container-c li pt-dropdown pt-selectable-element:hover {
+  background-color: <%=color %> !important;
+  color: <%=textcolor %> !important;
+}
+.controls-container .meta-container-c li.device-dropdown pt-selectable-element:hover::shadow #icon {
+  <%
+    if(textcolor == '#111214') {
+        invert = 100;
+    } else {
+        invert = 0;
+    }
+  %>
+    -webkit-filter: invert(<%=invert %>%);
+}
+</style>
 <% if(typeof backdrop==="undefined" ){ backdrop="" ; }; if(typeof synopsis==="undefined" ){ synopsis="Synopsis not available." ; }; if(typeof runtime==="undefined" ){ runtime="N/A" ; }; for(var i=0 ; i < genre.length; i++){ genre[i]=i18n.__(genre[i]); }; %>
     <div class="bg-backdrop" data-bgr="<%= backdrop %>">
     </div>

@@ -29,7 +29,6 @@
             if (this.model.attributes.data.type === 'show') {
                 this.getEpisodeDetails();
             }
-            this.StateUpdate();
         },
 
 
@@ -59,7 +58,7 @@
                     _.delay(_.bind(this.StateUpdate, this), 1000);
                 }
             } else {
-                _.delay(_.bind(this.StateUpdate, this), 100);
+                _.delay(_.bind(this.StateUpdate, this), 1000);
             }
 
         },
@@ -81,24 +80,54 @@
                     return;
                 }
                 if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
-                    win.info('Initial Meta Chunks Received! Starting Playback in 3 seconds.');
+                    win.info('Initial Meta Chunks Received! Starting Playback in 4 seconds.');
                     debugmetachunks = true;
                     that.BufferingStarted = true;
                     that.ui.progressbar.removeAttr('indeterminate');
                 }
-                var percent = loadingPlayer.currentTime / 3 * 100;
+                var percent = loadingPlayer.currentTime / 4 * 100;
                 that.ui.progressbar.prop('value', percent);
-                /*
-                if (loadingPlayer.currentTime > 3) {
+
+                if (loadingPlayer.currentTime > 4) {
                     loadingPlayer.pause();
                     loadingPlayer.src = ''; // empty source
                     loadingPlayer.load();
                     that.initMainplayer();
-                }*/
+                }
 
             };
         },
+        initMainplayer: function () {
+            var that = this;
 
+            function begin() {
+                if (that.player === 'local') {
+                    var playerModel = new Backbone.Model(that.model.get('data'));
+                    App.vent.trigger('stream:local', playerModel);
+                } else {
+                    var externalPlayerModel = that.model.get('player');
+                    externalPlayerModel.set('src', App.Streamer.src);
+                    externalPlayerModel.set('subtitle', that.extsubs); //set subs if we have them; if not? well that boat has sailed.
+                    App.vent.trigger('stream:ready', externalPlayerModel);
+                    that.playingExternally = true;
+                    that.StateUpdate();
+                }
+            }
+            if (this.SubtitlesLoaded || this.model.attributes.data.defaultSubtitle === 'none') {
+                begin();
+            } else {
+                win.info('Subtitles Not Yet Loaded, Waiting for them');
+                var watchSubsLoaded = function (forced) {
+                    require('watchjs').unwatch(this, 'SubtitlesLoaded', watchSubsLoaded);
+                    if (!forced) {
+                        win.info('Subtitles Retrived! Starting playback');
+                    }
+                    begin();
+                };
+                require('watchjs').watch(this, 'SubtitlesLoaded', watchSubsLoaded);
+                this.ui.stateTextDownload.text(i18n.__('Waiting For Subtitles'));
+            }
+        },
 
         updateStatsUI: function (download, upload, peers) {
             this.ui.stats.text(i18n.__('Download') + ': ' + download + ' • ' + i18n.__('Upload') + ': ' + upload + ' • ' + i18n.__('Peers') + ': ' + peers);
@@ -121,6 +150,11 @@
             var that = this;
             var img = document.createElement('img');
             img.setAttribute('src', url);
+            console.log(url);
+            img.addEventListener('error', function () {
+                that.StateUpdate();
+                img.remove();
+            })
             img.addEventListener('load', function () {
                 if (this.width >= 1920 && this.height >= 1080) {
                     that.ui.backdrop.removeClass('fadein');
@@ -141,8 +175,13 @@
                         _.delay(function () {
                             that.ui.backdrop.css('background-image', 'url(' + url + ')').addClass('fadein');
                             that.ui.progressStyle.html('paper-progress::shadow #activeProgress {  background-color: ' + color + '; }');
+                            that.StateUpdate();
                         }, 300);
+                    } else {
+                        that.StateUpdate();
                     }
+                } else {
+                    that.StateUpdate();
                 }
                 img.remove();
             });

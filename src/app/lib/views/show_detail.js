@@ -188,7 +188,7 @@
                 this.selectSeason(null, season);
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
                 this.selectEpisode(null, episodeUIid);
-                this.ui.episodeContainer.scrollTop($('#episodeTab-' + episodeUIid).offset().top);
+                this.ui.episodeContainer.scrollTop($('#episodeTab-' + episodeUIid).offset().top - 240);
             } else {
                 this.loadCover();
                 if ($('paper-tabs paper-tab:nth-child(2)').data('type') !== 'special') {

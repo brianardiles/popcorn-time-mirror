@@ -38,7 +38,8 @@
             }
         },
         getSubtitles: function () {
-            if (this.model.attributes.data.type === 'show') {
+            switch (this.model.attributes.data.type) {
+            case 'show':
                 this.fetchTVSubtitles({
                     imdbid: this.model.attributes.data.metadata.imdb_id,
                     season: this.model.attributes.data.metadata.season,
@@ -50,6 +51,10 @@
                         that.SubtitlesRetrieved = true; //no subs could be found so we have done all we can
                     }
                 });
+                break;
+            case 'movie':
+                this.setupLocalSubs(this.model.attributes.data.defaultSubtitle, this.model.attributes.data.subtitles);
+                break;
             }
         },
         setupLocalSubs: function (defaultSubtitle, subtitles) {

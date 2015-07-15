@@ -5,7 +5,7 @@ var os = require('os');
 
     // use of darwin string instead of mac (mac os x returns darwin as platform)
     var ButtonOrder = {
-        'win32': ['min', 'max', 'close'],
+        'win32': ['close', 'max', 'min'],
         'darwin': ['close', 'min', 'max'],
         'linux': ['min', 'max', 'close']
     };
@@ -27,6 +27,7 @@ var os = require('os');
 
         templateHelpers: {
             getButtons: function () {
+                console.log(ButtonOrder[App.Config.platform]);
                 return ButtonOrder[App.Config.platform];
             },
 

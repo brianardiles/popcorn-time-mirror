@@ -14,6 +14,7 @@
             background: '.bg-backdrop',
             startStreamingUI: '.watchnow-btn span',
             bookmarkedIcon: '.bookmark-toggle',
+            watchedIcon: '.watched-toggle',
             seasonsTabs: 'paper-tabs',
             SubtitlesDropdown: '.subtitles-dropdown',
             episodeContainer: '.episode-container',
@@ -253,10 +254,10 @@
         toggleBookmarked: function () {
             if (!this.model.get('bookmarked')) {
                 this.model.set('bookmarked', true);
-                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark-outline').addClass('zmdi-bookmark');
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark');
             } else {
                 this.model.set('bookmarked', false);
-                this.ui.bookmarkedIcon.removeClass('zmdi-bookmark').addClass('zmdi-bookmark-outline');
+                this.ui.bookmarkedIcon.prop('icon', 'bookmark-outline');
             }
             $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
         },
@@ -265,6 +266,8 @@
             var imdb_id = this.model.get('imdb_id');
 
             var episodes = this.model.get('episodes');
+
+            this.ui.watchedIcon.prop('icon', 'visibility');
 
             episodes.forEach(function (episode, index, array) {
                 var value = {
@@ -307,6 +310,7 @@
                                 season: episode.season,
                                 episode: episode.episode
                             });
+
                             return true;
                         } else {
                             watchedEpisodes.push({
@@ -324,6 +328,11 @@
                             episode: episode.episode
                         });
                         if (checkedEpisodes.length === episodes.length) {
+                            if (unWatchedEpisodes.length > 0) {
+                                that.ui.watchedIcon.prop('icon', 'visibility-off');
+                            } else {
+                                that.ui.watchedIcon.prop('icon', 'visibility');
+                            }
                             that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes, watchedEpisodes);
                         }
 

@@ -9,7 +9,7 @@
         className: 'show-detail',
 
         ui: {
-            qualitytoggles: '#quality-toggle',
+            qualitytoggles: '.quality-toggle',
             poster: '.poster',
             background: '.bg-backdrop',
             startStreamingUI: '.watchnow-btn span',
@@ -26,8 +26,7 @@
             'click .back': 'closeDetails',
             'click .watched-toggle': 'markShowAsWatched',
             'click .bookmark-toggle': 'toggleBookmarked',
-            'change #quality-toggle': 'qualityChanged',
-            'change #subtitles-selector': 'toggleShowQuality',
+            'change #quality-toggle': 'toggleShowQuality',
             'change #device-selector': 'deviceChanged',
             'click .seasons-container paper-tab': 'selectSeason',
             'click .episode-container ul li': 'selectEpisode',
@@ -56,7 +55,6 @@
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark');
             }
-            console.log(this.model)
             this.loadbackground();
             this.playerQualityChooseUI();
         },
@@ -67,7 +65,6 @@
             var episode_id = this.Stream.tvdb_id;
             var season = this.Stream.season;
             var name = this.Stream.title;
-
 
             var episodes = [];
             var episodes_data = [];
@@ -189,7 +186,6 @@
                 season = select.season + 1;
                 this.selectSeason(null, season);
                 var episodeUIid = 'S' + this.formatTwoDigit(select.season) + 'E' + this.formatTwoDigit(select.episode);
-                console.log(episodeUIid);
                 this.selectEpisode(null, episodeUIid);
                 this.ui.episodeContainer.scrollTop($('#episodeTab-' + episodeUIid).offset().top);
             } else {
@@ -399,20 +395,34 @@
             console.log('Subtitles Changed', e.originalEvent.detail);
         },
         toggleShowQuality: function (e) {
-            var quality = $(e.currentTarget).val();
+            console.log('Quality Changed', e.originalEvent.detail.label);
             var episodeData = _.findWhere(this.model.get('episodes'), {
                 season: this.Stream.season,
                 episode: this.Stream.episode
             });
-            this.Stream.torrent = episodeData.torrents[quality + 'p'].url;
-            this.Stream.quality = quality + 'p';
+            this.Stream.torrent = episodeData.torrents[e.originalEvent.detail.label].url;
+            this.Stream.quality = e.originalEvent.detail.label;
 
-            AdvSettings.set('shows_default_quality', quality + 'p');
+            AdvSettings.set('shows_default_quality', e.originalEvent.detail.label);
         },
-        setQualityUI: function (torrents) {
+        setStream: function (e) {
 
-            this.ui.qualitytoggles.children().removeClass('selected');
-            this.ui.qualitytoggles.children().removeAttr('selected');
+            this.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Loading") + '..."></pt-selectable-element></pt-dropdown>')
+
+            var season = $(e.currentTarget).data('season');
+            var episode = $(e.currentTarget).data('episode');
+
+            var episodeData = _.findWhere(this.model.get('episodes'), {
+                season: season,
+                episode: episode
+            });
+
+            var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
+            this.ui.startStreamingUI.text(episodeUIid);
+
+            var torrents = episodeData.torrents;
+            var that = this;
+
 
             var quality;
 
@@ -445,54 +455,37 @@
                 }
                 break;
             }
-            if (!torrents['1080p']) {
-                this.ui.qualitytoggles.children('[value="1080"]').hide();
-            } else {
-                this.ui.qualitytoggles.children('[value="1080"]').show();
+
+            var qualitys = '';
+            var slected;
+            if (torrents['480p']) {
+                slected = (quality === '480' ? 'selected' : '');
+                qualitys = '<pt-selectable-element ' + slected + ' value="480" label="480p"></pt-selectable-element>';
             }
-            if (!torrents['720p']) {
-                this.ui.qualitytoggles.children('[value="720"]').hide();
-            } else {
-                this.ui.qualitytoggles.children('[value="720"]').show();
+            if (torrents['720p']) {
+                slected = (quality === '720' ? 'selected' : '');
+                qualitys = qualitys + '<pt-selectable-element ' + slected + ' value="720" label="720p"></pt-selectable-element>';
             }
-            if (!torrents['480p']) {
-                this.ui.qualitytoggles.children('[value="480"]').hide();
-            } else {
-                this.ui.qualitytoggles.children('[value="480"]').show();
+            if (torrents['1080p']) {
+                slected = (quality === '1080' ? 'selected' : '');
+                qualitys = qualitys + '<pt-selectable-element ' + slected + ' value="1080" label="1080p"></pt-selectable-element>';
             }
 
-            this.ui.qualitytoggles.children('[value="' + quality + '"]').addClass('selected');
-            return Q(quality);
-        },
-        setStream: function (e) {
+            this.ui.qualitytoggles.html('<pt-toggle id="quality-toggle" icon="av:high-quality">' + qualitys + '</pt-toggle>');
 
-            this.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Loading") + '..."></pt-selectable-element></pt-dropdown>')
 
-            var season = $(e.currentTarget).data('season');
-            var episode = $(e.currentTarget).data('episode');
+            var torrent = torrents[quality + 'p'].url;
 
-            var episodeData = _.findWhere(this.model.get('episodes'), {
+
+            this.Stream = {
+                torrent: torrent,
+                quality: quality + 'p',
+                title: episodeData.title,
+                tvdb_id: episodeData.tvdb_id,
                 season: season,
                 episode: episode
-            });
+            };
 
-            var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
-            this.ui.startStreamingUI.text(episodeUIid);
-
-            var torrents = episodeData.torrents;
-            var that = this;
-
-            this.setQualityUI(torrents).then(function (quality) {
-                var torrent = torrents[quality + 'p'].url;
-                that.Stream = {
-                    torrent: torrent,
-                    quality: quality + 'p',
-                    title: episodeData.title,
-                    tvdb_id: episodeData.tvdb_id,
-                    season: season,
-                    episode: episode
-                };
-            });
             /*
             this.fetchTVSubtitles({
                 imdbid: this.model.get('imdb_id'),
@@ -568,7 +561,6 @@
         },
         openPerson: function (e) {
             var personid = $(e.currentTarget).parent().data('id');
-            console.log(personid);
             gui.Shell.openExternal('http://trakt.tv/people/' + personid);
         },
         playerQualityChooseUI: function () {

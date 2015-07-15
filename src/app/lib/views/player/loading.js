@@ -37,7 +37,7 @@
             if (this.model.attributes.data.type === 'show') {
                 this.getEpisodeDetails();
             } else {
-                this.StateUpdate();
+                this.stateUpdate();
             }
         },
 
@@ -136,7 +136,7 @@
             });
         },
 
-        StateUpdate: function () {
+        stateUpdate: function () {
             if (this.loadingStopped) {
                 return;
             }
@@ -160,10 +160,10 @@
                     this.updateStatsUI(Common.fileSize(Stream.downloadSpeed()) + '/s', Common.fileSize(Stream.uploadSpeed()) + '/s', Stream.wires.length)
                 }
                 if (!this.loadingStopped) {
-                    _.delay(_.bind(this.StateUpdate, this), 1000);
+                    _.delay(_.bind(this.stateUpdate, this), 1000);
                 }
             } else {
-                _.delay(_.bind(this.StateUpdate, this), 1000);
+                _.delay(_.bind(this.stateUpdate, this), 1000);
             }
         },
 
@@ -237,7 +237,7 @@
                     externalPlayerModel.set('subtitle', that.extsubs); //set subs if we have them; if not? well that boat has sailed.
                     App.vent.trigger('stream:ready', externalPlayerModel);
                     that.playingExternally = true;
-                    that.StateUpdate();
+                    that.stateUpdate();
                 }
             }
             if (this.SubtitlesRetrieved || this.model.attributes.data.defaultSubtitle === 'none') {

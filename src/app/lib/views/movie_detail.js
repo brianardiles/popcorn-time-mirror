@@ -96,9 +96,7 @@
         },
         loadCover: function () {
             var that = this;
-
             var url = this.ui.poster.prop('src');
-
             var cbackground = url;
             var coverCache = new Image();
             coverCache.src = cbackground;
@@ -115,28 +113,36 @@
                 coverCache = null;
             };
         },
-        loadbackground: function () {
+        loadbackground: function (url) {
             var that = this;
-            var background = this.ui.background.data('bgr');
-            var bgCache = new Image();
-            bgCache.src = background;
-            bgCache.onload = function () {
-                try {
-                    that.ui.background.css('background-image', 'url(' + background + ')').addClass('fadein');
-                } catch (e) {
-                    console.log(e);
+            var url = this.ui.background.data('bgr');
+            var img = document.createElement('img');
+            img.setAttribute('src', url);
+            img.addEventListener('error', function () {
+                that.ui.background.css('background-image', 'url("images/bg-header.jpg")').addClass('fadein');
+                img.remove();
+            });
+            img.addEventListener('load', function () {
+                var vibrant = new Vibrant(img, 64, 4);
+                var swatches = vibrant.swatches();
+                var color = null;
+                if (swatches['Vibrant']) {
+                    if (swatches['Vibrant'].getPopulation() < 20) {
+                        color = swatches['Muted'].getHex();
+                    } else {
+                        color = swatches['Vibrant'].getHex();
+                    }
+                } else if (swatches['Muted']) {
+                    color = swatches['Muted'].getHex();
                 }
-                bgCache = null;
-            };
-            bgCache.onerror = function () {
-                try {
-                    that.ui.background.css('background-image', 'url("images/bg-header.jpg")').addClass('fadein');
-                } catch (e) {
-                    console.log(e);
+                if (color) {
+                    that.model.set('color', color);
+                    that.ui.background.css('background-image', 'url(' + url + ')').addClass('fadein');
                 }
-                bgCache = null;
-            };
+                img.remove();
+            });
         },
+
         playTrailer: function () {
             var trailer = new Backbone.Model({
                 src: this.model.get('trailer'),
@@ -160,6 +166,7 @@
                     title: this.model.get('title'),
                     cover: this.model.get('image'),
                     imdb_id: this.model.get('imdb_id'),
+                    color: this.model.get('color'),
                     quality: this.ui.quality.get(0).selected.value
                 },
                 subtitles: this.ui.subtitles.get(0).selected.value,

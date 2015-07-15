@@ -22,7 +22,9 @@
 
         initialize: function () {},
         onShow: function () {
-            this.getEpisodeDetails();
+            if (this.model.attributes.data.type === 'show') {
+                this.getEpisodeDetails();
+            }
         },
         cancelStreaming: function () {
             App.vent.trigger('streamer:stop');

@@ -1,4 +1,4 @@
-  <%   
+<%   
 function formatTwoDigit(n) {
 	return n > 9 ? '' + n : '0' + n;
 }
@@ -13,7 +13,6 @@ switch(data.type) {
 			episode = 'S' + formatTwoDigit(data.metadata.season) + 'E' + formatTwoDigit(data.metadata.episode) + ' ' + data.metadata.episodeName;
         break;
 }
-
 %>
 <style id="loadingStyle">
 paper-progress::shadow #activeProgress {

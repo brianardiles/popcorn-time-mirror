@@ -32,6 +32,7 @@
                 this.player = 'local';
             }
         },
+
         onShow: function () {
             if (this.model.attributes.data.type === 'show') {
                 this.getEpisodeDetails();
@@ -39,6 +40,7 @@
                 this.StateUpdate();
             }
         },
+
         getSubtitles: function () {
             switch (this.model.attributes.data.type) {
             case 'show':
@@ -59,6 +61,7 @@
                 break;
             }
         },
+
         setupLocalSubs: function (defaultSubtitle, subtitles) {
             var that = this;
 
@@ -77,6 +80,7 @@
             }
 
         },
+
         fetchTVSubtitles: function (data) {
             var that = this;
             var defer = Q.defer();
@@ -104,6 +108,7 @@
             });
             return defer.promise;
         },
+
         initsubs: function (defaultSubtitle, subtitles) {
             var that = this;
             App.vent.on('subtitle:downloaded', function (sub) {
@@ -129,8 +134,8 @@
                 url: subtitles[defaultSubtitle],
                 path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
             });
-
         },
+
         StateUpdate: function () {
             if (this.loadingStopped) {
                 return;
@@ -160,8 +165,8 @@
             } else {
                 _.delay(_.bind(this.StateUpdate, this), 1000);
             }
-
         },
+
         backupCountdown: function () {
             if (this.loadingStopped) {
                 return;
@@ -183,6 +188,7 @@
             this.count--;
             _.delay(_.bind(this.backupCountdown, this), 1000);
         },
+
         initializeLoadingPlayer: function () {
             var that = this;
             var loadingPlayer = document.getElementById('loading_player');
@@ -217,6 +223,7 @@
 
             };
         },
+
         initMainplayer: function () {
             var that = this;
 
@@ -272,36 +279,18 @@
             img.setAttribute('src', url);
             console.log(url);
             img.addEventListener('error', function () {
-                that.StateUpdate();
+                that.stateUpdate();
                 img.remove();
             })
             img.addEventListener('load', function () {
-                if (this.width >= 1920 && this.height >= 1080) {
+                if (this.width >= 1280 && this.height >= 720) {
                     that.ui.backdrop.removeClass('fadein');
-                    var vibrant = new Vibrant(img, 64, 4);
-                    var swatches = vibrant.swatches();
-                    var color = null;
-                    if (swatches['DarkVibrant']) {
-                        if (swatches['DarkVibrant'].getPopulation() < 20) {
-                            color = swatches['DarkMuted'].getHex();
-                        } else {
-                            color = swatches['DarkVibrant'].getHex();
-                        }
-                    } else if (swatches['DarkMuted']) {
-                        color = swatches['DarkMuted'].getHex();
-                    }
-                    if (color) {
-                        that.model.set('color', color);
-                        _.delay(function () {
-                            that.ui.backdrop.css('background-image', 'url(' + url + ')').addClass('fadein');
-                            that.ui.progressStyle.html('paper-progress::shadow #activeProgress {  background-color: ' + color + '; }');
-                            that.StateUpdate();
-                        }, 300);
-                    } else {
-                        that.StateUpdate();
-                    }
+                    _.delay(function () {
+                        that.ui.backdrop.css('background-image', 'url(' + url + ')').addClass('fadein');
+                        that.stateUpdate();
+                    }, 300);
                 } else {
-                    that.StateUpdate();
+                    that.stateUpdate();
                 }
                 img.remove();
             });

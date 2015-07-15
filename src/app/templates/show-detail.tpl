@@ -86,7 +86,7 @@
                 </div>
                 <div class="meta-synop"><%= synopsis %></div>
 
-                <paper-button id="imdb-link" class="meta-btn">
+                <paper-button id="trakt-link" class="meta-btn">
                     <%=i18n.__( "Read More") %>
                 </paper-button>
 

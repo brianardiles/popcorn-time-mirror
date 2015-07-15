@@ -29,7 +29,7 @@
             'change #device-selector': 'deviceChanged',
             'click .watchnow-btn': 'play',
             'click #play-trailer': 'playTrailer',
-            'click #imdb-link': 'openIMDb',
+            'click #trakt-link': 'openTrakt',
             'click .person': 'openPerson'
         },
 
@@ -47,16 +47,20 @@
             this.loadCover();
             this.loadbackground();
         },
+
         closeDetails: function () {
             App.vent.trigger('movie:closeDetail');
         },
+
         qualityChanged: function (e) {
             console.log('Quality Changed', e.originalEvent.detail);
             this.model.set('quality', e.originalEvent.detail.value);
         },
+
         subtitlesChanged: function (e) {
             console.log('Subtitles Changed', e.originalEvent.detail);
         },
+
         deviceChanged: function (e) {
             console.log('Device Changed', e.originalEvent.detail);
             var player = e.originalEvent.detail.value;
@@ -66,13 +70,16 @@
                 AdvSettings.set('chosenPlayer', player);
             }
         },
-        openIMDb: function () {
+
+        openTrakt: function () {
             gui.Shell.openExternal('http://trakt.tv/movies/' + this.model.get('imdb_id'));
         },
+
         openPerson: function (e) {
             var personid = $(e.currentTarget).parent().data('id');
             gui.Shell.openExternal('http://trakt.tv/people/' + personid);
         },
+
         toggleWatched: function () {
             if (!this.model.get('watched')) {
                 this.model.set('watched', true);
@@ -84,6 +91,7 @@
             $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-watched').click();
 
         },
+
         toggleBookmarked: function () {
             if (!this.model.get('bookmarked')) {
                 this.model.set('bookmarked', true);
@@ -94,6 +102,7 @@
             }
             $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
         },
+
         loadCover: function () {
             var that = this;
             var url = this.ui.poster.prop('src');
@@ -113,6 +122,7 @@
                 coverCache = null;
             };
         },
+
         loadbackground: function (url) {
             var that = this;
             var url = this.ui.background.data('bgr');
@@ -158,7 +168,6 @@
         },
 
         play: function () {
-
             var torrentStart = {
                 torrent: this.model.get('torrents')[this.ui.quality.get(0).selected.value].magnet,
                 metadata: {
@@ -175,7 +184,6 @@
                 device: App.Device.Collection.selected
             };
             App.Streamer.start(torrentStart);
-
         }
 
     });

@@ -8,6 +8,7 @@
 
         ui: {
             status: '.status',
+            stats: '.stats',
             backdrop: '.bg-backdrop',
             progressStyle: '#loadingStyle'
         },
@@ -20,12 +21,57 @@
 
         },
 
-        initialize: function () {},
+        initialize: function () {
+            this.loadingStopped = false;
+        },
         onShow: function () {
             if (this.model.attributes.data.type === 'show') {
                 this.getEpisodeDetails();
             }
+            this.StateUpdate();
         },
+
+
+        initLoadingPlayer: function () {
+            var video = document.createElement('video');
+
+        },
+
+        StateUpdate: function () {
+            if (this.loadingStopped) {
+                return;
+            }
+            console.log('stateupdate')
+            var Stream = App.Streamer.client.swarm;
+            if (App.Streamer.fileindex !== null) {
+
+                this.ui.status.text(i18n.__('Connecting'));
+
+                if (Stream.downloadSpeed()) {
+                    /*
+                       if (!this.initializedLoadingPlayer) {
+                           this.initializedLoadingPlayer = true;
+                           this.initializeLoadingPlayer();
+                       }*/
+
+                    this.ui.status.text(i18n.__('Downloading'));
+
+                    this.updateStatsUI(Common.fileSize(Stream.downloadSpeed()) + '/s', Common.fileSize(Stream.uploadSpeed()) + '/s', Stream.wires.length)
+                }
+                if (!this.loadingStopped) {
+                    _.delay(_.bind(this.StateUpdate, this), 1000);
+                }
+            } else {
+                _.delay(_.bind(this.StateUpdate, this), 100);
+            }
+
+        },
+
+        updateStatsUI: function (download, upload, peers) {
+            console.log(download, upload, peers);
+            this.ui.stats.text(i18n.__('Download') + ': ' + download + ' • ' + i18n.__('Upload') + ': ' + upload + ' • ' + i18n.__('Peers') + ': ' + peers);
+        },
+
         cancelStreaming: function () {
             App.vent.trigger('streamer:stop');
             App.vent.trigger('player:close');

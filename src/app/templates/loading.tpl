@@ -27,6 +27,7 @@ paper-progress::shadow #activeProgress {
         <div class="title"><%= title %></div>
         <div class="episode-info"><%= episode %></div>
         <div class="meta-container">
-            <div class="status">Connecting</div>
+            <div class="status"><%=i18n.__('Initializing')%></div>
             <paper-progress class="progressbar" indeterminate ></paper-progress>
+             <div class="stats"></div>
         </div>

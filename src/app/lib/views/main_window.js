@@ -53,6 +53,7 @@
                         App.ViewStack.push(view.className);
                     }
                     App.vent.trigger('viewstack:push', view.className);
+                    $(this.el).fadeIn();
                 });
 
                 /**
@@ -60,18 +61,20 @@
                  * TODO: Find better solution
                  */
                 element.on('destroy', function (view) {
-                    if (typeof view === 'undefined' && element.currentView !== null) {
-                        view = element.currentView;
-                    }
-                    var viewName = (typeof view !== 'undefined' ? view.className : 'unknown');
-                    App.ViewStack.pop();
-                    App.vent.trigger('viewstack:pop', viewName);
-                    if (typeof element.currentView !== 'undefined') {
-                        element.currentView.destroy();
-                    }
-                    if (!App.ViewStack[0]) {
-                        App.ViewStack = ['main-browser'];
-                    }
+                    $(this.el).fadeOut(function() {
+                        if (typeof view === 'undefined' && element.currentView !== null) {
+                            view = element.currentView;
+                        }
+                        var viewName = (typeof view !== 'undefined' ? view.className : 'unknown');
+                        App.ViewStack.pop();
+                        App.vent.trigger('viewstack:pop', viewName);
+                        if (typeof element.currentView !== 'undefined') {
+                            element.currentView.destroy();
+                        }
+                        if (!App.ViewStack[0]) {
+                            App.ViewStack = ['main-browser'];
+                        }
+                    });
                 });
 
             });

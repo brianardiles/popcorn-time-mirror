@@ -35,6 +35,8 @@
         onShow: function () {
             if (this.model.attributes.data.type === 'show') {
                 this.getEpisodeDetails();
+            } else {
+                this.StateUpdate();
             }
         },
         getSubtitles: function () {

@@ -500,12 +500,11 @@
                 episode: episode
             };
 
-            /*
             this.fetchTVSubtitles({
                 imdbid: this.model.get('imdb_id'),
                 season: season,
                 episode: episode
-            }); */
+            });
         },
 
         fetchTVSubtitles: function (data) {
@@ -514,7 +513,7 @@
             win.debug('Subtitles data request:', data);
             var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
 
-            subtitleProvider.fetch(data).then(function (subs) {
+            subtitleProvider.fetch(data).delay(200).then(function (subs) {
                 if (subs && Object.keys(subs).length > 0) {
                     var index = 0;
                     var dropdowncon = '';
@@ -523,10 +522,10 @@
                         dropdowncon = dropdowncon + '<pt-selectable-element index="' + index + '" ' + selected + ' data-url="' + sub + '" value="' + id + '" label="' + (App.Localization.langcodes[id] !== undefined ? App.Localization.langcodes[id].nativeName : id) + '"></pt-selectable-element>';
                         index++;
                     });
-                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("Disabled") + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown>');
+                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="none" label="' + i18n.__("No subtitles") + '"></pt-selectable-element>' + dropdowncon + '</pt-dropdown>');
                     win.info(Object.keys(subs).length + ' subtitles found');
                 } else {
-                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("Subtitles Not Available") + '"></pt-selectable-element></pt-dropdown>');
+                    that.ui.SubtitlesDropdown.html('<pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles"><pt-selectable-element value="" selected label="' + i18n.__("No subtitles available") + '"></pt-selectable-element></pt-dropdown>');
                     win.info('No subtitles found');
                 }
             }).catch(function (err) {

@@ -84,7 +84,7 @@
             </li>
             <li class="subtitles-dropdown">
                 <pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles">
-                    <pt-selectable-element value="none" label="<%= i18n.__("Disabled") %>">
+                    <pt-selectable-element value="none" label="<%= i18n.__("No subtitles") %>">
                     </pt-selectable-element>
                     <% for(var lang in subtitle){ %>
                         <pt-selectable-element value="<%= lang %>" label="<%= App.Localization.langcodes[lang].nativeName %>"  <%=Settings.subtitle_language === lang ? 'selected="true"':''%>>

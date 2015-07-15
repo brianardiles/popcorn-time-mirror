@@ -437,63 +437,38 @@
             var torrents = episodeData.torrents;
             var that = this;
 
-
             var quality;
-
-            switch (Settings.shows_default_quality) {
-            case '1080p':
-                if (torrents['1080p']) {
-                    quality = '1080';
-                } else if (torrents['720p']) {
-                    quality = '720';
-                } else if (torrents['480p']) {
-                    quality = '480';
-                }
-                break;
-            case '720p':
-                if (torrents['720p']) {
-                    quality = '720';
-                } else if (torrents['480p']) {
-                    quality = '480';
-                } else if (torrents['1080p']) {
-                    quality = '1080';
-                }
-                break;
-            case '480p':
-                if (torrents['480p']) {
-                    quality = '480';
-                } else if (torrents['720p']) {
-                    quality = '720';
-                } else if (torrents['1080p']) {
-                    quality = '1080';
-                }
-                break;
+            var supported = ['720p', '480p', '1080p'];
+            if(torrents[Settings.shows_default_quality]) {
+                quality = Settings.shows_default_quality;
+            } else {
+                $.each(supported, function(index, value) {
+                    if(quality == undefined && torrents[value]) {
+                        quality = value;
+                    }
+                });
             }
 
             var qualitys = '';
-            var slected;
-            if (torrents['480p']) {
-                slected = (quality === '480' ? 'selected' : '');
-                qualitys = '<pt-selectable-element ' + slected + ' value="480" label="480p"></pt-selectable-element>';
-            }
-            if (torrents['720p']) {
-                slected = (quality === '720' ? 'selected' : '');
-                qualitys = qualitys + '<pt-selectable-element ' + slected + ' value="720" label="720p"></pt-selectable-element>';
-            }
-            if (torrents['1080p']) {
-                slected = (quality === '1080' ? 'selected' : '');
-                qualitys = qualitys + '<pt-selectable-element ' + slected + ' value="1080" label="1080p"></pt-selectable-element>';
-            }
+            var selected;
+            var value;
+            $.each(torrents, function(index) {
+                if(supported.indexOf(index) !== -1) {
+                    value = index.slice(0, -1);
+                    selected = (index === quality ? 'select' : '');
+                    qualitys = '<pt-selectable-element ' + selected + ' value="' + value + '" label="' + index + '"></pt-selectable-element>';
+                }
+            });
 
             this.ui.qualitytoggles.html('<pt-toggle id="quality-toggle" icon="av:high-quality">' + qualitys + '</pt-toggle>');
 
 
-            var torrent = torrents[quality + 'p'].url;
+            var torrent = torrents[quality].url;
 
 
             this.Stream = {
                 torrent: torrent,
-                quality: quality + 'p',
+                quality: quality,
                 title: episodeData.title,
                 tvdb_id: episodeData.tvdb_id,
                 season: season,

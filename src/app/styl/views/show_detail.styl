@@ -442,3 +442,44 @@
     display block
     opacity 1
 
+@media (max-height: 700px)
+    .show-detail
+        .summary-wrapper
+            .title
+                margin-top 40px
+                margin-left 17px
+                font-size 38px
+            .back
+                margin-top 37px
+                margin-left 22px
+                &::shadow core-icon
+                    width 32px
+                    height 32px
+            .watched-toggle, .bookmark-toggle
+                right 120px
+                top 40px
+            .bookmark-toggle
+                right 60px
+            .seasons-wrapper
+                top 95px
+                left -4px
+                paper-tab
+                    font-size 17px
+        .info-wrapper
+            top 180px
+            height calc(100vh - 180px)
+            .poster
+                left 80px
+                bottom 30px
+                height calc(100vh - 180px - 30px)
+                width calc((100vh - 180px - 30px) * 2 / 3)
+            .meta-container
+                right 50px
+                height calc(100% - 160px)
+        .episode-container
+            right 50px
+            height calc(100% - 160px)
+        .controls-container
+            height 160px
+            .meta-container-c
+                top 19px

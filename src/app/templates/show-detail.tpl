@@ -84,18 +84,11 @@
                 <% for (var i = Math.ceil(p_rating); i < 5; i++) { %>
                    <i class="zmdi zmdi-star-outline"></i>
             <% }; %>
-
-                </div>
-                <div class="meta-dot"></div>
-                <div class="meta-item">
+                    <span class="meta-dot"></span>
                     <p><%= genres.splice(0,3).join(", ") %></p>
-                </div>
-                <div class="meta-dot"></div>
-                <div class="meta-item">
-                    <p><%= year %> - Ongoing</p>
-                </div>
-                <div class="meta-dot"></div>
-                <div class="meta-item">
+                    <span class="meta-dot"></span>
+                    <p><%= year %> - <%=i18n.__(status) %></p>
+                    <span class="meta-dot"></span>
                     <p><%= runtime %> min</p>
                 </div>
                 <div class="meta-synop"><%= synopsis %></div>

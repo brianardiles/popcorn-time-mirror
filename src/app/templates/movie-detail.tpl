@@ -42,21 +42,15 @@
                     <% for (var i= Math.ceil(p_rating); i < 5; i++) { %>
                     <i class="zmdi zmdi-star-outline"></i>
                     <% }; %>
-                </div>
-                <div class="meta-dot"></div>
-                <div class="meta-item">
+                    <span class="meta-dot"></span>
                     <p>
                         <%=genre.join(", ") %>
                     </p>
-                </div>
-                <div class="meta-dot"></div>
-                <div class="meta-item">
+                    <span class="meta-dot"></span>
                     <p>
-                        <%= year %>
+                        <%=year %>
                     </p>
-                </div>
-                <div class="meta-dot"></div>
-                <div class="meta-item">
+                    <span class="meta-dot"></span>
                     <p>
                         <%=runtime %> min
                     </p>

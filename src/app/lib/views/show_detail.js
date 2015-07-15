@@ -49,6 +49,11 @@
             images.fanart = App.Trakt.resizeImage(images.fanart, 'original');
             images.poster = App.Trakt.resizeImage(images.poster, 'medium');
             this.isShowWatched();
+
+            var status = this.model.get('status');
+            if(status === 'returning series' || status === 'in production') {
+                this.model.set('status', 'continuing')
+            }
         },
 
         onShow: function () {

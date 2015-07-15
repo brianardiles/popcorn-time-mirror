@@ -437,37 +437,33 @@
             var torrents = episodeData.torrents;
             var that = this;
 
-            var quality;
-            var supported = ['720p', '480p', '1080p'];
+            var quality = null;
+            var fallbackOrder = ['720p', '480p', '1080p'];
+            console.log(Settings.shows_default_quality);
             if(torrents[Settings.shows_default_quality]) {
                 quality = Settings.shows_default_quality;
             } else {
-                $.each(supported, function(index, value) {
-                    if(quality == undefined && torrents[value]) {
+                $.each(fallbackOrder, function(index, value) {
+                    if(quality == null && torrents[value]) {
                         quality = value;
                     }
                 });
             }
 
+            var supported = ['480p', '720p', '1080p'];
             var qualitys = '';
-            var selected;
-            var value;
-            $.each(torrents, function(index) {
-                if(supported.indexOf(index) !== -1) {
-                    value = index.slice(0, -1);
-                    selected = (index === quality ? 'select' : '');
-                    qualitys = '<pt-selectable-element ' + selected + ' value="' + value + '" label="' + index + '"></pt-selectable-element>';
+            $.each(supported, function(index, label) {
+                if(torrents[label]) {
+                    var value = label.slice(0, -1);
+                    var selected = (label === quality ? 'select' : '');
+                    qualitys += '<pt-selectable-element ' + selected + ' value="' + value + '" label="' + label + '"></pt-selectable-element>';
                 }
             });
 
             this.ui.qualitytoggles.html('<pt-toggle id="quality-toggle" icon="av:high-quality">' + qualitys + '</pt-toggle>');
 
-
-            var torrent = torrents[quality].url;
-
-
             this.Stream = {
-                torrent: torrent,
+                torrent: torrents[quality].url,
                 quality: quality,
                 title: episodeData.title,
                 tvdb_id: episodeData.tvdb_id,

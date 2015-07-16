@@ -209,11 +209,7 @@
                 this.ui.episodeContainer.scrollTop($('#episodeTab-' + episodeUIid).offset().top - 240);
             } else {
                 this.loadCover();
-                if ($('paper-tabs paper-tab:nth-child(2)').data('type') !== 'special') {
-                    season = parseInt($('paper-tabs paper-tab:nth-child(2)').data('id'));
-                } else {
-                    season = parseInt($('paper-tabs paper-tab:nth-child(3)').data('id'));
-                }
+                season = parseInt($('paper-tabs paper-tab:nth-child(2)').data('id'));
                 $('#season-' + season + ' li:first').click();
             }
         },

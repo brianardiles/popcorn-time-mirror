@@ -155,11 +155,6 @@
                     <pt-selectable-element value="1080" label="1080p"></pt-selectable-element>
                 </pt-toggle>
             </li>
-            <li class="subtitles-dropdown">
-                <pt-dropdown id="subtitles-selector" openDir="up" icon="av:subtitles">
-                    <pt-selectable-element value="" selected label="<%=i18n.__( "Loading") %>..."></pt-selectable-element>
-                </pt-dropdown>
-            </li>
             <li id="player-option" class="device-dropdown">
                 <pt-dropdown id="device-selector" openDir="up">
                  <% _.each(App.Device.Collection.models, function(player) { %>

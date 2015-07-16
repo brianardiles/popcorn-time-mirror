@@ -25,6 +25,7 @@
         initialize: function () {
             this.loadingStopped = false;
             this.SubtitlesRetrieved = false;
+            this.WaitingForSubs = false;
             this.getSubtitles();
             if (this.model.get('player').get('id')) {
                 this.player = this.model.get('player').get('id');
@@ -154,6 +155,8 @@
                     }
                     if (this.BufferingStarted) {
                         this.ui.status.text(i18n.__('Buffering'));
+                    } else if (this.WaitingForSubs) {
+                        this.ui.status.text(i18n.__('Waiting For Subtitles'));
                     } else {
                         this.ui.status.text(i18n.__('Downloading'));
                     }
@@ -168,20 +171,20 @@
         },
 
         backupCountdown: function () {
-            if (this.loadingStopped) {
+            if (this.loadingStopped || this.backupCountdownDone) {
                 return;
             }
             if (!this.count) {
-                this.count = 60;
+                this.count = 30;
                 win.debug('Backup ' + this.count + ' Second timeout started for:', this.model.get('data').metadata.title);
             }
             if (this.count === 0) {
                 win.debug('Smart Loading timeout reached for :', this.model.get('data').metadata.title, 'Starting Playback Arbitrarily');
                 var loadingPlayer = document.getElementById('loading_player');
-                this.loadingStopped = true;
                 loadingPlayer.pause();
                 loadingPlayer.src = ''; // empty source
                 loadingPlayer.load();
+                this.backupCountdownDone = true;
                 this.initMainplayer();
                 return;
             }
@@ -228,6 +231,7 @@
             var that = this;
 
             function begin() {
+                that.WaitingForSubs = false;
                 if (that.player === 'local') {
                     var playerModel = new Backbone.Model(that.model.get('data'));
                     App.vent.trigger('stream:local', playerModel);
@@ -251,8 +255,8 @@
                     }
                     begin();
                 };
+                this.WaitingForSubs = true;
                 require('watchjs').watch(this, 'SubtitlesLoaded', watchSubsLoaded);
-                this.ui.stateTextDownload.text(i18n.__('Waiting For Subtitles'));
             }
         },
 

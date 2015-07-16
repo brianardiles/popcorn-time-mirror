@@ -172,7 +172,7 @@
         },
 
         backupCountdown: function () {
-            if (this.loadingStopped) {
+            if (this.loadingStopped || this.backupCountdownDone) {
                 return;
             }
             if (!this.count) {
@@ -182,10 +182,10 @@
             if (this.count === 0) {
                 win.debug('Smart Loading timeout reached for :', this.model.get('data').metadata.title, 'Starting Playback Arbitrarily');
                 var loadingPlayer = document.getElementById('loading_player');
-                this.loadingStopped = true;
                 loadingPlayer.pause();
                 loadingPlayer.src = ''; // empty source
                 loadingPlayer.load();
+                this.backupCountdownDone = true;
                 this.initMainplayer();
                 return;
             }

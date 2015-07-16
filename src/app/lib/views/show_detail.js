@@ -620,24 +620,23 @@
 
             var first_aired = '';
             if (episodeData.first_aired !== undefined) {
-                first_aired = moment.unix(episodeData.first_aired).locale(Settings.language).format("LLLL");
-                this.ui.episodeModalAired.text(i18n.__("Aired") + ": " + first_aired);
+                first_aired = moment.unix(episodeData.first_aired).locale(Settings.language).format('LLLL');
+                this.ui.episodeModalAired.text(i18n.__('Aired') + ": " + first_aired);
             } else {
                 this.ui.episodeModalAired.hide();
             }
 
-            $("html /deep/ .episode-modal img").removeAttr('src');
-            $("html /deep/ .episode-modal img").removeClass('fadein');
+            $('html /deep/ .episode-modal img').removeClass('fadein');
 
-            $(".episode-modal").get(0).open();
+            $('.episode-modal').get(0).open();
 
             App.Trakt.episodes.summary(this.model.get('imdb_id'), season, episode)
                 .then(function (episodeSummary) {
                     console.log(episodeSummary);
-                    $("html /deep/ .episode-modal img").one('load', function () {
+                    $('html /deep/ .episode-modal img').attr('src', episodeSummary.images.screenshot.full);
+                    $('html /deep/ .episode-modal img').one('load', function () {
                         $(this).addClass('fadein');
                     });
-                    $("html /deep/ .episode-modal img").attr('src', episodeSummary.images.screenshot.full);
                 });
         },
 

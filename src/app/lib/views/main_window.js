@@ -387,7 +387,6 @@
             this.MovieDetail.show(new App.View.ShowDetail({
                 model: showModel
             }));
-            App.vent.trigger('nav:hide');
         },
 
         closeShowDetail: function (showModel) {
@@ -407,7 +406,6 @@
             this.Settings.show(new App.View.Settings({
                 model: settingsModel
             }));
-            App.vent.trigger('nav:hide');
         },
 
         traktAuthenticated: function () {

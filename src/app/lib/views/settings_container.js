@@ -11,11 +11,15 @@
         },
 
         events: {
-         
+            'click .back': 'closeSettings'
         },
 
         onShow: function () {
           
+        },
+
+        closeSettings: function () {
+            App.vent.trigger('settings:close');
         },
 
         onDestroy: function () {

@@ -143,11 +143,8 @@
             }
             var Stream = App.Streamer.client.swarm;
             if (App.Streamer.fileindex !== null) {
-
                 this.ui.status.text(i18n.__('Connecting'));
-
                 if (Stream.downloadSpeed()) {
-
                     if (!this.initializedLoadingPlayer) {
                         this.initializedLoadingPlayer = true;
                         this.initializeLoadingPlayer();
@@ -171,25 +168,26 @@
         },
 
         backupCountdown: function () {
-            if (this.loadingStopped || this.backupCountdownDone) {
-                return;
-            }
-            if (!this.count) {
-                this.count = 30;
-                win.debug('Backup ' + this.count + ' Second timeout started for:', this.model.get('data').metadata.title);
-            }
-            if (this.count === 0) {
-                win.debug('Smart Loading timeout reached for :', this.model.get('data').metadata.title, 'Starting Playback Arbitrarily');
-                var loadingPlayer = document.getElementById('loading_player');
-                loadingPlayer.pause();
-                loadingPlayer.src = ''; // empty source
-                loadingPlayer.load();
-                this.backupCountdownDone = true;
-                this.initMainplayer();
-                return;
-            }
-            this.count--;
-            _.delay(_.bind(this.backupCountdown, this), 1000);
+            var that = this;
+            var count = 30;
+            win.debug('Backup ' + this.count + ' Second timeout started for:', this.model.get('data').metadata.title);
+            var backupCountdown = setInterval(function () {
+                if (that.loadingStopped) {
+                    clearInterval(backupCountdown);
+                    return;
+                }
+                if (count === 0) {
+                    win.debug('Smart Loading timeout reached for :', that.model.get('data').metadata.title, 'Starting Playback Arbitrarily');
+                    var loadingPlayer = document.getElementById('loading_player');
+                    loadingPlayer.pause();
+                    loadingPlayer.src = ''; // empty source
+                    loadingPlayer.load();
+                    that.backupCountdownDone = true;
+                    that.initMainplayer();
+                    clearInterval(backupCountdown);
+                }
+                count--;
+            }, 1000);
         },
 
         initializeLoadingPlayer: function () {
@@ -202,7 +200,7 @@
             loadingPlayer.play();
             var debugmetachunks = false;
             loadingPlayer.ontimeupdate = function () {
-                if (that.loadingStopped) {
+                if (that.loadingStopped || that.backupCountdownDone) {
                     loadingPlayer.pause();
                     loadingPlayer.src = ''; // empty source
                     loadingPlayer.load();

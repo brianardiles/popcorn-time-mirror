@@ -77,6 +77,18 @@
         },
         onShow: function () {
 
+            this.$('.tooltipped').tooltip({
+                delay: {
+                    'show': 800,
+                    'hide': 100
+                }
+            });
+            this.$('.providerinfo').tooltip({
+                delay: {
+                    'show': 50,
+                    'hide': 50
+                }
+            });
         },
 
         focusSearch: function () {

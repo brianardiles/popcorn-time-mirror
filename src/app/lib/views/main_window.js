@@ -53,7 +53,7 @@
                         App.ViewStack.push(view.className);
                     }
                     App.vent.trigger('viewstack:push', view.className);
-                    $(this.el).fadeIn();
+                    $(this.el).fadeIn(500);
                 });
 
                 /**
@@ -61,7 +61,7 @@
                  * TODO: Find better solution
                  */
                 element.on('destroy', function (view) {
-                    $(this.el).fadeOut(function () {
+                    $(this.el).fadeOut(500, function () {
                         if (typeof view === 'undefined' && element.currentView !== null) {
                             view = element.currentView;
                         }
@@ -364,13 +364,11 @@
             this.MovieDetail.show(new App.View.MovieDetail({
                 model: movieModel
             }));
-            App.vent.trigger('nav:hide');
         },
 
         closeMovieDetail: function (movieModel) {
             _this.MovieDetail.destroy();
             App.vent.trigger('shortcuts:list');
-            App.vent.trigger('nav:show');
         },
 
         showNotification: function (notificationModel) {
@@ -392,7 +390,6 @@
         closeShowDetail: function (showModel) {
             _this.MovieDetail.destroy();
             App.vent.trigger('shortcuts:list');
-            App.vent.trigger('nav:show');
         },
 
         showFileSelector: function (fileModel) {

@@ -61,7 +61,7 @@
                  * TODO: Find better solution
                  */
                 element.on('destroy', function (view) {
-                    $(this.el).fadeOut(function() {
+                    $(this.el).fadeOut(function () {
                         if (typeof view === 'undefined' && element.currentView !== null) {
                             view = element.currentView;
                         }

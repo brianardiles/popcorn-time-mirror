@@ -600,7 +600,7 @@
             gui.Shell.openExternal('http://trakt.tv/shows/' + this.model.get('imdb_id'));
         },
 
-        openEpisodeModal: function(e) {
+        openEpisodeModal: function (e) {
             var el = $(e.currentTarget);
             var parent = el.parent();
 
@@ -625,6 +625,9 @@
             } else {
                 this.ui.episodeModalAired.hide();
             }
+
+            $("html /deep/ .episode-modal img").removeAttr('src');
+            $("html /deep/ .episode-modal img").removeClass('fadein');
 
             $(".episode-modal").get(0).open();
 

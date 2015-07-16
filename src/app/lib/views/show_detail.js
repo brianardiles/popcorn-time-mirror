@@ -612,7 +612,6 @@
                 episode: episode
             });
 
-            console.log(episodeData);
             var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
             this.ui.episodeModalNumber.text(episodeUIid);
             this.ui.episodeModalTitle.text(episodeData.title);
@@ -626,18 +625,22 @@
                 this.ui.episodeModalAired.hide();
             }
 
-            $('html /deep/ .episode-modal img').removeClass('fadein');
+            if (this.lastEpModel !== episodeUIid) {
+                $('html /deep/ .episode-modal img').removeClass('fadein');
+            }
 
             $('.episode-modal').get(0).open();
 
-            App.Trakt.episodes.summary(this.model.get('imdb_id'), season, episode)
-                .then(function (episodeSummary) {
-                    console.log(episodeSummary);
-                    $('html /deep/ .episode-modal img').attr('src', episodeSummary.images.screenshot.full);
-                    $('html /deep/ .episode-modal img').one('load', function () {
-                        $(this).addClass('fadein');
+            if (this.lastEpModel !== episodeUIid) {
+                App.Trakt.episodes.summary(this.model.get('imdb_id'), season, episode)
+                    .then(function (episodeSummary) {
+                        $('html /deep/ .episode-modal img').attr('src', episodeSummary.images.screenshot.full);
+                        $('html /deep/ .episode-modal img').one('load', function () {
+                            $(this).addClass('fadein');
+                        });
                     });
-                });
+            }
+            this.lastEpModel = episodeUIid;
         },
 
         closeDetails: function (e) {

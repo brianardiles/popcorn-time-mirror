@@ -41,24 +41,32 @@
                         seasontext,
                         type,
                         index = 1;
+
                 _.each(episodes, function(value, currentEpisode) {
                     if (!torrents[value.season]) torrents[value.season] = {};
                     torrents[value.season][value.episode] = value;
                 });
-                _.each(torrents, function(value, season) {
-                if(season !== '0'){ 
-                    type = 'season';
-                    seasontext = i18n.__("Season %s", season) ; 
-                } else{
-                     type = 'special';
-                    seasontext = i18n.__("Special Features") ;
+
+                var keys = Object.keys(torrents);
+                if(torrents[0]) {
+                    keys.push(keys.shift());
                 }
-                var seasonID = parseInt(season) + 1;
-                if(seasonImages && seasonImages[season] && seasonImages[season].images.poster.full){
-                var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full, 'medium');
-                }else{
-                    var seasonPoster = images.poster;
-                }
+
+                _.each(keys, function(season, index) {
+                    if(season !== '0') { 
+                        type = 'season';
+                        seasontext = i18n.__("Season %s", season) ; 
+                    } else {
+                        type = 'special';
+                        seasontext = i18n.__("Special Features") ;
+                    }
+
+                    var seasonID = parseInt(season) + 1;
+                    if (seasonImages && seasonImages[season] && seasonImages[season].images.poster.full) {
+                        var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full, 'medium');
+                    } else {
+                        var seasonPoster = images.poster;
+                    }
                  %>
                     <paper-tab id="seasonTab-<%= seasonID %>" data-type="<%= type %>"  data-index="<%= index %>" data-id="<%= seasonID %>" data-poster="<%= seasonPoster %>" role="tab"><%= seasontext %></paper-tab>
                 <% index++; }); %>

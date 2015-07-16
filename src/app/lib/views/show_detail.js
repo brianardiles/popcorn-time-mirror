@@ -19,7 +19,11 @@
             subtitlesDropdown: '.subtitles-dropdown',
             episodeContainer: '.episode-container',
             startStreamBtn: '.watchnow-btn',
-            episodeUistyle: '#showColorStyl'
+            episodeUistyle: '#showColorStyl',
+            episodeModalTitle: '.episode-modal .episode-title',
+            episodeModalNumber: '.episode-modal .episode-number',
+            episodeModalDescription: '.episode-modal .modal-description',
+            episodeModalAired: '.episode-modal .episode-aired'
         },
 
 
@@ -35,7 +39,8 @@
             'click #trakt-link': 'openTrakt',
             'click .person': 'openPerson',
             'click .epsiode-tab': 'setStream',
-            'click .watchnow-btn': 'startStreaming'
+            'click .watchnow-btn': 'startStreaming',
+            'click .info-icon': 'openEpisodeModal'
         },
 
 
@@ -460,7 +465,6 @@
 
             var quality = null;
             var fallbackOrder = ['720p', '480p', '1080p'];
-            console.log(Settings.shows_default_quality);
             if (torrents[Settings.shows_default_quality]) {
                 quality = Settings.shows_default_quality;
             } else {
@@ -594,6 +598,44 @@
 
         openTrakt: function () {
             gui.Shell.openExternal('http://trakt.tv/shows/' + this.model.get('imdb_id'));
+        },
+
+        openEpisodeModal: function(e) {
+            var el = $(e.currentTarget);
+            var parent = el.parent();
+
+            var season = parent.data('season');
+            var episode = parent.data('episode');
+
+            var episodeData = _.findWhere(this.model.get('episodes'), {
+                season: season,
+                episode: episode
+            });
+
+            console.log(episodeData);
+            var episodeUIid = 'S' + this.formatTwoDigit(season) + 'E' + this.formatTwoDigit(episode);
+            this.ui.episodeModalNumber.text(episodeUIid);
+            this.ui.episodeModalTitle.text(episodeData.title);
+            this.ui.episodeModalDescription.text(episodeData.overview);
+
+            var first_aired = '';
+            if (episodeData.first_aired !== undefined) {
+                first_aired = moment.unix(episodeData.first_aired).locale(Settings.language).format("LLLL");
+                this.ui.episodeModalAired.text(i18n.__("Aired") + ": " + first_aired);
+            } else {
+                this.ui.episodeModalAired.hide();
+            }
+
+            $(".episode-modal").get(0).open();
+
+            App.Trakt.episodes.summary(this.model.get('imdb_id'), season, episode)
+                .then(function (episodeSummary) {
+                    console.log(episodeSummary);
+                    $("html /deep/ .episode-modal img").one('load', function () {
+                        $(this).addClass('fadein');
+                    });
+                    $("html /deep/ .episode-modal img").attr('src', episodeSummary.images.screenshot.full);
+                });
         },
 
         closeDetails: function (e) {

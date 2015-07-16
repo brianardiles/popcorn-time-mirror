@@ -165,3 +165,16 @@
         </paper-shadow>
     </div>
 </div>
+<paper-dialog class="episode-modal" transition="core-transition-fade" backdrop="true">
+    <div class="modal-header">
+        <img class="image" />
+        <div class="overlay"></div>
+        <h3 class="episode-number"></h3>
+        <h2 class="episode-title"></h2>
+    </div>
+    <p class="episode-aired">
+    </p>
+    <p class="modal-description">
+    </p>
+    <paper-button core-overlay-toggle autofocus><%=i18n.__( "Close") %></paper-button>
+</paper-dialog>

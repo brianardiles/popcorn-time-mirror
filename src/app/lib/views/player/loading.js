@@ -190,6 +190,7 @@
                 return;
             }
             this.count--;
+            _.delay(_.bind(this.backupCountdown, this), 1000);
         },
 
         initializeLoadingPlayer: function () {

@@ -23,15 +23,6 @@ paper-progress::shadow #activeProgress {
   <div class="bg-backdrop fadein" style="background-image: url(<%= data.metadata.backdrop %>);"></div>
         <div class="overlay"></div>
         <paper-icon-button class="back" icon="close"></paper-icon-button>
-
-        <core-tooltip>
-        <paper-icon-button class="info" icon="info"></paper-icon-button>
-          <div tip>
-          <img src="profile.jpg">Foo <b>Bar</b> - <a href="#">@baz</a>
-           </div>
-          </core-tooltip>
-
-
           
         <div class="title"><%= title %></div>
         <div class="episode-info"><%= episode %></div>

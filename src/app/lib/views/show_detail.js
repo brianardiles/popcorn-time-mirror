@@ -20,6 +20,7 @@
             episodeContainer: '.episode-container',
             startStreamBtn: '.watchnow-btn',
             episodeUistyle: '#showColorStyl',
+            episodeModal: '.episode-modal',
             episodeModalTitle: '.episode-modal .episode-title',
             episodeModalNumber: '.episode-modal .episode-number',
             episodeModalDescription: '.episode-modal .modal-description',
@@ -629,7 +630,7 @@
                 $('html /deep/ .episode-modal img').removeClass('fadein');
             }
 
-            $('.episode-modal').get(0).open();
+            this.ui.episodeModal.get(0).open();
 
             if (this.lastEpModel !== episodeUIid) {
                 App.Trakt.episodes.summary(this.model.get('imdb_id'), season, episode)

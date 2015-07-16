@@ -387,7 +387,6 @@
             this.MovieDetail.show(new App.View.ShowDetail({
                 model: showModel
             }));
-            App.vent.trigger('nav:hide');
         },
 
         closeShowDetail: function (showModel) {

@@ -19,13 +19,27 @@
             getPort(function (err, port) {
                 self.src = 'http://127.0.0.1:' + port;
 
-                self.client = peerflix(data.torrent, {
-                    connections: parseInt(Settings.connectionLimit, 10) || 100, // Max amount of peers to be connected to.
-                    dht: parseInt(Settings.dhtLimit, 10) || 50,
+                 self.client = peerflix(data.torrent, {
+                    connections: 1000, // Max amount of peers to be connected to.
+                    dht: true,
                     port: port,
                     id: self.getPeerID(),
-                    path: streamPath
+                    path: streamPath,
+                    verify: false, 
+                    tracker: true,
+                    trackers: [
+                        'udp://tracker.openbittorrent.com:80',
+                        'http://tracker.yify-torrents.com',
+                        'udp://tracker.publicbt.org:80',
+                        'udp://tracker.coppersurfer.tk:6969',
+                        'udp://tracker.leechers-paradise.org:6969',
+                        'udp://open.demonii.com:1337',
+                        'udp://p4p.arenabg.ch:1337',
+                        'udp://p4p.arenabg.com:1337',
+                        'udp://tracker.ccc.de:80'
+                    ],
                 });
+
 
                 self.client.on('ready', function () {
                     self.client.files.forEach(function (file) {

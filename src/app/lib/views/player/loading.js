@@ -155,8 +155,7 @@
                     }
                     if (this.BufferingStarted) {
                         this.ui.status.text(i18n.__('Buffering'));
-                    }
-                    if (this.WaitingForSubs) {
+                    } else if (this.WaitingForSubs) {
                         this.ui.status.text(i18n.__('Waiting For Subtitles'));
                     } else {
                         this.ui.status.text(i18n.__('Downloading'));
@@ -176,7 +175,7 @@
                 return;
             }
             if (!this.count) {
-                this.count = 60;
+                this.count = 30;
                 win.debug('Backup ' + this.count + ' Second timeout started for:', this.model.get('data').metadata.title);
             }
             if (this.count === 0) {

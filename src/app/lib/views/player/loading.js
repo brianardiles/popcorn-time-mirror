@@ -25,6 +25,7 @@
         initialize: function () {
             this.loadingStopped = false;
             this.SubtitlesRetrieved = false;
+            this.WaitingForSubs = false;
             this.getSubtitles();
             if (this.model.get('player').get('id')) {
                 this.player = this.model.get('player').get('id');
@@ -154,6 +155,9 @@
                     }
                     if (this.BufferingStarted) {
                         this.ui.status.text(i18n.__('Buffering'));
+                    }
+                    if (this.WaitingForSubs) {
+                        this.ui.status.text(i18n.__('Waiting For Subtitles'));
                     } else {
                         this.ui.status.text(i18n.__('Downloading'));
                     }
@@ -186,7 +190,6 @@
                 return;
             }
             this.count--;
-            _.delay(_.bind(this.backupCountdown, this), 1000);
         },
 
         initializeLoadingPlayer: function () {
@@ -228,6 +231,7 @@
             var that = this;
 
             function begin() {
+                that.WaitingForSubs = false;
                 if (that.player === 'local') {
                     var playerModel = new Backbone.Model(that.model.get('data'));
                     App.vent.trigger('stream:local', playerModel);
@@ -251,8 +255,8 @@
                     }
                     begin();
                 };
+                this.WaitingForSubs = true;
                 require('watchjs').watch(this, 'SubtitlesLoaded', watchSubsLoaded);
-                this.ui.stateTextDownload.text(i18n.__('Waiting For Subtitles'));
             }
         },
 

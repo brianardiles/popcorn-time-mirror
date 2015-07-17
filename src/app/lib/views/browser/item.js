@@ -50,7 +50,7 @@
                 this.model.set('image', App.Trakt.resizeImage(img, 'thumb'));
                 break;
             case 'show':
-                  this.model.set('image', App.Trakt.resizeImage(img, 'thumb'));
+                this.model.set('image', App.Trakt.resizeImage(img, 'thumb'));
                 break;
             case 'bookmarkedmovie':
             case 'movie':
@@ -80,18 +80,35 @@
         },
 
         onShow: function () {
-
+            this.loadCover();
         },
 
-   
 
         onDestroy: function () {
-         
+
         },
 
 
+        loadCover: function () {
+            var coverCache = new Image();
+            coverCache.src = this.model.get('image');
+            var that = this;
+            coverCache.onload = function () {
+                try {
+                    that.ui.cover.addClass('fadein');
+                } catch (e) {}
+                coverCache = null;
+            };
+            coverCache.onerror = function () {
+                try {
+                    that.ui.cover.attr('src', 'url("images/posterholder.png")').addClass('fadein');
+                } catch (e) {}
+                coverCache = null;
+            };
 
-      
+
+        },
+
         showDetail: function (e) {
             e.preventDefault();
             var provider = App.Providers.get(this.model.get('provider'));
@@ -169,14 +186,14 @@
                 var textColor = null;
 
                 if (swatches['Vibrant']) {
-                    if(swatches['Vibrant'].getPopulation() < 20) {
+                    if (swatches['Vibrant'].getPopulation() < 20) {
                         color = swatches['Muted'].getHex();
                         textColor = swatches['Muted'].getTitleTextColor();
                     } else {
                         color = swatches['Vibrant'].getHex();
                         textColor = swatches['Vibrant'].getTitleTextColor();
                     }
-                } else if(swatches['Muted']) {
+                } else if (swatches['Muted']) {
                     color = swatches['Muted'].getHex();
                     textColor = swatches['Muted'].getTitleTextColor();
                 } else {
@@ -187,7 +204,7 @@
                     textColor = '#111214';
                 }
 
-                if(color && textColor) {
+                if (color && textColor) {
                     defer.resolve({
                         color: color,
                         textcolor: textColor

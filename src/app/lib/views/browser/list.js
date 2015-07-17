@@ -51,10 +51,19 @@
 
     var List = Backbone.Marionette.CompositeView.extend({
         template: '#list-tpl',
-        tagName: 'div',
+        tagName: 'core-scroll-header-panel',
 
         childView: App.View.Item,
-        childViewContainer: '.list',
+        childViewContainer: '.content',
+
+
+        defaults: {
+            id: undefined,
+            isOnline: undefined,
+            profileUrl: undefined,
+            userType: undefined,
+            newProperty: undefined
+        },
 
         events: {
             'scroll': 'onScroll',
@@ -63,7 +72,7 @@
         },
 
         ui: {
-            list: '.list',
+            list: '.content',
             listbackdrop: '.list-backdrop',
             spinner: '.spinner'
         },
@@ -395,30 +404,6 @@
             }
         },
         onScroll: function () {
-
-            $('.list').scroll(function () {
-                var scroll = $('.list').scrollTop();
-
-                var padding = $(window).height() * 0.39;
-
-                var scrollTop = $(window).scrollTop(),
-                    elementOffset = $(".filter-bar").offset().top,
-                    distance = (elementOffset - scrollTop);
-                console.log(distance, padding, scroll);
-                $(".list-backdrop").css('top', '-' + scroll + 'px');
-                if (scroll <= padding) {
-                    $(".filter-bar").css('top', 'calc(29vh - ' + scroll + 'px )');
-                }
-                if (distance < 50) {
-                    $(".filter-bar").addClass("top");
-
-                } else {
-                    $(".filter-bar").removeClass("top");
-
-                }
-
-
-            });
 
             if (!this.collection.hasMore) {
                 return;

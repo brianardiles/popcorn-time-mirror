@@ -236,7 +236,19 @@
         },
         getRandomItem: function () {
             var that = this;
-            var random = Math.floor(Math.random() * $('.list li').length);
+
+            var divsInRow = 0
+            $('.list li').each(function () {
+                if ($(this).prev().length > 0) {
+                    if ($(this).position().top !== $(this).prev().position().top) {
+                        return false;
+                    }
+                } else {
+                    divsInRow++;
+                }
+            });
+            var random = Math.floor(Math.random() * (divsInRow + divsInRow)); //olny get backdrop for first two rows
+
             var imdb = $('.list li').eq(random).data('imdb-id');
             var type = $('.list li').eq(random).data('type');
             that.ui.listbackdrop.removeClass('fadein');

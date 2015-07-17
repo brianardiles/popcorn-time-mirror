@@ -99,6 +99,50 @@
             }
         },
 
+        initialize: function () {
+            _this = this;
+            this.listenTo(this.collection, 'loading', this.onLoading);
+            this.listenTo(this.collection, 'loaded', this.onLoaded);
+
+            _this.initPosterResizeKeys();
+        },
+
+
+        initPosterResizeKeys: function () {
+            $(window)
+                .on('mousewheel', function (event) { // Ctrl + wheel doesnt seems to be working on node-webkit (works just fine on chrome)
+                    if (event.altKey === true) {
+                        event.preventDefault();
+                        if (event.originalEvent.wheelDelta > 0) {
+                            _this.increasePoster();
+                        } else {
+                            _this.decreasePoster();
+                        }
+                    }
+                })
+                .on('keydown', function (event) {
+                    if (event.ctrlKey === true || event.metaKey === true) {
+
+                        if ($.inArray(event.keyCode, [107, 187]) !== -1) {
+                            _this.increasePoster();
+                            return false;
+
+                        } else if ($.inArray(event.keyCode, [109, 189]) !== -1) {
+                            _this.decreasePoster();
+                            return false;
+                        }
+                    }
+                });
+        },
+
+        onShow: function () {
+            this.backdroploaded = false;
+            if (this.collection.state === 'loading') {
+                this.onLoading();
+            }
+        },
+
+
         switchTabs: function (e, combo) {
             if ((App.PlayerView === undefined || App.PlayerView.isDestroyed) && $('#about-container').children().length <= 0 && $('#player').children().length <= 0) {
                 if (combo === 'tab') {
@@ -201,48 +245,7 @@
             }
         },
 
-        initialize: function () {
-            _this = this;
-            this.listenTo(this.collection, 'loading', this.onLoading);
-            this.listenTo(this.collection, 'loaded', this.onLoaded);
 
-            _this.initPosterResizeKeys();
-        },
-
-
-        initPosterResizeKeys: function () {
-            $(window)
-                .on('mousewheel', function (event) { // Ctrl + wheel doesnt seems to be working on node-webkit (works just fine on chrome)
-                    if (event.altKey === true) {
-                        event.preventDefault();
-                        if (event.originalEvent.wheelDelta > 0) {
-                            _this.increasePoster();
-                        } else {
-                            _this.decreasePoster();
-                        }
-                    }
-                })
-                .on('keydown', function (event) {
-                    if (event.ctrlKey === true || event.metaKey === true) {
-
-                        if ($.inArray(event.keyCode, [107, 187]) !== -1) {
-                            _this.increasePoster();
-                            return false;
-
-                        } else if ($.inArray(event.keyCode, [109, 189]) !== -1) {
-                            _this.decreasePoster();
-                            return false;
-                        }
-                    }
-                });
-        },
-
-        onShow: function () {
-            this.backdroploaded = false;
-            if (this.collection.state === 'loading') {
-                this.onLoading();
-            }
-        },
         getRandomItem: function () {
             var that = this;
             this.ui.listbackdrop.removeClass('fadein');

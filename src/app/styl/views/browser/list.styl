@@ -1,12 +1,12 @@
 .list-region
   height 100vh
   core-scroll-header-panel
+    background-color #17181b
     position absolute
     top 0
     right 0
     bottom 0
     left 0
-    background-color #eee
     &::shadow
       #condensedHeaderBg
         background-color rgba(17, 18, 20, 0.95)
@@ -19,13 +19,16 @@
   pt-dropdown
     padding-bottom 20px
   .list-backdrop
-    -webkit-filter brightness(90%)
     position absolute
     width 100%
     top 0
+    opacity: 0
     height 60vh
     background-position-x center
-    background-image url(https://walter.trakt.us/images/movies/000/161/414/fanarts/original/8b5b11e37b.jpg)
+    -webkit-filter: brightness(90%)
+    &.fadein
+      transition: opacity .6s ease-in;
+      opacity: 1
   .content
     left 48px
     position absolute

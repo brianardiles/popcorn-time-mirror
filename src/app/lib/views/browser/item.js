@@ -17,8 +17,7 @@
         },
 
         ui: {
-            coverImage: '.cover-image',
-            cover: '.cover',
+            cover: 'img',
             bookmarkIcon: '.actions-favorites',
             watchedIcon: '.actions-watched'
         },
@@ -51,7 +50,7 @@
                 this.model.set('image', App.Trakt.resizeImage(img, 'thumb'));
                 break;
             case 'show':
-                images.poster = App.Trakt.resizeImage(img, 'thumb');
+                  this.model.set('image', App.Trakt.resizeImage(img, 'thumb'));
                 break;
             case 'bookmarkedmovie':
             case 'movie':
@@ -81,111 +80,18 @@
         },
 
         onShow: function () {
-            this.ui.coverImage.on('load', _.bind(this.showCover, this));
+      console.log(this.model.attributes)
         },
 
-        onRender: function () {
-            var itemtype = this.model.get('type');
-            if (itemtype === 'show' || itemtype === 'bookmarkedshow' || itemtype === 'historyshow') {
-                this.ui.watchedIcon.remove();
-            }
-
-        },
+   
 
         onDestroy: function () {
-            this.ui.coverImage.off('load');
+         
         },
 
-        hoverItem: function (e) {
-            if (e.pageX !== prevX || e.pageY !== prevY) {
-                $('.item.selected').removeClass('selected');
-                $(this.el).addClass('selected');
-                prevX = e.pageX;
-                prevY = e.pageY;
-            }
-        },
-
-        showCover: function () {
-            var coverUrl;
-            var itemtype = this.model.get('type');
-            switch (itemtype) {
-            case 'bookmarkedmovie':
-                if (this.model.get('watched')) {
-                    this.ui.watchedIcon.addClass('selected');
-                    switch (Settings.watchedCovers) {
-                    case 'fade':
-                    case 'hide':
-                        this.$el.addClass('watched');
-                        break;
-                    }
-                }
-                coverUrl = this.model.get('image');
-                this.ui.bookmarkIcon.addClass('selected');
-                break;
-            case 'bookmarkedshow':
-                coverUrl = this.model.get('image');
-                this.ui.bookmarkIcon.addClass('selected');
-                break;
-            case 'movie':
-                coverUrl = this.model.get('image');
-
-                if (this.model.get('watched')) {
-                    this.ui.watchedIcon.addClass('selected');
-                    switch (Settings.watchedCovers) {
-                    case 'fade':
-                        this.$el.addClass('watched');
-                        break;
-                    case 'hide':
-                        if ($('.search input').val()) {
-                            this.$el.addClass('watched');
-                        } else {
-                            this.$el.remove();
-                        }
-                        break;
-                    }
-                }
-                if (this.model.get('bookmarked')) {
-                    this.ui.bookmarkIcon.addClass('selected');
-                }
-                break;
-            case 'show':
-                coverUrl = this.model.get('images').poster;
-
-                if (this.model.get('bookmarked')) {
-                    this.ui.bookmarkIcon.addClass('selected');
-                }
-                break;
-            }
 
 
-            this.ui.watchedIcon.tooltip({
-                title: this.ui.watchedIcon.hasClass('selected') ? i18n.__('Mark as unseen') : i18n.__('Mark as Seen')
-            });
-            this.ui.bookmarkIcon.tooltip({
-                title: this.ui.bookmarkIcon.hasClass('selected') ? i18n.__('Remove from bookmarks') : i18n.__('Add to bookmarks')
-            });
-
-            this.model.set('coverURL', coverUrl);
-            var this_ = this;
-            var coverCache = new Image();
-            coverCache.src = coverUrl;
-            coverCache.onload = function () {
-                try {
-                    this_.ui.cover.css('background-image', 'url(' + coverUrl + ')').addClass('fadein');
-                } catch (e) {}
-                coverCache = null;
-            };
-            coverCache.onerror = function () {
-                try {
-                    this_.ui.cover.css('background-image', 'url("images/posterholder.png")').addClass('fadein');
-                } catch (e) {}
-                coverCache = null;
-            };
-
-            this.ui.coverImage.remove();
-
-        },
-
+      
         showDetail: function (e) {
             e.preventDefault();
             var provider = App.Providers.get(this.model.get('provider'));

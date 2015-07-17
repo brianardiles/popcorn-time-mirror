@@ -51,12 +51,10 @@
 
     var List = Backbone.Marionette.CompositeView.extend({
         template: '#list-tpl',
-
-        tagName: 'ul',
-        className: 'list',
+        tagName: 'div',
 
         childView: App.View.Item,
-        childViewContainer: '.items',
+        childViewContainer: '.list',
 
         events: {
             'scroll': 'onScroll',

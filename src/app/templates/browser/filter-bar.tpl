@@ -31,10 +31,7 @@
          <%}%>
     
     <div class="right search">
-        <form>
-            <input id="searchbox" type="text" placeholder="<%= i18n.__(" Search ") %>">
-            <div class="clear fa fa-times"></div>
-        </form>
+       <paper-input label="<%=i18n.__("Search")%>" floatingLabel="true" ></paper-input>
     </div>
     
 </div>

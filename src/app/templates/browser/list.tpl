@@ -1,3 +1,6 @@
+ 
+
+
  <core-toolbar class="tall">
 
                 <pt-dropdown style="left:35px;" class="filter-element bottom" multiple="true" conditional="all">
@@ -8,9 +11,10 @@
                 </pt-dropdown>
 </core-toolbar>
 
-<div class="list-backdrop">
-               
-            </div>
 
-            <div class="content">
+
+
+<div class="list-backdrop"></div>
+               
+<div class="content">
             </div>

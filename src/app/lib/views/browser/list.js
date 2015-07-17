@@ -63,6 +63,7 @@
         },
 
         ui: {
+            list: '.list',
             spinner: '.spinner'
         },
 
@@ -345,8 +346,8 @@
                 return;
             }
 
-            var totalHeight = this.$el.prop('scrollHeight');
-            var currentPosition = this.$el.scrollTop() + this.$el.height();
+            var totalHeight = this.ui.list.prop('scrollHeight');
+            var currentPosition = this.ui.list.scrollTop() + this.ui.list.height();
 
             if (this.collection.state === 'loaded' &&
                 (currentPosition / totalHeight) > SCROLL_MORE) {

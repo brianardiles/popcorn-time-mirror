@@ -400,9 +400,9 @@
                 var scroll = $('.list').scrollTop();
 
                 if (scroll >= 500) {
-                    $(".filter-bar").addClass("darkHeader");
+                    $(".filter-bar").addClass("top");
                 } else {
-                    $(".filter-bar").removeClass("darkHeader");
+                    $(".filter-bar").removeClass("top");
                 }
             });
 

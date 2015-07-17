@@ -3,7 +3,11 @@
   width: 100%;
   background-size: cover;
   position: absolute;
+  opacity: 0
   -webkit-filter: brightness(90%) blur(1px);
+  &.fadein
+    transition: opacity .3s ease-in;
+    opacity: 1
 
 .list
   font-family 'Roboto', sans-serif

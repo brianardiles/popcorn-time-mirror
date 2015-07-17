@@ -239,6 +239,7 @@
             var random = Math.floor(Math.random() * $('.list li').length);
             var imdb = $('.list li').eq(random).data('imdb-id');
             var type = $('.list li').eq(random).data('type');
+            that.ui.listbackdrop.removeClass('fadein');
             switch (type) {
             case 'movie':
                 App.Trakt.movies.summary(imdb)
@@ -247,7 +248,7 @@
                             console.log(summary.images.fanart.full);
 
 
-                            that.ui.listbackdrop.css('background-image', 'url(' + summary.images.fanart.full + ')')
+                            that.ui.listbackdrop.css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
                         } else {
                             that.getRandomItem();
                             win.warn('Unable to fetch data from Trakt.tv');
@@ -264,6 +265,7 @@
                     .then(function (summary) {
                         if (summary) {
                             console.log(summary.images.fanart.full);
+                            that.ui.listbackdrop.css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
                         } else {
                             that.getRandomItem();
                             win.warn('Unable to fetch data from Trakt.tv');

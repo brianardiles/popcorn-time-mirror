@@ -57,12 +57,11 @@
         childViewContainer: '.content',
 
 
-        defaults: {
-            id: undefined,
-            isOnline: undefined,
-            profileUrl: undefined,
-            userType: undefined,
-            newProperty: undefined
+        attributes: function () {
+            return {
+                'keepCondensedHeader': true,
+                'condenses': true
+            };
         },
 
         events: {

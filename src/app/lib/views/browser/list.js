@@ -395,6 +395,17 @@
             }
         },
         onScroll: function () {
+
+            $('.list').scroll(function () {
+                var scroll = $('.list').scrollTop();
+
+                if (scroll >= 500) {
+                    $(".filter-bar").addClass("darkHeader");
+                } else {
+                    $(".filter-bar").removeClass("darkHeader");
+                }
+            });
+
             if (!this.collection.hasMore) {
                 return;
             }

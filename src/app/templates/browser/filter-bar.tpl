@@ -10,7 +10,7 @@
         </div>
         
         <% }if(typeof genre !=='undefined' && genres.length > 0){ %>
-            <div class="filter genres" style="margin-left: 110px;">
+            <div class="filter genres" style="margin-left: 64px;">
                 <pt-dropdown id="filter-genre" class="filter-element" multiple="true" conditional="All">
                     <% _.each(genres, function(c) { %>
                         <pt-selectable-element checkable value="<%= c %>" label="<%=i18n.__(c.capitalizeEach()) %>"

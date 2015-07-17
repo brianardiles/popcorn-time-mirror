@@ -12,7 +12,8 @@
 
         attributes: function () {
             return {
-                'data-imdb-id': this.model.get('imdb_id')
+                'data-imdb-id': this.model.get('imdb_id'),
+                'data-type': this.model.get('type')
             };
         },
 

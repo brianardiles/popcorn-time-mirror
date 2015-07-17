@@ -64,6 +64,7 @@
 
         ui: {
             list: '.list',
+            listbackdrop: '.list-backdrop',
             spinner: '.spinner'
         },
 
@@ -233,7 +234,50 @@
                 this.onLoading();
             }
         },
+        getRandomItem: function () {
+            var that = this;
+            var random = Math.floor(Math.random() * $('.list li').length);
+            var imdb = $('.list li').eq(random).data('imdb-id');
+            var type = $('.list li').eq(random).data('type');
+            switch (type) {
+            case 'movie':
+                App.Trakt.movies.summary(imdb)
+                    .then(function (summary) {
+                        if (summary) {
+                            console.log(summary.images.fanart.full);
 
+
+                            that.ui.listbackdrop.css('background-image', 'url(' + summary.images.fanart.full + ')')
+                        } else {
+                            that.getRandomItem();
+                            win.warn('Unable to fetch data from Trakt.tv');
+                        }
+                    }).catch(function (err) {
+                        console.log(err);
+                        that.getRandomItem();
+                        win.warn('Unable to fetch data from Trakt.tv');
+                    });
+
+                break;
+            case 'show':
+                App.Trakt.shows.summary(imdb)
+                    .then(function (summary) {
+                        if (summary) {
+                            console.log(summary.images.fanart.full);
+                        } else {
+                            that.getRandomItem();
+                            win.warn('Unable to fetch data from Trakt.tv');
+                        }
+                    }).catch(function (err) {
+                        console.log(err);
+                        that.getRandomItem();
+                        win.warn('Unable to fetch data from Trakt.tv');
+                    });
+
+                break;
+            }
+
+        },
         onLoading: function () {
 
         },
@@ -244,7 +288,10 @@
             var self = this;
             this.addloadmore();
 
+            this.getRandomItem();
+
             this.AddGhostsToBottomRow();
+
             $(window).resize(function () {
                 var addghost;
                 clearTimeout(addghost);
@@ -266,6 +313,8 @@
                 });
             });
             $('.items').attr('tabindex', '1');
+
+
             _.defer(function () {
                 self.checkFetchMore();
                 self.$('.items:first').focus();
@@ -310,6 +359,7 @@
 
                 break;
             case 'Watchlist':
+
 
                 break;
             }

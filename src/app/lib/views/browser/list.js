@@ -235,8 +235,7 @@
         },
 
         onLoading: function () {
-            $('.status-loadmore').hide();
-            $('#loading-more-animi').show();
+
         },
 
         onLoaded: function () {

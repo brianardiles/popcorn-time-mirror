@@ -405,7 +405,7 @@
                     elementOffset = $(".filter-bar").offset().top,
                     distance = (elementOffset - scrollTop);
                 console.log(distance, padding, scroll);
-
+                $(".list-backdrop").css('top', '-' + scroll + 'px');
                 if (scroll <= padding) {
                     $(".filter-bar").css('top', 'calc(29vh - ' + scroll + 'px )');
                 }

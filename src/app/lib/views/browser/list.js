@@ -236,22 +236,10 @@
         },
         getRandomItem: function () {
             var that = this;
+            this.ui.listbackdrop.removeClass('fadein');
 
-            var divsInRow = 0
-            $('.list li').each(function () {
-                if ($(this).prev().length > 0) {
-                    if ($(this).position().top !== $(this).prev().position().top) {
-                        return false;
-                    }
-                } else {
-                    divsInRow++;
-                }
-            });
-            var random = Math.floor(Math.random() * (divsInRow + divsInRow)); //olny get backdrop for first two rows
-
-            var imdb = $('.list li').eq(random).data('imdb-id');
-            var type = $('.list li').eq(random).data('type');
-            that.ui.listbackdrop.removeClass('fadein');
+            var imdb = $('.list li:first').data('imdb-id');
+            var type = $('.list li:first').data('type');
             switch (type) {
             case 'movie':
                 App.Trakt.movies.summary(imdb)

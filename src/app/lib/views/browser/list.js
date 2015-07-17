@@ -399,11 +399,25 @@
             $('.list').scroll(function () {
                 var scroll = $('.list').scrollTop();
 
-                if (scroll >= 500) {
+                var padding = $(window).height() * 0.39;
+
+                var scrollTop = $(window).scrollTop(),
+                    elementOffset = $(".filter-bar").offset().top,
+                    distance = (elementOffset - scrollTop);
+                console.log(distance, padding, scroll);
+
+                if (scroll <= padding) {
+                    $(".filter-bar").css('top', 'calc(29vh - ' + scroll + 'px )');
+                }
+                if (distance < 50) {
                     $(".filter-bar").addClass("top");
+
                 } else {
                     $(".filter-bar").removeClass("top");
+
                 }
+
+
             });
 
             if (!this.collection.hasMore) {

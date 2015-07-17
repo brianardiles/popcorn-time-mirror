@@ -230,6 +230,7 @@
         },
 
         onShow: function () {
+            this.backdroploaded = false;
             if (this.collection.state === 'loading') {
                 this.onLoading();
             }
@@ -289,9 +290,10 @@
             this.checkEmpty();
             var self = this;
             this.addloadmore();
-
-            this.getRandomItem();
-
+            if (!this.backdroploaded) {
+                this.getRandomItem();
+                this.backdroploaded = true;
+            }
             this.AddGhostsToBottomRow();
 
             $(window).resize(function () {

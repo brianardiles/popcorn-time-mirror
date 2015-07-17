@@ -250,16 +250,13 @@
             var that = this;
             this.ui.listbackdrop.removeClass('fadein');
 
-            var imdb = $('.list li:first').data('imdb-id');
-            var type = $('.list li:first').data('type');
+            var imdb = $('.content li:first').data('imdb-id');
+            var type = $('.content li:first').data('type');
             switch (type) {
             case 'movie':
                 App.Trakt.movies.summary(imdb)
                     .then(function (summary) {
                         if (summary) {
-                            console.log(summary.images.fanart.full);
-
-
                             that.ui.listbackdrop.css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
                         } else {
                             that.getRandomItem();
@@ -276,7 +273,6 @@
                 App.Trakt.shows.summary(imdb)
                     .then(function (summary) {
                         if (summary) {
-                            console.log(summary.images.fanart.full);
                             that.ui.listbackdrop.css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
                         } else {
                             that.getRandomItem();

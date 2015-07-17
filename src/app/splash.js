@@ -1,6 +1,7 @@
 var splashwin = require('nw.gui').Window.open('splash.html', {
     'frame': false, // frameless
     'toolbar': false,
+    'icon': "src/app/images/icon.png",
     'position': 'center', // centered
     'width': Math.round(window.screen.width * 0.24) || 460,
     'resizable': false,

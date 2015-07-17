@@ -24,7 +24,7 @@
         events: {
             'click .actions-favorites': 'toggleFavorite',
             'click .actions-watched': 'toggleWatched',
-            'click .cover': 'showDetail',
+            'click img': 'showDetail',
             'mouseover .cover': 'hoverItem'
         },
 
@@ -80,7 +80,7 @@
         },
 
         onShow: function () {
-      console.log(this.model.attributes)
+
         },
 
    
@@ -161,7 +161,7 @@
         getColor: function () {
             var defer = Q.defer();
             var img = document.createElement('img');
-            img.setAttribute('src', App.Trakt.resizeImage(this.model.get('coverURL'), 'medium'));
+            img.setAttribute('src', App.Trakt.resizeImage(this.model.get('image'), 'medium'));
             img.addEventListener('load', function () {
                 var vibrant = new Vibrant(img, 64, 4);
                 var swatches = vibrant.swatches();

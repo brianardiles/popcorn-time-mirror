@@ -268,7 +268,6 @@
                                 $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
                             }, 600);
                         } else {
-
                             win.warn('Unable to fetch data from Trakt.tv');
                         }
                     }).catch(function (err) {
@@ -295,31 +294,16 @@
                 this.getRandomItem();
                 this.backdroploaded = true;
             }
-            //this.AddGhostsToBottomRow();
-            /*
-                        $(window).resize(function () {
-                            var addghost;
-                            clearTimeout(addghost);
-                            addghost = setTimeout(function () {
-                                self.AddGhostsToBottomRow();
-                            }, 100);
-                        });
+            this.AddGhostsToBottomRow();
 
-                        if (typeof (this.ui.spinner) === 'object') {
-                            this.ui.spinner.hide();
-                        }
+            $(window).resize(function () {
+                var addghost;
+                clearTimeout(addghost);
+                addghost = setTimeout(function () {
+                    self.AddGhostsToBottomRow();
+                }, 100);
+            });
 
-                        $('.filter-bar').on('mousedown', function (e) {
-                            if (e.target.localName !== 'div') {
-                                return;
-                            }
-                            _.defer(function () {
-                                self.$('.items:first').focus();
-                            });
-                        });
-                        $('.items').attr('tabindex', '1');
-
-            */
             _.defer(function () {
                 self.checkFetchMore();
                 $('.content').show();
@@ -372,9 +356,9 @@
 
         AddGhostsToBottomRow: function () {
             var divsInLastRow, divsInRow, to_add;
-            $('.ghost').remove();
+            $('#list-content .ghost').remove();
             divsInRow = 0;
-            $('.items .item').each(function () {
+            $('#list-content .item').each(function () {
                 if ($(this).prev().length > 0) {
                     if ($(this).position().top !== $(this).prev().position().top) {
                         return false;
@@ -384,14 +368,14 @@
                     divsInRow++;
                 }
             });
-            divsInLastRow = $('.items .item').length % divsInRow;
+            divsInLastRow = $('#list-content .item').length % divsInRow;
             if (divsInLastRow === 0) {
                 divsInLastRow = -Math.abs(Math.round($('.items').width() / $('.item').outerWidth(true)) - divsInRow);
             }
             NUM_MOVIES_IN_ROW = divsInRow;
             to_add = divsInRow - divsInLastRow;
             while (to_add > 0) {
-                $('.items').append($('<li/>').addClass('item ghost'));
+                $('#list-content').append($('<li/>').addClass('item ghost'));
                 to_add--;
             }
         },
@@ -401,8 +385,8 @@
                 return;
             }
 
-            var totalHeight = $('core-scroll-header-panel::shadow #mainContainer').prop('scrollHeight');
-            var currentPosition = $('core-scroll-header-panel::shadow #mainContainer').scrollTop() + $('core-scroll-header-panel::shadow #mainContainer').outerHeight(true);
+            var totalHeight = $('.list-region').prop('scrollHeight');
+            var currentPosition = $('.list-region').scrollTop() + $('.list-region').outerHeight(true);
             if (this.collection.state === 'loaded' && totalHeight - currentPosition < 400) {
                 this.collection.fetchMore();
             }

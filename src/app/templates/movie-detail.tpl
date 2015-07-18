@@ -64,14 +64,31 @@
                 <paper-button id="play-trailer" class="meta-btn">
                     <%=i18n.__( "Watch Trailer") %>
                 </paper-button>
-                <div class="meta-divider"></div>
-                <% _.each(cast.cast, function(person) {%>
-                <div data-id="<%= person.person.ids.imdb %>" class="people">
+                <div class="meta-divider"></div><div class="director-title"><%=i18n.__( "Director") %></div>
+
+                <% _.each(directors, function(person) {%>
+                <div data-id="<%= person.imdb_code %>" class="people">
+                    <div class="person-avatar">
+                        <img src="<%= person.small_image %>" alt="">
+                    </div>
                     <p class="person">
-                        <%= person.person.name %>
+                        <%= person.name %>
+                    </p>
+                </div>
+                <% }); %>
+
+                <div class="actor-title"><%=i18n.__( "Actors") %></div>
+
+                <% _.each(actors, function(actor) { %>
+                <div data-id="<%= actor.imdb_code %>" class="people">
+                    <div class="person-avatar">
+                        <img src="<%= actor.small_image %>" alt="">
+                    </div>
+                    <p class="person">
+                        <%= actor.name %>
                     </p>
                     <p class="status">
-                        <%=i18n.__( "as") %>&nbsp;<%= person.character %>
+                        <%=i18n.__( "as %s", actor.character_name) %>
                     </p>
                 </div>
                 <% }); %>

@@ -75,9 +75,9 @@
     </div>
 </div>
 <div class="info-wrapper">
-    <paper-shadow z="1" class="poster-shadow">  
+
         <img data-bgr="<%= images.poster %>" src="<%= images.poster %>" class="poster" />
-    </paper-shadow>
+
     <div id="season-0" class="meta-container show-info episode-list-show">
         <div class="meta-item">
             <% var p_rating = Math.round(rating.percentage) / 20; // Roundoff number to nearest 0.5  %>

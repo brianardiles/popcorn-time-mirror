@@ -27,9 +27,9 @@
             </paper-icon-button>
             <paper-icon-button icon="visibility-off" class="watched-toggle">
             </paper-icon-button>
-            <paper-shadow z="1" class="poster-shadow">
+
                 <img src="<%= cover %>" class="poster" />
-            </paper-shadow>
+
             <div class="meta">
                 <div class="meta-item">
                     <% var p_rating=Math.round(rating) / 2; %>

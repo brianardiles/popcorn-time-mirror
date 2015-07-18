@@ -325,9 +325,6 @@
                 $('.content').show();
             });
 
-            console.log('BAM WE LOADED.')
-
-
         },
 
         checkFetchMore: function () {
@@ -406,8 +403,6 @@
 
             var totalHeight = $('core-scroll-header-panel::shadow #mainContainer').prop('scrollHeight');
             var currentPosition = $('core-scroll-header-panel::shadow #mainContainer').scrollTop() + $('core-scroll-header-panel::shadow #mainContainer').outerHeight(true);
-            console.log(totalHeight, currentPosition)
-
             if (this.collection.state === 'loaded' && totalHeight - currentPosition < 400) {
                 this.collection.fetchMore();
             }

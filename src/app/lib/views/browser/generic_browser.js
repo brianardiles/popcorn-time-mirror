@@ -11,17 +11,28 @@
      */
     var PCTBrowser = Backbone.Marionette.LayoutView.extend({
         template: '#browser-tpl',
-        className: 'main-browser',
+
+        tagName: 'core-scroll-header-panel',
+
         regions: {
-            FilterBar: '.filter-bar-region',
-            ItemList: '.list-region'
+            FilterBar: 'core-toolbar',
+            ItemList: '.content'
         },
         events: {
             'click .retry-button': 'onFilterChange',
             'click .online-search': 'onlineSearch'
         },
 
+
+        attributes: function () {
+            return {
+                'keepCondensedHeader': true,
+                'condenses': true
+            };
+        },
+
         initialize: function () {
+            console.log(this.filters);
             this.filter = new App.Model.Filter(this.filters);
 
             this.collection = new this.collectionModel([], {

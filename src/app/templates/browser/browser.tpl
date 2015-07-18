@@ -1,2 +1,9 @@
-<div class="filter-bar-region"></div>
-<div class="list-region"></div>
+
+ <core-toolbar id="filterbar-toolbar" class="tall">
+
+</core-toolbar>
+
+
+<div class="list-backdrop"></div>
+               
+<div class="content">            </div>

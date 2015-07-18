@@ -51,18 +51,10 @@
 
     var List = Backbone.Marionette.CompositeView.extend({
         template: '#list-tpl',
-        tagName: 'core-scroll-header-panel',
 
         childView: App.View.Item,
-        childViewContainer: '.content',
+        childViewContainer: '#list-content',
 
-
-        attributes: function () {
-            return {
-                'keepCondensedHeader': true,
-                'condenses': true
-            };
-        },
 
         events: {
             'scroll': 'onScroll',

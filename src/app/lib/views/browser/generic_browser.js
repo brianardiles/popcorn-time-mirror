@@ -65,13 +65,13 @@
             
             switch (App.currentview) {
                 case 'movies':
-                    $('#section-title').text('Movies');
+                    $('#section-title').text(i18n.__('Movies'));
                     break;
                 case 'shows':
-                    $('#section-title').text('TV Shows');
+                    $('#section-title').text(i18n.__('TV Series'));
                     break;
                 case 'anime':
-                    $('#section-title').text('Anime');
+                    $('#section-title').text(i18n.__('Anime'));
                     break;
             }
             
@@ -105,7 +105,7 @@
                 }
             }, 1000);
             
-            win.on('resize', _.bind(this.resizeHandler, this));
+            this.$el.on('resize', _.bind(this.resizeHandler, this));
             $('#content').scroll(_.bind(this.scrollHandler, this));
 
         },

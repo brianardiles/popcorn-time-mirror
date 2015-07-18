@@ -405,8 +405,8 @@
                 return;
             }
 
-            var totalHeight = this.ui.list.prop('scrollHeight');
-            var currentPosition = this.ui.list.scrollTop() + this.ui.list.height();
+            var totalHeight = $('core-scroll-header-panel::shadow #mainContainer').prop('scrollHeight');
+            var currentPosition = $('core-scroll-header-panel::shadow #mainContainer').scrollTop();
 
             if (this.collection.state === 'loaded' &&
                 (currentPosition / totalHeight) > SCROLL_MORE) {

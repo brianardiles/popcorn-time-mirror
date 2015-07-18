@@ -105,13 +105,19 @@
         </paper-button>
 
         <div class="meta-divider"></div>
-         <% if(cast.cast){
-
+         <% if(cast.cast) {
          _.each(cast.cast, function(person) {%>
-          <div data-id="<%= person.person.ids.imdb || person.person.ids.slug %>" class="people">
-            <p class="person"><%= person.person.name %></p>
-            <p class="status"><%=i18n.__( "as") %>&nbsp;<%= person.character %></p>
-           </div>
+           <div data-id="<%= person.person.ids.imdb || person.person.ids.slug %>" class="people">
+                <div class="person-avatar">
+                    <img src="<%= person.person.images.headshot.thumb %>" alt="">
+                </div>
+                <p class="person">
+                    <%= person.person.name %>
+                </p>
+                <p class="status">
+                    <%=i18n.__( "as") %>&nbsp;<%= person.character %>
+                </p>
+            </div>
           <% }); } %>
 
     </div>

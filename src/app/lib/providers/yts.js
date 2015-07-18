@@ -26,6 +26,7 @@
                     return torrent.quality !== '3D';
                 });
             }).map(function (movie) {
+                console
                 return {
                     type: 'movie',
                     imdb_id: movie.imdb_code,
@@ -40,6 +41,8 @@
                     synopsis: movie.description_full,
                     trailer: 'https://www.youtube.com/watch?v=' + movie.yt_trailer_code || false,
                     certification: movie.mpa_rating,
+                    actors: movie.actors,
+                    directors: movie.directors,
                     torrents: _.reduce(movie.torrents, function (torrents, torrent) {
                         if (torrent.quality !== '3D') {
                             torrents[torrent.quality] = {

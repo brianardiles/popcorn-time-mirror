@@ -95,7 +95,7 @@
             this.listenTo(this.collection, 'loading', this.onLoading);
             this.listenTo(this.collection, 'loaded', this.onLoaded);
 
-            _this.initPosterResizeKeys();
+            // _this.initPosterResizeKeys();
         },
 
 
@@ -127,13 +127,10 @@
         },
 
         onShow: function () {
-            document.querySelector('core-scroll-header-panel').scroller.scrollTop = 0;
             this.backdroploaded = false;
             if (this.collection.state === 'loading') {
                 this.onLoading();
             }
-
-
         },
 
 
@@ -291,42 +288,46 @@
 
         onLoaded: function () {
             App.vent.trigger('list:loaded');
+
             this.checkEmpty();
             var self = this;
-            this.addloadmore();
+            //this.addloadmore();
             if (!this.backdroploaded) {
                 this.getRandomItem();
                 this.backdroploaded = true;
             }
-            this.AddGhostsToBottomRow();
+            //this.AddGhostsToBottomRow();
+            /*
+                        $(window).resize(function () {
+                            var addghost;
+                            clearTimeout(addghost);
+                            addghost = setTimeout(function () {
+                                self.AddGhostsToBottomRow();
+                            }, 100);
+                        });
 
-            $(window).resize(function () {
-                var addghost;
-                clearTimeout(addghost);
-                addghost = setTimeout(function () {
-                    self.AddGhostsToBottomRow();
-                }, 100);
-            });
+                        if (typeof (this.ui.spinner) === 'object') {
+                            this.ui.spinner.hide();
+                        }
 
-            if (typeof (this.ui.spinner) === 'object') {
-                this.ui.spinner.hide();
-            }
+                        $('.filter-bar').on('mousedown', function (e) {
+                            if (e.target.localName !== 'div') {
+                                return;
+                            }
+                            _.defer(function () {
+                                self.$('.items:first').focus();
+                            });
+                        });
+                        $('.items').attr('tabindex', '1');
 
-            $('.filter-bar').on('mousedown', function (e) {
-                if (e.target.localName !== 'div') {
-                    return;
-                }
-                _.defer(function () {
-                    self.$('.items:first').focus();
-                });
-            });
-            $('.items').attr('tabindex', '1');
-
-
+            */
             _.defer(function () {
                 self.checkFetchMore();
-                self.$('.items:first').focus();
+                $('.content').show();
             });
+
+            console.log('BAM WE LOADED.')
+
 
         },
 

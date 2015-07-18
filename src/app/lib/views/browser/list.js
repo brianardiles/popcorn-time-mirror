@@ -63,8 +63,7 @@
         },
 
         ui: {
-            list: '.content',
-            listbackdrop: '.list-backdrop',
+            list: '#list-content',
             spinner: '.spinner'
         },
 
@@ -240,23 +239,21 @@
 
         getRandomItem: function () {
             var that = this;
-            this.ui.listbackdrop.removeClass('fadein');
+            $('.list-backdrop').removeClass('fadein');
 
-            var imdb = $('.content li:first').data('imdb-id');
-            var type = $('.content li:first').data('type');
+            var imdb = $('#list-content li:first').data('imdb-id');
+            var type = $('#list-content li:first').data('type');
             switch (type) {
             case 'movie':
                 App.Trakt.movies.summary(imdb)
                     .then(function (summary) {
                         if (summary) {
-                            that.ui.listbackdrop.css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
+                            $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
                         } else {
-                            that.getRandomItem();
                             win.warn('Unable to fetch data from Trakt.tv');
                         }
                     }).catch(function (err) {
                         console.log(err);
-                        that.getRandomItem();
                         win.warn('Unable to fetch data from Trakt.tv');
                     });
 
@@ -265,14 +262,14 @@
                 App.Trakt.shows.summary(imdb)
                     .then(function (summary) {
                         if (summary) {
-                            that.ui.listbackdrop.css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
+                            $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
                         } else {
-                            that.getRandomItem();
+
                             win.warn('Unable to fetch data from Trakt.tv');
                         }
                     }).catch(function (err) {
                         console.log(err);
-                        that.getRandomItem();
+
                         win.warn('Unable to fetch data from Trakt.tv');
                     });
 

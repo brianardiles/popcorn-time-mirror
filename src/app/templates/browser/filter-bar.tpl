@@ -1,7 +1,7 @@
 
     <% if(typeof type !=='undefined' && types.length > 0){ %>
-     
-            <pt-dropdown id="filter-type" style="left:35px;" class="filter-element" multiple="true" conditional="all">
+ 
+            <pt-dropdown id="filter-type" class="filter-element" multiple="true" conditional="all">
                 <pt-selectable-element checkable checked value="all" label="<%=i18n.__( "Type") %>"></pt-selectable-element>
                 <% _.each(types, function(c) { %>
                     <pt-selectable-element checkable value="<%= c %>" label="<%=i18n.__(c) %>"></pt-selectable-element>

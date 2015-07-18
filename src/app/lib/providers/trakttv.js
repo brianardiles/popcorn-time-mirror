@@ -249,7 +249,9 @@
             });
         },
         people: function (id) {
-            return this.get('shows/' + id + '/people');
+            return this.get('shows/' + id + '/people', {
+                extended: 'images'
+            });
         },
         aliases: function (id) {
             return this.get('shows/' + id + '/aliases');

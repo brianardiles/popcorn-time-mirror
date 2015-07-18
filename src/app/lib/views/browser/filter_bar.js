@@ -3,7 +3,11 @@
     var clipboard = gui.Clipboard.get();
 
     App.View.FilterBar = Backbone.Marionette.ItemView.extend({
-        className: 'filter-bar',
+
+        attributes: {
+            class: 'bottom filter-bar'
+        },
+
         ui: {
             searchForm: '.search form',
             searchInput: '.search input',
@@ -169,7 +173,7 @@
             App.vent.trigger('about:close');
 
             var genres = $(e.target).val().split(',');
-            
+
             console.log('GEnre', genres);;
 
             this.model.set({

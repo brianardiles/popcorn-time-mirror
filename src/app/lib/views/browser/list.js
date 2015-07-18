@@ -127,10 +127,13 @@
         },
 
         onShow: function () {
+            document.querySelector('core-scroll-header-panel').scroller.scrollTop = 0;
             this.backdroploaded = false;
             if (this.collection.state === 'loading') {
                 this.onLoading();
             }
+
+
         },
 
 
@@ -239,7 +242,6 @@
 
         getRandomItem: function () {
             var that = this;
-            $('.list-backdrop').removeClass('fadein');
 
             var imdb = $('#list-content li:first').data('imdb-id');
             var type = $('#list-content li:first').data('type');
@@ -248,7 +250,10 @@
                 App.Trakt.movies.summary(imdb)
                     .then(function (summary) {
                         if (summary) {
-                            $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
+                            $('.list-backdrop').removeClass('fadein');
+                            _.delay(function () {
+                                $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
+                            }, 600);
                         } else {
                             win.warn('Unable to fetch data from Trakt.tv');
                         }
@@ -262,7 +267,10 @@
                 App.Trakt.shows.summary(imdb)
                     .then(function (summary) {
                         if (summary) {
-                            $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
+                            $('.list-backdrop').removeClass('fadein');
+                            _.delay(function () {
+                                $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
+                            }, 600);
                         } else {
 
                             win.warn('Unable to fetch data from Trakt.tv');

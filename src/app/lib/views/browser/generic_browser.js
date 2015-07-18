@@ -13,6 +13,8 @@
         template: '#browser-tpl',
 
         tagName: 'core-scroll-header-panel',
+        id: 'main-list-content',
+
 
         regions: {
             FilterBar: 'core-toolbar',

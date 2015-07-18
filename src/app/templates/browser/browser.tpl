@@ -1,5 +1,5 @@
 
- <core-toolbar id="filterbar-toolbar" class="tall">
+ <core-toolbar  id="filterbar-toolbar" class="tall">
 
 </core-toolbar>
 

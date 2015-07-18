@@ -1,8 +1,8 @@
+<div class="top-tools">
+    <h1 id="section-title" class="title">Movies</h1>
 
- <core-toolbar  id="filterbar-toolbar" class="tall">
-
-</core-toolbar>
-
+    <div id="filterbar-toolbar" class="filters-wrapper"></div>
+</div>
 
 <div class="list-backdrop"></div>
                

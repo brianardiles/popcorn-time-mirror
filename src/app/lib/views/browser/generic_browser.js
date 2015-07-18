@@ -12,25 +12,17 @@
     var PCTBrowser = Backbone.Marionette.LayoutView.extend({
         template: '#browser-tpl',
 
-        tagName: 'core-scroll-header-panel',
+        //tagName: 'core-scroll-header-panel',
         id: 'main-list-content',
 
 
         regions: {
-            FilterBar: 'core-toolbar',
+            FilterBar: '#filterbar-toolbar',
             ItemList: '.content'
         },
         events: {
             'click .retry-button': 'onFilterChange',
             'click .online-search': 'onlineSearch'
-        },
-
-
-        attributes: function () {
-            return {
-                'keepCondensedHeader': true,
-                'condenses': true
-            };
         },
 
         initialize: function () {
@@ -44,7 +36,8 @@
             this.collection.fetch();
 
             this.listenTo(this.filter, 'change', this.onFilterChange);
-
+            this.resizeActions = [];
+            this.scrollActions = [];  
         },
 
         onClose: function () {
@@ -69,7 +62,63 @@
             }
             App.vent.trigger('app:started');
             App.vent.trigger('nav:show');
+            
+            switch (App.currentview) {
+                case 'movies':
+                    $('#section-title').text('Movies');
+                    break;
+                case 'shows':
+                    $('#section-title').text('TV Shows');
+                    break;
+                case 'anime':
+                    $('#section-title').text('Anime');
+                    break;
+            }
+            
+            
+            var positionTop = function() {
+                var padding =  $('.item').eq(0).offset().left - $('#list-content').offset().left;
+                $('.top-tools').css('padding', '0px '+padding+'px');
+            },
+            filterTop = $('.filter-bar').offset().top,
+            scrollFilters = function() {
+                if ($('#content').scrollTop() + 35 > filterTop && ! $('.filter-bar').hasClass('fixed')) {
+                    $('.filter-bar')
+                    .addClass('fixed')
+                    .css('padding-left', $('#section-title').offset().left - 100);
+                }
 
+                if ($('#content').scrollTop() + 35 < filterTop && $('.filter-bar').hasClass('fixed')) {
+                    $('.filter-bar')
+                    .removeClass('fixed')
+                    .css('padding-left', 0);
+                }
+            };
+            
+            this.resizeActions.push(positionTop);
+            this.scrollActions.push(scrollFilters);
+            
+            setTimeout(function(){
+                for (var i = 0; i < 10; i++) {
+                    positionTop();
+                    $('<li href="#" class="item ghost"></li>').appendTo('#list-content');
+                }
+            }, 1000);
+            
+            win.on('resize', _.bind(this.resizeHandler, this));
+            $('#content').scroll(_.bind(this.scrollHandler, this));
+
+        },
+        resizeHandler: function() {
+            this.resizeActions.forEach(function(action) {
+                action.apply();
+            });
+        },
+
+        scrollHandler: function() {
+            this.scrollActions.forEach(function(action) {
+                action.apply();
+            });
         },
         onFilterChange: function () {
 
@@ -85,17 +134,17 @@
         },
         onlineSearch: function () {
             switch (App.currentview) {
-            case 'movies':
-                Settings.OnlineSearchCategory = 'Movies';
-                break;
-            case 'shows':
-                Settings.OnlineSearchCategory = 'TV Series';
-                break;
-            case 'anime':
-                Settings.OnlineSearchCategory = 'Anime';
-                break;
-            default:
+                case 'movies':
+                    Settings.OnlineSearchCategory = 'Movies';
+                    break;
+                case 'shows':
+                    Settings.OnlineSearchCategory = 'TV Series';
+                    break;
+                case 'anime':
+                    Settings.OnlineSearchCategory = 'Anime';
+                    break;
             }
+            $('#section-title').text(Settings.OnlineSearchCategory);
 
             if (!Settings.activateTorrentCollection) {
                 AdvSettings.set('activateTorrentCollection', true);

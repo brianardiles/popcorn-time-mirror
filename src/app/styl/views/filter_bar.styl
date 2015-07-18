@@ -9,9 +9,10 @@ disabled-text-color = rgb(122, 122, 122, 1)
 .filter-bar
     width: 100%
     -webkit-user-select: none
+    transition background-color 0.5s
 
     #filter-genre
-        left 48px
+        left 0
 
     #filter-sorter
         left 100px
@@ -31,3 +32,12 @@ disabled-text-color = rgb(122, 122, 122, 1)
             background main-background-color
         &::shadow #arrow
             opacity 0.7
+            
+    &.fixed
+        position fixed
+        padding-top 35px
+        top 0
+        left 100px
+        right 0
+        margin-top 0
+        background-color rgba(0, 0, 0, 0.8)

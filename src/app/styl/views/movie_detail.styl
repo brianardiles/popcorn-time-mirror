@@ -129,6 +129,12 @@
                 font-weight 500
                 padding-top 2px
                 margin-top 20px
+                opacity 0.7
+                transition opacity 100ms linear
+                &:hover
+                    opacity 1
+                &:active
+                    opacity 1
                 &#trakt-link
                     margin-left -10px
             .meta-divider
@@ -137,17 +143,7 @@
                 margin-top 36px
                 margin-bottom 41px
                 background-color rgba(255, 255, 255, 0.12)
-                height 1px
-             .actor-title
-                color rgba(255, 255, 255, 0.7)
-                margin 30px 0 20px
-                font-size 16px
-                clear both
-            .director-title
-                color rgba(255, 255, 255, 0.7)
-                margin-bottom 20px
-                font-size 16px
-                
+                height 1px                
             .people
                 position relative
                 width 50%
@@ -188,8 +184,7 @@
         background-color #111214
         .watchnow-btn
             cursor pointer
-            padding-left 17px
-            padding-right 17px
+            padding 3px 21px
             color #fff
             font-weight 500
             font-size 15px
@@ -198,7 +193,7 @@
             border-radius 4px
             float right
             position absolute
-            top 65px
+            top 62px
             right 80px
             transition 0.5s
             background-color #3F51B5
@@ -334,4 +329,4 @@
             .meta-container-c
                 top 19px
             .watchnow-btn
-                top 55px
+                top 52px

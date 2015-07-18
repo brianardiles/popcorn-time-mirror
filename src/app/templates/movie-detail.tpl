@@ -59,12 +59,12 @@
                     <%=synopsis %>
                 </div>
                 <paper-button id="trakt-link" class="meta-btn">
-                    <%=i18n.__( "Read More") %>
+                    <%=i18n.__( "Open Trakt") %>
                 </paper-button>
                 <paper-button id="play-trailer" class="meta-btn">
                     <%=i18n.__( "Watch Trailer") %>
                 </paper-button>
-                <div class="meta-divider"></div><div class="director-title"><%=i18n.__( "Director") %></div>
+                <div class="meta-divider"></div>
 
                 <% _.each(directors, function(person) {%>
                 <div data-id="<%= person.imdb_code %>" class="people">
@@ -74,10 +74,11 @@
                     <p class="person">
                         <%= person.name %>
                     </p>
+                    <p class="status">
+                        <%=i18n.__( "Director") %>
+                    </p>
                 </div>
                 <% }); %>
-
-                <div class="actor-title"><%=i18n.__( "Actors") %></div>
 
                 <% _.each(actors, function(actor) { %>
                 <div data-id="<%= actor.imdb_code %>" class="people">

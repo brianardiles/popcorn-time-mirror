@@ -1,7 +1,6 @@
 (function (App) {
     'use strict';
 
-    var SCROLL_MORE = 0.7; // 70% of window height
     var NUM_MOVIES_IN_ROW = 7;
     var _this;
 
@@ -406,10 +405,10 @@
             }
 
             var totalHeight = $('core-scroll-header-panel::shadow #mainContainer').prop('scrollHeight');
-            var currentPosition = $('core-scroll-header-panel::shadow #mainContainer').scrollTop();
+            var currentPosition = $('core-scroll-header-panel::shadow #mainContainer').scrollTop() + $('core-scroll-header-panel::shadow #mainContainer').outerHeight(true);
+            console.log(totalHeight, currentPosition)
 
-            if (this.collection.state === 'loaded' &&
-                (currentPosition / totalHeight) > SCROLL_MORE) {
+            if (this.collection.state === 'loaded' && totalHeight - currentPosition < 400) {
                 this.collection.fetchMore();
             }
         },

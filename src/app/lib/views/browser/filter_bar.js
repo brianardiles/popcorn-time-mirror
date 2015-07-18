@@ -81,6 +81,9 @@
         },
         onShow: function () {
 
+            $("#filterbar-toolbar").prepend('<div class="" style="left: 30px;">Movies</div>');
+
+
             this.$('.tooltipped').tooltip({
                 delay: {
                     'show': 800,

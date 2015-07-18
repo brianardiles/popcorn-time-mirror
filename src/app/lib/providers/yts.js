@@ -26,7 +26,6 @@
                     return torrent.quality !== '3D';
                 });
             }).map(function (movie) {
-                console
                 return {
                     type: 'movie',
                     imdb_id: movie.imdb_code,

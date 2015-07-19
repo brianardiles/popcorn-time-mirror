@@ -265,7 +265,8 @@
                         if (summary) {
                             $('.list-backdrop').removeClass('fadein');
                             _.delay(function () {
-                                $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
+                                $('.list-backdrop img').attr('src', summary.images.fanart.full);
+                                $('.list-backdrop').addClass('fadein');
                             }, 600);
                         } else {
                             win.warn('Unable to fetch data from Trakt.tv');

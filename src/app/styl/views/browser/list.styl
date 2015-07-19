@@ -1,39 +1,91 @@
+main-background-color = rgb(17, 18, 20, 1)
+main-background-color-light = rgb(28, 29, 33, 1)
+main-text-color = rgb(255, 255, 255, 1)
+main-text-color-secondary = rgba(255, 255, 255, 0.6)
+main-text-color-inactive = rgba(255, 255, 255, 0.3)
+main-color-accent = rgb(63, 81, 181, 1)
+disabled-text-color = rgb(122, 122, 122, 1)
 
 .list-region
     height 100vh
     position: absolute
-    left: 100px;
-    right: 0px
-    overflow-y: auto
-    &::-webkit-scrollbar
-        width 2px
-    &::-webkit-scrollbar-track
-        box-shadow inset 0 0 6px rgba(0, 0, 0, 0.1)
-    &::-webkit-scrollbar-thumb
-        background rgba(255, 255, 255, 0.22)
+    left 100px
+    right 0px
+    overflow-y auto
+    overflow-x hidden
+    font-family Roboto
+        &::-webkit-scrollbar
+            width 0px
+        &::-webkit-scrollbar-track
+            box-shadow inset 0 0 6px rgba(0, 0, 0, 0)
+        &::-webkit-scrollbar-thumb
+            background rgba(255, 255, 255, 0.22)
 
     .top-tools
-        position absolute
+        position relative
         display block
+        margin-top 65px
         width 100%
         z-index 1
-        top: 10vh
-        padding-left: 48px
-        
-    #list-content
-        margin-top: 30vh
         
     .title
-        font-size 2.5em
+        font-size 42px
+        font-weight 500
+        letter-spacing 0.7px
         color #fff
+        padding 0 80px 0 70px
 
-    .filters-wrapper
+    #filterbar-toolbar
         position relative
         margin-top 130px
-        min-height 50px
+        min-height 100px
+        background-color rgba(0, 0, 0, 0)
+        transition background-color 300ms ease-in
+        .filter-bar
+            width 100%
+            padding 20px 76px 20px 70px
+            -webkit-user-select: none
+            transition background-color 0.5s
+            z-index 1
 
-    pt-dropdown
-        padding-bottom 20px
+            &.fixed
+                position fixed
+                top 0
+                left 0
+                right 0
+                padding-left 170px
+                margin-top 0
+                background-color rgba(0, 0, 0, 0.8)
+
+            pt-dropdown
+                min-width 70px
+                margin-right 40px
+
+            #filter-sorter
+                min-width 150px
+
+            .filter-element
+                color #fff
+                border none
+                font-size 20px
+                font-weight 600
+                pt-selectable-element, ::content pt-selectable-element
+                    font-weight normal
+                    padding 14px 20px
+                pt-selectable-element.selected, ::content pt-selectable-element.selected
+                    font-weight bold
+                &#filter-order pt-selectable-element:hover
+                    background main-color-accent
+                &::shadow #options
+                    background main-background-color
+                &::shadow #arrow
+                    opacity 0.7
+                    
+            .search
+                margin-top -15px
+                margin-right 3px
+                paper-input
+                    color #fff
         
     .list-backdrop
         position absolute
@@ -41,31 +93,34 @@
         top 0
         opacity: 0
         height 60vh
+        overflow hidden
         background-position-x center
         background-attachment fixed
         -webkit-filter: brightness(55%)
-        transition: opacity .6s ease-in;
+        transition: margin-top 100ms ease-in, opacity .6s ease-in;
+        img
+            width 100%
         &.fadein
             opacity: 1
             
     #list-content
         position relative
-        width 100%
+        margin 20px 76px 0 66px
+        width calc(100% - 76px - 65px)
         -webkit-user-select none
-        text-align center
         .item
             position relative
             display inline-block
             overflow hidden
-            transform translateY(50%) translateZ(0)
             opacity 1
-            margin 2px 5px
+            margin 3px
             cursor pointer
-            width 150px
-            box-shadow 0 0 10px rgba(0, 0, 0, 0.5)
+            width 200px
+            border-radius 1px
+            box-shadow 0 0 3px rgba(0, 0, 0, 0.2)
             img
                 width 100%
-                height 225px
+                height 295px
                 opacity: 0
                 transition: opacity 300ms ease-in;
                 &.fadein
@@ -107,4 +162,3 @@
                     transform translateY(0)
                     paper-fab
                         transform translateY(0)
-

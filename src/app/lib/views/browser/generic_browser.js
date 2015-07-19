@@ -77,29 +77,28 @@
 
 
             var positionTop = function () {
-                    var padding = $('.item').eq(0).offset().left - $('#list-content').offset().left;
-                    $('.top-tools').css('padding', '0px ' + padding + 'px');
-                },
-                filterTop = $('.filter-bar').offset().top,
-                scrollFilters = function () {
-                    if ($('#content').scrollTop() + 35 > filterTop && !$('.filter-bar').hasClass('fixed')) {
-                        $('.filter-bar')
-                            .addClass('fixed')
-                            .css('padding-left', $('#section-title').offset().left - 100);
-                    }
+                var padding = $('.item').eq(0).offset().left - $('#list-content').offset().left;
+                $('.top-tools').css('padding', '0px ' + padding + 'px');
+            },
+            filterTop = $('.filter-bar').offset().top,
+            scrollFilters = function () {
+                var scrollTop  = $('#content').scrollTop();
 
-                    if ($('#content').scrollTop() + 35 < filterTop && $('.filter-bar').hasClass('fixed')) {
-                        $('.filter-bar')
-                            .removeClass('fixed')
-                            .css('padding-left', 0);
-                    }
-                };
+                if (scrollTop > filterTop && !$('.filter-bar').hasClass('fixed')) {
+                    $('.filter-bar').addClass('fixed');
+                }
+
+                if (scrollTop < filterTop && $('.filter-bar').hasClass('fixed')) {
+                    $('.filter-bar').removeClass('fixed');
+                }
+
+                $('.list-backdrop').css('margin-top', -(scrollTop / 2));
+            };
 
             this.scrollActions.push(scrollFilters);
 
 
             $('#content').scroll(_.bind(this.scrollHandler, this));
-
         },
 
 

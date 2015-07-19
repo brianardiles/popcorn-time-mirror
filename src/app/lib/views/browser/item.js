@@ -27,7 +27,8 @@
             'click .actions-favorites': 'toggleFavorite',
             'click .actions-watched': 'toggleWatched',
             'click img': 'showDetail',
-            'mouseover .cover': 'hoverItem'
+            'mouseover .cover': 'hoverItem',
+            'click #play-action': 'play'
         },
 
         initialize: function () {
@@ -48,16 +49,16 @@
             });
 
             switch (itemtype) {
-                case 'bookmarkedshow':
-                    this.model.set('image', App.Trakt.resizeImage(img, 'medium'));
-                    break;
-                case 'show':
-                    this.model.set('image', App.Trakt.resizeImage(img, 'medium'));
-                    break;
-                case 'bookmarkedmovie':
-                case 'movie':
-                    this.model.set('image', img);
-                    break;
+            case 'bookmarkedshow':
+                this.model.set('image', App.Trakt.resizeImage(img, 'medium'));
+                break;
+            case 'show':
+                this.model.set('image', App.Trakt.resizeImage(img, 'medium'));
+                break;
+            case 'bookmarkedmovie':
+            case 'movie':
+                this.model.set('image', img);
+                break;
             }
 
             var date = new Date();
@@ -114,6 +115,95 @@
 
 
         },
+
+
+        play: function (e) {
+            e.preventDefault();
+            var provider = App.Providers.get(this.model.get('provider'));
+
+            var type = this.model.get('type');
+            switch (type) {
+            case 'bookmarkedmovie':
+                var SelectedMovie = new Backbone.Model({
+                    imdb_id: this.model.get('imdb_id'),
+                    torrents: this.model.get('torrents'),
+                    title: this.model.get('title'),
+                    subtitle: this.model.get('subtitle'),
+                    backdrop: this.model.get('backdrop'),
+                    provider: this.model.get('provider'),
+                    watched: this.model.get('watched')
+                });
+
+                break;
+
+            case 'bookmarkedshow':
+                type = 'show';
+                /* falls through */
+            case 'show':
+            case 'movie':
+                var that = this;
+                provider.detail(this.model.get('imdb_id'), this.model.attributes)
+                    .catch(function () {
+                        $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
+                    })
+                    .then(function (data) {
+                        Q.all([
+                            that.getSeasonImages(),
+                            that.getColor()
+                        ]).spread(function (images, color) {
+                            data.color = color.color;
+                            data.seasonImages = images;
+                            that.startStreaming(data);
+                        });
+
+                    });
+                break;
+
+            }
+
+        },
+
+
+        startStreaming: function (data) {
+            var type = this.model.get('type');
+            var torrentStart;
+            switch (type) {
+            case 'movie':
+                var quality = null;
+                var fallbackOrder = ['720p', '1080p'];
+                if (data.torrents[Settings.movies_default_quality]) {
+                    quality = Settings.movies_default_quality;
+                } else {
+                    $.each(fallbackOrder, function (index, value) {
+                        if (quality == null && data.torrents[value]) {
+                            quality = value;
+                        }
+                    });
+                }
+                torrentStart = {
+                    torrent: data.torrents[quality].magnet,
+                    metadata: {
+                        backdrop: data.backdrop,
+                        title: data.title,
+                        imdb_id: data.imdb_id,
+                        color: data.color,
+                        quality: quality
+                    },
+                    subtitles: data.subtitle,
+                    defaultSubtitle: Settings.subtitle_language,
+                    type: 'movie',
+                    device: App.Device.Collection.selected
+                };
+                break;
+            case 'show':
+                return; //show not made yet
+                break;
+
+            }
+            App.Streamer.start(torrentStart);
+
+        },
+
 
         showDetail: function (e) {
             e.preventDefault();
@@ -255,12 +345,12 @@
         },
 
         getCast: function () {
-            var that = this;
             var type = this.model.get('type');
             var defer = Q.defer();
             switch (type) {
 
             case 'show':
+
                 App.Trakt.shows.people(this.model.get('imdb_id'))
                     .then(function (people) {
                         if (!people) {
@@ -276,18 +366,7 @@
 
                 break;
             case 'movie':
-                App.Trakt.movies.people(this.model.get('imdb_id'))
-                    .then(function (people) {
-                        if (!people) {
-                            defer.resolve({});
-                            win.warn('Unable to fetch data from Trakt.tv');
-                        } else {
-                            defer.resolve(people);
-                        }
-                    }).catch(function (err) {
-                        console.log(err);
-                        defer.resolve({});
-                    });
+                defer.resolve({});
                 break;
 
             }

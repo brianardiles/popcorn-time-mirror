@@ -1,6 +1,6 @@
 <img width="100%" class="" src="<%= image %>" />
 <div class="info">
-	<paper-fab icon="av:play-arrow" title="S01E01: Pilot"></paper-fab>
+	<paper-fab id="play-action" icon="av:play-arrow" title="S01E01: Pilot"></paper-fab>
     <h3 class="item-title"><%= title %></h3>
     <div class="meta">
     	<%= year %>

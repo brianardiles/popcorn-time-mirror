@@ -37,7 +37,7 @@ disabled-text-color = rgb(122, 122, 122, 1)
 
     #filterbar-toolbar
         position relative
-        margin-top 130px
+        margin-top 100px
         min-height 100px
         background-color rgba(0, 0, 0, 0)
         transition background-color 300ms ease-in
@@ -109,7 +109,7 @@ disabled-text-color = rgb(122, 122, 122, 1)
         flex-direction: row;
         justify-content: space-between;
         flex-wrap: wrap;
-        margin 20px 76px 0 66px
+        margin 0 76px 0 66px
         width calc(100% - 76px - 65px)
         -webkit-user-select none
         .item
@@ -135,32 +135,48 @@ disabled-text-color = rgb(122, 122, 122, 1)
                 left 0
                 right 0
                 height auto
-                background rgba(0, 0, 0, 0.7)
+                background #212327
                 color #fff
-                padding 16px
-                z-index 1
+                padding 16px 20px 20px 20px
                 transition transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
                 transform translateY(100%)
                 text-align left
                 h3
-                    font-size 14pt
-                    line-height 15pt
-                    font-weight normal
-                small
-                    font-size 12pt
+                    font-size 18px
+                    line-height 22px
+                    font-weight 500
+                    margin-bottom 16px
+                    &::before
+                        content ''
+                        float right
+                        width 35px
+                        height 18px
+                .meta
+                    font-size 13px
+                    .zmdi
+                        font-size 14px
+                    .dot
+                        display inline-block
+                        width 5px
+                        height 5px
+                        margin 0 6px 2px 6px
+                        border-radius 50%
+                        background-color white
                 paper-fab
                     position absolute
-                    width 45px
-                    height 45px
-                    right 24px
+                    width 48px
+                    height 48px
+                    right 8px
                     top -24px
                     background main-color-accent
                     transition transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) 0.1s, background 0.4s
                     transform translateY(50px)
                     &::shadow core-icon
                         fill white
+                        margin-left: -4px;
+                        margin-top: -4px;
                     &:hover
-                        background lighten(main-color-accent, 5)
+                        background lighten(main-color-accent, 5)          
             &:hover
                 .info
                     transform translateY(0)

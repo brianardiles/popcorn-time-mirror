@@ -22,6 +22,7 @@
             bookmarkIcon: '.actions-favorites',
             watchedIcon: '.actions-watched'
         },
+
         events: {
             'click .actions-favorites': 'toggleFavorite',
             'click .actions-watched': 'toggleWatched',
@@ -47,16 +48,16 @@
             });
 
             switch (itemtype) {
-            case 'bookmarkedshow':
-                this.model.set('image', App.Trakt.resizeImage(img, 'thumb'));
-                break;
-            case 'show':
-                this.model.set('image', App.Trakt.resizeImage(img, 'thumb'));
-                break;
-            case 'bookmarkedmovie':
-            case 'movie':
-                this.model.set('image', img);
-                break;
+                case 'bookmarkedshow':
+                    this.model.set('image', App.Trakt.resizeImage(img, 'medium'));
+                    break;
+                case 'show':
+                    this.model.set('image', App.Trakt.resizeImage(img, 'medium'));
+                    break;
+                case 'bookmarkedmovie':
+                case 'movie':
+                    this.model.set('image', img);
+                    break;
             }
 
             var date = new Date();
@@ -78,6 +79,10 @@
                 }
                 this.model.set('title', titleArray.join(' '));
             }
+
+            var rating = this.model.get('rating').percentage / 10;
+            rating = Math.round(rating * 2) / 2;
+            this.model.set('rating', rating);
         },
 
         onShow: function () {
@@ -178,6 +183,7 @@
 
             }
         },
+
         getColor: function () {
             var defer = Q.defer();
             var img = document.createElement('img');
@@ -247,6 +253,7 @@
             }
             return defer.promise;
         },
+
         getCast: function () {
             var that = this;
             var type = this.model.get('type');
@@ -286,6 +293,7 @@
             }
             return defer.promise;
         },
+
         toggleWatched: function (e) {
             e.stopPropagation();
             e.preventDefault();

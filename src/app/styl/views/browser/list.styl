@@ -104,13 +104,17 @@ disabled-text-color = rgb(122, 122, 122, 1)
             opacity: 1
             
     #list-content
+        display flex
         position relative
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
         margin 20px 76px 0 66px
         width calc(100% - 76px - 65px)
         -webkit-user-select none
         .item
             position relative
-            display inline-block
+            list-style: none;
             overflow hidden
             opacity 1
             margin 3px

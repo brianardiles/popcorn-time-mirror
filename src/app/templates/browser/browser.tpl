@@ -1,4 +1,4 @@
-<div class="list-backdrop"><img src="#" /></div>
+<div class="list-backdrop"></div>
 
 <div class="top-tools">
     <h1 id="section-title" class="title">Movies</h1>

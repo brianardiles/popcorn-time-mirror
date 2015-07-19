@@ -29,7 +29,7 @@ nav#main-nav
     padding-top 60px
     font-size 1em
     line-height 1.7em
-    transition width 0.4s ease-out, left 0.5s ease-out
+    transition width 0.2s ease-out, left 0.5s ease-out
     overflow hidden
     z-index 2
     
@@ -37,12 +37,10 @@ nav#main-nav
         left: -100px
     
     ul
-        position absolute
         overflow hidden
-        padding 0
         margin 0
-        left 35px
-        height 95%
+        padding: 0 35px;
+        height 100%
         
         li
             display block
@@ -50,27 +48,29 @@ nav#main-nav
             //transform translateX(70px)
             
             a
+                display block
                 color main-text-color-secondary
                 white-space nowrap
                 text-decoration none
-                transition color 0.4s ease-out
+                transition color 0.2s ease-out
                 .active
                     color main-text-color
                 core-icon, i
                     width 30px
                     height 30px
-                    margin-right 60px
+                    margin-right 20px
                     vertical-align bottom
-                    transition margin-right 0.4s ease-out
                     font-size 30px
+                .nav-text
+                    opacity 0
+                    transition opacity 0.3s ease-in
                 &:hover, &.active
                     color main-text-color
                     
         #nav-settings
             position absolute
             bottom 20px
-            left 0
     &:hover
-        width 200px
-        ul li a core-icon, ul li a i
-            margin-right 20px
+        width 212px
+        ul li a .nav-text
+            opacity 1

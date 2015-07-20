@@ -144,6 +144,22 @@
             this.playing = false;
             this.NextEpisode = false;
             this.inFullscreen = win.isFullscreen;
+            var that = this;
+
+            App.vent.on('subtitle:downloaded', function (sub) {
+                if (sub) {
+                    App.vent.trigger('subtitle:convert', {
+                        path: sub,
+                        language: that.model.get('defaultSubtitle')
+                    }, function (err, res) {
+                        if (err) {
+                            win.error('error converting subtitles', err);
+                        } else {
+                            App.Subtitles.Server.start(res);
+                        }
+                    });
+                }
+            });
         },
 
 
@@ -153,7 +169,6 @@
             this.setUI();
             this.setPlayerEvents();
             this.restoreUserPref();
-
         },
         detectscrubbing: function () {
             var that = this;

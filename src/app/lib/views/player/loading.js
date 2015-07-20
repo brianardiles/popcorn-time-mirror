@@ -28,7 +28,7 @@
             this.loadingStopped = false;
             this.SubtitlesRetrieved = false;
             this.WaitingForSubs = false;
-            this.getSubtitles();
+            //this.getSubtitles();
             if (this.model.get('player').get('id')) {
                 this.player = this.model.get('player').get('id');
             } else {
@@ -45,101 +45,6 @@
             } else {
                 this.stateUpdate();
             }
-        },
-
-        getSubtitles: function () {
-            switch (this.model.attributes.data.type) {
-            case 'show':
-                this.fetchTVSubtitles({
-                    imdbid: this.model.attributes.data.metadata.imdb_id,
-                    season: this.model.attributes.data.metadata.season,
-                    episode: this.model.attributes.data.metadata.episode
-                }).then(function (subs) {
-                    if (subs && subs[that.model.attributes.data.defaultSubtitle]) {
-                        that.setupLocalSubs(that.model.attributes.data.defaultSubtitle, subs);
-                    } else {
-                        that.SubtitlesRetrieved = true; //no subs could be found so we have done all we can
-                    }
-                });
-                break;
-            case 'movie':
-                this.setupLocalSubs(this.model.attributes.data.defaultSubtitle, this.model.attributes.data.subtitles);
-                break;
-            }
-        },
-
-        setupLocalSubs: function (defaultSubtitle, subtitles) {
-            var that = this;
-
-            if (subtitles[defaultSubtitle]) {
-                if (!App.Streamer.streamDir) {
-                    var watchstreamDir = function () {
-                        require('watchjs').unwatch(App.Streamer, 'streamDir', watchstreamDir);
-                        that.initsubs(defaultSubtitle, subtitles);
-                    };
-                    require('watchjs').watch(App.Streamer, 'streamDir', watchstreamDir);
-                } else {
-                    this.initsubs(defaultSubtitle, subtitles);
-                }
-            } else {
-                this.SubtitlesRetrieved = true;
-            }
-
-        },
-
-        fetchTVSubtitles: function (data) {
-            var that = this;
-            var defer = Q.defer();
-            // fix for anime
-            if (data.imdbid.indexOf('mal') !== -1) {
-                data.imdbid = null;
-            }
-            win.debug('Subtitles data request:', data);
-
-            var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
-
-            subtitleProvider.fetch(data).then(function (subs) {
-                if (subs && Object.keys(subs).length > 0) {
-                    var subtitles = subs;
-                    that.model.attributes.data.subtitles = subs;
-                    defer.resolve(subs);
-                    win.info(Object.keys(subs).length + ' subtitles found');
-                } else {
-                    win.warn('No subtitles returned');
-                    defer.resolve(false);
-                }
-            }).catch(function (err) {
-                defer.resolve(false);
-                console.log('subtitleProvider.fetch()', err);
-            });
-            return defer.promise;
-        },
-
-        initsubs: function (defaultSubtitle, subtitles) {
-            var that = this;
-            App.vent.on('subtitle:downloaded', function (sub) {
-                if (sub) {
-                    that.extsubs = sub;
-                    App.vent.trigger('subtitle:convert', {
-                        path: sub,
-                        language: defaultSubtitle
-                    }, function (err, res) {
-                        if (err) {
-                            that.extsubs = null;
-                            win.error('error converting subtitles', err);
-                        } else {
-                            App.Subtitles.Server.start(res);
-                        }
-                        that.SubtitlesRetrieved = true;
-                    });
-                } else {
-                    that.SubtitlesRetrieved = true;
-                }
-            });
-            App.vent.trigger('subtitle:download', {
-                url: subtitles[defaultSubtitle],
-                path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
-            });
         },
 
         stateUpdate: function () {
@@ -231,35 +136,17 @@
         },
 
         initMainplayer: function () {
-            var that = this;
 
-            function begin() {
-                that.WaitingForSubs = false;
-                if (that.player === 'local') {
-                    var playerModel = new Backbone.Model(that.model.get('data'));
-                    App.vent.trigger('stream:local', playerModel);
-                } else {
-                    var externalPlayerModel = that.model.get('player');
-                    externalPlayerModel.set('src', App.Streamer.src);
-                    externalPlayerModel.set('subtitle', that.extsubs); //set subs if we have them; if not? well that boat has sailed.
-                    App.vent.trigger('stream:ready', externalPlayerModel);
-                    that.playingExternally = true;
-                    that.stateUpdate();
-                }
-            }
-            if (this.SubtitlesRetrieved || this.model.attributes.data.defaultSubtitle === 'none' || this.player === 'local') {
-                begin();
+            if (this.player === 'local') {
+                var playerModel = new Backbone.Model(this.model.get('data'));
+                App.vent.trigger('stream:local', playerModel);
             } else {
-                win.info('Subtitles Not Yet Loaded, Waiting for them');
-                var watchSubsLoaded = function (forced) {
-                    require('watchjs').unwatch(this, 'SubtitlesLoaded', watchSubsLoaded);
-                    if (!forced) {
-                        win.info('Subtitles Retrived! Starting playback');
-                    }
-                    begin();
-                };
-                this.WaitingForSubs = true;
-                require('watchjs').watch(this, 'SubtitlesLoaded', watchSubsLoaded);
+                var externalPlayerModel = this.model.get('player');
+                externalPlayerModel.set('src', App.Streamer.src);
+                externalPlayerModel.set('subtitle', this.extsubs); //set subs if we have them; if not? well that boat has sailed.
+                App.vent.trigger('stream:ready', externalPlayerModel);
+                this.playingExternally = true;
+                this.stateUpdate();
             }
         },
 
@@ -396,7 +283,7 @@
 
                                         that.loadbackground(data.images.screenshot.full);
 
-                                        that.getSubtitles();
+                                        // that.getSubtitles();
                                     }
                                 }).catch(function (err) {
                                     tryMovie(tvshowname);

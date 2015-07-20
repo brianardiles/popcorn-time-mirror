@@ -81,11 +81,14 @@
                 }
                 this.model.set('title', titleArray.join(' '));
             }
-            if (itemtype !== 'movie') {
+            if (!this.model.get('rating')) {
+                this.model.set('rating', 'NaN');
+            } else if (itemtype !== 'movie') {
                 var rating = this.model.get('rating').percentage / 10;
                 rating = Math.round(rating * 2) / 2;
                 this.model.set('rating', rating);
             }
+
         },
 
         onShow: function () {

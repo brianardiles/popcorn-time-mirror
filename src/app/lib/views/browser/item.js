@@ -19,6 +19,7 @@
 
         ui: {
             cover: 'img',
+            infowrapper: '.info',
             bookmarkIcon: '.actions-favorites',
             watchedIcon: '.actions-watched'
         },
@@ -27,7 +28,7 @@
             'click .actions-favorites': 'toggleFavorite',
             'click .actions-watched': 'toggleWatched',
             'click img': 'showDetail',
-            'mouseover .cover': 'hoverItem',
+            'mouseover': 'hoverItem',
             'click #play-action': 'play'
         },
 
@@ -95,7 +96,15 @@
 
         },
 
+        hoverItem: function () {
+            var that = this;
+            this.getColor(true).then(function (color) {
+                console.log(color)
+                that.ui.infowrapper.css('background', color.color);
+            });
+            console.log('hovered!');
 
+        },
         loadCover: function () {
             var coverCache = new Image();
             coverCache.src = this.model.get('image');
@@ -471,12 +480,24 @@
             }
         },
 
-        getColor: function () {
+        getColor: function (fast) {
+
+            if (this.model.get('color')) {
+                return Q(this.model.get('color'))
+            };
+
             var defer = Q.defer();
+            var that = this;
             var img = document.createElement('img');
             img.setAttribute('src', App.Trakt.resizeImage(this.model.get('image'), 'medium'));
             img.addEventListener('load', function () {
-                var vibrant = new Vibrant(img, 64, 4);
+
+                if (!fast) {
+                    var vibrant = new Vibrant(img, 64, 4);
+                } else {
+                    var vibrant = new Vibrant(img, 64, 6);
+                }
+
                 var swatches = vibrant.swatches();
                 var color = null;
                 var textColor = null;
@@ -501,6 +522,10 @@
                 }
 
                 if (color && textColor) {
+                    that.model.set('color', {
+                        color: color,
+                        textcolor: textColor
+                    });
                     defer.resolve({
                         color: color,
                         textcolor: textColor
@@ -515,6 +540,7 @@
                 defer.resolve(null);
                 img.remove();
             });
+
             return defer.promise;
         },
 

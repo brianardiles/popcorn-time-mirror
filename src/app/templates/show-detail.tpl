@@ -52,7 +52,7 @@
                     keys.push(keys.shift());
                 }
 
-                _.each(keys, function(season, index) {
+                _.each(keys, function(season) {
                     if(season !== '0') { 
                         type = 'season';
                         seasontext = i18n.__("Season %s", season) ; 

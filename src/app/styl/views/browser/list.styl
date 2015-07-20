@@ -119,7 +119,9 @@ disabled-text-color = rgb(122, 122, 122, 1)
             opacity 1
             margin 3px
             cursor pointer
-            width 200px
+            width 7.4%
+            max-width 200px
+            min-width 165px
             border-radius 1px
             box-shadow 0 0 3px rgba(0, 0, 0, 0.2)
             &.ghost
@@ -127,9 +129,8 @@ disabled-text-color = rgb(122, 122, 122, 1)
                 box-shadow 0 0 0px rgba(0, 0, 0, 0)
             img
                 width 100%
-                height 295px
                 opacity: 0
-                transition: opacity 300ms ease-in;
+                transition opacity 300ms ease-in
                 &.fadein
                     opacity: 1
             .info
@@ -186,3 +187,39 @@ disabled-text-color = rgb(122, 122, 122, 1)
                     transform translateY(0)
                     paper-fab
                         transform translateY(0)
+
+@media (max-width: 2750px)
+    .list-region #list-content .item
+        width 8%
+
+@media (max-width: 2750px)
+    .list-region #list-content .item
+        width 8%
+
+@media (max-width: 2520px)
+    .list-region #list-content .item
+        width 8.8%
+
+@media (max-width: 2350px)
+    .list-region #list-content .item
+        width 9.6%
+
+@media (max-width: 2100px)
+    .list-region #list-content .item
+        width 10.7%
+
+@media (max-width: 1890px)
+    .list-region #list-content .item
+        width 13.8%
+
+@media (max-width: 1495px)
+    .list-region #list-content .item
+        width 16%
+
+@media (max-width: 1267px)
+    .list-region #list-content .item
+        width 19%
+
+@media (max-width: 1095px)
+    .list-region #list-content .item
+        width 24%

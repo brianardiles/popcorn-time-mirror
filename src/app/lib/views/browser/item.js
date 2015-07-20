@@ -258,11 +258,8 @@
                     };
                     App.Streamer.start(torrentStart);
                 });
-
                 break;
-
             }
-
 
         },
 
@@ -311,9 +308,7 @@
                         });
                         if (checkedEpisodes.length === episodes.length) {
                             that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes, watchedEpisodes).then(function (rdata) {
-
                                 defer.resolve(rdata);
-
                             });
 
                         }
@@ -367,8 +362,13 @@
                     defer.resolve(data);
                 });
             } else {
-                console.log(episodes);
-                console.log('start from first!')
+                var filtered = _(episodes).filter(function (item) {
+                    return item.season !== 0
+                });
+                var select = _.first(filtered);
+                this.setEpisodeStream(select.episode, select.season, episodes).then(function (data) {
+                    defer.resolve(data);
+                });
             }
             return defer.promise;
 

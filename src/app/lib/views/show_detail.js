@@ -210,6 +210,7 @@
             } else {
                 this.loadCover();
                 season = parseInt($('paper-tabs paper-tab:nth-child(2)').data('id'));
+                this.selectSeason(null, season);
                 $('#season-' + season + ' li:first').click();
             }
         },

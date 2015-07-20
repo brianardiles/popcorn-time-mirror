@@ -40,7 +40,7 @@
                <% var torrents = {},
                         seasontext,
                         type,
-                        index = 1;
+                        tabindex = 1;
 
                 _.each(episodes, function(value, currentEpisode) {
                     if (!torrents[value.season]) torrents[value.season] = {};
@@ -68,8 +68,8 @@
                         var seasonPoster = images.poster;
                     }
                  %>
-                    <paper-tab id="seasonTab-<%= seasonID %>" data-type="<%= type %>"  data-index="<%= index %>" data-id="<%= seasonID %>" data-poster="<%= seasonPoster %>" role="tab"><%= seasontext %></paper-tab>
-                <% index++; }); %>
+                    <paper-tab id="seasonTab-<%= seasonID %>" data-type="<%= type %>"  data-index="<%= tabindex %>" data-id="<%= seasonID %>" data-poster="<%= seasonPoster %>" role="tab"><%= seasontext %></paper-tab>
+                <% tabindex++; }); %>
            </paper-tabs>
         </div>
     </div>

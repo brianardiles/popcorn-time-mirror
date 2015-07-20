@@ -9,23 +9,14 @@
         },
 
         ui: {
-            searchForm: '.search form',
-            searchInput: '.search input',
-            search: '.search',
-            searchClear: '.search .clear',
-            sorterValue: '.sorters .value',
             typeValue: '.types .value',
             genreValue: '.genres  .value'
         },
         events: {
-            'hover  @ui.searchInput': 'focus',
-            'submit @ui.searchForm': 'search',
-            'contextmenu @ui.searchInput': 'rightclick_search',
-            'click  @ui.searchClear': 'clearSearch',
-            'click  @ui.search': 'focusSearch',
             'change #filter-sorter': 'sortBy',
             'change #filter-genre': 'changeGenre',
-            'change #filter-type': 'changeType',
+            'change #filter-type': 'changeType'
+            'change #filterbar-search': 'search'
 
         },
 
@@ -33,9 +24,7 @@
 
 
         },
-        focus: function (e) {
-            e.focus();
-        },
+
         setactive: function (set) {
             $('.sorters .dropdown-menu a:nth(0)').addClass('active');
             $('.genres .dropdown-menu a:nth(0)').addClass('active');
@@ -94,47 +83,24 @@
             });
         },
 
-        focusSearch: function () {
-            this.$('.search input').focus();
-        },
-
         search: function (e) {
-            App.vent.trigger('about:close');
-            App.vent.trigger('torrentCollection:close');
-            App.vent.trigger('movie:closeDetail');
             e.preventDefault();
-            var searchvalue = this.ui.searchInput.val();
-            this.model.set({
-                keywords: this.ui.searchInput.val(),
-                genre: ''
-            });
 
-            this.ui.searchInput.blur();
-
-            if (searchvalue === '') {
-                this.ui.searchForm.removeClass('edited');
-            } else {
-                this.ui.searchForm.addClass('edited');
-            }
+            var that = this;
+            clearTimeout(search);
+            var search;
+            search = setTimeout(function () {
+                App.vent.trigger('about:close');
+                App.vent.trigger('torrentCollection:close');
+                var searchvalue = $(e.target).val();
+                that.model.set({
+                    keywords: searchvalue,
+                    genre: ''
+                });
+            }, 500);
         },
 
-        clearSearch: function (e) {
-            this.ui.searchInput.focus();
 
-            App.vent.trigger('about:close');
-            App.vent.trigger('torrentCollection:close');
-            App.vent.trigger('movie:closeDetail');
-
-            e.preventDefault();
-            this.model.set({
-                keywords: '',
-                genre: ''
-            });
-
-            this.ui.searchInput.val('');
-            this.ui.searchForm.removeClass('edited');
-
-        },
         sortBy: function (e) {
             App.vent.trigger('about:close');
             App.vent.trigger('torrentCollection:close');

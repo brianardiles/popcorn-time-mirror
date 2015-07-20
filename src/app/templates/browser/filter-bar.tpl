@@ -30,7 +30,7 @@
         <%} %>
     
     <div class="right search">
-       <paper-input label="<%=i18n.__("Search")%>" floatingLabel="true" ></paper-input>
+       <paper-input id="filterbar-search"  validate="[A-Za-z'\s-]*" label="<%=i18n.__("Search")%>" floatingLabel="true" ></paper-input>
     </div>
     
 

@@ -166,7 +166,7 @@
 
         startStreaming: function (data) {
             var type = this.model.get('type');
-            var torrentStart;
+
             switch (type) {
             case 'movie':
                 var quality = null;
@@ -180,7 +180,7 @@
                         }
                     });
                 }
-                torrentStart = {
+                var torrentStart = {
                     torrent: data.torrents[quality].magnet,
                     metadata: {
                         backdrop: data.backdrop,
@@ -194,14 +194,212 @@
                     type: 'movie',
                     device: App.Device.Collection.selected
                 };
+                App.Streamer.start(torrentStart);
                 break;
             case 'show':
-                return; //show not made yet
+                var that = this;
+                this.getShowEpisode(data).then(function (episodedata) {
+                    var title = that.model.get('title');
+                    var episode = episodedata.episode;
+                    var episode_id = episodedata.tvdb_id;
+                    var season = episodedata.season;
+                    var name = episodedata.title;
+
+                    var episodes = [];
+                    var episodes_data = [];
+                    var selected_quality = episodedata.quality;
+
+                    if (AdvSettings.get('playNextEpisodeAuto') && that.model.get('imdb_id').indexOf('mal') === -1) {
+                        _.each(data.episodes, function (value) {
+                            var epaInfo = {
+                                id: parseInt(value.season) * 100 + parseInt(value.episode),
+                                title: value.title,
+                                torrents: value.torrents,
+                                season: value.season,
+                                episode: value.episode,
+                                episode_id: value.tvdb_id,
+                                tvdb_id: that.model.get('tvdb_id'),
+                                imdb_id: that.model.get('imdb_id')
+                            };
+                            episodes_data.push(epaInfo);
+                            episodes.push(parseInt(value.season) * 100 + parseInt(value.episode));
+                        });
+                        episodes.sort();
+                        episodes_data = _.sortBy(episodes_data, 'id');
+
+                    } else {
+                        episodes = null;
+                        episodes_data = null;
+                    }
+
+                    var torrentStart = {
+                        torrent: episodedata.torrent,
+                        type: 'show',
+                        metadata: {
+                            title: title + ' - ' + i18n.__('Season') + ' ' + season + ', ' + i18n.__('Episode') + ' ' + episode + ' - ' + name,
+                            showName: title,
+                            season: season,
+                            episode: episode,
+                            episodeName: name,
+                            tvdb_id: data.tvdb_id,
+                            episode_id: episode_id,
+                            imdb_id: that.model.get('imdb_id'),
+                            backdrop: data.images.fanart,
+                            quality: selected_quality,
+                            color: data.color
+                        },
+                        autoPlayData: {
+                            episodes: episodes,
+                            streamer: 'main',
+                            episodes_data: episodes_data
+                        },
+                        defaultSubtitle: Settings.subtitle_language,
+                        device: App.Device.Collection.selected
+                    };
+                    App.Streamer.start(torrentStart);
+                });
+
                 break;
 
             }
-            App.Streamer.start(torrentStart);
 
+
+        },
+
+
+        getShowEpisode: function (data) {
+            var defer = Q.defer();
+            var unWatchedEpisodes = [];
+            var watchedEpisodes = [];
+            var tvdb_id = data.tvdb_id;
+            var imdb_id = data.imdb_id;
+            var that = this;
+            var episodes = data.episodes;
+            var checkedEpisodes = [];
+            episodes.forEach(function (episode, index, array) {
+                var value = {
+                    tvdb_id: tvdb_id,
+                    imdb_id: imdb_id,
+                    episode_id: episode.tvdb_id,
+                    season: episode.season,
+                    episode: episode.episode
+                };
+                App.Database.watched('check', 'show', value)
+                    .then(function (watched) {
+                        if (!watched) {
+                            unWatchedEpisodes.push({
+                                id: parseInt(episode.season) * 100 + parseInt(episode.episode),
+                                season: episode.season,
+                                episode: episode.episode
+                            });
+                        } else {
+                            watchedEpisodes.push({
+                                id: parseInt(episode.season) * 100 + parseInt(episode.episode),
+                                season: episode.season,
+                                episode: episode.episode
+                            });
+                        }
+                        return true;
+                    }).then(function () {
+                        checkedEpisodes.push({
+                            id: parseInt(episode.season) * 100 + parseInt(episode.episode),
+                            season: episode.season,
+                            episode: episode.episode,
+                            tvdb_id: episode.tvdb_id,
+                            torrents: episode.torrents,
+                            title: episode.title
+                        });
+                        if (checkedEpisodes.length === episodes.length) {
+                            that.selectNextEpisode(checkedEpisodes, unWatchedEpisodes, watchedEpisodes).then(function (rdata) {
+
+                                defer.resolve(rdata);
+
+                            });
+
+                        }
+                    });
+            });
+            return defer.promise;
+        },
+
+
+        selectNextEpisode: function (episodes, unWatchedEpisodes, watchedEpisodes) {
+            var defer = Q.defer();
+            episodes = _.sortBy(episodes, 'id');
+            unWatchedEpisodes = _.sortBy(unWatchedEpisodes, 'id');
+            var select;
+            switch (Settings.tv_detail_jump_to) {
+            case 'info':
+                select = false;
+                break;
+            case 'next':
+                if (watchedEpisodes.length === 0) {
+                    select = false;
+                } else {
+                    if (unWatchedEpisodes.length > 0) {
+                        select = _.last(unWatchedEpisodes);
+                    } else {
+                        select = _.last(episodes);
+                    }
+                }
+                break;
+            case 'firstUnwatched':
+                if (watchedEpisodes.length === 0) {
+                    select = false;
+                } else {
+                    if (unWatchedEpisodes.length > 0) {
+                        select = _.first(unWatchedEpisodes);
+                    } else {
+                        select = _.last(episodes);
+                    }
+                }
+                break;
+            case 'first':
+                select = _.first(episodes);
+                break;
+            case 'last':
+                select = _.last(episodes);
+                break;
+            }
+
+            if (select.season) {
+                this.setEpisodeStream(select.episode, select.season, episodes).then(function (data) {
+                    defer.resolve(data);
+                });
+            } else {
+                console.log(episodes);
+                console.log('start from first!')
+            }
+            return defer.promise;
+
+        },
+
+        setEpisodeStream: function (episode, season, episodes) {
+            var episodeData = _.findWhere(episodes, {
+                season: season,
+                episode: episode
+            });
+            var torrents = episodeData.torrents;
+            var quality = null;
+            var fallbackOrder = ['720p', '480p', '1080p'];
+            if (torrents[Settings.shows_default_quality]) {
+                quality = Settings.shows_default_quality;
+            } else {
+                $.each(fallbackOrder, function (index, value) {
+                    if (quality == null && torrents[value]) {
+                        quality = value;
+                    }
+                });
+            }
+            var Stream = {
+                torrent: torrents[quality].url,
+                quality: quality,
+                title: episodeData.title,
+                tvdb_id: episodeData.tvdb_id,
+                season: season,
+                episode: episode
+            };
+            return Q(Stream);
         },
 
 
@@ -263,7 +461,6 @@
                             data.color = color.color;
                             data.textcolor = color.textcolor;
                             data.seasonImages = images;
-                            console.log(data);
                             $('.spinner').hide();
                             App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
                         });

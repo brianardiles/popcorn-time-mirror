@@ -15,7 +15,7 @@
         events: {
             'change #filter-sorter': 'sortBy',
             'change #filter-genre': 'changeGenre',
-            'change #filter-type': 'changeType'
+            'change #filter-type': 'changeType',
             'change #filterbar-search': 'search'
 
         },

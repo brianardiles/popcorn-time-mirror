@@ -7,6 +7,8 @@
         tagName: 'section',
 
         ui: {
+            title: '.title',
+            episodeInfo: '.episode-info',
             status: '.status',
             stats: '.stats',
             backdrop: '.bg-backdrop',
@@ -31,6 +33,9 @@
                 this.player = this.model.get('player').get('id');
             } else {
                 this.player = 'local';
+            }
+            if (this.model.attributes.data.type !== ('show' || 'movie')) {
+                this.waitForSelection();
             }
         },
 
@@ -299,6 +304,121 @@
         },
         onDestroy: function () {
             this.loadingStopped = true;
+        },
+        waitForSelection: function () {
+            var that = this;
+            var watchFileSelected = function () {
+                require('watchjs').unwatch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
+                that.model.attributes.data.metadata.title = that.removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
+                that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
+            };
+            require('watchjs').watch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
+        },
+        augmentDropModel: function (data) {
+            var metadata = data.metadata;
+            var that = this;
+            console.log(metadata);
+            var title = $.trim(metadata.title.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
+
+            var se_re = title.match(/(.*)S(\d\d)E(\d\d)/i); // regex try (ex: title.s01e01)
+            if (se_re === null) { // if fails
+                se_re = title.match(/(.*)(\d\d\d\d)+\W/i); // try another regex (ex: title.0101)
+                if (se_re !== null) {
+                    se_re[3] = se_re[2].substr(2, 4);
+                    se_re[2] = se_re[2].substr(0, 2);
+                } else {
+                    se_re = title.match(/(.*)(\d\d\d)+\W/i); // try a last one (ex: title.101)
+                    if (se_re !== null) {
+                        se_re[3] = se_re[2].substr(1, 2);
+                        se_re[2] = se_re[2].substr(0, 1);
+                    }
+                }
+            }
+            if (se_re != null) {
+                // function in case it's a movie (or not, it also handles errors)
+                var tryMovie = function (moviename) {
+                    App.Trakt.search(moviename, 'movie')
+                        .then(function (summary) {
+                            if (!summary || summary.length === 0) {
+                                win.warn('Unable to fetch data from Trakt.tv');
+                            } else {
+                                var data = summary[0].movie;
+                                that.model.attributes.data.type = 'movie';
+                                that.model.attributes.data.metadata.title = data.title;
+                                that.model.attributes.data.metadata.cover = data.images.poster;
+                                that.model.attributes.data.metadata.imdb_id = data.imdb_id;
+                                that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
+                                that.ui.title.text(data.title);
+
+                                that.loadBackground(that.model.attributes.data.metadata.backdrop);
+                            }
+
+                        }).catch(function (err) {
+                            // Ok then, it's not a tv show, it's not a movie. I give up, deal with it.
+                            win.error('An error occured while trying to get subtitles', err);
+                        });
+                };
+
+                // we're going to start by assuming it's a TV Series
+                var tvshowname = $.trim(se_re[1].replace(/[\.]/g, ' '))
+                    .replace(/^\[.*\]/, '') // starts with brackets
+                    .replace(/[^\w ]+/g, '') // remove brackets
+                    .replace(/ +/g, '-') // has spaces
+                    .replace(/_/g, '-') // has '_'
+                    .replace(/\-$/, '') // ends with '-'
+                    .replace(/^\./, '') // starts with '.'
+                    .replace(/^\-/, ''); // starts with '-'
+                App.Trakt.shows.summary(tvshowname)
+                    .then(function (summary) {
+                        if (!summary) {
+                            win.warn('Unable to fetch data from Trakt.tv');
+                        } else {
+                            that.loadbackground(summary.images.fanart.full);
+                            that.model.attributes.data.metadata.showName = summary.title;
+                            App.Trakt.episodes.summary(tvshowname, se_re[2], se_re[3])
+                                .then(function (episodeSummary) {
+                                    if (!episodeSummary) {
+                                        win.warn('Unable to fetch data from Trakt.tv');
+                                    } else {
+                                        var data = episodeSummary;
+
+                                        that.model.attributes.data.type = 'show';
+                                        that.model.attributes.data.metadata.title = summary.title + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
+                                        that.model.attributes.data.metadata.season = data.season.toString();
+                                        that.model.attributes.data.metadata.episode = data.number.toString();
+                                        that.model.attributes.data.metadata.tvdb_id = summary.ids.tvdb;
+                                        that.model.attributes.data.metadata.episode_id = data.ids.tvdb;
+                                        that.model.attributes.data.metadata.imdb_id = summary.ids.imdb;
+                                        that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
+
+                                        that.ui.title.text(summary.title);
+                                        var episode = 'S' + that.formatTwoDigit(data.season) + 'E' + that.formatTwoDigit(data.number) + ' ' + data.title;
+                                        that.ui.episodeInfo.text(episode);
+
+                                        that.loadBackground(data.images.screenshot.full, summary.images.fanart.full);
+
+                                        that.getSubtitles();
+                                    }
+                                }).catch(function (err) {
+                                    tryMovie(tvshowname);
+                                });
+                        }
+
+                    }).catch(function (err) {
+                        tryMovie(tvshowname);
+                    });
+            }
+        },
+        formatTwoDigit: function (n) {
+            return n > 9 ? '' + n : '0' + n;
+        },
+        removeExtension: function (filename) {
+            var lastDotPosition = filename.lastIndexOf('.');
+            if (lastDotPosition === -1) {
+                return filename;
+            } else {
+                return filename.substr(0, lastDotPosition);
+            }
         }
 
     });

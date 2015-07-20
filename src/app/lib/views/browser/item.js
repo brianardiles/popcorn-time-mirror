@@ -29,7 +29,7 @@
             'click .actions-watched': 'toggleWatched',
             'click img': 'showDetail',
             'mouseover': 'hoverItem',
-            'click #play-action': 'play'
+            'click #play-action': 'clickplay'
         },
 
         initialize: function () {
@@ -102,10 +102,8 @@
 
         hoverItem: function () {
             var that = this;
-            console.log(this.model)
             if (!this.backgroundset) {
                 this.getColor(true).then(function (color) {
-                    console.log(color)
                     that.ui.infowrapper.css('background', color.color);
                     that.backgroundset = true;
                 });
@@ -132,9 +130,19 @@
 
         },
 
-
-        play: function (e) {
+        clickplay: function (e) {
             e.preventDefault();
+            if (this.model.get('type') === 'movie') {
+                var that = this;
+                _.delay(function () {
+                    _.defer(_.bind(that.play, that));
+                }, 300);
+            } else {
+                _.defer(_.bind(this.play, this));
+            }
+        },
+        play: function () {
+
             var provider = App.Providers.get(this.model.get('provider'));
 
             var type = this.model.get('type');

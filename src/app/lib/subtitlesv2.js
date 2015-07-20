@@ -10,11 +10,10 @@
         },
 
         get: function (data) {
-            var defer = Q.defer();
             var defaultSubtitle = data.defaultSubtitle;
             var type = data.type;
             var that = this;
-
+            console.log(data);
             switch (type) {
             case 'show':
                 this.fetchTVSubtitles({
@@ -23,7 +22,9 @@
                     episode: data.episode
                 }).then(function (subs) {
                     if (subs && subs[defaultSubtitle]) {
-                        that.setupLocalSubs(defaultSubtitle, subs).then(function () {
+                        that.initsubs(subs, defaultSubtitle).then(function (info) {
+                            console.log(info);
+                            App.vent.trigger('subtitlev2:done', info);
 
                         });
                     }
@@ -31,12 +32,12 @@
                 });
                 break;
             case 'movie':
-                this.setupLocalSubs(data.defaultSubtitle, data.subtitles).then(function () {
-
+                this.initsubs(data.subtitles, defaultSubtitle).then(function (info) {
+                    console.log(info);
+                    App.vent.trigger('subtitlev2:done', info);
                 });
                 break;
             }
-            return defer.promise;
         },
 
         fetchTVSubtitles: function (data) {
@@ -49,7 +50,6 @@
 
             subtitleProvider.fetch(data).then(function (subs) {
                 if (subs && Object.keys(subs).length > 0) {
-                    var subtitles = subs;
                     defer.resolve(subs);
                     win.info(Object.keys(subs).length + ' subtitles found');
                 } else {
@@ -62,6 +62,35 @@
             });
             return defer.promise;
         },
+
+        initsubs: function (subtitles, defaultSubtitle) {
+            var that = this;
+            var defer = Q.defer();
+            App.vent.on('subtitle:downloaded', function (sub) {
+                if (sub) {
+                    App.vent.trigger('subtitle:convert', {
+                        path: sub,
+                        language: defaultSubtitle
+                    }, function (err, res) {
+                        if (err) {
+                            defer.resolve(false);
+                            win.error('error converting subtitles', err);
+                        } else {
+                            defer.resolve(sub);
+                            App.Subtitles.Server.start(res);
+                        }
+
+                    });
+                } else {
+                    defer.resolve(false);
+                }
+            });
+            App.vent.trigger('subtitle:download', {
+                url: subtitles[defaultSubtitle],
+                path: path.join(App.Streamer.streamDir, App.Streamer.client.torrent.files[App.Streamer.fileindex].name)
+            });
+            return defer.promise;
+        }
 
     });
 

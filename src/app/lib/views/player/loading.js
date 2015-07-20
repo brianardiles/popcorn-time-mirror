@@ -28,7 +28,7 @@
             this.loadingStopped = false;
             this.SubtitlesRetrieved = false;
             this.WaitingForSubs = false;
-            //this.getSubtitles();
+            this.setupSubs();
             if (this.model.get('player').get('id')) {
                 this.player = this.model.get('player').get('id');
             } else {
@@ -44,6 +44,32 @@
                 this.getEpisodeDetails();
             } else {
                 this.stateUpdate();
+            }
+        },
+
+
+        setupSubs: function () {
+
+            var defaultSubtitle = this.model.get('defaultSubtitle');
+            var subtitles = this.model.get('subtitles');
+
+            var subrequest = {
+                type: this.model.attributes.data.type,
+                defaultSubtitle: this.model.attributes.data.defaultSubtitle,
+                subtitles: this.model.attributes.data.subtitles,
+                imdbid: this.model.attributes.data.metadata.imdb_id,
+                season: this.model.attributes.data.metadata.season,
+                episode: this.model.attributes.data.metadata.episode
+            };
+
+            if (!App.Streamer.streamDir) {
+                var watchstreamDir = function () {
+                    require('watchjs').unwatch(App.Streamer, 'streamDir', watchstreamDir);
+                    App.Subtitlesv2.get(subrequest);
+                };
+                require('watchjs').watch(App.Streamer, 'streamDir', watchstreamDir);
+            } else {
+                App.Subtitlesv2.get(subrequest);
             }
         },
 

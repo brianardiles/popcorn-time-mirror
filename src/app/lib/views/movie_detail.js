@@ -163,8 +163,8 @@
                     color: this.model.get('color'),
                     quality: this.ui.quality.get(0).selected.value
                 },
-                subtitles: this.ui.subtitles.get(0).selected.value,
-                defaultSubtitle: this.subtitle_selected,
+                subtitles: this.model.get('subtitle'),
+                defaultSubtitle: this.ui.subtitles.get(0).selected.value,
                 type: 'movie',
                 device: App.Device.Collection.selected
             };

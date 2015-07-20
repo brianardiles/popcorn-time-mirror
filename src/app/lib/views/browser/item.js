@@ -98,11 +98,13 @@
 
         hoverItem: function () {
             var that = this;
-            this.getColor(true).then(function (color) {
-                console.log(color)
-                that.ui.infowrapper.css('background', color.color);
-            });
-            console.log('hovered!');
+            if (!this.backgroundset) {
+                this.getColor(true).then(function (color) {
+                    console.log(color)
+                    that.ui.infowrapper.css('background', color.color);
+                    that.backgroundset = true;
+                });
+            }
 
         },
         loadCover: function () {

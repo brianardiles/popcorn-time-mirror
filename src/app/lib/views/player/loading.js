@@ -349,7 +349,7 @@
                                 that.model.attributes.data.metadata.imdb_id = data.imdb_id;
                                 that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
                                 that.ui.title.text(data.title);
-                                that.loadbackground(data.images.fanart.ful);
+                                that.loadbackground(data.images.fanart.full);
                             }
 
                         }).catch(function (err) {

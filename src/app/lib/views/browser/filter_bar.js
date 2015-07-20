@@ -9,22 +9,22 @@
         },
 
         ui: {
+            searchInput: '#filterbar-input',
+            sorterValue: '.sorters .value',
             typeValue: '.types .value',
             genreValue: '.genres  .value'
         },
         events: {
+            'submit #filterbar-search': 'search',
             'change #filter-sorter': 'sortBy',
             'change #filter-genre': 'changeGenre',
-            'change #filter-type': 'changeType',
-            'change #filterbar-search': 'search'
-
+            'change #filter-type': 'changeType'
         },
 
         initialize: function () {
 
 
         },
-
         setactive: function (set) {
             $('.sorters .dropdown-menu a:nth(0)').addClass('active');
             $('.genres .dropdown-menu a:nth(0)').addClass('active');
@@ -84,22 +84,18 @@
         },
 
         search: function (e) {
+            App.vent.trigger('about:close');
+            App.vent.trigger('torrentCollection:close');
             e.preventDefault();
 
-            var that = this;
-            clearTimeout(search);
-            var search;
-            search = setTimeout(function () {
-                App.vent.trigger('about:close');
-                App.vent.trigger('torrentCollection:close');
-                var searchvalue = $(e.target).val();
-                that.model.set({
-                    keywords: searchvalue,
-                    genre: ''
-                });
-            }, 500);
-        },
+            var searchvalue = this.ui.searchInput.val();
+            this.model.set({
+                keywords: this.ui.searchInput.val(),
+                genre: ''
+            });
 
+
+        },
 
         sortBy: function (e) {
             App.vent.trigger('about:close');

@@ -20,6 +20,7 @@
         ui: {
             cover: 'img',
             infowrapper: '.info',
+            infofab: '.info paper-fab',
             bookmarkIcon: '.actions-favorites',
             watchedIcon: '.actions-watched'
         },
@@ -105,6 +106,7 @@
             if (!this.backgroundset) {
                 this.getColor(true).then(function (color) {
                     that.ui.infowrapper.css('background', color.color);
+                    that.ui.infofab.css('background', color.fab);
                     that.backgroundset = true;
                 });
             }
@@ -505,18 +507,22 @@
                 var swatches = vibrant.swatches();
                 var color = null;
                 var textColor = null;
+                var fabColor = null;
 
                 if (swatches['Vibrant']) {
                     if (swatches['Vibrant'].getPopulation() < 20) {
                         color = swatches['Muted'].getHex();
                         textColor = swatches['Muted'].getTitleTextColor();
+                        fabColor = swatches['DarkVibrant'].getHex();
                     } else {
                         color = swatches['Vibrant'].getHex();
                         textColor = swatches['Vibrant'].getTitleTextColor();
+                        fabColor = swatches['DarkMuted'].getHex();
                     }
                 } else if (swatches['Muted']) {
                     color = swatches['Muted'].getHex();
                     textColor = swatches['Muted'].getTitleTextColor();
+                    fabColor = swatches['DarkVibrant'].getHex();
                 } else {
                     defer.resolve(null);
                 }
@@ -528,7 +534,8 @@
                 if (color && textColor) {
                     defer.resolve({
                         color: color,
-                        textcolor: textColor
+                        textcolor: textColor,
+                        fab: fabColor
                     });
                 } else {
                     defer.resolve(null);

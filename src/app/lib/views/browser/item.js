@@ -81,10 +81,11 @@
                 }
                 this.model.set('title', titleArray.join(' '));
             }
-
-            var rating = this.model.get('rating').percentage / 10;
-            rating = Math.round(rating * 2) / 2;
-            this.model.set('rating', rating);
+            if (itemtype !== 'movie') {
+                var rating = this.model.get('rating').percentage / 10;
+                rating = Math.round(rating * 2) / 2;
+                this.model.set('rating', rating);
+            }
         },
 
         onShow: function () {
@@ -98,6 +99,7 @@
 
         hoverItem: function () {
             var that = this;
+            console.log(this.model)
             if (!this.backgroundset) {
                 this.getColor(true).then(function (color) {
                     console.log(color)

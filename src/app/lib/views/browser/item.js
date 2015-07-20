@@ -142,9 +142,7 @@
             }
         },
         play: function () {
-
             var provider = App.Providers.get(this.model.get('provider'));
-
             var type = this.model.get('type');
             switch (type) {
             case 'bookmarkedmovie':
@@ -157,9 +155,7 @@
                     provider: this.model.get('provider'),
                     watched: this.model.get('watched')
                 });
-
                 break;
-
             case 'bookmarkedshow':
                 type = 'show';
                 /* falls through */
@@ -182,11 +178,8 @@
 
                     });
                 break;
-
             }
-
         },
-
 
         startStreaming: function (data) {
             var type = this.model.get('type');

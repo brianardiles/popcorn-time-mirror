@@ -247,7 +247,7 @@
                     that.stateUpdate();
                 }
             }
-            if (this.SubtitlesRetrieved || this.model.attributes.data.defaultSubtitle === 'none') {
+            if (this.SubtitlesRetrieved || this.model.attributes.data.defaultSubtitle === 'none' || this.player === 'local') {
                 begin();
             } else {
                 win.info('Subtitles Not Yet Loaded, Waiting for them');

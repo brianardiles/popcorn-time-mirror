@@ -490,10 +490,6 @@
 
         getColor: function (fast) {
 
-            if (this.model.get('color')) {
-                return Q(this.model.get('color'))
-            };
-
             var defer = Q.defer();
             var that = this;
             var img = document.createElement('img');
@@ -530,10 +526,6 @@
                 }
 
                 if (color && textColor) {
-                    that.model.set('color', {
-                        color: color,
-                        textcolor: textColor
-                    });
                     defer.resolve({
                         color: color,
                         textcolor: textColor

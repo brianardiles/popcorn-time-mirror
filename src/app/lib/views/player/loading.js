@@ -349,13 +349,11 @@
                                 that.model.attributes.data.metadata.imdb_id = data.imdb_id;
                                 that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
                                 that.ui.title.text(data.title);
-
-                                that.loadBackground(that.model.attributes.data.metadata.backdrop);
+                                that.loadbackground(data.images.fanart.ful);
                             }
 
                         }).catch(function (err) {
                             // Ok then, it's not a tv show, it's not a movie. I give up, deal with it.
-                            win.error('An error occured while trying to get subtitles', err);
                         });
                 };
 
@@ -378,6 +376,7 @@
                             App.Trakt.episodes.summary(tvshowname, se_re[2], se_re[3])
                                 .then(function (episodeSummary) {
                                     if (!episodeSummary) {
+                                        that.loadbackground(summary.images.fanart.full);
                                         win.warn('Unable to fetch data from Trakt.tv');
                                     } else {
                                         var data = episodeSummary;
@@ -395,7 +394,7 @@
                                         var episode = 'S' + that.formatTwoDigit(data.season) + 'E' + that.formatTwoDigit(data.number) + ' ' + data.title;
                                         that.ui.episodeInfo.text(episode);
 
-                                        that.loadBackground(data.images.screenshot.full, summary.images.fanart.full);
+                                        that.loadbackground(data.images.screenshot.full);
 
                                         that.getSubtitles();
                                     }

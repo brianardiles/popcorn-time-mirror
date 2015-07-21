@@ -733,7 +733,9 @@
             var metadata = {
                 title: this.model.attributes.metadata.showName + ' - ' + i18n.__('Season') + ' ' + nextEpisodeData.season + ', ' + i18n.__('Episode') + ' ' + nextEpisodeData.episode + ' - ' + nextEpisodeData.title,
                 showName: this.model.attributes.metadata.showName,
+                episodeName: nextEpisodeData.title,
                 season: nextEpisodeData.season,
+                color: this.model.attributes.metadata.color,
                 episode: nextEpisodeData.episode,
                 cover: this.model.attributes.metadata.cover,
                 tvdb_id: this.model.attributes.metadata.tvdb_id,

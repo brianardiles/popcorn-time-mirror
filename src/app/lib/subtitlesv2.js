@@ -41,7 +41,6 @@
                 break;
             case 'movie':
                 this.initsubs(data.subtitles, defaultSubtitle).then(function (info) {
-                    console.log(info);
                     App.vent.trigger('subtitlev2:done', info);
                 });
                 break;

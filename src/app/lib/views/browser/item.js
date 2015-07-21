@@ -118,13 +118,15 @@
             var that = this;
             coverCache.onload = function () {
                 try {
+                    that.model.set('image', App.Trakt.resizeImage(that.model.get('image'), 'medium'));
                     that.ui.cover.addClass('fadein');
                 } catch (e) {}
                 coverCache = null;
             };
             coverCache.onerror = function () {
                 try {
-                    that.ui.cover.attr('src', 'url("images/posterholder.png")').addClass('fadein');
+                    that.model.set('image', 'images/posterholder.png');
+                    that.ui.cover.attr('src', 'images/posterholder.png').addClass('fadein');
                 } catch (e) {}
                 coverCache = null;
             };
@@ -495,7 +497,7 @@
             var defer = Q.defer();
             var that = this;
             var img = document.createElement('img');
-            img.setAttribute('src', App.Trakt.resizeImage(this.model.get('image'), 'medium'));
+            img.setAttribute('src', this.model.get('image'));
             img.addEventListener('load', function () {
 
                 if (!fast) {

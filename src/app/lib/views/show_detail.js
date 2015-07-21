@@ -54,16 +54,23 @@
             var images = this.model.get('images');
             images.fanart = App.Trakt.resizeImage(images.fanart, 'original');
             images.poster = App.Trakt.resizeImage(images.poster, 'medium');
+
             this.isShowWatched();
+
+            this.listenTo(App.vent, 'watched', this.onWatched);
 
             var status = this.model.get('status');
             if (status === 'returning series' || status === 'in production') {
                 this.model.set('status', 'continuing')
             }
+
+        },
+        onRender: function () {
+
         },
 
         onShow: function () {
-            App.vent.on('watched', _.bind(this.onWatched, this));
+
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark');
             }
@@ -71,6 +78,9 @@
             this.playerQualityChooseUI();
         },
 
+        onDestroy: function () {
+            console.log('show detail closed')
+        },
         startStreaming: function (e) {
             var that = this;
             var title = this.model.get('title');

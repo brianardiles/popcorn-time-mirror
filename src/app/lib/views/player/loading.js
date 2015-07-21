@@ -25,18 +25,33 @@
         },
 
         initialize: function () {
+            var that = this;
+
             this.loadingStopped = false;
             this.SubtitlesRetrieved = false;
-            this.WaitingForSubs = false;
-            this.setupSubs();
+
             if (this.model.get('player').get('id')) {
                 this.player = this.model.get('player').get('id');
             } else {
                 this.player = 'local';
             }
-            if (this.model.attributes.data.type !== ('show' || 'movie')) {
+            var type = this.model.attributes.data.type;
+            if (type !== ('show' || 'movie')) {
                 this.waitForSelection();
             }
+
+            App.vent.on('subtitlev2:done', function (info) {
+                switch (type) {
+                case 'show':
+                    that.model.attributes.data.subtitles = info.subs;
+                    that.extsubs = info.extpath;
+                    break;
+                case 'movie':
+                    that.extsubs = info;
+                    break;
+                }
+            });
+            this.setupSubs();
         },
 
         onShow: function () {
@@ -49,7 +64,6 @@
 
 
         setupSubs: function () {
-
             var defaultSubtitle = this.model.get('defaultSubtitle');
             var subtitles = this.model.get('subtitles');
 

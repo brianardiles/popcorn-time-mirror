@@ -23,12 +23,14 @@
                 }).then(function (subs) {
                     if (subs && subs[defaultSubtitle]) {
                         that.initsubs(subs, defaultSubtitle).then(function (info) {
+                            info = {
+                                subs: subs,
+                                extpath: info
+                            };
                             console.log(info);
                             App.vent.trigger('subtitlev2:done', info);
-
                         });
                     }
-                    defer.resolve(false);
                 });
                 break;
             case 'movie':
@@ -79,7 +81,6 @@
                             defer.resolve(sub);
                             App.Subtitles.Server.start(res);
                         }
-
                     });
                 } else {
                     defer.resolve(false);

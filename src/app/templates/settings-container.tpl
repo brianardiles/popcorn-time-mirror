@@ -1,3 +1,28 @@
+<%
+   
+                       var langs = "";
+                        for(var key in App.Localization.allTranslations) {
+                                key = App.Localization.allTranslations[key];
+                                if (App.Localization.langcodes[key] !== undefined) {
+                                langs += "<paper-item "+(Settings.language == key? "selected='selected'":"")+" value='"+key+"'>"+
+                                            App.Localization.langcodes[key].nativeName+"</paper-item>";
+                            }
+                        }
+
+
+  var sub_langs = "<paper-item "+(Settings.subtitle_language == "none"? "selected='selected'":"")+" value='none'>" +
+                                            i18n.__("Disabled") + "</paper-item>";
+
+                        for(var key in App.Localization.langcodes) {
+                            if (App.Localization.langcodes[key].subtitle !== undefined && App.Localization.langcodes[key].subtitle == true) {
+                                sub_langs += "<paper-item "+(Settings.subtitle_language == key? "selected='selected'":"")+" value='"+key+"'>"+
+                                                App.Localization.langcodes[key].nativeName+"</paper-item>";
+                            }
+                        }
+
+%>
+
+
 
   <paper-icon-button class="back" icon="arrow-back"></paper-icon-button>
         <div class="title">Settings</div>
@@ -7,13 +32,10 @@
             <div class="content">
                 <div class="content-row">
                     <p>Defualt Language:</p>
-                    <paper-dropdown-menu class="settings-dropdown" label="English">
+                    <paper-dropdown-menu class="settings-dropdown" label="<%=App.Localization.langcodes[Settings.language].nativeName%>">
                         <paper-dropdown class="dropdown">
                             <core-menu class="menu">
-                                <paper-item>Croissant</paper-item>
-                                <paper-item>Donut</paper-item>
-                                <paper-item>Financier</paper-item>
-                                <paper-item>Madeleine</paper-item>
+                            <%=langs%>
                             </core-menu>
                         </paper-dropdown>
                     </paper-dropdown-menu>
@@ -23,10 +45,7 @@
                     <paper-dropdown-menu class="settings-dropdown" label="Movies">
                         <paper-dropdown class="dropdown">
                             <core-menu class="menu">
-                                <paper-item>Croissant</paper-item>
-                                <paper-item>Donut</paper-item>
-                                <paper-item>Financier</paper-item>
-                                <paper-item>Madeleine</paper-item>
+                            
                             </core-menu>
                         </paper-dropdown>
                     </paper-dropdown-menu>
@@ -61,13 +80,10 @@
             <div class="content">
               <div class="content-row">
                   <p>Default Subtitle:</p>
-                  <paper-dropdown-menu class="settings-dropdown" label="English">
+                  <paper-dropdown-menu class="settings-dropdown" label="<%=Settings.subtitle_language%>">
                       <paper-dropdown class="dropdown">
                           <core-menu class="menu">
-                              <paper-item>Croissant</paper-item>
-                              <paper-item>Donut</paper-item>
-                              <paper-item>Financier</paper-item>
-                              <paper-item>Madeleine</paper-item>
+                       <%=sub_langs%>
                           </core-menu>
                       </paper-dropdown>
                   </paper-dropdown-menu>

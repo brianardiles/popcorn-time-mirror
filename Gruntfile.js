@@ -49,12 +49,12 @@ module.exports = function (grunt) {
         'bower_clean',
         'injectgit'
     ]);
-    /*
-        // Called from the npm hook
-        grunt.registerTask('setup', [
-            'githooks'
-        ]);
-    */
+
+    // Called from the npm hook
+    grunt.registerTask('setup', [
+        //'githooks'
+    ]);
+
     grunt.registerTask('css', [
         'officalcss'
     ]);

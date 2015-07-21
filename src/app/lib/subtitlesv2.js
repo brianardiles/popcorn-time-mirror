@@ -17,19 +17,25 @@
             switch (type) {
             case 'show':
                 this.fetchTVSubtitles({
-                    imdbid: data.imdb_id,
+                    imdbid: data.imdbid,
                     season: data.season,
                     episode: data.episode
                 }).then(function (subs) {
-                    if (subs && subs[defaultSubtitle]) {
-                        that.initsubs(subs, defaultSubtitle).then(function (info) {
-                            info = {
-                                subs: subs,
-                                extpath: info
+                    if (subs) {
+                        if (subs[defaultSubtitle]) {
+                            that.initsubs(subs, defaultSubtitle).then(function (info) {
+                                info = {
+                                    subs: subs,
+                                    extpath: info
+                                };
+                                App.vent.trigger('subtitlev2:done', info);
+                            });
+                        } else {
+                            var info = {
+                                subs: subs
                             };
-                            console.log(info);
                             App.vent.trigger('subtitlev2:done', info);
-                        });
+                        }
                     }
                 });
                 break;

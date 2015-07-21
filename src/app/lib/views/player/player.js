@@ -144,24 +144,8 @@
             this.playing = false;
             this.NextEpisode = false;
             this.inFullscreen = win.isFullscreen;
-            var that = this;
-            console.log(this.model.get('WaitingForSubs'))
-            if (this.model.get('WaitingForSubs')) {
-                App.vent.on('subtitle:downloaded', function (sub) {
-                    if (sub) {
-                        App.vent.trigger('subtitle:convert', {
-                            path: sub,
-                            language: that.model.get('defaultSubtitle')
-                        }, function (err, res) {
-                            if (err) {
-                                win.error('error converting subtitles', err);
-                            } else {
-                                App.Subtitles.Server.start(res);
-                            }
-                        });
-                    }
-                });
-            }
+
+
         },
 
 
@@ -446,12 +430,43 @@
                     $('.item-next').show();
                     if (!this.precachestarted) {
                         this.precachestarted = true;
+                        var that = this;
+
+
                         console.log('Preload Streamer Started');
+
+
                         if (this.model.attributes.autoPlayData.streamer === 'preload') {
                             App.PreloadStreamer.start(this.NextEpisode);
+
+                            if (!App.PreloadStreamer.streamDir) {
+                                var watchstreamDir = function () {
+                                    require('watchjs').unwatch(App.PreloadStreamer, 'streamDir', watchstreamDir);
+                                    App.Subtitlesv2.get(that.subrequest);
+                                };
+                                require('watchjs').watch(App.PreloadStreamer, 'streamDir', watchstreamDir);
+                            } else {
+                                App.Subtitlesv2.get(this.subrequest);
+                            }
                         } else {
                             App.Streamer.start(this.NextEpisode, true);
+                            if (!App.Streamer.streamDir) {
+                                var watchstreamDir = function () {
+                                    require('watchjs').unwatch(App.Streamer, 'streamDir', watchstreamDir);
+                                    App.Subtitlesv2.get(that.subrequest);
+                                };
+                                require('watchjs').watch(App.Streamer, 'streamDir', watchstreamDir);
+                            } else {
+                                App.Subtitlesv2.get(this.subrequest);
+                            }
                         }
+
+                        App.vent.on('subtitlev2:done', function (info) {
+                            console.log(info);
+                            that.NextEpisode.subtitles = info.subs;
+                        });
+
+
                         $('.item-next').appendTo('div#video_player');
                         $('.dial').each(function () {
 
@@ -733,18 +748,21 @@
                 metadata: metadata,
                 autoPlayData: autoPlayDataNext,
                 defaultSubtitle: Settings.subtitle_language,
+                subtitles: {},
                 status: this.model.attributes.status,
                 device: App.Device.Collection.selected
             };
             this.NextEpisode = torrentStartNext;
 
-            this.fetchTVSubtitles({
+
+            this.subrequest = {
+                type: 'show',
+                defaultSubtitle: this.model.attributes.defaultSubtitle,
                 imdbid: this.model.attributes.metadata.imdb_id,
                 season: nextEpisodeData.season,
                 episode: nextEpisodeData.episode
-            }).then(function (subs) {
-                that.NextEpisode.subtitles = subs;
-            });
+            };
+
             this.checkAutoPlay();
             this.loadPlayNextUI(metadata);
         },
@@ -810,11 +828,11 @@
                     deferred.resolve(subtitles);
                     win.info(Object.keys(subs).length + ' subtitles found');
                 } else {
-                    deferred.reject({});
+                    deferred.resolve({});
                     win.warn('No subtitles returned');
                 }
             }).catch(function (err) {
-                deferred.reject({});
+                deferred.resolve({});
                 console.log('subtitleProvider.fetch()', err);
             });
             return deferred.promise;
@@ -967,7 +985,7 @@
                         App.vent.trigger('preloadStreamer:stop');
                     }
                     var playerModel = new Backbone.Model(this.NextEpisode);
-
+                    console.log(playerModel);
                     App.vent.trigger('stream:local', playerModel);
                 }
             }

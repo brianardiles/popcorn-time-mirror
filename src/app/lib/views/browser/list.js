@@ -246,10 +246,7 @@
                 App.Trakt.movies.summary(imdb)
                     .then(function (summary) {
                         if (summary) {
-                            $('.list-backdrop').removeClass('fadein');
-                            _.delay(function () {
-                                $('.list-backdrop').css('background-image', 'url(' + summary.images.fanart.full + ')').addClass('fadein');
-                            }, 600);
+                            that.loadbackground(summary.images.fanart.full);
                         } else {
                             win.warn('Unable to fetch data from Trakt.tv');
                         }
@@ -263,11 +260,7 @@
                 App.Trakt.shows.summary(imdb)
                     .then(function (summary) {
                         if (summary) {
-                            $('.list-backdrop').removeClass('fadein');
-                            _.delay(function () {
-                                $('.list-backdrop img').attr('src', summary.images.fanart.full);
-                                $('.list-backdrop').addClass('fadein');
-                            }, 600);
+                            that.loadbackground(summary.images.fanart.full);
                         } else {
                             win.warn('Unable to fetch data from Trakt.tv');
                         }
@@ -281,6 +274,26 @@
             }
 
         },
+
+        loadbackground: function (url) {
+            var that = this;
+            var img = document.createElement('img');
+            img.setAttribute('src', url);
+            img.addEventListener('error', function () {
+                img.remove();
+            })
+            img.addEventListener('load', function () {
+
+                if (this.width >= 1280 && this.height >= 720) {
+                    $('.list-backdrop').removeClass('fadein');
+                    _.delay(function () {
+                        $('.list-backdrop').css('background-image', 'url(' + url + ')').addClass('fadein');
+                    }, 300);
+                }
+                img.remove();
+            });
+        },
+
         onLoading: function () {
 
         },

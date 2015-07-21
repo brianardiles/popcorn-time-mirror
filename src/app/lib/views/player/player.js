@@ -150,6 +150,7 @@
 
 
         onShow: function () {
+            console.log(this.model);
             that = this;
             this.prossessType();
             this.setUI();
@@ -333,7 +334,6 @@
 
                 // Trigger a resize so the subtitles are adjusted
                 $(window).trigger('resize');
-                console.log(that.scrubbing);
                 if (!that.scrubbing) {
                     if (!that.firstplay) {
                         that.ui.pause.hide().dequeue();
@@ -439,6 +439,10 @@
                         if (this.model.attributes.autoPlayData.streamer === 'preload') {
                             App.PreloadStreamer.start(this.NextEpisode);
 
+                            App.vent.on('subtitlev2:done', function (info) {
+                                that.NextEpisode.subtitles = info.subs;
+                            });
+
                             if (!App.PreloadStreamer.streamDir) {
                                 var watchstreamDir = function () {
                                     require('watchjs').unwatch(App.PreloadStreamer, 'streamDir', watchstreamDir);
@@ -460,11 +464,6 @@
                                 App.Subtitlesv2.get(this.subrequest);
                             }
                         }
-
-                        App.vent.on('subtitlev2:done', function (info) {
-                            console.log(info);
-                            that.NextEpisode.subtitles = info.subs;
-                        });
 
 
                         $('.item-next').appendTo('div#video_player');
@@ -953,6 +952,9 @@
                 AdvSettings.set('lastWatchedTime', false); // clear last pos
             }
 
+            var vjsPlayer = document.getElementById('video_player');
+            videojs(vjsPlayer).dispose();
+
             this.ui.pause.dequeue();
             this.ui.play.dequeue();
 
@@ -972,8 +974,7 @@
                 $('.btn-os.fullscreen').removeClass('active');
             }
 
-            var vjsPlayer = document.getElementById('video_player');
-            videojs(vjsPlayer).dispose();
+
             App.vent.trigger('player:close');
             if (this.model.get('type') !== 'trailer') {
                 if (!next) {

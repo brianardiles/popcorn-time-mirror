@@ -109,6 +109,9 @@
          _.each(cast.cast, function(person) {%>
            <div data-id="<%= person.person.ids.imdb || person.person.ids.slug %>" class="people">
                 <div class="person-avatar">
+                <% if(!person.person.images.headshot.thumb){
+                	person.person.images.headshot.thumb = 'images/profile_placeholder.png';
+                } %>
                     <img src="<%= person.person.images.headshot.thumb %>" alt="">
                 </div>
                 <p class="person">

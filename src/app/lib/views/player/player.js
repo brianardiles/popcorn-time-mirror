@@ -144,8 +144,6 @@
             this.playing = false;
             this.NextEpisode = false;
             this.inFullscreen = win.isFullscreen;
-
-
         },
 
 
@@ -250,10 +248,8 @@
 
             $('li:contains("subtitles off")').text(i18n.__('Disabled'));
 
-            $('#header').removeClass('header-shadow').hide();
             // Test to make sure we have title
 
-            $('.filter-bar').show();
             $('#player_drag').show();
 
             App.vent.trigger('player:ready', {});
@@ -931,7 +927,6 @@
             $('#player').unbind('mousewheel', _.bind(this.mouseScroll, this));
 
             this.playing = false;
-            win.info('Player closed');
 
             var type = this.model.get('type');
 
@@ -952,13 +947,41 @@
                 AdvSettings.set('lastWatchedTime', false); // clear last pos
             }
 
-            var vjsPlayer = document.getElementById('video_player');
-            videojs(vjsPlayer).dispose();
+            if (!next) {
+                var vjsPlayer = document.getElementById('video_player');
+                videojs(vjsPlayer).dispose();
+
+                App.vent.trigger('streamer:stop');
+                App.vent.trigger('preloadStreamer:stop');
+                App.vent.trigger('player:close');
+                this.destroy(next);
+            } else {
+                if (this.model.attributes.autoPlayData.streamer === 'preload') {
+                    App.vent.trigger('streamer:stop');
+                } else {
+                    console.log('DESTROYING PRELOAD STREAMER');
+                    App.vent.trigger('preloadStreamer:stop');
+                }
+
+                this.player.pause();
+                this.player.src([{
+                    type: "video/mp4",
+                    src: App.PreloadStreamer.src
+                }]);
+                this.player.load();
+                this.player.play();
+                var playerModel = new Backbone.Model(this.NextEpisode);
+                console.log(playerModel);
+
+                this.model = playerModel;
+                this.setUI();
+
+            }
 
             this.ui.pause.dequeue();
             this.ui.play.dequeue();
 
-            this.destroy(next);
+
         },
 
         onDestroy: function (next) {
@@ -973,25 +996,7 @@
             if (this.inFullscreen && !win.isFullscreen) {
                 $('.btn-os.fullscreen').removeClass('active');
             }
-
-
-            App.vent.trigger('player:close');
-            if (this.model.get('type') !== 'trailer') {
-                if (!next) {
-                    App.vent.trigger('streamer:stop');
-                    App.vent.trigger('preloadStreamer:stop');
-                } else {
-                    if (this.model.attributes.autoPlayData.streamer === 'preload') {
-                        App.vent.trigger('streamer:stop');
-                    } else {
-                        console.log('DESTROYING PRELOAD STREAMER');
-                        App.vent.trigger('preloadStreamer:stop');
-                    }
-                    var playerModel = new Backbone.Model(this.NextEpisode);
-                    console.log(playerModel);
-                    App.vent.trigger('stream:local', playerModel);
-                }
-            }
+            win.info('Player closed');
 
         }
     });

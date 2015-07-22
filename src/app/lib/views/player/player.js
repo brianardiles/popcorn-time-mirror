@@ -434,25 +434,23 @@
                         console.log('Preload Streamer Started');
 
 
-                        if (this.model.attributes.autoPlayData.streamer === 'preload') {
-                            if (App.Streamer.src) {
-                                App.PreloadStreamer.start(this.NextEpisode);
-                            } else {
-                                App.Streamer.start(this.NextEpisode, true);
-                            }
+                        App.vent.on('subtitlev2:done', function (info) {
+                            that.NextEpisode.subtitles = info.subs;
+                        });
 
-                            App.vent.on('subtitlev2:done', function (info) {
-                                that.NextEpisode.subtitles = info.subs;
-                            });
 
+                        if (App.Streamer.src) {
+                            App.PreloadStreamer.start(this.NextEpisode);
                             if (!App.PreloadStreamer.streamDir) {
                                 var watchstreamDir = function () {
                                     require('watchjs').unwatch(App.PreloadStreamer, 'streamDir', watchstreamDir);
                                     App.Subtitlesv2.get(that.subrequest);
+                                    that.initializeLoadingPlayer(App.PreloadStreamer.src);
                                 };
                                 require('watchjs').watch(App.PreloadStreamer, 'streamDir', watchstreamDir);
                             } else {
                                 App.Subtitlesv2.get(this.subrequest);
+                                this.initializeLoadingPlayer(App.PreloadStreamer.src);
                             }
                         } else {
                             App.Streamer.start(this.NextEpisode, true);
@@ -460,10 +458,12 @@
                                 var watchstreamDir = function () {
                                     require('watchjs').unwatch(App.Streamer, 'streamDir', watchstreamDir);
                                     App.Subtitlesv2.get(that.subrequest);
+                                    that.initializeLoadingPlayer(App.Streamer.src);
                                 };
                                 require('watchjs').watch(App.Streamer, 'streamDir', watchstreamDir);
                             } else {
                                 App.Subtitlesv2.get(this.subrequest);
+                                this.initializeLoadingPlayer(App.Streamer.src);
                             }
                         }
 
@@ -543,6 +543,32 @@
             if (this.playing) {
                 this.checkAutoPlayTimer = _.delay(_.bind(this.checkAutoPlay, this), 1000);
             }
+        },
+
+        initializeLoadingPlayer: function (url) {
+            var that = this;
+            this.loadingStopped = false;
+            var loadingPlayer = document.getElementById('loading_player');
+            loadingPlayer.pause();
+
+            loadingPlayer.src = url; // empty source
+            loadingPlayer.muted = true;
+            loadingPlayer.load();
+            loadingPlayer.play();
+            var debugmetachunks = false;
+            loadingPlayer.ontimeupdate = function () {
+                if (that.loadingStopped) {
+                    loadingPlayer.pause();
+                    loadingPlayer.src = ''; // empty source
+                    loadingPlayer.load();
+                    return;
+                }
+                if (loadingPlayer.currentTime > 4) {
+                    loadingPlayer.pause();
+                    loadingPlayer.src = ''; // empty source
+                    loadingPlayer.load();
+                }
+            };
         },
 
 
@@ -964,7 +990,7 @@
                 this.destroy(next);
             } else {
                 $('.item-next').hide();
-
+                this.loadingStopped = true;
                 if (this.model.attributes.autoPlayData.streamer === 'preload') {
                     App.vent.trigger('streamer:stop');
                 } else {
@@ -992,7 +1018,6 @@
                 this.model = playerModel;
                 this.setUI();
 
-
                 this.playing = true;
                 this.autoplayisshown = false;
                 this.NextEpisode = false;
@@ -1009,12 +1034,11 @@
 
         },
 
-        onDestroy: function (next) {
+        onDestroy: function () {
             if (this.model.get('type') === 'trailer') { // XXX Sammuel86 Trailer UI Show FIX/HACK -START
                 $('.trailer_mouse_catch').remove();
             }
             $('#player_drag').hide();
-            $('#header').show();
             if (!this.dontTouchFS && !this.inFullscreen && win.isFullscreen) {
                 win.leaveFullscreen();
             }
@@ -1022,7 +1046,6 @@
                 $('.btn-os.fullscreen').removeClass('active');
             }
             win.info('Player closed');
-
         }
     });
     App.View.Player = Player;

@@ -50,3 +50,5 @@
         <%=subtracks%>
     </video>
 
+    
+    <video controls id="loading_player" width="20%" height="20%" style="display:none" preload="none"></video>

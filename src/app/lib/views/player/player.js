@@ -872,6 +872,7 @@
             $('.playing_next').hide();
             $('.playing_next span').text('');
             this.autoplayisshown = false;
+            this.loadingStopped = true;
             this.NextEpisode = false;
         },
         toggleMouseDebug: function () {
@@ -983,7 +984,7 @@
             if (!next) {
                 var vjsPlayer = document.getElementById('video_player');
                 videojs(vjsPlayer).dispose();
-
+                this.loadingStopped = true;
                 App.vent.trigger('streamer:stop');
                 App.vent.trigger('preloadStreamer:stop');
                 App.vent.trigger('player:close');

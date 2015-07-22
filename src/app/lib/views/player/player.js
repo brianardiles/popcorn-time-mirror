@@ -992,20 +992,18 @@
             } else {
                 $('.item-next').hide();
                 this.loadingStopped = true;
+                var videosrc;
                 if (this.model.attributes.autoPlayData.streamer === 'preload') {
                     App.vent.trigger('streamer:stop');
+                    videosrc = App.PreloadStreamer.src;
                 } else {
                     console.log('DESTROYING PRELOAD STREAMER');
                     App.vent.trigger('preloadStreamer:stop');
+                    videosrc = App.Streamer.src;
                 }
 
                 this.player.pause();
-                var videosrc;
-                if (App.Streamer.src) {
-                    videosrc = App.Streamer.src;
-                } else {
-                    videosrc = App.PreloadStreamer.src;
-                }
+
 
                 this.player.src([{
                     type: "video/mp4",

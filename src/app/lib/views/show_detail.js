@@ -56,10 +56,8 @@
             'w': 'toggleWatched',
             'up': 'previousEpisode',
             'down': 'nextEpisode',
-            'ctrl+up': 'nextSeason',
-            'command+up': 'nextSeason',
-            'ctrl+down': 'previousSeason',
-            'command+down': 'previousSeason',
+            'mod+up': 'nextSeason',
+            'mod+down': 'previousSeason',
             'left': 'previousSeason',
             'right': 'nextSeason',
             'd': 'toggleDevice'

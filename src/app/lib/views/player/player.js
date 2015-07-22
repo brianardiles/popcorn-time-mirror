@@ -144,6 +144,8 @@
             this.playing = false;
             this.NextEpisode = false;
             this.inFullscreen = win.isFullscreen;
+            this.precachestarted = false;
+            this.autoplayisshown = false;
         },
 
 
@@ -964,17 +966,35 @@
                 }
 
                 this.player.pause();
+                var videosrc;
+                if (App.Streamer.src) {
+                    videosrc = App.Streamer.src;
+                } else {
+                    videosrc = App.PreloadStreamer.src;
+                }
+
+
                 this.player.src([{
                     type: "video/mp4",
-                    src: App.PreloadStreamer.src
+                    src: videosrc
                 }]);
+
+
                 this.player.load();
                 this.player.play();
                 var playerModel = new Backbone.Model(this.NextEpisode);
-                console.log(playerModel);
 
                 this.model = playerModel;
                 this.setUI();
+
+                $('.item-next').hide();
+                this.autoplayisshown = false;
+
+                this.precachestarted = false;
+                this.autoplayisshown = false;
+
+                this.progressDoneUI();
+                this.processNext();
 
             }
 

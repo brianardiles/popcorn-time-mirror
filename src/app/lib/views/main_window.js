@@ -53,7 +53,8 @@
                         App.ViewStack.push(view.className);
                     }
                     App.vent.trigger('viewstack:push', view.className);
-                    $(this.el).fadeIn(500);
+                    $(this.el).css('display', 'block');
+                    $(this.el).addClass('viewfadein');
                 });
 
                 /**
@@ -61,7 +62,11 @@
                  * TODO: Find better solution
                  */
                 element.on('destroy', function (view) {
-                    $(this.el).fadeOut(500, function () {
+                    $(this.el).removeClass('viewfadein');
+
+                    var that = this;
+                    _.delay(function () {
+                        $(that.el).css('display', 'none');
                         if (typeof view === 'undefined' && element.currentView !== null) {
                             view = element.currentView;
                         }
@@ -74,7 +79,9 @@
                         if (!App.ViewStack[0]) {
                             App.ViewStack = ['main-browser'];
                         }
-                    });
+                    }, 300)
+
+
                 });
 
             });

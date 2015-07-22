@@ -48,6 +48,7 @@
         keyboardEvents: {
             'esc': 'closeDetails', 
             'backspace': 'closeDetails', 
+            'alt+left': 'closeDetails', 
             'space': 'startStreaming', 
             'enter': 'startStreaming', 
             'q': 'toggleShowQualityKey',

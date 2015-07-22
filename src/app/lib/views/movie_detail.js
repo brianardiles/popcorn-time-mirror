@@ -32,6 +32,7 @@
         keyboardEvents: {
             'esc': 'closeDetails', 
             'backspace': 'closeDetails', 
+            'alt+left': 'closeDetails', 
             'space': 'play', 
             'enter': 'play', 
             'q': 'toggleQualityKey',

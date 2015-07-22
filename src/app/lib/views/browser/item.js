@@ -29,6 +29,7 @@
             'click .actions-favorites': 'toggleFavorite',
             'click .actions-watched': 'toggleWatched',
             'click img': 'showDetail',
+            'click .info': 'showDetail',
             'mouseover': 'hoverItem',
             'click #play-action': 'clickplay'
         },
@@ -136,6 +137,7 @@
 
         clickplay: function (e) {
             e.preventDefault();
+            e.stopPropagation();
             if (this.model.get('type') === 'movie') {
                 var that = this;
                 _.delay(function () {

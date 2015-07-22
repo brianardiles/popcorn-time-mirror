@@ -122,7 +122,7 @@
             var count = 30;
             win.debug('Backup ' + this.count + ' Second timeout started for:', this.model.get('data').metadata.title);
             var backupCountdown = setInterval(function () {
-                if (that.loadingStopped) {
+                if (that.loadingStopped || that.BufferingStarted) {
                     clearInterval(backupCountdown);
                     return;
                 }

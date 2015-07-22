@@ -59,6 +59,8 @@
             'command+up': 'nextSeason',
             'ctrl+down': 'previousSeason',
             'command+down': 'previousSeason',
+            'left': 'previousSeason',
+            'right': 'nextSeason',
             'd': 'toggleDevice'
         },
 

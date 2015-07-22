@@ -963,6 +963,8 @@
                 App.vent.trigger('player:close');
                 this.destroy(next);
             } else {
+                $('.item-next').hide();
+
                 if (this.model.attributes.autoPlayData.streamer === 'preload') {
                     App.vent.trigger('streamer:stop');
                 } else {
@@ -978,12 +980,10 @@
                     videosrc = App.PreloadStreamer.src;
                 }
 
-
                 this.player.src([{
                     type: "video/mp4",
                     src: videosrc
                 }]);
-
 
                 this.player.load();
                 this.player.play();
@@ -992,10 +992,10 @@
                 this.model = playerModel;
                 this.setUI();
 
-                $('.item-next').hide();
+
                 this.playing = true;
                 this.autoplayisshown = false;
-
+                this.NextEpisode = false;
                 this.precachestarted = false;
                 this.autoplayisshown = false;
 

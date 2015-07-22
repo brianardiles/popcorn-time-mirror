@@ -38,7 +38,8 @@
             'f': 'toggleBookmarked',
             'w': 'toggleWatched',
             'd': 'toggleDevice',
-            's': 'toggleSubs'
+            's': 'toggleSubs',
+            't': 'playTrailer'
         },
 
         initialize: function () {

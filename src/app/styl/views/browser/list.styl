@@ -85,7 +85,16 @@ disabled-text-color = rgb(122, 122, 122, 1)
                 margin-top -15px
                 margin-right 3px
                 paper-input
-                    color #fff
+                    color #fff            
+                ::shadow
+                    .unfocused-underline, .focused-underline
+                        background-color #fff
+                    .label-text
+                        color #fff
+                #filterbar-input
+                    &::-webkit-input-placeholder
+                        color #fff
+
         
     .list-backdrop
         position absolute

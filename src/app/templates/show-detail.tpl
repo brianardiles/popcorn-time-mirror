@@ -36,7 +36,7 @@
         </paper-icon-button>
         <div class="seasons-wrapper">
            <paper-tabs class="seasons-container" selected="0" noink="true" scrollable role="tablist" horizontal center layout>
-               <paper-tab data-id="0" data-poster="<%= images.poster %>" role="tab" active class="active"><%= i18n.__( "Show Info") %></paper-tab>
+               <paper-tab data-id="0" data-index="0" data-poster="<%= images.poster %>" role="tab" active class="active"><%= i18n.__( "Show Info") %></paper-tab>
                <% var torrents = {},
                         seasontext,
                         type,

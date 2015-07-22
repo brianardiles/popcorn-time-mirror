@@ -46,7 +46,20 @@
 
 
         keyboardEvents: {
-
+            'esc': 'closeDetails', 
+            'backspace': 'closeDetails', 
+            'space': 'startStreaming', 
+            'enter': 'startStreaming', 
+            'q': 'toggleShowQualityKey',
+            'f': 'toggleBookmarked',
+            'w': 'toggleWatched',
+            'up': 'previousEpisode',
+            'down': 'nextEpisode',
+            'ctrl+up': 'nextSeason',
+            'command+up': 'nextSeason',
+            'ctrl+down': 'previousSeason',
+            'command+down': 'previousSeason',
+            'd': 'toggleDevice'
         },
 
         initialize: function () {
@@ -74,13 +87,14 @@
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark');
             }
-            this.loadbackground();
+            this.loadBackground();
             this.playerQualityChooseUI();
         },
 
         onDestroy: function () {
             console.log('show detail closed')
         },
+
         startStreaming: function (e) {
             var that = this;
             var title = this.model.get('title');
@@ -146,7 +160,7 @@
             App.Streamer.start(torrentStart);
         },
 
-        loadbackground: function () {
+        loadBackground: function () {
             var that = this;
             var background = this.ui.background.data('bgr');
             var bgCache = new Image();
@@ -442,6 +456,16 @@
             console.log('Subtitles Changed', e.originalEvent.detail);
         },
 
+        toggleShowQualityKey: function (e) {
+            var newIndex = parseInt($('#quality-toggle pt-selectable-element[selected=true]').attr('index')) + 1;
+            var newElement = $('#quality-toggle pt-selectable-element[index=' + newIndex + ']');
+            if(newElement.length === 0) {
+                newIndex = 0;
+                newElement = $('#quality-toggle pt-selectable-element[index=' + newIndex + ']');
+            }
+            newElement.click();
+        },
+
         toggleShowQuality: function (e) {
             console.log('Quality Changed', e.originalEvent.detail.label);
             var episodeData = _.findWhere(this.model.get('episodes'), {
@@ -537,6 +561,17 @@
             });
         },
 
+        toggleDevice: function (e) {
+            var newIndex = parseInt($('#device-selector pt-selectable-element[selected=true]').attr('index')) + 1;
+            var newElement = $('#device-selector pt-selectable-element[index=' + newIndex + ']');
+            if(newElement.length === 0) {
+                newIndex = 0;
+                newElement = $('#device-selector pt-selectable-element[index=' + newIndex + ']');
+            }
+            newElement.click();
+            $('#device-selector').get(0).toggle();
+        },
+
         deviceChanged: function (e) {
             console.log('Device Changed', e.originalEvent.detail);
             var player = e.originalEvent.detail.value;
@@ -547,12 +582,78 @@
             }
         },
 
+        nextEpisode: function (e) {
+            var activeElement = $('.episode-container ul li.active');
+            var season = activeElement.data('season');
+            var episode = activeElement.data('episode');
+
+            var nextEpisode = parseInt(episode) + 1;
+
+            var newElement = $('.episode-container ul li[data-season=' + season + '][data-episode=' + nextEpisode + ']');
+            if(newElement.length === 0)
+                return;
+
+            newElement.click();
+            this.ui.episodeContainer.animate({
+                scrollTop: newElement.offset().top - this.ui.episodeContainer.offset().top
+            }, 'fast');
+        },
+
+        previousEpisode: function (e) {
+            var activeElement = $('.episode-container ul li.active');
+            var season = activeElement.data('season');
+            var episode = activeElement.data('episode');
+
+            var previousEpisode = parseInt(episode) - 1;
+
+            var newElement = $('.episode-container ul li[data-season=' + season + '][data-episode=' + previousEpisode + ']');
+            if(newElement.length === 0)
+                return;
+
+            newElement.click();
+            this.ui.episodeContainer.animate({
+                scrollTop: newElement.offset().top - this.ui.episodeContainer.offset().top
+            }, 'fast');
+        },
+
         selectEpisode: function (e, episodeUIid) {
             $('.episode-container ul li').removeClass('active');
             if (!episodeUIid) {
                 $(e.currentTarget).addClass('active');
             } else {
                 $('#episodeTab-' + episodeUIid).click();
+            }
+        },
+
+        nextSeason: function (e) {
+            var index = this.ui.seasonsTabs.prop('selected');
+            if (index === $('.seasons-container').children().length - 1) {
+                return;
+            }
+
+            var nextSeason = parseInt(index + 1);
+            this.ui.seasonsTabs.prop('selected', nextSeason);
+            $('.seasons-container paper-tab[data-index=' + nextSeason + ']').click();
+            
+            if (e.type) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        },
+
+        previousSeason: function (e) {
+            var index = this.ui.seasonsTabs.prop('selected');
+            if (index === 0) {
+                return;
+            }
+
+            var prevSeason = parseInt(index - 1);
+            this.ui.seasonsTabs.prop('selected', prevSeason);
+            $('.seasons-container paper-tab[data-index=' + prevSeason + ']').click();
+
+            if (e.type) {
+                e.preventDefault();
+                e.stopPropagation();
             }
         },
 

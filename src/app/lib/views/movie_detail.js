@@ -16,10 +16,6 @@
             watchedIcon: '.watched-toggle'
         },
 
-        keyboardEvents: {
-
-        },
-
         events: {
             'click .back': 'closeDetails',
             'click .bookmark-toggle': 'toggleBookmarked',
@@ -31,6 +27,18 @@
             'click #play-trailer': 'playTrailer',
             'click #trakt-link': 'openTrakt',
             'click .person': 'openPerson'
+        },
+
+        keyboardEvents: {
+            'esc': 'closeDetails', 
+            'backspace': 'closeDetails', 
+            'space': 'play', 
+            'enter': 'play', 
+            'q': 'toggleQualityKey',
+            'f': 'toggleBookmarked',
+            'w': 'toggleWatched',
+            'd': 'toggleDevice',
+            's': 'toggleSubs'
         },
 
         initialize: function () {
@@ -45,7 +53,7 @@
                 this.ui.watchedIcon.prop('icon', 'visibility');
             }
             this.loadCover();
-            this.loadbackground();
+            this.loadBackground();
         },
 
         closeDetails: function () {
@@ -59,6 +67,17 @@
 
         subtitlesChanged: function (e) {
             console.log('Subtitles Changed', e.originalEvent.detail);
+        },
+
+        toggleDevice: function (e) {
+            var newIndex = parseInt($('#device-selector pt-selectable-element[selected=true]').attr('index')) + 1;
+            var newElement = $('#device-selector pt-selectable-element[index=' + newIndex + ']');
+            if(newElement.length === 0) {
+                newIndex = 0;
+                newElement = $('#device-selector pt-selectable-element[index=' + newIndex + ']');
+            }
+            newElement.click();
+            $('#device-selector').get(0).toggle();
         },
 
         deviceChanged: function (e) {
@@ -103,6 +122,27 @@
             $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
         },
 
+        toggleQualityKey: function (e) {
+            var newIndex = parseInt($('#quality-toggle pt-selectable-element[selected=true]').attr('index')) + 1;
+            var newElement = $('#quality-toggle pt-selectable-element[index=' + newIndex + ']');
+            if(newElement.length === 0) {
+                newIndex = 0;
+                newElement = $('#quality-toggle pt-selectable-element[index=' + newIndex + ']');
+            }
+            newElement.click();
+        },
+
+        toggleSubs: function (e) {
+            var newIndex = parseInt($('#subtitles-selector pt-selectable-element[selected=true]').attr('index')) + 1;
+            var newElement = $('#subtitles-selector pt-selectable-element[index=' + newIndex + ']');
+            if(newElement.length === 0) {
+                newIndex = 0;
+                newElement = $('#subtitles-selector pt-selectable-element[index=' + newIndex + ']');
+            }
+            newElement.click();
+            $("#subtitles-selector").get(0).toggle();
+        },
+
         loadCover: function () {
             var that = this;
             var url = this.ui.poster.prop('src');
@@ -123,7 +163,7 @@
             };
         },
 
-        loadbackground: function (url) {
+        loadBackground: function (url) {
             var that = this;
             var url = this.ui.background.data('bgr');
             var img = document.createElement('img');

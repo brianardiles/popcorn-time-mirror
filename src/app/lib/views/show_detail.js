@@ -239,10 +239,10 @@
         },
 
         toggleWatched: function (e) {
-            var season = $(e.currentTarget).parent().data('season');
-            var episode = $(e.currentTarget).parent().data('episode');
+            var season = $('.episode-container ul li.active').data('season');
+            var episode = $('.episode-container ul li.active').data('episode');
 
-            var episode_id = $(e.currentTarget).parent().data('tvdb');
+            var episode_id = $('.episode-container ul li.active').parent().data('tvdb');
 
             var value = {
                 tvdb_id: this.model.get('tvdb_id'),

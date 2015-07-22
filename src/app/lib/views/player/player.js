@@ -765,6 +765,7 @@
                 season: nextEpisodeData.season,
                 episode: nextEpisodeData.episode
             };
+            console.log(metadata);
 
             this.checkAutoPlay();
             this.loadPlayNextUI(metadata);
@@ -992,12 +993,12 @@
                 this.setUI();
 
                 $('.item-next').hide();
+                this.playing = true;
                 this.autoplayisshown = false;
 
                 this.precachestarted = false;
                 this.autoplayisshown = false;
 
-                this.progressDoneUI();
                 this.processNext();
 
             }

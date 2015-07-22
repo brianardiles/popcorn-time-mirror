@@ -21,7 +21,9 @@
         },
 
         keyboardEvents: {
-
+            'esc': 'cancelStreaming', 
+            'backspace': 'cancelStreaming', 
+            'alt+left': 'cancelStreaming'
         },
 
         initialize: function () {

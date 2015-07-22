@@ -435,7 +435,11 @@
 
 
                         if (this.model.attributes.autoPlayData.streamer === 'preload') {
-                            App.PreloadStreamer.start(this.NextEpisode);
+                            if (App.Streamer.src) {
+                                App.PreloadStreamer.start(this.NextEpisode);
+                            } else {
+                                App.Streamer.start(this.NextEpisode, true);
+                            }
 
                             App.vent.on('subtitlev2:done', function (info) {
                                 that.NextEpisode.subtitles = info.subs;

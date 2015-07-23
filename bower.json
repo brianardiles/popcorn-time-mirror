@@ -38,7 +38,7 @@
         "mousetrap": [
             "tests",
             ".gitignore",
-            "./*!mousetrap.min.js"
+            "**/!(mousetrap.min.js)"
         ],
         "marionette": [
             "**/!(lib)"
@@ -50,6 +50,9 @@
             "**/!(lib)"
         ],
         "bootstrap": [
+            "**/!(dist)"
+        ],
+        "material-design-iconic-font": [
             "**/!(dist)"
         ]
     },

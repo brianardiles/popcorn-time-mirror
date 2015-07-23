@@ -10,30 +10,13 @@ body #splash {
     width: 90vw;
     height: 90vh;
     margin: 0 auto;
-    background: rgba(25, 29, 34, 0.95);
-    border-radius: 5px;
-}
-
-body #splash .bar {
-    background: rgba(25, 29, 34, 0.5);
-    border-bottom: 1px solid rgba(245, 247, 250, 0.3);
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    width: 90vw;
-    height: calc(12vh - 1px);
-}
-
-body #splash .bar p {
-    color: rgba(245, 247, 250, 0.9);
-    font-family: "Open Sans", sans-serif;
-    padding-left: 2vw;
-    line-height: calc(12vh - 1px);
-    font-size: 2.4vw;
+    background: rgba(25, 29, 34, .96);
+    border-radius: 3px;
 }
 
 body #splash .icon {
     position: absolute;
-    margin-top: 10vh;
+    margin-top: 12vh;
     margin-left: 37.5vw;
     width: 15vw;
 }
@@ -43,7 +26,7 @@ body #splash #spinner{
     width: 30vw;
     height: 1vh;
     margin-left: 30vw;
-    margin-top: 60vh;
+    margin-top: 65vh;
 }
 
 body #splash #spinner .spinner,

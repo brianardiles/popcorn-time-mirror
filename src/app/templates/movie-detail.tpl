@@ -58,10 +58,10 @@
                 <%=synopsis %>
             </div>
             <paper-button id="trakt-link" class="meta-btn">
-                <%=i18n.__( "Open Trakt") %>
+                <i class="zmdi zmdi-open-in-new"></i><%=i18n.__( "More Info") %>
             </paper-button>
             <paper-button id="play-trailer" class="meta-btn">
-                <%=i18n.__( "Watch Trailer") %>
+                <i class="zmdi zmdi-play-circle-outline"></i><%=i18n.__( "Watch Trailer") %>
             </paper-button>
             <div class="meta-divider"></div>
 

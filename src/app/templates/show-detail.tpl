@@ -98,7 +98,7 @@
         <div class="meta-synop"><%= synopsis %></div>
 
         <paper-button id="trakt-link" class="meta-btn">
-            <%=i18n.__( "Read More") %>
+            <i class="zmdi zmdi-open-in-new"></i><%=i18n.__( "More Info") %>
         </paper-button>
 
         <div class="meta-divider"></div>

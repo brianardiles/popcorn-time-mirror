@@ -21,6 +21,7 @@
             cover: 'img',
             infowrapper: '.info',
             infofab: '.info paper-fab',
+            infodot: '.info .meta .dot',
             bookmarkIcon: '.actions-favorites',
             watchedIcon: '.actions-watched'
         },
@@ -107,6 +108,8 @@
             if (!this.backgroundset) {
                 this.getColor(true).then(function (color) {
                     that.ui.infowrapper.css('background', color.color);
+                    that.ui.infowrapper.css('color', color.textcolor);
+                    that.ui.infodot.css('background', color.textcolor);
                     that.ui.infofab.css('background', color.fab);
                     that.backgroundset = true;
                 });
@@ -539,7 +542,7 @@
                 }
 
                 if (textColor === '#000' || textColor === '#000000') {
-                    textColor = '#111214';
+                    textColor = 'rgba(20,21,23,.9)';
                 }
 
                 if (color && textColor) {

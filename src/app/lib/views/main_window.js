@@ -62,7 +62,7 @@
                       */
                     _.delay(function () {
                         $(that.el).addClass('viewfadein');
-                    }, 50);
+                    }, 100);
                 });
 
                 /**

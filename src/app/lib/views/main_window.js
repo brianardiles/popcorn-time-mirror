@@ -54,7 +54,15 @@
                     }
                     App.vent.trigger('viewstack:push', view.className);
                     $(this.el).css('display', 'block');
-                    $(this.el).addClass('viewfadein');
+
+                     var that = this;
+                     /*
+                      * Delay till display: block or fade won't work
+                      * Note that this delay has been tested, lower values will result in jumps and not fades between views
+                      */
+                    _.delay(function () {
+                        $(that.el).addClass('viewfadein');
+                    }, 50);
                 });
 
                 /**
@@ -79,9 +87,7 @@
                         if (!App.ViewStack[0]) {
                             App.ViewStack = ['main-browser'];
                         }
-                    }, 300)
-
-
+                    }, 300);
                 });
 
             });

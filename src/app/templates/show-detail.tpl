@@ -25,53 +25,50 @@
 </style>
 
 <div class="bg-backdrop" data-bgr="<%= images.fanart %>"></div>
-<div class="overlay"></div>
 <div class="summary-wrapper">
-    <div class="summary-overlay">
-        <paper-icon-button class="back" icon="arrow-back"></paper-icon-button>
-        <div class="title"><%= title %></div>
-        <paper-icon-button icon="bookmark-outline" class="bookmark-toggle">
-        </paper-icon-button>
-        <paper-icon-button icon="visibility-off" class="watched-toggle">
-        </paper-icon-button>
-        <div class="seasons-wrapper">
-           <paper-tabs class="seasons-container" selected="0" noink="true" scrollable role="tablist" horizontal center layout>
-               <paper-tab data-id="0" data-index="0" data-poster="<%= images.poster %>" role="tab" active class="active"><%= i18n.__( "Show Info") %></paper-tab>
-               <% var torrents = {},
-                        seasontext,
-                        type,
-                        tabindex = 1;
+    <paper-icon-button class="back" icon="arrow-back"></paper-icon-button>
+    <div class="title"><%= title %></div>
+    <paper-icon-button icon="bookmark-outline" class="bookmark-toggle">
+    </paper-icon-button>
+    <paper-icon-button icon="visibility-off" class="watched-toggle">
+    </paper-icon-button>
+    <div class="seasons-wrapper">
+       <paper-tabs class="seasons-container" selected="0" noink="true" scrollable role="tablist" horizontal center layout>
+           <paper-tab data-id="0" data-index="0" data-poster="<%= images.poster %>" role="tab" active class="active"><%= i18n.__( "Show Info") %></paper-tab>
+           <% var torrents = {},
+                    seasontext,
+                    type,
+                    tabindex = 1;
 
-                _.each(episodes, function(value, currentEpisode) {
-                    if (!torrents[value.season]) torrents[value.season] = {};
-                    torrents[value.season][value.episode] = value;
-                });
+            _.each(episodes, function(value, currentEpisode) {
+                if (!torrents[value.season]) torrents[value.season] = {};
+                torrents[value.season][value.episode] = value;
+            });
 
-                var keys = Object.keys(torrents);
-                if(torrents[0]) {
-                    keys.push(keys.shift());
+            var keys = Object.keys(torrents);
+            if(torrents[0]) {
+                keys.push(keys.shift());
+            }
+
+            _.each(keys, function(season) {
+                if(season !== '0') { 
+                    type = 'season';
+                    seasontext = i18n.__("Season %s", season) ; 
+                } else {
+                    type = 'special';
+                    seasontext = i18n.__("Special Features") ;
                 }
 
-                _.each(keys, function(season) {
-                    if(season !== '0') { 
-                        type = 'season';
-                        seasontext = i18n.__("Season %s", season) ; 
-                    } else {
-                        type = 'special';
-                        seasontext = i18n.__("Special Features") ;
-                    }
-
-                    var seasonID = parseInt(season) + 1;
-                    if (seasonImages && seasonImages[season] && seasonImages[season].images.poster.full) {
-                        var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full, 'medium');
-                    } else {
-                        var seasonPoster = images.poster;
-                    }
-                 %>
-                    <paper-tab id="seasonTab-<%= seasonID %>" data-type="<%= type %>"  data-index="<%= tabindex %>" data-id="<%= seasonID %>" data-poster="<%= seasonPoster %>" role="tab"><%= seasontext %></paper-tab>
-                <% tabindex++; }); %>
-           </paper-tabs>
-        </div>
+                var seasonID = parseInt(season) + 1;
+                if (seasonImages && seasonImages[season] && seasonImages[season].images.poster.full) {
+                    var seasonPoster = App.Trakt.resizeImage(seasonImages[season].images.poster.full, 'medium');
+                } else {
+                    var seasonPoster = images.poster;
+                }
+             %>
+                <paper-tab id="seasonTab-<%= seasonID %>" data-type="<%= type %>"  data-index="<%= tabindex %>" data-id="<%= seasonID %>" data-poster="<%= seasonPoster %>" role="tab"><%= seasontext %></paper-tab>
+            <% tabindex++; }); %>
+       </paper-tabs>
     </div>
 </div>
 <div class="info-wrapper">

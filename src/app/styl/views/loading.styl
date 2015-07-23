@@ -12,20 +12,12 @@
     z-index -1
     width 100vw
     opacity 0
-    background-position center
+    -webkit-filter brightness(40%)
     background-size cover
     background-repeat no-repeat
-    transition opacity 0.3s ease-in-out
     &.fadein
+      transition opacity 0.3s ease-in-out
       opacity 1
-  .overlay
-    position absolute
-    top 0
-    right 0
-    z-index -1
-    bottom 0
-    left 0
-    background-color rgba(13, 13, 13, 0.67)
   .back
     float left
     margin-top 54px

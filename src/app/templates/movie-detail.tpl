@@ -18,82 +18,80 @@
     <div class="bg-backdrop" data-bgr="<%= backdrop %>">
     </div>
     <div class="summary-wrapper movie">
-        <div class="summary-overlay">
-            <paper-icon-button class="back" icon="arrow-back"></paper-icon-button>
-            <div class="title">
-                <%= title %>
+        <paper-icon-button class="back" icon="arrow-back"></paper-icon-button>
+        <div class="title">
+            <%= title %>
+        </div>
+        <paper-icon-button icon="bookmark-outline" class="bookmark-toggle">
+        </paper-icon-button>
+        <paper-icon-button icon="visibility-off" class="watched-toggle">
+        </paper-icon-button>
+
+            <img src="<%= cover %>" class="poster" />
+
+        <div class="meta">
+            <div class="meta-item">
+                <% var p_rating=Math.round(rating) / 2; %>
+                <% for (var i=1 ; i <= Math.floor(p_rating); i++) { %>
+                <i class="zmdi zmdi-star"></i>
+                <% }; %>
+                <% if (p_rating % 1> 0) { %>
+                <i class="zmdi zmdi-star-half"></i>
+                <% }; %>
+                <% for (var i= Math.ceil(p_rating); i < 5; i++) { %>
+                <i class="zmdi zmdi-star-outline"></i>
+                <% }; %>
+                <span class="meta-dot"></span>
+                <p>
+                    <%=genre.join(", ") %>
+                </p>
+                <span class="meta-dot"></span>
+                <p>
+                    <%=year %>
+                </p>
+                <span class="meta-dot"></span>
+                <p>
+                    <%=runtime %> min
+                </p>
             </div>
-            <paper-icon-button icon="bookmark-outline" class="bookmark-toggle">
-            </paper-icon-button>
-            <paper-icon-button icon="visibility-off" class="watched-toggle">
-            </paper-icon-button>
-
-                <img src="<%= cover %>" class="poster" />
-
-            <div class="meta">
-                <div class="meta-item">
-                    <% var p_rating=Math.round(rating) / 2; %>
-                    <% for (var i=1 ; i <= Math.floor(p_rating); i++) { %>
-                    <i class="zmdi zmdi-star"></i>
-                    <% }; %>
-                    <% if (p_rating % 1> 0) { %>
-                    <i class="zmdi zmdi-star-half"></i>
-                    <% }; %>
-                    <% for (var i= Math.ceil(p_rating); i < 5; i++) { %>
-                    <i class="zmdi zmdi-star-outline"></i>
-                    <% }; %>
-                    <span class="meta-dot"></span>
-                    <p>
-                        <%=genre.join(", ") %>
-                    </p>
-                    <span class="meta-dot"></span>
-                    <p>
-                        <%=year %>
-                    </p>
-                    <span class="meta-dot"></span>
-                    <p>
-                        <%=runtime %> min
-                    </p>
-                </div>
-                <div class="meta-synop">
-                    <%=synopsis %>
-                </div>
-                <paper-button id="trakt-link" class="meta-btn">
-                    <%=i18n.__( "Open Trakt") %>
-                </paper-button>
-                <paper-button id="play-trailer" class="meta-btn">
-                    <%=i18n.__( "Watch Trailer") %>
-                </paper-button>
-                <div class="meta-divider"></div>
-
-                <% _.each(directors, function(person) {%>
-                <div data-id="<%= person.imdb_code %>" class="people">
-                    <div class="person-avatar">
-                        <img src="<%= person.small_image %>" alt="">
-                    </div>
-                    <p class="person">
-                        <%= person.name %>
-                    </p>
-                    <p class="status">
-                        <%=i18n.__( "Director") %>
-                    </p>
-                </div>
-                <% }); %>
-
-                <% _.each(actors, function(actor) { %>
-                <div data-id="<%= actor.imdb_code %>" class="people">
-                    <div class="person-avatar">
-                        <img src="<%= actor.small_image %>" alt="">
-                    </div>
-                    <p class="person">
-                        <%= actor.name %>
-                    </p>
-                    <p class="status">
-                        <%=i18n.__( "as %s", actor.character_name) %>
-                    </p>
-                </div>
-                <% }); %>
+            <div class="meta-synop">
+                <%=synopsis %>
             </div>
+            <paper-button id="trakt-link" class="meta-btn">
+                <%=i18n.__( "Open Trakt") %>
+            </paper-button>
+            <paper-button id="play-trailer" class="meta-btn">
+                <%=i18n.__( "Watch Trailer") %>
+            </paper-button>
+            <div class="meta-divider"></div>
+
+            <% _.each(directors, function(person) {%>
+            <div data-id="<%= person.imdb_code %>" class="people">
+                <div class="person-avatar">
+                    <img src="<%= person.small_image %>" alt="">
+                </div>
+                <p class="person">
+                    <%= person.name %>
+                </p>
+                <p class="status">
+                    <%=i18n.__( "Director") %>
+                </p>
+            </div>
+            <% }); %>
+
+            <% _.each(actors, function(actor) { %>
+            <div data-id="<%= actor.imdb_code %>" class="people">
+                <div class="person-avatar">
+                    <img src="<%= actor.small_image %>" alt="">
+                </div>
+                <p class="person">
+                    <%= actor.name %>
+                </p>
+                <p class="status">
+                    <%=i18n.__( "as %s", actor.character_name) %>
+                </p>
+            </div>
+            <% }); %>
         </div>
     </div>
     <div class="controls-container">

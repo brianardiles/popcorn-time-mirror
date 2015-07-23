@@ -21,7 +21,6 @@ paper-progress::shadow #activeProgress {
 </style>
 
   <div class="bg-backdrop fadein" style="background-image: url(<%= data.metadata.backdrop %>);"></div>
-        <div class="overlay"></div>
         <paper-icon-button class="back" icon="close"></paper-icon-button>
           
         <div class="title"><%= title %></div>

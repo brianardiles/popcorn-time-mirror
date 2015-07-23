@@ -76,24 +76,22 @@
             }
 
 
-            var positionTop = function () {
-                var padding = $('.item').eq(0).offset().left - $('#list-content').offset().left;
-                $('.top-tools').css('padding', '0px ' + padding + 'px');
-            },
-            filterTop = $('.filter-bar').offset().top,
-            scrollFilters = function () {
-                var scrollTop  = $('#content').scrollTop();
+            var filterTop = $('.filter-bar').offset().top,
+                filterBar = $('.filter-bar'),
+                backDrop = $('.list-backdrop'),
+                scrollFilters = function () {
+                    var scrollTop = $('#content').scrollTop();
 
-                if (scrollTop > filterTop && !$('.filter-bar').hasClass('fixed')) {
-                    $('.filter-bar').addClass('fixed');
-                }
+                    if (scrollTop > filterTop && !filterBar.hasClass('fixed')) {
+                        filterBar.addClass('fixed');
+                    }
 
-                if (scrollTop < filterTop && $('.filter-bar').hasClass('fixed')) {
-                    $('.filter-bar').removeClass('fixed');
-                }
+                    if (scrollTop < filterTop && filterBar.hasClass('fixed')) {
+                        filterBar.removeClass('fixed');
+                    }
 
-                $('.list-backdrop').css('margin-top', -(scrollTop / 2));
-            };
+                    backDrop.css('margin-top', -(scrollTop / 1.5));
+                };
 
             this.scrollActions.push(scrollFilters);
 

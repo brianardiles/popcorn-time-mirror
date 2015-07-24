@@ -56,8 +56,8 @@
             if (this.model.get('data').metadata.backdrop) {
                 this.loadBackground(this.model.get('data').metadata.backdrop);
             }
-
-            switch (this.model.attributes.data.type) {
+            var type = this.model.attributes.data.type;
+            switch (type) {
             case 'show':
                 App.Trakt.episodes.summary(this.model.get('data').metadata.imdb_id, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode))
                     .then(function (episodeSummary) {

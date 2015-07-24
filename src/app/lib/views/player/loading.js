@@ -59,29 +59,12 @@
 
             switch (this.model.attributes.data.type) {
             case 'show':
-                this.fetchTVSubtitles({
-                    imdbid: this.model.attributes.data.metadata.imdb_id,
-                    season: this.model.attributes.data.metadata.season,
-                    episode: this.model.attributes.data.metadata.episode
-                });
-                var tvshowname = $.trim(this.model.attributes.data.metadata.showName.replace(/[\.]/g, ' '))
-                    .replace(/^\[.*\]/, '') // starts with brackets
-                    .replace(/[^\w ]+/g, '') // remove brackets
-                    .replace(/ +/g, '-') // has spaces
-                    .replace(/_/g, '-') // has '_'
-                    .replace(/\-$/, '') // ends with '-'
-                    .replace(/^\./, '') // starts with '.'
-                    .replace(/^\-/, ''); // starts with '-'
-
-                console.log(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode));
-
-                App.Trakt.episodes.summary(tvshowname, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode))
+                App.Trakt.episodes.summary(this.model.get('data').metadata.imdb_id, formatTwoDigit(this.model.attributes.data.metadata.season), formatTwoDigit(this.model.attributes.data.metadata.episode))
                     .then(function (episodeSummary) {
                         if (!episodeSummary) {
                             win.warn('Unable to fetch data from Trakt.tv');
                         } else {
                             var data = episodeSummary;
-                            console.log(data);
                             that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
                             that.loadBackground(data.images.screenshot.full, true);
                         }
@@ -94,7 +77,19 @@
             default: //this is a dropped selection
                 this.waitForSelection();
             }
-
+            App.vent.on('subtitlev2:done', function (info) {
+                console.log(info);
+                switch (type) {
+                case 'show':
+                    that.model.attributes.data.subtitles = info.subs;
+                    that.extsubs = info.extpath;
+                    break;
+                case 'movie':
+                    that.extsubs = info;
+                    break;
+                }
+            });
+            this.setupSubs();
         },
 
         onShow: function () {
@@ -111,6 +106,29 @@
             this.StateUpdate();
         },
 
+        setupSubs: function () {
+            var defaultSubtitle = this.model.get('defaultSubtitle');
+            var subtitles = this.model.get('subtitles');
+
+            var subrequest = {
+                type: this.model.attributes.data.type,
+                defaultSubtitle: this.model.attributes.data.defaultSubtitle,
+                subtitles: this.model.attributes.data.subtitles,
+                imdbid: this.model.attributes.data.metadata.imdb_id,
+                season: this.model.attributes.data.metadata.season,
+                episode: this.model.attributes.data.metadata.episode
+            };
+
+            if (!App.Streamer.streamDir) {
+                var watchstreamDir = function () {
+                    require('watchjs').unwatch(App.Streamer, 'streamDir', watchstreamDir);
+                    App.Subtitlesv2.get(subrequest);
+                };
+                require('watchjs').watch(App.Streamer, 'streamDir', watchstreamDir);
+            } else {
+                App.Subtitlesv2.get(subrequest);
+            }
+        },
         backupCountdown: function () {
             if (this.playing) {
                 return;
@@ -291,42 +309,10 @@
 
         },
 
-        fetchTVSubtitles: function (data) {
-            var that = this;
-
-            // fix for anime
-            if (data.imdbid.indexOf('mal') !== -1) {
-                data.imdbid = null;
-            }
-            console.log(data);
-            win.debug('Subtitles data request:', data);
-
-            var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
-
-            subtitleProvider.fetch(data).then(function (subs) {
-                if (subs && Object.keys(subs).length > 0) {
-                    var subtitles = subs;
-                    that.model.attributes.data.subtitles = subtitles;
-
-                    win.info(Object.keys(subs).length + ' subtitles found');
-                } else {
-                    win.warn('No subtitles returned');
-                }
-            }).catch(function (err) {
-                console.log('subtitleProvider.fetch()', err);
-            });
-        },
-
-
-        fetchMovieSubtitles: function (data) {
-
-        },
-
 
         augmentDropModel: function (data) {
             var metadata = data.metadata;
             var that = this;
-            console.log(metadata);
             var title = $.trim(metadata.title.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
 
             var se_re = title.match(/(.*)S(\d\d)E(\d\d)/i); // regex try (ex: title.s01e01)
@@ -400,11 +386,6 @@
 
                                         that.loadBackground(that.model.attributes.data.metadata.backdrop, true);
 
-                                        that.fetchTVSubtitles({
-                                            imdbid: summary.ids.imdb,
-                                            season: data.season.toString(),
-                                            episode: data.number.toString()
-                                        });
                                     }
                                 }).catch(function (err) {
                                     tryMovie(tvshowname);

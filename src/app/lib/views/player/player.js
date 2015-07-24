@@ -281,11 +281,8 @@
 
             this.player.on('loadeddata', function () {
                 // resume position
-                console.log(that.model.attributes.metadata.title, AdvSettings.get('lastWatchedTitle'), AdvSettings.get('lastWatchedTime'))
                 if (AdvSettings.get('lastWatchedTitle') === that.model.attributes.metadata.title && AdvSettings.get('lastWatchedTime') > 0) {
                     var position = AdvSettings.get('lastWatchedTime');
-                    console.log(position);
-
                     win.debug('Resuming position to', position.toFixed(), 'secs');
                     that.player.currentTime(position);
                 } else if (AdvSettings.get('traktPlayback')) {
@@ -396,7 +393,6 @@
 
         sendToTrakt: function (method) {
             var type = this.model.get('type');
-            console.log('MODEL', this.model.attributes);
             if (type === 'show') {
                 type = 'episode';
             }
@@ -675,7 +671,6 @@
             }).then(function (subs) {
                 torrentStartNext.subtitles = subs;
                 that.NextEpisode = torrentStartNext;
-                console.log(torrentStartNext);
                 that.checkAutoPlay();
             });
 
@@ -685,7 +680,7 @@
         fetchTVSubtitles: function (data) {
             var deferred = Q.defer();
             var that = this;
-            console.log(data);
+
             win.debug('Subtitles data request:', data);
 
             var subtitleProvider = App.Config.getProvider('tvshowsubtitle');

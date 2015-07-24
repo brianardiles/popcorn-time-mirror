@@ -77,7 +77,8 @@
             default: //this is a dropped selection
                 this.waitForSelection();
             }
-            App.vent.on('subtitlev2:done', function (info) {
+
+            this.listenTo(App.vent, 'subtitlev2:done', function (info) {
                 console.log(info);
                 switch (type) {
                 case 'show':
@@ -89,6 +90,8 @@
                     break;
                 }
             });
+
+
             this.setupSubs();
         },
 

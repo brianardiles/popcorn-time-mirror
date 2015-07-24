@@ -150,12 +150,11 @@
 
 
         onShow: function () {
-            console.log(this.model);
             that = this;
             this.prossessType();
             this.setUI();
             this.setPlayerEvents();
-            this.restoreUserPref();
+
         },
         detectscrubbing: function () {
             var that = this;
@@ -234,8 +233,9 @@
 
             // Force custom controls
             this.player.usingNativeControls(false);
-            $('#player').bind('mousewheel', _.bind(this.mouseScroll, this)); //volume wheel control
+
             this.detectscrubbing();
+            this.restoreUserPref();
         },
 
         setUI: function () {
@@ -259,7 +259,6 @@
         },
 
         restoreUserPref: function () {
-
             if (AdvSettings.get('alwaysFullscreen') && !this.inFullscreen) {
                 this.toggleFullscreen();
             }
@@ -267,7 +266,6 @@
                 win.leaveFullscreen();
                 this.toggleFullscreen();
             }
-
             this.player.volume(AdvSettings.get('playerVolume'));
         },
 
@@ -275,7 +273,7 @@
             var type = this.model.get('type');
             var that = this;
             this.player.one('play', function () {
-
+                $('#player').bind('mousewheel', _.bind(this.mouseScroll, this)); //volume wheel control
                 if (that.model.get('type') === 'trailer') {
                     // XXX quality fix
                     $('.vjs-quality-button .vjs-menu-content').remove();

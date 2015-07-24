@@ -252,7 +252,7 @@
 
             // Test to make sure we have title
 
-            $('#player_drag').show();
+            //$('#player_drag').show();
 
             App.vent.trigger('player:ready', {});
 
@@ -273,7 +273,7 @@
             var type = this.model.get('type');
             var that = this;
             this.player.one('play', function () {
-                $('#player').bind('mousewheel', _.bind(this.mouseScroll, this)); //volume wheel control
+                $('#player').bind('mousewheel', _.bind(that.mouseScroll, that)); //volume wheel control
                 if (that.model.get('type') === 'trailer') {
                     // XXX quality fix
                     $('.vjs-quality-button .vjs-menu-content').remove();
@@ -979,6 +979,9 @@
                 AdvSettings.set('lastWatchedTime', false); // clear last pos
             }
 
+            this.ui.pause.dequeue();
+            this.ui.play.dequeue();
+
             if (!next) {
                 var vjsPlayer = document.getElementById('video_player');
                 videojs(vjsPlayer).dispose();
@@ -1002,7 +1005,6 @@
 
                 this.player.pause();
 
-
                 this.player.src([{
                     type: "video/mp4",
                     src: videosrc
@@ -1024,9 +1026,6 @@
                 this.processNext();
 
             }
-
-            this.ui.pause.dequeue();
-            this.ui.play.dequeue();
 
 
         },

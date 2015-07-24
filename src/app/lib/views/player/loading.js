@@ -182,6 +182,7 @@
             } else {
                 var externalPlayerModel = this.model.get('player');
                 externalPlayerModel.set('src', App.Streamer.src);
+                externalPlayerModel.set('subtitle', this.extsubs); //set subs if we have them; if not? well that boat has sailed.
                 App.vent.trigger('stream:ready', externalPlayerModel);
 
                 this.ui.player.text(this.model.get('player').get('name'));

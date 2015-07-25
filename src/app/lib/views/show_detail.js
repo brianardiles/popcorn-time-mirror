@@ -253,7 +253,7 @@
                 episode: episode,
                 type: 'show'
             };
-            App.Database.watched('check', 'show', value)
+            App.Databasev2.checkWatched(value)
                 .then(function (watched) {
                     if (watched) {
                         App.vent.trigger('watched', value, true);
@@ -349,9 +349,10 @@
                     imdb_id: imdb_id,
                     episode_id: episode.tvdb_id,
                     season: episode.season,
-                    episode: episode.episode
+                    episode: episode.episode,
+                    type: 'show'
                 };
-                App.Database.watched('check', 'show', value)
+                App.Databasev2.checkWatched(value)
                     .then(function (watched) {
                         if (!watched) {
                             $('.show-watched-toggle').show();
@@ -360,7 +361,6 @@
                                 season: episode.season,
                                 episode: episode.episode
                             });
-
                             return true;
                         } else {
                             watchedEpisodes.push({

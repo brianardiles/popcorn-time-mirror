@@ -37,7 +37,6 @@
         /* RESUME */
 
         ckeckResume: function (data) {
-
             var resume = this.db.getCollection('resume');
             var result = resume.find({
                 imdb: data.imdb_id,
@@ -50,14 +49,11 @@
             if (result.length > 0) {
                 r = result[0];
             }
-            console.log(r);
             return Q(r);
         },
 
-
         resume: function (data, remove) {
             var resume = this.db.getCollection('resume');
-
             if (remove) {
                 resume.removeWhere({
                     imdb: data.imdb_id,
@@ -104,7 +100,6 @@
             return Q(true);
         },
 
-
         /* WATCHED */
 
         checkWatched: function (data) {
@@ -126,7 +121,6 @@
 
         watched: function (data, remove) {
             var watched = this.db.getCollection('watched');
-
             if (remove) {
                 watched.removeWhere({
                     imdb: data.imdb_id,
@@ -147,13 +141,10 @@
                 });
             }
             this.db.saveDatabase();
-
             return Q(true);
         },
 
-
         /* BOOKMARKS */
-
 
         checkBookmarked: function (data) {
             var bookmarked = this.db.getCollection('bookmarked');
@@ -189,10 +180,8 @@
                 });
             }
             this.db.saveDatabase();
-
             return Q(true);
         },
-
 
         /* CACHE */
         checkCached: function (data) {

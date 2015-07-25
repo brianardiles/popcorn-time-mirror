@@ -77,7 +77,7 @@
             if (status === 'returning series' || status === 'in production') {
                 this.model.set('status', 'continuing')
             }
-
+            this.model.set('type', 'show');
         },
         onRender: function () {
 

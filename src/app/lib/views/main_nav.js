@@ -12,7 +12,7 @@
             'click #nav-movies a': 'showMovies',
             'click #nav-shows a': 'showShows',
             'click #nav-anime a': 'showAnime',
-            'click #nav-favourites a': 'showFavorites',
+            'click #nav-bookmarks a': 'showFavorites',
             'click #nav-watchlist a': 'showWatchlist',
             'click #nav-collection a': 'showTorrentCollection',
             'click #nav-vpn a': 'vpnConnect',
@@ -193,29 +193,13 @@
 
         showFavorites: function (e) {
             e.preventDefault();
+            App.previousview = App.currentview;
+            App.currentview = 'Favorites';
+            App.vent.trigger('about:close');
+            App.vent.trigger('torrentCollection:close');
+            App.vent.trigger('favorites:list', []);
+            this.setactive('Favorites');
 
-            if (App.currentview !== 'Favorites') {
-                App.previousview = App.currentview;
-                App.currentview = 'Favorites';
-                App.vent.trigger('about:close');
-                App.vent.trigger('torrentCollection:close');
-                App.vent.trigger('favorites:list', []);
-                this.setactive('Favorites');
-            } else {
-
-                if ($('#movie-detail').html().length === 0 && $('#about-container').html().length === 0) {
-                    App.currentview = App.previousview;
-                    App.vent.trigger(App.previousview.toLowerCase() + ':list', []);
-                    this.setactive(App.currentview);
-
-                } else {
-                    App.vent.trigger('about:close');
-                    App.vent.trigger('torrentCollection:close');
-                    App.vent.trigger('favorites:list', []);
-                    this.setactive('Favorites');
-                }
-
-            }
 
         },
 

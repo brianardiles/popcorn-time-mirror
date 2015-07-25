@@ -93,8 +93,6 @@
                 keywords: this.ui.searchInput.val(),
                 genre: ''
             });
-
-
         },
 
         sortBy: function (e) {

@@ -146,6 +146,11 @@
 
         /* BOOKMARKS */
 
+        getBookmarks: function () {
+            var bookmarked = this.db.getCollection('bookmarked');
+            return Q(bookmarked.data);
+        },
+
         checkBookmarked: function (data) {
             var bookmarked = this.db.getCollection('bookmarked');
             var result = bookmarked.find({
@@ -183,12 +188,28 @@
             return Q(true);
         },
 
+        getCached: function (data) {
+            var cache = this.db.getCollection('cache');
+            console.log(data);
+            var result = cache.find({
+                imdb: data.imdb,
+                tvdb: data.tvdb,
+                title: data.title,
+                type: data.type
+            });
+            var r = false;
+            if (result.length > 0) {
+                r = result[0];
+            }
+            return Q(r);
+        },
+
         /* CACHE */
         checkCached: function (data) {
             var cache = this.db.getCollection('cache');
             var result = cache.find({
                 imdb: data.imdb_id,
-                tvdb: data.tvdb,
+                tvdb: data.tvdb_id,
                 title: data.title,
                 type: data.type
             });
@@ -204,7 +225,7 @@
             if (remove) {
                 cache.removeWhere({
                     imdb: data.imdb_id,
-                    tvdb: data.tvdb,
+                    tvdb: data.tvdb_id,
                     title: data.title,
                     type: data.type
                 });
@@ -215,7 +236,7 @@
                     if (!status) {
                         cache.insert({
                             imdb: data.imdb_id,
-                            tvdb: data.tvdb,
+                            tvdb: data.tvdb_id,
                             title: data.title,
                             type: data.type,
                             data: data

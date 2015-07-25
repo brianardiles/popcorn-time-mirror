@@ -12,7 +12,6 @@
     var PCTBrowser = Backbone.Marionette.LayoutView.extend({
         template: '#browser-tpl',
 
-        //tagName: 'core-scroll-header-panel',
         id: 'main-list-content',
 
 

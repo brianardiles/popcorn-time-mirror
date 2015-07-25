@@ -20,7 +20,7 @@
         </li>
         
     
-        <li id="nav-favorites">
+        <li id="nav-bookmarks">
             <a href="#">
                 <core-icon icon="bookmark"></core-icon>
                 <span class="nav-text"><%= i18n.__("Bookmarks") %></span>

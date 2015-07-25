@@ -966,8 +966,17 @@
                 if (this.checkAutoPlayTimer) {
                     clearInterval(this.checkAutoPlayTimer);
                 }
-                AdvSettings.set('lastWatchedTitle', this.model.attributes.metadata.title);
-                AdvSettings.set('lastWatchedTime', this.video.currentTime() - 3);
+
+                var resumeObject = {
+                    imdb_id: this.model.get('metadata').imdb_id,
+                    season: this.model.get('metadata').season,
+                    episode: this.model.get('metadata').episode,
+                    tvdb_id: this.model.get('metadata').tvdb_id,
+                    timeindex: this.video.currentTime() - 3,
+                    duration: this.video.duration()
+                };
+                console.log(resumeObject);
+
             }
 
             this.sendToTrakt('stop');

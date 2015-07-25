@@ -44,7 +44,6 @@
                 watched, bookmarked, cached, that = this;
 
             App.Databasev2.checkBookmarked(this.model.attributes).then(function (b) {
-                console.log(b);
                 that.model.set('bookmarked', b);
             });
             App.Databasev2.checkWatched(this.model.attributes).then(function (w) {
@@ -99,7 +98,6 @@
 
         listenEvents: function () {
             this.listenTo(App.vent, 'bookmarked', function (data, remove) {
-
                 if (data.imdb_id === this.model.get('imdb_id')) {
                     console.log(data, remove);
                     if (!remove) {
@@ -109,9 +107,8 @@
                     }
                 }
             });
-
             this.listenTo(App.vent, 'watched', function (data, remove) {
-                if (data.imdb_id === this.model.get('imdb_id') && type !== 'show') {
+                if (data.imdb_id === this.model.get('imdb_id') && data.type !== 'show') {
                     if (!remove) {
                         this.model.set('watched', true);
                     } else {

@@ -36,6 +36,24 @@
 
         /* RESUME */
 
+        ckeckResume: function (data) {
+
+            var resume = this.db.getCollection('resume');
+            var result = resume.find({
+                imdb: data.imdb_id,
+                tvdb: data.tvdb_id,
+                episode: data.episode,
+                season: data.season,
+                type: data.type
+            });
+            var r = false;
+            if (result.length > 0) {
+                r = result[0];
+            }
+            console.log(r);
+            return Q(r);
+        },
+
 
         resume: function (data, remove) {
             var resume = this.db.getCollection('resume');
@@ -48,19 +66,35 @@
                     season: data.season,
                     type: data.type
                 });
+                this.db.saveDatabase();
             } else {
-                resume.insert({
-                    imdb: data.imdb_id,
-                    season: data.season,
-                    episode: data.episode,
-                    tvdb_id: data.tvdb_id,
-                    type: data.type
-                    timeindex: data.timeindex,
-                    duration: data.duration,
+                var that = this;
+                this.ckeckResume(data).then(function (status) {
+                    if (status) {
+                        resume.update({
+                            imdb: data.imdb_id,
+                            tvdb: data.tvdb_id,
+                            episode: data.episode,
+                            season: data.season,
+                            type: data.type
+                        }, {
+                            timeindex: data.timeindex,
+                            duration: data.duration,
+                        });
+                    } else {
+                        resume.insert({
+                            imdb: data.imdb_id,
+                            season: data.season,
+                            episode: data.episode,
+                            tvdb_id: data.tvdb_id,
+                            type: data.type,
+                            timeindex: data.timeindex,
+                            duration: data.duration
+                        });
+                    }
+                    that.db.saveDatabase();
                 });
             }
-            this.db.saveDatabase();
-
             return Q(true);
         },
 
@@ -179,7 +213,9 @@
                     title: data.title,
                     type: data.type
                 });
+                this.db.saveDatabase();
             } else {
+                var that = this;
                 this.checkCached(data).then(function (status) {
                     if (!status) {
                         cache.insert({
@@ -189,11 +225,10 @@
                             type: data.type,
                             data: data
                         });
+                        that.db.saveDatabase();
                     }
-                })
+                });
             }
-            this.db.saveDatabase();
-
             return Q(true);
         },
 

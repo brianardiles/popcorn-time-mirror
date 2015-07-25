@@ -295,33 +295,46 @@
                     that.processNext();
                 }
             });
-
+            var resumeObject = {
+                imdb_id: this.model.get('metadata').imdb_id,
+                season: this.model.get('metadata').season,
+                episode: this.model.get('metadata').episode,
+                tvdb_id: this.model.get('metadata').tvdb_id,
+                timeindex: this.video.currentTime() - 3,
+                duration: this.video.duration(),
+                type: this.model.get('type')
+            };
             this.player.on('loadeddata', function () {
                 // resume position
-                if (AdvSettings.get('lastWatchedTitle') === that.model.attributes.metadata.title && AdvSettings.get('lastWatchedTime') > 0) {
-                    var position = AdvSettings.get('lastWatchedTime');
-                    win.debug('Resuming position to', position.toFixed(), 'secs');
-                    that.player.currentTime(position);
-                } else if (AdvSettings.get('traktPlayback')) {
 
-                    var type = that.model.get('type');
-                    if (type === 'show') {
-                        type = 'episode';
-                    }
+                App.Databasev2.ckeckResume(resumeObject).then(function (resume) {
 
-                    var id = type === 'movie' ? that.model.attributes.metadata.imdb_id : that.model.attributes.metadata.episode_id;
+                    if (resume) {
+                        var position = resume.timeindex;
+                        win.debug('Resuming position to', position.toFixed(), 'secs');
+                        that.player.currentTime(position);
+                    } else {
+                        if (AdvSettings.get('traktPlayback')) {
 
-                    App.Trakt.sync.playback(type, id).then(function (position_percent) {
-                        var total = that.video.duration();
-                        var position = (position_percent / 100) * total | 0;
+                            var type = that.model.get('type');
+                            if (type === 'show') {
+                                type = 'episode';
+                            }
 
-                        if (position > 0) {
-                            win.debug('Resuming position to', position.toFixed(), 'secs (reported by Trakt)');
-                            that.player.currentTime(position);
+                            var id = type === 'movie' ? that.model.attributes.metadata.imdb_id : that.model.attributes.metadata.episode_id;
+
+                            App.Trakt.sync.playback(type, id).then(function (position_percent) {
+                                var total = that.video.duration();
+                                var position = (position_percent / 100) * total | 0;
+
+                                if (position > 0) {
+                                    win.debug('Resuming position to', position.toFixed(), 'secs (reported by Trakt)');
+                                    that.player.currentTime(position);
+                                }
+                            });
                         }
-                    });
-                }
-
+                    }
+                });
                 // alert Trakt
                 that.sendToTrakt('start');
             });
@@ -969,22 +982,24 @@
             }
 
             this.sendToTrakt('stop');
+            var resumeObject = {
+                imdb_id: this.model.get('metadata').imdb_id,
+                season: this.model.get('metadata').season,
+                episode: this.model.get('metadata').episode,
+                tvdb_id: this.model.get('metadata').tvdb_id,
+                timeindex: this.video.currentTime() - 3,
+                duration: this.video.duration(),
+                type: this.model.get('type')
+            };
 
             if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
                 this.sendToTrakt('stop');
                 var watchObject = this.model.get('metadata');
                 App.vent.trigger('watched', watchObject);
                 AdvSettings.set('lastWatchedTime', false); // clear last pos
+                App.Databasev2.resume(resumeObject, true);
             } else {
-                var resumeObject = {
-                    imdb_id: this.model.get('metadata').imdb_id,
-                    season: this.model.get('metadata').season,
-                    episode: this.model.get('metadata').episode,
-                    tvdb_id: this.model.get('metadata').tvdb_id,
-                    timeindex: this.video.currentTime() - 3,
-                    duration: this.video.duration(),
-                    type: this.model.get('type')
-                };
+                App.Databasev2.resume(resumeObject);
             }
 
             this.ui.pause.dequeue();

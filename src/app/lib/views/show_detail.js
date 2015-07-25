@@ -46,11 +46,11 @@
 
 
         keyboardEvents: {
-            'esc': 'closeDetails', 
-            'backspace': 'closeDetails', 
-            'alt+left': 'closeDetails', 
-            'space': 'startStreaming', 
-            'enter': 'startStreaming', 
+            'esc': 'closeDetails',
+            'backspace': 'closeDetails',
+            'alt+left': 'closeDetails',
+            'space': 'startStreaming',
+            'enter': 'startStreaming',
             'q': 'toggleShowQualityKey',
             'f': 'toggleBookmarked',
             'w': 'toggleWatched',
@@ -250,26 +250,27 @@
                 imdb_id: this.model.get('imdb_id'),
                 episode_id: $('#watch-now').attr('data-episodeid'),
                 season: season,
-                episode: episode
+                episode: episode,
+                type: 'show'
             };
             App.Database.watched('check', 'show', value)
                 .then(function (watched) {
                     if (watched) {
-                        App.vent.trigger('watched', 'remove', 'show', value);
+                        App.vent.trigger('watched', value, true);
                     } else {
-                        App.vent.trigger('watched', 'add', 'show', value);
+                        App.vent.trigger('watched', value);
                     }
                 });
         },
 
-        onWatched: function (method, type, data, ignore) {
+        onWatched: function (data, remove, ignore) {
             if (ignore) {
                 return;
             }
-            if (type !== 'show') {
+            if (data.type !== 'show') {
                 return;
             }
-            if (method === 'add') {
+            if (!remove) {
                 this.markWatched(data, true);
             } else if (method === 'remove') {
                 this.markWatched(data, false);
@@ -295,11 +296,14 @@
             if (!this.model.get('bookmarked')) {
                 this.model.set('bookmarked', true);
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark');
+                App.vent.trigger('bookmarked', this.model.attributes);
+                App.Databasev2.cache(this.model.attributes);
             } else {
                 this.model.set('bookmarked', false);
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark-outline');
+                App.vent.trigger('bookmarked', this.model.attributes, true);
+                App.Databasev2.cache(this.model.attributes, true);
             }
-            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
         },
 
         markShowAsWatched: function () {
@@ -317,12 +321,13 @@
                             imdb_id: imdb_id,
                             episode_id: episode.tvdb_id,
                             season: episode.season,
-                            episode: episode.episode
+                            episode: episode.episode,
+                            type: 'show'
                         };
-                        App.Database.watched('check', 'show', value)
+                        App.Databasev2.checkWatched(value)
                             .then(function (watched) {
                                 if (!watched) {
-                                    App.vent.trigger('watched', 'add', 'show', value);
+                                    App.vent.trigger('watched', value);
                                 }
                             });
                     });
@@ -460,7 +465,7 @@
         toggleShowQualityKey: function (e) {
             var newIndex = parseInt($('#quality-toggle pt-selectable-element[selected=true]').attr('index')) + 1;
             var newElement = $('#quality-toggle pt-selectable-element[index=' + newIndex + ']');
-            if(newElement.length === 0) {
+            if (newElement.length === 0) {
                 newIndex = 0;
                 newElement = $('#quality-toggle pt-selectable-element[index=' + newIndex + ']');
             }
@@ -565,7 +570,7 @@
         toggleDevice: function (e) {
             var newIndex = parseInt($('#device-selector pt-selectable-element[selected=true]').attr('index')) + 1;
             var newElement = $('#device-selector pt-selectable-element[index=' + newIndex + ']');
-            if(newElement.length === 0) {
+            if (newElement.length === 0) {
                 newIndex = 0;
                 newElement = $('#device-selector pt-selectable-element[index=' + newIndex + ']');
             }
@@ -591,7 +596,7 @@
             var nextEpisode = parseInt(episode) + 1;
 
             var newElement = $('.episode-container ul li[data-season=' + season + '][data-episode=' + nextEpisode + ']');
-            if(newElement.length === 0)
+            if (newElement.length === 0)
                 return;
 
             newElement.click();
@@ -608,7 +613,7 @@
             var previousEpisode = parseInt(episode) - 1;
 
             var newElement = $('.episode-container ul li[data-season=' + season + '][data-episode=' + previousEpisode + ']');
-            if(newElement.length === 0)
+            if (newElement.length === 0)
                 return;
 
             newElement.click();
@@ -635,7 +640,7 @@
             var nextSeason = parseInt(index + 1);
             this.ui.seasonsTabs.prop('selected', nextSeason);
             $('.seasons-container paper-tab[data-index=' + nextSeason + ']').click();
-            
+
             if (e.type) {
                 e.preventDefault();
                 e.stopPropagation();

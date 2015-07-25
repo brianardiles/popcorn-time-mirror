@@ -30,11 +30,11 @@
         },
 
         keyboardEvents: {
-            'esc': 'closeDetails', 
-            'backspace': 'closeDetails', 
-            'alt+left': 'closeDetails', 
-            'space': 'play', 
-            'enter': 'play', 
+            'esc': 'closeDetails',
+            'backspace': 'closeDetails',
+            'alt+left': 'closeDetails',
+            'space': 'play',
+            'enter': 'play',
             'q': 'toggleQualityKey',
             'f': 'toggleBookmarked',
             'w': 'toggleWatched',
@@ -62,6 +62,7 @@
             App.vent.trigger('movie:closeDetail');
         },
 
+
         qualityChanged: function (e) {
             console.log('Quality Changed', e.originalEvent.detail);
             this.model.set('quality', e.originalEvent.detail.value);
@@ -74,7 +75,7 @@
         toggleDevice: function (e) {
             var newIndex = parseInt($('#device-selector pt-selectable-element[selected=true]').attr('index')) + 1;
             var newElement = $('#device-selector pt-selectable-element[index=' + newIndex + ']');
-            if(newElement.length === 0) {
+            if (newElement.length === 0) {
                 newIndex = 0;
                 newElement = $('#device-selector pt-selectable-element[index=' + newIndex + ']');
             }
@@ -105,29 +106,34 @@
             if (!this.model.get('watched')) {
                 this.model.set('watched', true);
                 this.ui.watchedIcon.prop('icon', 'visibility');
+
+                App.vent.trigger('watched', this.model.attributes);
             } else {
                 this.model.set('watched', false);
                 this.ui.watchedIcon.prop('icon', 'visibility-off');
+                App.vent.trigger('watched', this.model.attributes, true);
             }
-            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-watched').click();
-
         },
 
         toggleBookmarked: function () {
             if (!this.model.get('bookmarked')) {
                 this.model.set('bookmarked', true);
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark');
+                App.vent.trigger('bookmarked', this.model.attributes);
+                App.Databasev2.cache(this.model.attributes);
             } else {
                 this.model.set('bookmarked', false);
+                App.vent.trigger('bookmarked', this.model.attributes, true);
+                App.Databasev2.cache(this.model.attributes, true);
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark-outline');
             }
-            $('li[data-imdb-id="' + this.model.get('imdb_id') + '"] .actions-favorites').click();
+
         },
 
         toggleQualityKey: function (e) {
             var newIndex = parseInt($('#quality-toggle pt-selectable-element[selected=true]').attr('index')) + 1;
             var newElement = $('#quality-toggle pt-selectable-element[index=' + newIndex + ']');
-            if(newElement.length === 0) {
+            if (newElement.length === 0) {
                 newIndex = 0;
                 newElement = $('#quality-toggle pt-selectable-element[index=' + newIndex + ']');
             }
@@ -137,7 +143,7 @@
         toggleSubs: function (e) {
             var newIndex = parseInt($('#subtitles-selector pt-selectable-element[selected=true]').attr('index')) + 1;
             var newElement = $('#subtitles-selector pt-selectable-element[index=' + newIndex + ']');
-            if(newElement.length === 0) {
+            if (newElement.length === 0) {
                 newIndex = 0;
                 newElement = $('#subtitles-selector pt-selectable-element[index=' + newIndex + ']');
             }

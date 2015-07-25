@@ -43,15 +43,13 @@
                 img = (images) ? images.poster : this.model.get('image'),
                 watched, bookmarked, cached, that = this;
 
-            App.Database.bookmark('check', this.model.get('type'), imdb).then(function (d) {
-                bookmarked = d;
-                that.model.set('bookmarked', bookmarked);
-                App.Database.watched('check', that.model.get('type'), imdb).then(function (w) {
-                    watched = w;
-                    that.model.set('watched', watched);
-                });
+            App.Databasev2.checkBookmarked(this.model.attributes).then(function (b) {
+                console.log(b);
+                that.model.set('bookmarked', b);
             });
-
+            App.Databasev2.checkWatched(this.model.attributes).then(function (w) {
+                that.model.set('watched', w);
+            });
             switch (itemtype) {
             case 'bookmarkedshow':
                 this.model.set('image', App.Trakt.resizeImage(img, 'medium'));
@@ -96,9 +94,32 @@
 
         onShow: function () {
             this.loadCover();
+            this.listenEvents();
         },
 
+        listenEvents: function () {
+            this.listenTo(App.vent, 'bookmarked', function (data, remove) {
 
+                if (data.imdb_id === this.model.get('imdb_id')) {
+                    console.log(data, remove);
+                    if (!remove) {
+                        this.model.set('bookmarked', true);
+                    } else {
+                        this.model.set('bookmarked', false);
+                    }
+                }
+            });
+
+            this.listenTo(App.vent, 'watched', function (data, remove) {
+                if (data.imdb_id === this.model.get('imdb_id') && type !== 'show') {
+                    if (!remove) {
+                        this.model.set('watched', true);
+                    } else {
+                        this.model.set('watched', false);
+                    }
+                }
+            });
+        },
         onDestroy: function () {
 
         },

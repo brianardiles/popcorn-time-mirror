@@ -21,8 +21,8 @@
         },
 
         keyboardEvents: {
-            'esc': 'cancelStreaming', 
-            'backspace': 'cancelStreaming', 
+            'esc': 'cancelStreaming',
+            'backspace': 'cancelStreaming',
             'alt+left': 'cancelStreaming'
         },
 
@@ -41,8 +41,7 @@
             if (type !== ('show' || 'movie')) {
                 this.waitForSelection();
             }
-
-            App.vent.on('subtitlev2:done', function (info) {
+            this.listenTo(App.vent, 'subtitlev2:done', function (info) {
                 switch (type) {
                 case 'show':
                     that.model.attributes.data.subtitles = info.subs;

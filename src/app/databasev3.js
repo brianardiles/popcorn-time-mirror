@@ -71,23 +71,22 @@
                 var that = this;
                 this.ckeckResume(data).then(function (status) {
                     if (status) {
-                        resume.chain()
-                            .removeWhere({
-                                imdb: data.imdb_id,
-                                tvdb: data.tvdb_id,
-                                episode: data.episode,
-                                season: data.season,
-                                type: data.type
-                            })
-                            .insert({
-                                imdb: data.imdb_id,
-                                season: data.season,
-                                episode: data.episode,
-                                tvdb_id: data.tvdb_id,
-                                type: data.type,
-                                timeindex: data.timeindex,
-                                duration: data.duration
-                            });
+                        resume.removeWhere({
+                            imdb: data.imdb_id,
+                            tvdb: data.tvdb_id,
+                            episode: data.episode,
+                            season: data.season,
+                            type: data.type
+                        });
+                        resume.insert({
+                            imdb: data.imdb_id,
+                            season: data.season,
+                            episode: data.episode,
+                            tvdb_id: data.tvdb_id,
+                            type: data.type,
+                            timeindex: data.timeindex,
+                            duration: data.duration
+                        });
                     } else {
                         resume.insert({
                             imdb: data.imdb_id,

@@ -99,7 +99,6 @@
         listenEvents: function () {
             this.listenTo(App.vent, 'bookmarked', function (data, remove) {
                 if (data.imdb_id === this.model.get('imdb_id')) {
-                    console.log(data, remove);
                     if (!remove) {
                         this.model.set('bookmarked', true);
                     } else {

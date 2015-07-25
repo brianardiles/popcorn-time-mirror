@@ -966,17 +966,6 @@
                 if (this.checkAutoPlayTimer) {
                     clearInterval(this.checkAutoPlayTimer);
                 }
-
-                var resumeObject = {
-                    imdb_id: this.model.get('metadata').imdb_id,
-                    season: this.model.get('metadata').season,
-                    episode: this.model.get('metadata').episode,
-                    tvdb_id: this.model.get('metadata').tvdb_id,
-                    timeindex: this.video.currentTime() - 3,
-                    duration: this.video.duration()
-                };
-                console.log(resumeObject);
-
             }
 
             this.sendToTrakt('stop');
@@ -986,6 +975,16 @@
                 var watchObject = this.model.get('metadata');
                 App.vent.trigger('watched', watchObject);
                 AdvSettings.set('lastWatchedTime', false); // clear last pos
+            } else {
+                var resumeObject = {
+                    imdb_id: this.model.get('metadata').imdb_id,
+                    season: this.model.get('metadata').season,
+                    episode: this.model.get('metadata').episode,
+                    tvdb_id: this.model.get('metadata').tvdb_id,
+                    timeindex: this.video.currentTime() - 3,
+                    duration: this.video.duration(),
+                    type: this.model.get('type')
+                };
             }
 
             this.ui.pause.dequeue();

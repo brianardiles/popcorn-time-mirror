@@ -7,7 +7,6 @@
 
     var Databasev2 = Backbone.Model.extend({
         initialize: function () {
-
             var dbpath = path.join(require('nw.gui').App.dataPath + '/Database.json');
             if (!fs.existsSync(dbpath)) {
                 fs.closeSync(fs.openSync(dbpath, 'w'));
@@ -34,6 +33,37 @@
                 this.db.addCollection('cache');
             }
         },
+
+        /* RESUME */
+
+
+        resume: function (data, remove) {
+            var resume = this.db.getCollection('resume');
+
+            if (remove) {
+                resume.removeWhere({
+                    imdb: data.imdb_id,
+                    tvdb: data.tvdb_id,
+                    episode: data.episode,
+                    season: data.season,
+                    type: data.type
+                });
+            } else {
+                resume.insert({
+                    imdb: data.imdb_id,
+                    season: data.season,
+                    episode: data.episode,
+                    tvdb_id: data.tvdb_id,
+                    type: data.type
+                    timeindex: data.timeindex,
+                    duration: data.duration,
+                });
+            }
+            this.db.saveDatabase();
+
+            return Q(true);
+        },
+
 
         /* WATCHED */
 
@@ -125,7 +155,20 @@
 
 
         /* CACHE */
-        checkCached: function () {},
+        checkCached: function (data) {
+            var cache = this.db.getCollection('cache');
+            var result = cache.find({
+                imdb: data.imdb_id,
+                tvdb: data.tvdb,
+                title: data.title,
+                type: data.type
+            });
+            var r = false;
+            if (result.length > 0) {
+                r = true;
+            }
+            return Q(r);
+        },
 
         cache: function (data, remove) {
             var cache = this.db.getCollection('cache');
@@ -137,13 +180,17 @@
                     type: data.type
                 });
             } else {
-                cache.insert({
-                    imdb: data.imdb_id,
-                    tvdb: data.tvdb,
-                    title: data.title,
-                    type: data.type,
-                    data: data
-                });
+                this.checkCached(data).then(function (status) {
+                    if (!status) {
+                        cache.insert({
+                            imdb: data.imdb_id,
+                            tvdb: data.tvdb,
+                            title: data.title,
+                            type: data.type,
+                            data: data
+                        });
+                    }
+                })
             }
             this.db.saveDatabase();
 

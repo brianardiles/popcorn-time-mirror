@@ -975,7 +975,7 @@
             if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== 'trailer') {
                 this.sendToTrakt('stop');
                 var watchObject = this.model.get('metadata');
-                App.vent.trigger('watched', 'add', type, watchObject);
+                App.vent.trigger('watched', watchObject);
                 AdvSettings.set('lastWatchedTime', false); // clear last pos
             }
 

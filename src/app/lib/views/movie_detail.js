@@ -56,6 +56,7 @@
             }
             this.loadCover();
             this.loadBackground();
+            App.vent.trigger('dummy:closeDetail');
         },
 
         closeDetails: function () {

@@ -13,6 +13,7 @@
             MainNav: '#main-nav',
             Content: '#content',
             MovieDetail: '#movie-detail',
+            DummyDetail: '#dummy-detail',
             FileSelector: '#file-selector-container',
             Player: '#player',
             Settings: '#settings-container',
@@ -55,14 +56,14 @@
                     App.vent.trigger('viewstack:push', view.className);
                     $(this.el).css('display', 'block');
 
-                     var that = this;
-                     /*
-                      * Delay till display: block or fade won't work
-                      * Note that this delay has been tested, lower values will result in jumps and not fades between views
-                      */
-                    _.delay(function () {
-                        $(that.el).addClass('viewfadein');
-                    }, 100);
+                    var that = this;
+                    /*
+                     * Delay till display: block or fade won't work
+                     * Note that this delay has been tested, lower values will result in jumps and not fades between views
+                     */
+
+                    $(that.el).addClass('viewfadein');
+
                 });
 
                 /**
@@ -127,6 +128,10 @@
             // Movies
             App.vent.on('movie:showDetail', _.bind(this.showMovieDetail, this));
             App.vent.on('movie:closeDetail', _.bind(this.closeMovieDetail, this.MovieDetail));
+
+            //dummy model
+            App.vent.on('dummy:showDetail', _.bind(this.showDummyDetail, this));
+            App.vent.on('dummy:closeDetail', _.bind(this.closeDummyDetail, this.DummyDetail));
 
             // Torrent collection
             App.vent.on('torrentCollection:show', _.bind(this.showTorrentCollection, this));
@@ -384,6 +389,15 @@
             App.vent.trigger('shortcuts:list');
         },
 
+        showDummyDetail: function (model) {
+            this.DummyDetail.show(new App.View.DummyDetail({
+                model: model
+            }));
+        },
+
+        closeDummyDetail: function () {
+            _this.DummyDetail.destroy();
+        },
         showNotification: function (notificationModel) {
             this.Notification.show(new App.View.Notification({
                 model: notificationModel

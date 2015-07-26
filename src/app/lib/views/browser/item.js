@@ -485,11 +485,11 @@
             case 'movie':
                 var Type = type.charAt(0).toUpperCase() + type.slice(1);
                 this.model.set('health', false);
+                App.vent.trigger('dummy:showDetail', new Backbone.Model(this.model.attributes));
+
                 var that = this;
-                $('.spinner').show();
                 data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
                     .catch(function () {
-                        $('.spinner').hide();
                         $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
                     })
                     .then(function (data) {
@@ -504,7 +504,6 @@
                             data.color = color.color;
                             data.textcolor = color.textcolor;
                             data.seasonImages = images;
-                            $('.spinner').hide();
                             App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
                         });
 

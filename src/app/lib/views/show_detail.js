@@ -90,6 +90,7 @@
             }
             this.loadBackground();
             this.playerQualityChooseUI();
+            App.vent.trigger('dummy:closeDetail');
         },
 
         onDestroy: function () {

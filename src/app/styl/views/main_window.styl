@@ -111,3 +111,16 @@ body,
     font-family $AlternateFont
     font-size 14px
     z-index 999
+
+.dummymodel
+    position: fixed;
+    width: 100vw;
+    background-color: #191d22;
+    top: 0px;
+    opacity 0
+    display none
+    z-index: 2;
+    height: 100vh;
+    transition: opacity .3s ease-in;
+    &.viewfadein
+        opacity: 1

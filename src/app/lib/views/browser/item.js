@@ -124,6 +124,7 @@
             var that = this;
             if (!this.backgroundset) {
                 this.getColor(true).then(function (color) {
+                    that.model.set('color', color.color);
                     that.ui.infowrapper.css('background', color.color);
                     that.ui.infowrapper.css('color', color.textcolor);
                     that.ui.infodot.css('background', color.textcolor);

@@ -104,22 +104,14 @@
 
         checkWatched: function (data) {
             var watched = this.db.getCollection('watched');
-            var result = watched.findObject({
-                imdb: data.imdb_id,
-                tvdb: data.tvdb_id,
-                episode_id: data.episode_id,
-                episode: data.episode,
-                season: data.season,
-                type: data.type
+            var result = watched.where(function (obj) {
+                return obj.imdb === data.imdb_id && obj.tvdb === data.tvdb_id && obj.episode === data.episode && obj.season === data.season && obj.type === data.type;
             });
-            console.log(result);
-            if (result !== null) {
-                result = true;
-            } else {
-                result = false;
+            var r = false;
+            if (result.length > 0) {
+                r = true;
             }
-            console.log(result);
-            return Q(result);
+            return Q(r);
         },
 
         watched: function (data, remove) {
@@ -128,7 +120,6 @@
                 watched.removeWhere({
                     imdb: data.imdb_id,
                     tvdb: data.tvdb_id,
-                    episode_id: data.episode_id,
                     episode: data.episode,
                     season: data.season,
                     type: data.type
@@ -137,7 +128,6 @@
                 watched.insert({
                     imdb: data.imdb_id,
                     tvdb: data.tvdb_id,
-                    episode_id: data.episode_id,
                     episode: data.episode,
                     season: data.season,
                     type: data.type

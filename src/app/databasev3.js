@@ -38,7 +38,7 @@
 
         ckeckResume: function (data) {
             var resume = this.db.getCollection('resume');
-            var result = resume.find({
+            var result = resume.findWhere({
                 imdb: data.imdb_id,
                 tvdb: data.tvdb_id,
                 episode: data.episode,
@@ -104,7 +104,7 @@
 
         checkWatched: function (data) {
             var watched = this.db.getCollection('watched');
-            var result = watched.find({
+            var result = watched.findObject({
                 imdb: data.imdb_id,
                 tvdb: data.tvdb_id,
                 episode_id: data.episode_id,
@@ -112,11 +112,14 @@
                 season: data.season,
                 type: data.type
             });
-            var r = false;
-            if (result.length > 0) {
-                r = true;
+            console.log(result);
+            if (result !== null) {
+                result = true;
+            } else {
+                result = false;
             }
-            return Q(r);
+            console.log(result);
+            return Q(result);
         },
 
         watched: function (data, remove) {

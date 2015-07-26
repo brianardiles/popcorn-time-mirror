@@ -264,16 +264,14 @@
                 });
         },
 
-        onWatched: function (data, remove, ignore) {
-            if (ignore) {
-                return;
-            }
+        onWatched: function (data, remove) {
+
             if (data.type !== 'show') {
                 return;
             }
             if (!remove) {
                 this.markWatched(data, true);
-            } else if (method === 'remove') {
+            } else {
                 this.markWatched(data, false);
             }
         },
@@ -355,6 +353,7 @@
                 };
                 App.Databasev2.checkWatched(value)
                     .then(function (watched) {
+                        console.log(watched);
                         if (!watched) {
                             $('.show-watched-toggle').show();
                             unWatchedEpisodes.push({
@@ -533,7 +532,7 @@
                 season: season,
                 episode: episode
             };
-            /*
+            /* Find a better method for this later
                         this.fetchTVSubtitles({
                             imdbid: this.model.get('imdb_id'),
                             season: season,

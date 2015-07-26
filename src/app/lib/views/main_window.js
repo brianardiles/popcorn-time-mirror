@@ -56,13 +56,13 @@
                     App.vent.trigger('viewstack:push', view.className);
                     $(this.el).css('display', 'block');
 
-                    var that = this;
+
                     /*
                      * Delay till display: block or fade won't work
                      * Note that this delay has been tested, lower values will result in jumps and not fades between views
                      */
 
-                    $(that.el).addClass('viewfadein');
+                    $(this.el).addClass('viewfadein');
 
                 });
 

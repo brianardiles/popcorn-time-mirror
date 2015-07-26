@@ -36,7 +36,7 @@
         },
 
         initialize: function () {
-
+            this.dummyclosed = true;
             var imdb = this.model.get('imdb_id'),
                 itemtype = this.model.get('type'),
                 images = this.model.get('images'),
@@ -115,6 +115,10 @@
                     }
                 }
             });
+            this.listenTo(App.vent, 'dummy:closeDetail', function () {
+                this.dummyclosed = false;
+            });
+
         },
         onDestroy: function () {
 
@@ -452,6 +456,7 @@
             var provider = App.Providers.get(this.model.get('provider'));
             var data;
             var type = this.model.get('type');
+            this.dummyclosed = true;
             switch (type) {
             case 'bookmarkedmovie':
                 var SelectedMovie = new Backbone.Model({
@@ -494,6 +499,7 @@
                         $('.notification_alert').text(i18n.__('Error loading data, try again later...')).fadeIn('fast').delay(2500).fadeOut('fast');
                     })
                     .then(function (data) {
+
                         data.provider = provider.name;
                         data.bookmarked = that.model.get('bookmarked');
                         Q.all([
@@ -505,6 +511,11 @@
                             data.color = color.color;
                             data.textcolor = color.textcolor;
                             data.seasonImages = images;
+                            if (!that.dummyclosed) {
+                                console.log('Dummyclosed before model shown aborting')
+                                that.dummyclosed = true;
+                                return;
+                            }
                             App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
                         });
 

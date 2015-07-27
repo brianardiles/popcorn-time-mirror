@@ -553,18 +553,26 @@
 
                 if (swatches['Vibrant']) {
                     if (swatches['Vibrant'].getPopulation() < 20) {
-                        color = rgba(swatches['Muted'].getRgb(), 0.96);
-                        textColor = swatches['Muted'].getTitleTextColor();
-                        fabColor = swatches['DarkVibrant'].getHex();
+                        if (swatches['Muted']) {
+                            color = rgba(swatches['Muted'].getRgb(), 0.96);
+                            textColor = swatches['Muted'].getTitleTextColor();
+                        }
+                        if (swatches['DarkVibrant']) {
+                            fabColor = swatches['DarkVibrant'].getHex();
+                        }
                     } else {
                         color = rgba(swatches['Vibrant'].getRgb(), 0.96);
                         textColor = swatches['Vibrant'].getTitleTextColor();
-                        fabColor = swatches['DarkMuted'].getHex();
+                        if (swatches['DarkMuted']) {
+                            fabColor = swatches['DarkMuted'].getHex();
+                        }
                     }
                 } else if (swatches['Muted']) {
                     color = rgba(swatches['Muted'].getRgb(), 0.96);
                     textColor = swatches['Muted'].getTitleTextColor();
-                    fabColor = swatches['DarkVibrant'].getHex();
+                    if (swatches['DarkVibrant']) {
+                        fabColor = swatches['DarkVibrant'].getHex();
+                    }
                 } else {
                     defer.resolve(null);
                 }

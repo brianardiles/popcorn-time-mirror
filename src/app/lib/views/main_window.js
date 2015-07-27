@@ -88,7 +88,7 @@
                         if (!App.ViewStack[0]) {
                             App.ViewStack = ['main-browser'];
                         }
-                    }, 300);
+                    }, 200);
                 });
 
             });

@@ -12,9 +12,7 @@
         className: 'player',
 
         ui: {
-
             title: '.player-title',
-
         },
 
         events: {
@@ -40,6 +38,14 @@
                 this.player.addPlaylist(this.model.get('src'));
             } else {
                 this.player.addPlaylist(App.Streamer.src);
+                this.player.addPlaylist({
+                    url: App.Streamer.src,
+                    vlcArgs: [],
+                    subtitles: {
+                        "Hungarian": "http://my.subtitle.server/hungarian.srt",
+                        "Polish": "http://my.subtitle.server/polish.sub"
+                    }
+                });
             }
 
         },
@@ -49,13 +55,14 @@
         },
 
         closePlayer: function (next) {
+            this.player.close();
             App.vent.trigger('streamer:stop');
             App.vent.trigger('preloadStreamer:stop');
             App.vent.trigger('player:close');
         },
 
         onDestroy: function () {
-            this.player.close();
+
         }
     });
     App.View.Player = Player;

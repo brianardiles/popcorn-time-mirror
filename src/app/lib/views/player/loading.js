@@ -164,7 +164,6 @@
 
                 that.ui.progressbar.prop('value', percent);
                 if (time >= 4000) {
-                    that.player.stop();
                     that.initMainplayer();
                 }
 
@@ -176,7 +175,9 @@
         },
 
         initMainplayer: function () {
-
+            if (this.player) {
+                this.player.stop();
+            }
             if (this.player === 'local') {
                 var playerModel = new Backbone.Model(this.model.get('data'));
                 App.vent.trigger('stream:local', playerModel);
@@ -195,6 +196,9 @@
         },
 
         cancelStreaming: function () {
+            if (this.player) {
+                this.player.stop();
+            }
             App.vent.trigger('streamer:stop');
             App.vent.trigger('player:close');
         },
@@ -230,7 +234,6 @@
             });
         },
         onDestroy: function () {
-            this.player.stop();
             this.loadingStopped = true;
         },
         waitForSelection: function () {

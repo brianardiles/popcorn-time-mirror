@@ -70,6 +70,7 @@
     "underscore": "^1.8.3",
     "upnp-mediarenderer-client": "git+https://github.com/thibauts/node-upnp-mediarenderer-client.git",
     "watchjs": "0.0.0",
+    "wcjs-player": "^0.4.8",
     "xmlbuilder": "^2.6.4"
   },
   "devDependencies": {
@@ -78,14 +79,17 @@
     "grunt-bower-clean": "^0.2.2",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-compress": "^0.13.0",
+    "grunt-contrib-copy": "^0.8.0",
     "grunt-contrib-jshint": "^0.11.1",
     "grunt-contrib-stylus": "0.21.0",
     "grunt-contrib-watch": "0.6.x",
+    "grunt-download": "^0.2.0",
     "grunt-exec": "0.4.x",
     "grunt-githooks": "^0.3.1",
     "grunt-jsbeautifier": "*",
-    "grunt-node-webkit-builder": "0.1.x",
+    "grunt-nw-builder": "^2.0.0",
     "grunt-shell": "^1.1.2",
+    "grunt-zip": "^0.16.2",
     "load-grunt-tasks": "3.1.0",
     "nw-gyp": "^0.12.4",
     "stylus": "0.50.0"

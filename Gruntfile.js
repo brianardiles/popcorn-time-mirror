@@ -43,6 +43,12 @@ module.exports = function (grunt) {
 
     require('load-grunt-tasks')(grunt);
 
+
+    grunt.loadNpmTasks('grunt-nw-builder');
+    grunt.loadNpmTasks('grunt-zip');
+    grunt.loadNpmTasks('grunt-download');
+
+
     grunt.registerTask('default', [
         'css',
         'jshint',
@@ -73,10 +79,17 @@ module.exports = function (grunt) {
         'injectgit',
         'bower_clean',
         'lang',
-        'nodewebkit',
+        'nwjs',
+        'vlc',
         'shell:setexecutable'
     ]);
     grunt.registerTask('lang', ['shell:language']);
+
+
+    grunt.registerTask('vlc', [
+        'vlc:download',
+        'vlc:copy'
+    ]);
 
     grunt.registerTask('dist', [
         'clean:releases',
@@ -148,6 +161,38 @@ module.exports = function (grunt) {
         }
     });
 
+
+    grunt.registerTask('vlc:download', function () {
+        var start = parseBuildPlatforms();
+        if (start.win) {
+            grunt.task.run('download:win');
+        } else if (start.mac) {
+            grunt.task.run('download:mac');
+        } else if (start.linux32) {
+            grunt.task.run('download:linux32');
+        } else if (start.linux64) {
+            grunt.task.run('download:linux64');
+        } else {
+            grunt.log.writeln('OS not supported.');
+        }
+    });
+
+    grunt.registerTask('vlc:copy', function () {
+        var start = parseBuildPlatforms();
+        if (start.win) {
+            grunt.task.run('unzip:win');
+        } else if (start.mac) {
+            grunt.task.run('unzip:mac');
+        } else if (start.linux32) {
+            grunt.task.run('unzip:linux32');
+        } else if (start.linux64) {
+            grunt.task.run('unzip:linux64');
+        } else {
+            grunt.log.writeln('OS not supported.');
+        }
+    });
+
+
     grunt.initConfig({
         githooks: {
             all: {
@@ -169,6 +214,21 @@ module.exports = function (grunt) {
                 options: {
                     mode: 'VERIFY_ONLY'
                 }
+            }
+        },
+
+        unzip: {
+            win: {
+                src: 'cache/vlc_2.2.1_win_ia32_with_avi_fix.zip',
+                dest: 'node_modules/pw-wcjs-player/node_modules/wcjs-renderer/node_modules/webchimera.js/build/Release'
+            }
+        },
+
+        download: {
+            win: {
+                url: 'http://powder.media/vlc_2.2.1_win_ia32_with_avi_fix.zip',
+                manifest: false,
+                filename: 'cache/'
             }
         },
 
@@ -201,9 +261,9 @@ module.exports = function (grunt) {
             }
         },
 
-        nodewebkit: {
+        nwjs: {
             options: {
-                version: '0.12.1',
+                version: '0.12.2',
                 build_dir: './build', // Where the build version of my node-webkit app is saved
                 keep_nw: true,
                 embed_nw: false,
@@ -212,8 +272,7 @@ module.exports = function (grunt) {
                 mac: buildPlatforms.mac,
                 win: buildPlatforms.win,
                 linux32: buildPlatforms.linux32,
-                linux64: buildPlatforms.linux64,
-                download_url: 'http://get.popcorntime.io/nw/'
+                linux64: buildPlatforms.linux64
             },
             src: ['./src/**', '!./src/app/styl/**',
                 './node_modules/**', '!./node_modules/bower/**',
@@ -230,10 +289,10 @@ module.exports = function (grunt) {
 
         exec: {
             win: {
-                cmd: '"build/cache/win/<%= nodewebkit.options.version %>/nw.exe" .'
+                cmd: '"cache/<%= nwjs.options.version %>/win32/nw.exe" .'
             },
             mac: {
-                cmd: 'build/cache/mac/<%= nodewebkit.options.version %>/node-webkit.app/Contents/MacOS/nwjs .'
+                cmd: 'cache/<%= nwjs.options.version %>/osx32/nwjs.app/Contents/MacOS/nwjs .'
             },
             linux32: {
                 cmd: '"build/cache/linux32/<%= nodewebkit.options.version %>/nw" .'

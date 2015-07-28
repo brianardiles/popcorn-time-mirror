@@ -269,7 +269,7 @@ module.exports = function (grunt) {
                 embed_nw: false,
                 mac_icns: './src/app/images/popcorntime.icns' // Path to the Mac icon file
             },
-            src: ['./src/**', '!./src/app/styl/**', '!./vlc-deps/**',
+            src: ['./src/**', '!./src/app/styl/**', '!./vlc-deps/**', '!./cache/**',
                 './node_modules/**', '!./node_modules/bower/**',
                 '!./node_modules/*grunt*/**', '!./node_modules/stylus/**',
                 '!./node_modules/nw-gyp/**', '!./node_modules/**/*.bin',

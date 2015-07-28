@@ -13,10 +13,12 @@
 
         ui: {
 
+            title: '.player-title',
+
         },
 
         events: {
-
+            'click .close-player': 'closePlayer',
         },
 
         initialize: function () {
@@ -25,22 +27,35 @@
 
 
         onShow: function () {
-
-            this.player = new wjs("#player").addPlayer({
-                autoplay: true
-            });
-
-            this.player.addPlaylist(App.Streamer.src);
+            this.initplayer(this.model.get('type'));
+            this.setUI();
         },
 
+        initplayer: function (type) {
+
+            this.player = new wjs("#internal_player").addPlayer({
+                autoplay: true
+            });
+            if (type === 'trailer') {
+                this.player.addPlaylist(this.model.get('src'));
+            } else {
+                this.player.addPlaylist(App.Streamer.src);
+            }
+
+        },
+
+        setUI: function () {
+            this.ui.title.text(this.model.attributes.metadata.title);
+        },
 
         closePlayer: function (next) {
-            this.player.close();
-
+            App.vent.trigger('streamer:stop');
+            App.vent.trigger('preloadStreamer:stop');
+            App.vent.trigger('player:close');
         },
 
         onDestroy: function () {
-
+            this.player.close();
         }
     });
     App.View.Player = Player;

@@ -56,6 +56,15 @@ module.exports = function (grunt) {
         'injectgit'
     ]);
 
+
+    grunt.registerTask('wcjs', [
+        'css',
+        'injectgit',
+        'lang',
+        'nwjs',
+        'vlc'
+    ]);
+
     // Called from the npm hook
     grunt.registerTask('setup', [
         //'githooks'
@@ -65,10 +74,6 @@ module.exports = function (grunt) {
         'officalcss'
     ]);
 
-    grunt.registerTask('themes', [
-        'shell:themes',
-        'unofficalcss'
-    ]);
 
     grunt.registerTask('js', [
         'jsbeautifier:default'
@@ -221,6 +226,10 @@ module.exports = function (grunt) {
             win: {
                 src: 'cache/vlc_2.2.1_win_ia32_with_avi_fix.zip',
                 dest: 'node_modules/wcjs-player/node_modules/wcjs-renderer/node_modules/webchimera.js/build/Release'
+            },
+            mac: {
+                src: 'cache/libvlc_2.2.1_mac.zip',
+                dest: 'node_modules/wcjs-player/node_modules/wcjs-renderer/node_modules/webchimera.js/build/Release'
             }
         },
 
@@ -229,7 +238,13 @@ module.exports = function (grunt) {
                 url: 'http://powder.media/vlc_2.2.1_win_ia32_with_avi_fix.zip',
                 manifest: false,
                 filename: 'cache/'
+            },
+            mac: {
+                url: 'https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.3/libvlc_2.2.1_mac.zip',
+                manifest: false,
+                filename: 'cache/'
             }
+
         },
 
         stylus: {

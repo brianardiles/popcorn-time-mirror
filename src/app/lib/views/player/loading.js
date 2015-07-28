@@ -149,7 +149,7 @@
             var player = new wjs("#loading_player").addPlayer({
                 autoplay: true
             });
-
+            player.mute(true);
             player.addPlaylist(App.Streamer.src);
 
             player.onPlaying(function () {

@@ -220,7 +220,7 @@ module.exports = function (grunt) {
         unzip: {
             win: {
                 src: 'cache/vlc_2.2.1_win_ia32_with_avi_fix.zip',
-                dest: 'node_modules/pw-wcjs-player/node_modules/wcjs-renderer/node_modules/webchimera.js/build/Release'
+                dest: 'node_modules/wcjs-player/node_modules/wcjs-renderer/node_modules/webchimera.js/build/Release'
             }
         },
 
@@ -267,24 +267,9 @@ module.exports = function (grunt) {
                 build_dir: './build', // Where the build version of my node-webkit app is saved
                 keep_nw: true,
                 embed_nw: false,
-                mac_icns: './src/app/images/popcorntime.icns', // Path to the Mac icon file
-                macZip: buildPlatforms.win, // Zip nw for mac in windows. Prevent path too long if build all is used.
-                mac: buildPlatforms.mac,
-                win: buildPlatforms.win,
-                linux32: buildPlatforms.linux32,
-                linux64: buildPlatforms.linux64
+                mac_icns: './src/app/images/popcorntime.icns' // Path to the Mac icon file
             },
-            src: ['./src/**', '!./src/app/styl/**',
-                './node_modules/**', '!./node_modules/bower/**',
-                '!./node_modules/*grunt*/**', '!./node_modules/stylus/**',
-                '!./node_modules/nw-gyp/**', '!./node_modules/**/*.bin',
-                '!./node_modules/**/*.c', '!./node_modules/**/*.h',
-                '!./node_modules/**/Makefile', '!./node_modules/**/*.h',
-                '!./**/test*/**', '!./**/doc*/**', '!./**/example*/**',
-                '!./**/demo*/**', '!./**/bin/**', '!./**/build/**', '!./**/.*/**',
-                './package.json', './README.md', './CHANGELOG.md', './LICENSE.txt',
-                './.git.json'
-            ]
+            src: ['./src/**/*']
         },
 
         exec: {

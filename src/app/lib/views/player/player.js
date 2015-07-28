@@ -55,7 +55,7 @@
         },
 
         closePlayer: function (next) {
-            this.player.close();
+            this.player.stop();
             App.vent.trigger('streamer:stop');
             App.vent.trigger('preloadStreamer:stop');
             App.vent.trigger('player:close');

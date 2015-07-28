@@ -4,6 +4,7 @@
     var that,
         util = require('util'),
         Q = require('q');
+    var wjs = require('wcjs-player');
 
 
     var Player = Backbone.Marionette.ItemView.extend({
@@ -25,17 +26,16 @@
 
         onShow: function () {
 
-            var wjs = require("wcjs-player");
-            var player = new wjs("#player").addPlayer({
+            this.player = new wjs("#player").addPlayer({
                 autoplay: true
             });
 
-            player.addPlaylist(App.Streamer.src);
+            this.player.addPlaylist(App.Streamer.src);
         },
 
 
         closePlayer: function (next) {
-
+            this.player.close();
 
         },
 

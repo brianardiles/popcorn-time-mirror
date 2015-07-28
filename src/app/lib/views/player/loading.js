@@ -145,33 +145,29 @@
             var that = this;
 
 
-            var wjs = require("wcjs-player");
-            var player = new wjs("#loading_player").addPlayer({
+            var wjs = require('wcjs-player');
+            this.player = new wjs("#loading_player").addPlayer({
                 autoplay: true
             });
-            player.mute(true);
-            player.addPlaylist(App.Streamer.src);
+            this.player.mute(true);
+            this.player.addPlaylist(App.Streamer.src);
 
-            player.onPlaying(function () {
+            this.player.onPlaying(function () {
                 that.BufferingStarted = true;
                 that.ui.progressbar.removeAttr('indeterminate');
                 win.info('Initial Meta Chunks Received! Starting Playback in 4 seconds.');
             });
 
-            player.onTime(function (time) {
-
+            this.player.onTime(function (time) {
 
                 var percent = time / 4000 * 100;
-                console.log(time, percent);
 
-
+                that.ui.progressbar.prop('value', percent);
                 if (time >= 4000) {
-                    player.stop();
+                    that.player.stop();
                     that.initMainplayer();
                 }
 
-
-                that.ui.progressbar.prop('value', percent);
             });
 
 
@@ -234,6 +230,7 @@
             });
         },
         onDestroy: function () {
+            this.player.stop();
             this.loadingStopped = true;
         },
         waitForSelection: function () {

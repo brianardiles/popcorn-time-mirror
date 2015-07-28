@@ -143,37 +143,40 @@
 
         initializeLoadingPlayer: function () {
             var that = this;
-            var loadingPlayer = document.getElementById('loading_player');
-            loadingPlayer.setAttribute('src', App.Streamer.src);
-            win.debug('Requesting Initial Meta Chunks For', this.model.get('data').metadata.title, '(Smart Loader)');
-            loadingPlayer.muted = true;
-            loadingPlayer.load();
-            loadingPlayer.play();
-            var debugmetachunks = false;
-            loadingPlayer.ontimeupdate = function () {
-                if (that.loadingStopped || that.backupCountdownDone) {
-                    loadingPlayer.pause();
-                    loadingPlayer.src = ''; // empty source
-                    loadingPlayer.load();
-                    return;
-                }
-                if (loadingPlayer.currentTime > 0 && !debugmetachunks) {
-                    win.info('Initial Meta Chunks Received! Starting Playback in 4 seconds.');
-                    debugmetachunks = true;
-                    that.BufferingStarted = true;
-                    that.ui.progressbar.removeAttr('indeterminate');
-                }
-                var percent = loadingPlayer.currentTime / 4 * 100;
-                that.ui.progressbar.prop('value', percent);
 
-                if (loadingPlayer.currentTime > 4) {
-                    loadingPlayer.pause();
-                    loadingPlayer.src = ''; // empty source
-                    loadingPlayer.load();
+
+            var wjs = require("wcjs-player");
+            var player = new wjs("#loading_player").addPlayer({
+                autoplay: true
+            });
+
+            player.addPlaylist(App.Streamer.src);
+
+            player.onPlaying(function () {
+                that.BufferingStarted = true;
+                that.ui.progressbar.removeAttr('indeterminate');
+                win.info('Initial Meta Chunks Received! Starting Playback in 4 seconds.');
+            });
+
+            player.onTime(function (time) {
+
+
+                var percent = time / 4000 * 100;
+                console.log(time, percent);
+
+
+                if (time >= 4000) {
+                    player.stop();
                     that.initMainplayer();
                 }
 
-            };
+
+                that.ui.progressbar.prop('value', percent);
+            });
+
+
+            win.debug('Requesting Initial Meta Chunks For', this.model.get('data').metadata.title, '(Smart Loader)');
+
         },
 
         initMainplayer: function () {

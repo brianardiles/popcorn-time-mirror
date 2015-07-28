@@ -30,4 +30,4 @@ paper-progress::shadow #activeProgress {
             <paper-progress class="progressbar" indeterminate ></paper-progress>
              <div class="stats"></div>
         </div>
-    <video controls id="loading_player" width="20%" height="20%" style="display:none" preload="none"></video>
+        <div id="loading_player" ></div>

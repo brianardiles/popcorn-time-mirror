@@ -44,7 +44,7 @@
             <div class="auto-next-btn playnownext"><%= i18n.__("Play Now") %></div>
     </div>
 </div>
-<div id="player"></div>
+<div id="player" class="player"></div>
 
     
     <video controls id="loading_player" width="20%" height="20%" style="display:none" preload="none"></video>

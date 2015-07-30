@@ -36,9 +36,9 @@
             "**/!(underscore.js)"
         ],
         "mousetrap": [
-            "tests",
-            ".gitignore",
-            "**/!(mousetrap.min.js)"
+            "*",
+            "!mousetrap.min.js",
+            "!plugins"
         ],
         "marionette": [
             "**/!(lib)"

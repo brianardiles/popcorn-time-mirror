@@ -84,7 +84,7 @@
         },
 
         onShow: function () {
-
+            this.ui.poster = $('#ink-poster');
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark');
             }

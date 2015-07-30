@@ -552,7 +552,7 @@
             if ($('#ink-poster').length) {
                 $('#ink-poster').remove();
             }
-            poster = $('<img id="ink-poster" src="'+cover+'" />');
+            poster = $('<img data-bgr="'+cover+'" id="ink-poster" src="'+cover+'" />');
             poster.css(origparams);
             w.append(poster);
             

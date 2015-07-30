@@ -480,8 +480,11 @@
                     watched: this.model.get('watched'),
                     bookmarked: true,
                 });
-
-                App.vent.trigger('movie:showDetail', SelectedMovie);
+                    
+                this.showInk(e, type, function(){
+                    App.vent.trigger('movie:showDetail', SelectedMovie);
+                });
+                
                 break;
 
             case 'bookmarkedshow':
@@ -491,7 +494,10 @@
             case 'movie':
                 var Type = type.charAt(0).toUpperCase() + type.slice(1);
                 this.model.set('health', false);
-                App.vent.trigger('dummy:showDetail', new Backbone.Model(this.model.attributes));
+                    
+                //this.showInk(function(){
+                //    App.vent.trigger('dummy:showDetail', new Backbone.Model(this.model.attributes));
+                //});
 
                 var that = this;
                 data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
@@ -511,18 +517,95 @@
                             data.color = color.color;
                             data.textcolor = color.textcolor;
                             data.seasonImages = images;
-                            if (!that.dummyclosed) {
-                                console.log('Dummyclosed before model shown aborting')
-                                that.dummyclosed = true;
-                                return;
-                            }
-                            App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
+//                            if (!that.dummyclosed) {
+//                                console.log('Dummyclosed before model shown aborting')
+//                                that.dummyclosed = true;
+//                                return;
+//                            }
+                            var model = new App.Model[Type](data);
+                            that.showInk(e, type, model, function(){
+                                App.vent.trigger(type + ':showDetail', model);
+                            });
+                            
                         });
 
                     });
                 break;
 
             }
+        },
+        
+        showInk: function(e, type, model, cb) {
+            var w = $('#main-window'),
+                $target = $(e.target).closest('img'),
+                cover = model.get('cover') || model.get('images').poster,
+                ink, poster, d,x,y,px,py,pw,ph,scale,
+                origparams = {
+                    width: $target.width(),
+                    height: $target.height(),
+                    top: $target.offset().top,
+                    left: $target.parent().offset().left
+                };
+            
+            $target.closest('.info').addClass('hide');
+            
+            if ($('#ink-poster').length) {
+                $('#ink-poster').remove();
+            }
+            poster = $('<img id="ink-poster" src="'+cover+'" />');
+            poster.css(origparams);
+            w.append(poster);
+            
+            if ($('#ink').length) {
+                ink = $('#ink');
+            } else {
+                ink = $('<div id="ink"></div>');
+                w.append(ink);
+            }
+
+            ink.on('webkitTransitionEnd', function(e){
+                if (ink.css('opacity') === '0') {
+                    ink.css('z-index', 0);
+                    ink.off('webkitTransitionEnd');
+                } else {
+                    cb();
+                    ink.addClass('fade');
+                }
+            });
+
+            App.vent.once('ink:close', function(d) {
+                ink.css('z-index', 5);
+                ink.removeClass('fade');
+                App.vent.trigger(d.nextEvent);
+                poster.css('transition-duration', '0.7s');
+                poster.one('webkitTransitionEnd', function(){
+                    poster.remove();
+                });
+                poster.css('transform', 'none');
+                ink.removeClass('animate');
+            });
+            
+            d = Math.max(w.outerWidth(), w.outerHeight());
+            ink.css({height: d, width: d});
+            x = e.pageX -  ink.width()/2;
+            y = e.pageY -  ink.height()/2;
+            px = 110 - origparams.left;
+            
+            switch (type) {
+                case 'movie':
+                    pw = (w.height() - 160 - 50) * 2 / 3;
+                    py = 160 - origparams.top;
+                    break;
+                default:
+                    //show, anime?
+                    pw = (w.height() - 240 - 50) * 2 / 3;
+                    py = 240 - origparams.top;
+                    break;
+            }
+            
+            scale = pw/origparams.width;
+            ink.css({top: y+'px', left: x+'px'}).addClass("animate");
+            poster.css('transform', 'translate('+px+'px, '+py+'px) scale('+scale+')').addClass('animate');
         },
 
         getColor: function (fast) {

@@ -73,7 +73,7 @@
 </div>
 <div class="info-wrapper">
 
-        <img data-bgr="<%= images.poster %>" src="<%= images.poster %>" class="poster" />
+        <!--<img data-bgr="<%= images.poster %>" src="<%= images.poster %>" class="poster" />-->
 
     <div id="season-0" class="meta-container show-info episode-list-show">
         <div class="meta-item">

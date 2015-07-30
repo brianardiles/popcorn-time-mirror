@@ -758,7 +758,8 @@
         },
 
         closeDetails: function (e) {
-            App.vent.trigger('show:closeDetail');
+            App.vent.trigger('ink:close', {nextEvent: 'show:closeDetail'});
+            //App.vent.trigger('show:closeDetail');
         }
 
     });

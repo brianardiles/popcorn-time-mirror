@@ -60,7 +60,8 @@
         },
 
         closeDetails: function () {
-            App.vent.trigger('movie:closeDetail');
+            App.vent.trigger('ink:close', {nextEvent: 'movie:closeDetail'});
+            //App.vent.trigger('movie:closeDetail');
         },
 
 

@@ -480,8 +480,11 @@
                     watched: this.model.get('watched'),
                     bookmarked: true,
                 });
-
-                App.vent.trigger('movie:showDetail', SelectedMovie);
+                    
+                this.showInk(e, type, function(){
+                    App.vent.trigger('movie:showDetail', SelectedMovie);
+                });
+                
                 break;
 
             case 'bookmarkedshow':
@@ -491,7 +494,10 @@
             case 'movie':
                 var Type = type.charAt(0).toUpperCase() + type.slice(1);
                 this.model.set('health', false);
-                App.vent.trigger('dummy:showDetail', new Backbone.Model(this.model.attributes));
+                    
+                //this.showInk(function(){
+                //    App.vent.trigger('dummy:showDetail', new Backbone.Model(this.model.attributes));
+                //});
 
                 var that = this;
                 data = provider.detail(this.model.get('imdb_id'), this.model.attributes)
@@ -511,18 +517,56 @@
                             data.color = color.color;
                             data.textcolor = color.textcolor;
                             data.seasonImages = images;
-                            if (!that.dummyclosed) {
-                                console.log('Dummyclosed before model shown aborting')
-                                that.dummyclosed = true;
-                                return;
-                            }
-                            App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
+//                            if (!that.dummyclosed) {
+//                                console.log('Dummyclosed before model shown aborting')
+//                                that.dummyclosed = true;
+//                                return;
+//                            }
+                            that.showInk(e, type, function(){
+                                App.vent.trigger(type + ':showDetail', new App.Model[Type](data));
+                            });
+                            
                         });
 
                     });
                 break;
 
             }
+        },
+        
+        showInk: function(e, type, cb) {
+            var w = $('#main-window'),
+                ink, d,x,y;
+            
+            if ($('#ink').length) {
+                ink = $('#ink');
+            } else {
+                ink = $('<div id="ink"></div>');
+                w.append(ink);
+            }
+
+            ink.on('webkitTransitionEnd', function(e){
+                if (ink.css('opacity') === '0') {
+                    ink.css('z-index', 0);
+                    ink.off('webkitTransitionEnd');
+                } else {
+                    cb();
+                    ink.addClass('fade');
+                }
+            });
+
+            App.vent.once('ink:close', function(d) {
+                ink.css('z-index', 5);
+                ink.removeClass('fade');
+                App.vent.trigger(d.nextEvent);
+                ink.removeClass('animate');
+            });
+            
+            d = Math.max(w.outerWidth(), w.outerHeight());
+            ink.css({height: d, width: d});
+            x = e.pageX -  ink.width()/2;
+            y = e.pageY -  ink.height()/2;
+            ink.css({top: y+'px', left: x+'px'}).addClass("animate");
         },
 
         getColor: function (fast) {

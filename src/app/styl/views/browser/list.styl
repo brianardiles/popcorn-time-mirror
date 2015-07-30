@@ -111,22 +111,22 @@ disabled-text-color = rgb(122, 122, 122, 1)
         background-attachment fixed
         background-repeat no-repeat
         -webkit-filter brightness(55%)
-        transition: opacity .6s ease-in;
+        transition: opacity .6s ease-in
         &.fadein
             opacity 1
             
     #list-content
         display flex
         position relative
-        flex-direction: row;
-        justify-content: space-between;
-        flex-wrap: wrap;
+        flex-direction: row
+        justify-content: space-between
+        flex-wrap: wrap
         margin 0 76px 0 66px
         width calc(100% - 76px - 65px)
         -webkit-user-select none
         .item
             position relative
-            list-style: none;
+            list-style: none
             overflow hidden
             opacity 1
             margin 3px
@@ -199,6 +199,21 @@ disabled-text-color = rgb(122, 122, 122, 1)
                     transform translateY(0)
                     paper-fab
                         transform translateY(0)
+
+
+#ink
+    display: block
+    position: absolute
+    background: #17181b
+    border-radius: 100%
+    transform: scale(0)
+    transition: transform 0.65s, opacity 0.5s
+    transition-timing-function: cubic-bezier(.55,0,.1,1)
+    z-index: 5
+    &.animate
+        transform: scale(2.5)
+    &.fade
+        opacity: 0
 
 @media (max-width: 2750px)
     .list-region #list-content .item

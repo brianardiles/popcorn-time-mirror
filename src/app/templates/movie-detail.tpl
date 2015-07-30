@@ -27,7 +27,7 @@
         <paper-icon-button icon="visibility-off" class="watched-toggle">
         </paper-icon-button>
 
-            <img src="<%= cover %>" class="poster" />
+            <!--<img src="<%= cover %>" class="poster" />-->
 
         <div class="meta">
             <div class="meta-item">

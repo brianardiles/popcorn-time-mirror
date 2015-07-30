@@ -481,7 +481,7 @@
                     bookmarked: true,
                 });
                     
-                this.showInk(e, type, function(){
+                this.showInk(e, type, SelectedMovie, function(){
                     App.vent.trigger('movie:showDetail', SelectedMovie);
                 });
                 

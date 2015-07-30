@@ -552,7 +552,7 @@
             if ($('#ink-poster').length) {
                 $('#ink-poster').remove();
             }
-            poster = $('<img data-bgr="'+cover+'" id="ink-poster" src="'+cover+'" />');
+            poster = $('<img class="fadein" data-bgr="'+cover+'" id="ink-poster" src="'+cover+'" />');
             poster.css(origparams);
             w.append(poster);
             
@@ -579,7 +579,11 @@
                 App.vent.trigger(d.nextEvent);
                 poster.css('transition-duration', '0.7s');
                 poster.one('webkitTransitionEnd', function(){
-                    poster.remove();
+                    poster.removeClass('fadein');
+                    poster.one('webkitTransitionEnd', function(){
+                        poster.remove();
+                    });
+                    
                 });
                 poster.css('transform', 'none');
                 ink.removeClass('animate');

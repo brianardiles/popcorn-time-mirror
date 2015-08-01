@@ -1,0 +1,3 @@
+<div class="quality-selector">
+    <div ng-repeat="q in quality.list" class="q{{ q }}" ng-class="{ 'disabled': !quality.torrents[q], 'active': quality.torrents[quality.selected].url === quality.torrents[q].url }" ng-click="!quality.torrents[q] || quality.select(q)">{{ q }}</div>
+</div>

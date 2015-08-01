@@ -1,0 +1,23 @@
+<div class="list-region viewfadein" id="content" style="display: block;">
+  <div id="main-list-content">
+    <div class="list-backdrop fadein" style="background-image: url(https://walter.trakt.us/images/movies/000/107/556/fanarts/original/9126ceca78.jpg);">  </div>
+
+    <div class="top-tools">
+      <h1 id="section-title" class="title">{{ list.type | titleCase }}</h1>
+
+      <div ng-show="list.filters" id="filterbar-toolbar" class="filters-wrapper">
+        <div filter-bar list="list.filters" on-change="list.onChange({params: params})" class="bottom filter-bar">
+        </div>
+      </div>
+    </div>
+                   
+    <div class="content">
+      <div>
+        <div id="list-content" ng-show="list.data" class="items">
+          <li ui-sref="app.browser.list.detail({ id: id, listType: item.type })" browser-list-item ng-repeat="(id, item) in list.data track by id" class="item" type="item.type" id="id" item="item"></li>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

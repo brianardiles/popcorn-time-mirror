@@ -24,9 +24,8 @@ The [master](https://git.popcorntime.io/popcorntime/desktop/tree/master) branch 
 
 1. `npm install -g grunt-cli bower`
 1. `npm install`
-1. `grunt build --force`
+1. `grunt build`
 1. `grunt start`
-
 
 If you encounter trouble with the above method, you can try:
 

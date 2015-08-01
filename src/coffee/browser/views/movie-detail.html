@@ -1,0 +1,16 @@
+<div class="bg-backdrop fadein">
+    <img image-loaded ng-src="{{ show.data.images.fanart | traktSize:'medium':data.type }}" width="100%"/>
+</div>
+
+<pt-summary-wrapper class="summary-wrapper movie" title="show.data.title"></pt-summary-wrapper>
+
+<div class="info-container">
+  <div class="info-wrapper no-seasons">
+    <!-- Poster Image -->
+    <img image-loaded ng-src="{{ show.data.images.poster | traktSize:'thumb':show.data.type }}" class="poster">
+    <!-- Meta Container -->
+    <pt-meta-container show="show.data"></pt-meta-container>
+  </div>
+</div>
+<!-- Controls Container --> 
+<pt-controls-container></pt-controls-container>

@@ -1,0 +1,556 @@
+.summary-wrapper
+    display block
+    width 100vw
+    height 15vh
+    
+    .back
+        float left
+        margin-top 54px
+        margin-left 28px
+        z-index 2
+        height: 60px
+        width: 60px
+
+        md-icon
+            height 42px
+            width 42px
+            font-size: 42px
+
+    .title
+        color #FFF
+        margin-top 54px
+        float left
+        position: relative
+        font-size 42px
+        font-weight 500
+
+    .watched-toggle, .bookmark-toggle
+        position absolute
+        z-index 2
+        top 60px
+        right 140px
+        color #fff
+
+        md-icon
+            width: 28px
+            height: 28px
+
+    .bookmark-toggle
+        right 80px
+
+.info-container 
+    display block
+    position relative
+    height 100vw
+            
+md-tabs-wrapper
+    display block
+    margin 0 auto
+    height auto
+    width 90%
+
+    .md-tab
+        font-size 20px
+        font-weight 600
+
+.detail
+    position absolute
+    height 100vh
+    font-family 'Roboto', sans-serif
+    width 100vw
+    background-color #17181b
+    overflow: hidden
+    z-index 1
+    .bg-backdrop
+        position fixed
+        height 100vh
+        width 100vw
+        opacity 0
+        -webkit-filter brightness(45%)
+        background-size cover
+        background-repeat no-repeat
+        background-position top center
+        &.fadein
+            transition: opacity .3s ease-in;
+            opacity: 1
+
+    md-tabs
+        height: 100vw
+        z-index: 3
+
+    md-icon
+        outline none
+
+    md-tabs-content-wrapper, .info-wrapper
+        position absolute
+        width 100vw
+        top 100px
+        height calc(100vh - 240px)
+        bottom 0
+
+        .poster
+            position absolute
+            top 0
+            bottom 50px
+            left 110px
+            height calc(100vh - 240px - 50px)
+            width calc((100vh - 240px - 50px) * 2 / 3)
+            opacity 0
+            z-index 3
+            box-shadow 0 0 10px rgba(0, 0, 0, 0.5)
+            border-radius 2px
+            &.fadein
+                transition: opacity .3s ease-in;
+                opacity: 1
+        
+        .meta-container
+            position absolute
+            top 0
+            bottom 0px
+            left calc(((100vh - 240px - 50px) * 2 / 3) + 170px)
+            right 60px
+            padding-left 20px
+            padding-right 20px
+            padding-bottom 30px
+            height calc(100% - 180px)
+            overflow-y auto
+            overflow-x hidden
+            z-index 2
+            &::-webkit-scrollbar
+                width 2px
+            &::-webkit-scrollbar-track
+                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.1)
+            &::-webkit-scrollbar-thumb
+                background rgba(255, 255, 255, 0.22)
+        
+        .meta-item
+            float left
+            color #ffffff
+            line-height: 20px
+            i
+                font-size 17px
+            p
+                float none
+                display inline-block
+                text-transform capitalize
+                font-size 15px
+        
+        .meta-synop
+            text-align justify
+            padding-right 5px
+            margin-top 44px
+            position relative
+            color #ffffff
+            width 100%
+            line-height 25px
+            font-size 15px
+            text-rendering optimizeLegibility
+        .meta-btn
+            color #ffffff
+            font-weight 500
+            padding-top 2px
+            margin-top 20px
+            opacity 0.7
+            transition opacity 100ms linear
+            &:hover
+                opacity 1
+            &:active
+                opacity 1
+            &#trakt-link
+                margin-left -6px
+            i
+                margin-right 8px
+        .meta-dot
+            float none
+            display inline-block
+            position relative
+            background-color #ffffff
+            margin-top 0
+            margin-bottom 2px
+            margin-left 16px
+            margin-right 16px
+            width 7px
+            height 7px
+            border-radius 50%
+        .meta-divider
+            width 100%
+            position relative
+            margin-top 36px
+            margin-bottom 41px
+            background-color rgba(255, 255, 255, 0.12)
+            height 1px
+        .people
+            position relative
+            width 50%
+            height 50px
+            margin-bottom 10px
+            display inline-block
+            float left
+            p
+                color #ffffff
+                font-size 15px
+            .person-avatar
+                width 50px
+                height 50px
+                display inline-block
+                margin-right 10px
+                float left
+                border-radius 50%
+                overflow hidden
+                img
+                    width 100%
+                    margin-top: -25%;
+            .person
+                padding 10px 0 3px
+                cursor pointer
+                transition border-color, color 100ms linear
+                &:hover
+                    color rgba(255, 255, 255, 0.7)
+                    text-decoration none
+            .status
+                color rgba(255, 255, 255, 0.65) !important
+                font-size 15px
+
+    .info-wrapper
+        top 50px  
+
+    .episode-container
+        position absolute
+        top 0
+        bottom 0px
+        left calc(((100vh - 240px - 50px) * 2 / 3) + 170px)
+        right 60px
+        padding-right 20px
+        height calc(100% - 280px)
+        overflow-y auto
+        overflow-x hidden
+        z-index 1
+        &::-webkit-scrollbar
+            width 2px
+        &::-webkit-scrollbar-track
+            box-shadow inset 0 0 6px rgba(0, 0, 0, 0.1)
+        &::-webkit-scrollbar-thumb
+            background rgba(255, 255, 255, 0.22)
+        li
+            height 45px
+            list-style none
+            color #ffffff
+            cursor default
+            overflow hidden
+            &.active
+                transition background-color 150ms ease-in-out
+                background-color #3F51B5
+                borderleft-radius 1px
+                border box-shadow 0 2px 5px rgba(0, 0, 0, 0.39)
+                md-icon-button
+                    visibility visible
+                p
+                    &.episode-id, &.episode-name
+                        font-weight 500
+                    &.episode-airdate
+                        visibility visible
+                    &.episode-name
+                        max-width calc(100% - 488px)
+                &.watched
+                    p
+                        &.episode-id
+                            color rgba(255, 255, 255, 1)
+                        &.episode-name
+                            color rgba(255, 255, 255, 1)
+            &.watched
+                p
+                    &.episode-id
+                        color rgba(255, 255, 255, 0.4)
+                    &.episode-name
+                        color rgba(255, 255, 255, 0.4)
+                md-icon-button
+                    &.watched-icon
+                        opacity 0.9
+            p
+                &.episode-id
+                    text-transform uppercase
+                    line-height 45px
+                    font-size 14px
+                    float left
+                    letter-spacing 0.3px
+                    margin-left 17px
+                    font-weight 400
+                &.episode-name
+                    line-height 45px
+                    font-size 14px
+                    max-width calc(100% - 192px)
+                    min-width 110px
+                    float left
+                    white-space nowrap
+                    overflow hidden
+                    text-overflow ellipsis
+                    letter-spacing 0.3px
+                    margin-left 25px
+                    font-weight 400
+                &.episode-airdate
+                    line-height 45px
+                    font-size 13.5px
+                    float right
+                    position relative
+                    visibility hidden
+                    letter-spacing 0.6px
+                    margin-right 33px
+                    font-weight 500
+                    opacity 0.7
+            md-icon-button
+                font-size 22px
+                line-height 45px
+                visibility hidden
+                margin-top 2px
+                cursor pointer
+                &.info-icon
+                    float right
+                    margin-right 15px
+                &.watched-icon
+                    float right
+                    margin-right 5px
+                    opacity 0.5
+    .season-next
+        position absolute
+        right 40px
+        width 19px
+        color #ffffff
+        margin-top 15.5vh
+    .season-prev
+        position absolute
+        color #ffffff
+        left 65px
+        width 19px
+        margin-top 15.5vh
+    .controls-container
+        position absolute
+        height 180px
+        width 100vw
+        right 0
+        bottom 0px
+        background-color #111214
+        z-index 2
+        .watchnow-btn
+            cursor pointer
+            padding 3px 21px
+            color #fff
+            font-weight 500
+            font-size 15px
+            text-align center
+            text-transform uppercase
+            border-radius 4px
+            float right
+            position absolute
+            top 65px
+            right 80px
+            transition 0.5s
+            background-color #3F51B5
+            &:hover
+                background-color #3a499b
+            &:active
+                background-color #2d41b1
+                transition 0.2s
+            i
+                margin-right 9px
+                float left
+                line-height 25px
+        .meta-container-c
+            top 29px
+            position absolute
+            left calc(((100vh - 240px - 50px) * 2 / 3) + 190px)
+            width 300px
+            li
+                width 100%
+                list-style none
+                margin 0
+                padding 0
+                ul
+                    &.dropdown
+                        display none
+                        position absolute
+                        left -15px
+                        padding-top 5px
+                        background-color #1C1D21
+                        width 250px
+                        border-radius 1px
+                        z-index 5
+                        bottom 0px
+                        box-shadow 0 3px 18px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.1)
+                        i
+                            float left
+                        li
+                            list-style none
+                            margin 0
+                            height 32px
+                            margin-bottom 3px
+                            &:hover
+                                background-color #3F51B5
+                            p
+                                padding-right 60px
+                                line-height 31px
+                            i
+                                line-height 32px
+                                margin-left 15px
+                        &.visable
+                            display block
+                &.quality-toggle
+                    pt-toggle::shadow #icon
+                        color: white
+                    p
+                        opacity 0.5
+                        &.active
+                            opacity 1
+                &.subtitles-dropdown
+                    padding-left 1em
+                    color: white
+
+                    pt-dropdown
+                        z-index 5
+                        width 100%
+                    pt-dropdown::shadow #label
+                        pt-selectable-element 
+                            display inline-block
+                        #icon
+                            margin-right 9px;
+                    
+                    pt-dropdown::shadow #options 
+                        right 0
+                    
+                    pt-selectable-element.selected 
+                        font-weight bold
+                    
+                    pt-selectable-element:hover 
+                        background #3F51B5
+                            
+                &.device-dropdown
+                    color: white
+                    pt-dropdown
+                        z-index: 5
+                    pt-selectable-element.selected 
+                        font-weight: bold
+
+                    pt-selectable-element:hover 
+                        background: #3F51B5
+            p
+                font-size 14px
+                text-shadow 1px 0px 2px rgba(20, 19, 21, 1)
+                cursor pointer
+                color #ffffff
+                float left
+                position relative
+                margin-left 10px
+                left 10px
+                font-weight 500
+                line-height 25px
+    li
+        ul
+            &.dropdown
+                li
+                    i
+                        line-height 32px
+                        margin-left 15px
+html /deep/ .episode-modal
+    background-color #111214
+    font-family 'Roboto', sans-serif
+    &::shadow
+        #scroller
+            width 50vw
+            max-height 90vh
+            background-color #111214
+            padding 0
+    .modal-header
+        position relative
+        width 50vw
+        height 240px
+        overflow hidden
+        img
+            width 100%
+            margin-top -30px
+            height auto
+            opacity 0
+            transition: opacity .3s ease-in;
+            &.fadein
+                opacity 1
+        .overlay
+            position absolute
+            top 0
+            width 100%
+            height 100%
+            background linear-gradient(to bottom, rgba(0,0,0,0) 30%,rgba(0,0,0,0.6) 100%);
+        h2, h3
+            position absolute
+            left 30px
+            color white
+            margin 0
+        h2
+            font-weight 500
+            font-size 36px
+            bottom 25px
+        h3
+            font-weight 600
+            font-size 16px
+            bottom 70px
+            letter-spacing: 0.3px
+    .episode-aired
+        padding 25px 30px 0
+        font-size 14px
+        color #FFF
+        opacity 0.7
+    .modal-description
+        padding 5px 30px 0
+        margin 0
+        font-size 14px
+        line-height 21px
+        color #FFF
+    md-button
+        margin 16px
+        color #FFF
+        float right
+
+@media (max-height: 700px)
+    .show-detail
+        .summary-wrapper
+            .title
+                margin-top 40px
+                margin-left 17px
+                font-size 38px
+            .back
+                margin-top 37px
+                margin-left 22px
+                md-icon
+                    width 32px
+                    height 32px
+            .watched-toggle, .bookmark-toggle
+                right 120px
+                top 40px
+            .bookmark-toggle
+                right 60px
+            .seasons-wrapper
+                top 95px
+                left -4px
+                md-tab
+                    font-size 17px
+        md-tabs-content-wrapper
+            top 180px
+            height calc(100vh - 180px)
+            .poster
+                left 80px
+                bottom 30px
+                height calc(100vh - 180px - 30px)
+                width calc((100vh - 180px - 30px) * 2 / 3)
+            .meta-container
+                right 50px
+                height calc(100% - 160px)
+        .episode-container
+            right 50px
+            height calc(100% - 160px)
+        .controls-container
+            height 160px
+            .meta-container-c
+                top 19px
+            .watchnow-btn
+                top 52px
+@media (max-width: 1193px)
+    .show-detail
+        .episode-container li.active p.episode-name
+            max-width calc(100% - 192px)

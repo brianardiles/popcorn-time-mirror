@@ -1,0 +1,231 @@
+main-background-color = rgb(17, 18, 20, 1)
+main-background-color-light = rgb(28, 29, 33, 1)
+main-text-color = rgb(255, 255, 255, 1)
+main-text-color-secondary = rgba(255, 255, 255, 0.6)
+main-text-color-inactive = rgba(255, 255, 255, 0.3)
+main-color-accent = rgb(63, 81, 181, 1)
+disabled-text-color = rgb(122, 122, 122, 1)
+
+.list-region
+    height 100vh
+    position: absolute
+    left 100px
+    right 0px
+    overflow-y auto
+    overflow-x hidden
+    font-family Roboto
+    &::-webkit-scrollbar
+        width 0px
+    &::-webkit-scrollbar-track
+        box-shadow inset 0 0 6px rgba(0, 0, 0, 0)
+    &::-webkit-scrollbar-thumb
+        background rgba(255, 255, 255, 0.22)
+
+    .top-tools
+        position relative
+        display block
+        margin-top 65px
+        width 100%
+        z-index 1
+        
+    .title
+        font-size 42px
+        font-weight 500
+        letter-spacing 0.7px
+        color #fff
+        padding 0 80px 0 70px
+
+    #filterbar-toolbar
+        position relative
+        margin-top 100px
+        min-height 100px
+        background-color rgba(0, 0, 0, 0)
+        transition background-color 300ms ease-in
+        .filter-bar
+            width 100%
+            padding 20px 76px 20px 70px
+            -webkit-user-select: none
+            transition background-color 0.5s
+            z-index 1
+
+            &.fixed
+                position fixed
+                top 0
+                left 0
+                right 0
+                padding-left 170px
+                margin-top 0
+                background-color rgba(0, 0, 0, 0.8)
+
+            #filter-sorter
+                min-width 150px
+
+            .filter-element
+                display: inline-block
+
+                md-select
+                    min-width 70px
+                    margin-right 40px
+                    color #fff
+                    border none
+                    font-size 20px
+                    font-weight 600
+                    pt-selectable-element, ::content pt-selectable-element
+                        font-weight normal
+                        padding 14px 20px
+                    pt-selectable-element.selected, ::content pt-selectable-element.selected
+                        font-weight bold
+                    &#filter-order pt-selectable-element:hover
+                        background main-color-accent
+                    &::shadow #options
+                        background main-background-color
+                    &::shadow #arrow
+                        opacity 0.7
+                    
+            .search
+                margin-top -20px
+                margin-right 3px
+                
+                md-input-container
+                    label, input
+                        color #fff
+
+        
+    .list-backdrop
+        position absolute
+        width 100%
+        top 0
+        opacity 0
+        height 60vh
+        overflow hidden
+        background-size cover
+        background-position top center
+        background-attachment fixed
+        background-repeat no-repeat
+        -webkit-filter brightness(55%)
+        transition: opacity .6s ease-in;
+        &.fadein
+            opacity 1
+            
+    #list-content
+        display flex
+        position relative
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin 0 76px 0 66px
+        width calc(100% - 76px - 65px)
+        -webkit-user-select none
+        .item
+            position relative
+            list-style: none;
+            overflow hidden
+            opacity 1
+            margin 3px
+            cursor pointer
+            width 7.4%
+            max-width 200px
+            min-width 165px
+            border-radius 1px
+            box-shadow 0 0 3px rgba(0, 0, 0, 0.2)
+            &.ghost
+                cursor default
+                box-shadow 0 0 0px rgba(0, 0, 0, 0)
+            img
+                width 100%
+                opacity: 0
+                transition opacity 300ms ease-in
+                &.fadein
+                    opacity: 1
+            .info
+                position absolute
+                bottom 0
+                left 0
+                right 0
+                height auto
+                background #212327
+                color #fff
+                padding 16px 20px 20px 20px
+                transition .5s transform cubic-bezier(0.55, 0, 0.1, 1), .1s background ease-in
+                transform translateY(100%)
+                text-align left
+                h3
+                    font-size 18px
+                    line-height 22px
+                    font-weight 500
+                    margin-bottom 16px
+                    &::before
+                        content ''
+                        float right
+                        width 35px
+                        height 18px
+                .meta
+                    font-size 13px
+                    .zmdi
+                        font-size 14px
+                    .dot
+                        display inline-block
+                        width 5px
+                        height 5px
+                        margin 0 6px 2px 6px
+                        border-radius 50%
+                        background-color white
+
+                .md-button.md-fab
+                    position absolute
+                    width 48px
+                    height 48px
+                    right 8px
+                    top -24px
+                    background #212327
+                    transition .3s transform cubic-bezier(0.55, 0, 0.1, 1) .2s, .1s background ease-in
+                    transform scale(0,0)
+
+                    md-icon
+                        fill white
+                        margin-left -4px
+                        margin-top -4px
+
+                    &:hover
+                        transform scale(1,1)
+                        background-image linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1))   
+            &:hover
+                .info
+                    transform translateY(0)
+
+
+@media (max-width: 2750px)
+    .list-region #list-content .item
+        width 8%
+
+@media (max-width: 2750px)
+    .list-region #list-content .item
+        width 8%
+
+@media (max-width: 2520px)
+    .list-region #list-content .item
+        width 8.8%
+
+@media (max-width: 2350px)
+    .list-region #list-content .item
+        width 9.6%
+
+@media (max-width: 2100px)
+    .list-region #list-content .item
+        width 10.7%
+
+@media (max-width: 1890px)
+    .list-region #list-content .item
+        width 13.8%
+
+@media (max-width: 1495px)
+    .list-region #list-content .item
+        width 16%
+
+@media (max-width: 1267px)
+    .list-region #list-content .item
+        width 19%
+
+@media (max-width: 1095px)
+    .list-region #list-content .item
+        width 24%

@@ -1,0 +1,14 @@
+<pt-dropdown template='filter-bar-item' class="filter-element" ng-if="filters.list.types" items="filters.list.types" selected="filters.params.type" menu-open="filters.menuOpen" label='Type'></pt-dropdown>
+
+<pt-dropdown template='filter-bar-item' class="filter-element" ng-if="filters.list.genres" items="filters.list.genres" selected="filters.params.genre" menu-open="filters.menuOpen" label='Genre'></pt-dropdown>
+
+<pt-dropdown template='filter-bar-item' class="filter-element" ng-if="filters.list.sorters" items="filters.list.sorters" selected="filters.params.sort_by" menu-open="filters.menuOpen" label='Sort by'></pt-dropdown>
+
+<div class="right search">
+    <form id="filterbar-search">
+        <md-input-container flex>
+          <label>Search</label>
+          <input ng-model="filters.params.query">
+        </md-input-container>
+    </form>
+</div>

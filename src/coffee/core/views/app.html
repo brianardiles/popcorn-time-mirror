@@ -1,0 +1,15 @@
+<div id="main-window">
+  <header id="header" style="display: block">
+    <div>
+      <div class="os-controls {{ title.platform }}">
+          <div ng-repeat="button in title.buttons" ng-click="title[button]()" class="{{ button }}"><i class="zmdi"></i></div>
+      </div>
+
+      <span>Popcorn Time</span>
+    </div>
+  </header>
+
+  <div ui-view></div>
+  
+</div>
+

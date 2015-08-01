@@ -1,0 +1,88 @@
+main-background-color = rgb(13, 14, 15, 1)
+main-background-color-light = rgb(28, 29, 33, 1)
+main-text-color = rgb(255, 255, 255, 1)
+main-text-color-secondary = rgba(255, 255, 255, 0.6)
+main-text-color-inactive = rgba(255, 255, 255, 0.3)
+main-color-accent = rgb(63, 81, 181, 1)
+disabled-text-color = rgb(122, 122, 122, 1)
+
+lesscss-percentage(n)
+    (n * 100)%
+pre-show-text(wait)
+    opacity 0
+    transform translateY(-50px)
+    transition opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) wait, transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) wait
+    
+stagger(n)
+    for i in (1..n)
+        &:nth-of-type(i)
+            transition opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) (0.1s * i), transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) (0.1s * i)
+
+    
+nav#main-nav
+    position fixed
+    top 0px
+    left 0
+    bottom 0
+    width 100px
+    background-color main-background-color
+    padding-top 60px
+    font-size 1em
+    line-height 1.7em
+    transition width 0.2s ease-out, left 0.5s ease-out
+    overflow hidden
+    z-index 2
+    
+    &.hide
+        left: -100px
+    
+    ul
+        overflow hidden
+        margin 0
+        padding: 0 35px;
+        height 100%
+        
+        li
+            display block
+            margin-bottom 2em
+            //transform translateX(70px)
+            
+            a
+                display block
+                color main-text-color-secondary
+                fill main-text-color-secondary
+                white-space nowrap
+                text-decoration none
+                transition color 0.2s ease-out
+                .active
+                    color main-text-color
+                    fill main-text-color
+                svg
+                  display: inline-block
+                  vertical-align: middle
+                  background-repeat: no-repeat
+                  fill: currentcolor
+                  position: relative
+                  height: 24px
+                  width: 24px
+
+                svg, i
+                    width 30px
+                    height 30px
+                    margin-right 20px
+                    vertical-align bottom
+                    font-size 30px
+                .nav-text
+                    opacity 0
+                    transition opacity 0.3s ease-in
+                &:hover, &.active
+                    color main-text-color
+                    fill main-text-color  
+                    
+        #nav-settings
+            position absolute
+            bottom 20px
+    &:hover
+        width 212px
+        ul li a .nav-text
+            opacity 1

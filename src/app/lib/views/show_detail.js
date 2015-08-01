@@ -1,7 +1,7 @@
 (function (App) {
     'use strict';
 
-    var torrentHealth = require('torrent-health');
+	var torrentHealth = require('torrent-tracker-health');
 
     var ShowDetail = Backbone.Marionette.ItemView.extend({
         template: '#show-detail-tpl',

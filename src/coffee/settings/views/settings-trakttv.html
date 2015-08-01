@@ -1,0 +1,36 @@
+<section id="trakt-tv">
+    <h1>Trakt.tv</h1>
+    <div class="content">
+        <div class="trakt-options" ng-class="{ 'authenticated' : app.Trakt.authenticated }">
+                <div class="content-row" ng-if="app.Trakt.authenticated">
+                    You are currently connected to Trakt.tv.
+                    <a id="unauthTrakt" class="unauthtext" href="#">Disconnect account</a>
+                </div>
+                <md-input-container>
+                    <label>Automatically Sync on Start</label>
+                    <md-checkbox ng-model="vm.settings.traktSyncOnStart"></md-checkbox>
+                </md-input-container>
+                <md-input-container>
+                    <label>Resume Playback</label>
+                    <md-checkbox ng-model="vm.settings.traktPlayback"></md-checkbox>
+                </md-input-container>
+                <div class="content-row" ng-if="vm.settings.showAdvancedSettings">
+                    <div class="btn-settings syncTrakt" id="syncTrakt">
+                        <i class="fa fa-refresh">&nbsp;&nbsp;</i>
+                        Sync With Trakt
+                    </div>
+                </div>
+
+                <div class="content-row" ng-if="!app.Trakt.authenticated">
+                    Connect to Trakt.tv to automatically 'scrobble' episodes you watch in Popcorn Time
+                </div>
+                <div class="content-row">
+                    <div class="btn-settings syncTrakt" id="authTrakt">
+                        <i class="fa fa-user-plus">&nbsp;&nbsp;</i>
+                        Connect To Trakt
+                    </div>
+                    <div class="loading-spinner" style="display: none"></div>
+                </div>
+        </div>
+    </div>
+</section>

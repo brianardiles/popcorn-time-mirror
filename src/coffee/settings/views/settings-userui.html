@@ -1,0 +1,54 @@
+<section id="user-interface">
+    <h1>User Interface</h1>
+    <div class="content">
+        <div class="content-row">
+            <div class="dropdown subtitles-language">
+                <p>Default Language</p>
+                <md-select class="settings-dropdown" aria-label="language" ng-model="vm.settings.lang">
+                   <md-option ng-repeat="lang in vm.settings.langs" name="language">{{ lang }}</md-option>
+                </md-select>
+            </div>
+        </div>
+
+        <div class="content-row">
+            <div class="dropdown pct-theme">
+                <p>Theme</p>
+                <md-select class="settings-dropdown" ng-model="vm.settings.theme">
+                   <md-option ng-repeat="theme in vm.settings.themes" name="theme">{{ theme }}</md-option>
+                </md-select>
+            </div>
+        </div>
+
+        <div class="content-row" ng-if="vm.settings.showAdvancedSettings">
+            <div class="dropdown start-screen">
+                <p>Start Screen</p>
+                <md-select class="settings-dropdown" ng-model="vm.settings.screen">
+                   <md-option ng-repeat="screen in vm.settings.start_screens" name="start_screen">{{ screen }}</md-option>
+                </md-select>
+            </div>
+        </div>
+
+        <md-input-container ng-if="vm.settings.showAdvancedSettings">
+            <label>Translate Synopsis</label>
+            <md-checkbox ng-model="vm.settings.translateSynopsis"></md-checkbox>
+        </md-input-container>
+        
+        <md-input-container ng-if="vm.settings.showAdvancedSettings">
+            <label>Show rating over covers</label>
+            <md-checkbox ng-model="vm.settings.coversShowRating"></md-checkbox>
+        </md-input-container>
+
+        <md-input-container ng-if="vm.settings.showAdvancedSettings">
+            <label class="settings-label" for="cb4">Always On Top</label>
+            <md-checkbox ng-model="vm.settings.alwaysOnTop"></md-checkbox>
+        </md-input-container>
+
+        <md-input-container ng-if="vm.settings.showAdvancedSettings">
+            <label>Watched Items</label>
+            <md-select class="settings-dropdown" ng-model="vm.settings.watch_type">
+               <md-option ng-repeat="type in vm.watch_types" name="watchedCovers">{{ type }}</md-option>
+            </md-select>
+        </md-input-container>
+
+    </div>
+</section>

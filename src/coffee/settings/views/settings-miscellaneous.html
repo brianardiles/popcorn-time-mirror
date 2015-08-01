@@ -1,0 +1,29 @@
+<section id="miscellaneous" ng-if="vm.settings.showAdvancedSettings">
+    <h1>Miscellaneous</h1>
+    <div class="content">
+        <div class="content-row" >
+            <div class="dropdown tv_detail_jump_to">
+                <p>When Opening TV Series Detail Jump To</p>
+                <md-select class="settings-dropdown" ng-model="vm.settings.jump_to">
+                   <md-option ng-repeat="jump_to in vm.tv_detail_jump_to" name="jump_to">{{ jump_to }}</md-option>
+                </md-select>
+            </div>
+        </div>
+        <md-input-container>
+            <label>Activate automatic updating</label>
+            <md-checkbox ng-model="vm.settings.automaticUpdating"></md-checkbox>
+        </md-input-container>
+        <md-input-container>
+            <label>Celebrate various events</label>
+            <md-checkbox ng-model="vm.settings.events"></md-checkbox>
+        </md-input-container>
+        <md-input-container>
+            <label>Minimize to Tray</label>
+            <md-checkbox ng-model="vm.settings.minimizeToTray"></md-checkbox>
+        </md-input-container>
+        <md-input-container>
+            <label>Big Picture Mode</label>
+            <md-checkbox ng-model="vm.settings.bigPicture"></md-checkbox>
+        </md-input-container>
+    </div>
+</section>

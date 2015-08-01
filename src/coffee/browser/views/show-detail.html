@@ -2,7 +2,7 @@
     <img image-loaded ng-src="{{ show.data.images.fanart | traktSize:'medium':data.type }}" width="100%"/>
 </div>
 
-<pt-summary-wrapper class="summary-wrapper" title="show.data.title"></pt-summary-wrapper>
+<pt-summary-wrapper class="summary-wrapper" title="show.data.title" torrent-id="show.torrentId"></pt-summary-wrapper>
 
 <md-tabs md-selected="show.selectedSeason">
     <md-tab class="md-title">

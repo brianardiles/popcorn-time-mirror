@@ -8,10 +8,10 @@
 </div>
 
 <!-- Right Side -->
-<md-button class="md-icon-button bookmark-toggle" role="button">
+<md-button class="md-icon-button bookmark-toggle" role="button" ng-if="summary.torrentId">
     <md-icon md-font-set="material-icons">bookmark_outline</md-icon>
 </md-button>
 
-<md-button class="md-icon-button watched-toggle" role="button">
+<md-button class="md-icon-button watched-toggle" role="button" ng-if="summary.torrentId">
     <md-icon md-font-set="material-icons">visibility_off</md-icon>
 </md-button>

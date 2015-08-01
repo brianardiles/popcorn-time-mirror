@@ -1,0 +1,29 @@
+<section id="connection" ng-if="vm.settings.showAdvancedSettings">
+    <h1>Connection</h1>
+    <div class="content">
+        <md-input-container>
+            <label>TV Show API Endpoint</label>
+            <input id="tvshowAPI" type="text" size="50" name="tvshowAPI" ng-model="vm.settings.tvshowAPI.url">
+        </md-input-container>
+        <md-input-container>
+            <label>Connection Limit</label>
+            <input id="connectionLimit" type="text" size="20" name="connectionLimit" ng-model="vm.settings.connectionLimit"/>
+        </md-input-container>
+        <md-input-container>
+            <label>DHT Limit</label>
+            <input type="text" id="dhtLimit" size="20" name="dhtLimit" ng-model="vm.settings.dhtLimit"/>
+        </md-input-container>
+        <md-input-container>
+            <label>Port to stream on</label>
+            <input id="streamPort" type="text" size="20" name="streamPort" ng-model="vm.settings.streamPort"/>&nbsp;&nbsp;<em>0 = Random</em>
+        </md-input-container>
+        <md-input-container>
+            <label>Overall Ratio</label>
+            <input type="text" size="20" name="overallRatio" ng-init="overallRatio = vm.overallRatio()" ng-model="overallRatio">
+            <em>
+              {{ vm.settings.totalDownloaded | fileSize }} <i class="fa fa-arrow-circle-down"></i>
+              {{ vm.settings.totalUploaded | fileSize }} <i class="fa fa-arrow-circle-up"></i>
+            </em>
+        </md-input-container>
+    </div>
+</section>

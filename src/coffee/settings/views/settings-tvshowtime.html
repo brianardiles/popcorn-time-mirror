@@ -1,0 +1,19 @@
+<section id="tvshowtime">
+  <h1>TVShow Time</h1>
+  <div class="content">
+    <div class="tvshowtime-options" ng-class="{ 'authenticated' : app.TVShowTime.authenticated }">
+      <div class="content-row" ng-if="app.TVShowTime.authenticated">
+          You are currently connected to TVShow Time.
+          <a id="disconnect-tvst" class="unauthtext" href="#">Disconnect account</a>
+      </div>
+
+      <div class="content-row" ng-if="!app.TVShowTime.authenticated">
+          <div class="btn-settings" id="connect-with-tvst">
+              <i class="fa fa-user-plus">&nbsp;&nbsp;</i>
+              Connect To TVShow Time
+          </div>
+          <div class="tvst-loading-spinner" style="display: none"></div>
+      </div>
+    </div>
+  </div>
+</section>

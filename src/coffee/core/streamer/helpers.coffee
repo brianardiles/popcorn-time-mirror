@@ -2,6 +2,8 @@
 
 angular.module 'com.module.core'
 
+.constant 'streamServer', process.mainModule.exports
+
 .factory 'streamOptions', (Settings, AdvSettings, crypto, semver) ->
 
   getPeerID = ->

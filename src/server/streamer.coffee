@@ -6,6 +6,7 @@ mime        = require 'mime'
 pump        = require 'pump'
 
 server = http.createServer()
+files = []
 
 server.on 'request', (request, response) ->
   u = url.parse(request.url)
@@ -13,18 +14,18 @@ server.on 'request', (request, response) ->
 
   if u.pathname == '/.m3u'
     response.setHeader 'Content-Type', 'application/x-mpegurl; charset=utf-8'
-    return response.end('#EXTM3U\n' + e.files.map((f, i) ->
+    return response.end('#EXTM3U\n' + files.map((f, i) ->
       '#EXTINF:-1,' + f.path + '\n' + 'http://' + host + '/' + i
     ).join('\n'))
   
   i = Number(u.pathname.slice(1))
   
-  if isNaN(i) or i >= e.files.length
+  if isNaN(i) or i >= files.length
     response.statusCode = 404
     response.end()
     return
   
-  file = e.files[i]
+  file = files[i]
   
   range = request.headers.range
   range = range and rangeParser(file.length, range)[0]
@@ -53,8 +54,16 @@ server.on 'request', (request, response) ->
 server.on 'connection', (socket) ->
   socket.setTimeout 36000000
 
-process.on 'message', (message) ->
-  console.log message
-  
-  process.send 'streamer'
+service = 
+  setPort: (port) ->
+    server.listen port
+    console.log 'streamer listening on port ' + port
 
+  setTorrent: (obj) ->
+    files = obj
+    console.log 'torrent selected ' + obj
+
+process.on 'message', (message) ->
+  if message instanceof Object and message.hasOwnProperty('functionName') and message.hasOwnProperty('functionArgs')
+    service[message.functionName].apply this, message.functionArgs
+  return

@@ -2,7 +2,7 @@
 
 angular.module 'com.module.common'
 
-.factory 'torrentProvider', (torrentStats, torrentProgress, torrentStore) ->
+.factory 'torrentProvider', (torrentStats, torrentProgress, torrentStore, streamServer) ->
   serialize = (torrent) ->
     if !torrent.torrent
       return { infoHash: torrent.infoHash }
@@ -53,6 +53,10 @@ angular.module 'com.module.common'
         return infoHash: infoHash
 
       fs.unlink file.path
+
+  setStreamTorrent: (hash) ->
+    torrent = torrentStore.get hash
+    streamServer.run 'setTorrent', [torrent]
 
   getTorrent: (hash) ->
     serialize torrentStore.get hash

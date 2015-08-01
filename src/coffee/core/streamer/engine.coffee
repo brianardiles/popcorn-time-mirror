@@ -2,9 +2,11 @@
 
 angular.module 'com.module.core'
 
-.factory 'streamerEngine', (torrentStream, streamOptions) ->
+.factory 'streamerEngine', (torrentStream, streamOptions, streamServer) ->
   (torrent) ->
     engine = torrentStream torrent, streamOptions
+    
+    streamServer.run 'setPort', [streamOptions.port]
 
     engine.once 'verifying', ->
       console.log 'verifying ' + engine.infoHash

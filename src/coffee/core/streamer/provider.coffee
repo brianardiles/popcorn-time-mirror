@@ -29,6 +29,9 @@ angular.module 'com.module.common'
     files: serializeFiles torrent.files
     progress: torrentProgress torrent.bitfield.buffer
 
+  getAllTorrentHashs: ->
+    torrentStore.hashList()
+    
   getAllTorrents: ->
     torrentStore.list().map(serialize)
 

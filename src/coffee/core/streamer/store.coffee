@@ -80,6 +80,9 @@ angular.module 'com.module.core'
       delete torrents[infoHash]
       @save()
 
+  hashList: ->
+    Object.keys torrents
+
   list: ->
     Object.keys(torrents).map (infoHash) ->
       torrents[infoHash]

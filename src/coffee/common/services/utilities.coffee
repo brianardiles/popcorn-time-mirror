@@ -2,6 +2,10 @@
 
 angular.module 'com.module.common'
 
+.filter 'titleCase', ->
+  (input) ->
+    input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() if input
+
 .filter 'traktSize', ->
   (input = '', size, type) ->
     if type is 'movie' and size isnt 'thumb'
@@ -10,7 +14,6 @@ angular.module 'com.module.common'
       input = input.replace '/original/', "/#{size}/"
 
     input
-
 
 .constant 'healthMap', [
     'bad'

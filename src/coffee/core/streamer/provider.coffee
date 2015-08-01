@@ -3,18 +3,8 @@
 angular.module 'com.module.common'
 
 .factory 'torrentProvider', (torrentStats, torrentProgress, torrentStore, streamServer) ->
-  serialize = (torrent) ->
-    if !torrent.torrent
-      return { infoHash: torrent.infoHash }
-    
-    pieceLength = torrent.torrent.pieceLength
-      
-    infoHash: torrent.infoHash
-    name: torrent.torrent.name
-    interested: torrent.amInterested
-    ready: torrent.ready
-    
-    files: torrent.files.map (f) ->
+  serializeFiles = (torrentFiles) ->
+    torrentFiles.map (f) ->
       start = f.offset / pieceLength | 0
       end = (f.offset + f.length - 1) / pieceLength | 0
       
@@ -26,6 +16,17 @@ angular.module 'com.module.common'
       selected: torrent.selection.some (s) ->
         s.from <= start and s.to >= end
 
+  serialize = (torrent) ->
+    if !torrent.torrent
+      return { infoHash: torrent.infoHash }
+    
+    pieceLength = torrent.torrent.pieceLength
+      
+    infoHash: torrent.infoHash
+    name: torrent.torrent.name
+    interested: torrent.amInterested
+    ready: torrent.ready
+    files: serializeFiles torrent.files
     progress: torrentProgress torrent.bitfield.buffer
 
   getAllTorrents: ->
@@ -55,8 +56,8 @@ angular.module 'com.module.common'
       fs.unlink file.path
 
   setStreamTorrent: (hash) ->
-    torrent = torrentStore.get hash
-    streamServer.run 'setTorrent', [torrent]
+    torrentFiles = serializeFiles torrentStore.get(hash).files
+    streamServer.run 'setTorrent', [torrentFiles]
 
   getTorrent: (hash) ->
     serialize torrentStore.get hash

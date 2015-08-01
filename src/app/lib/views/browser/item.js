@@ -481,7 +481,7 @@
                     bookmarked: true,
                 });
                     
-                this.showInk(e, type, function(){
+                this.showInk(e, type, SelectedMovie, function(){
                     App.vent.trigger('movie:showDetail', SelectedMovie);
                 });
                 
@@ -552,7 +552,7 @@
             if ($('#ink-poster').length) {
                 $('#ink-poster').remove();
             }
-            poster = $('<img id="ink-poster" src="'+cover+'" />');
+            poster = $('<img class="fadein" data-bgr="'+cover+'" id="ink-poster" src="'+cover+'" />');
             poster.css(origparams);
             w.append(poster);
             
@@ -579,7 +579,11 @@
                 App.vent.trigger(d.nextEvent);
                 poster.css('transition-duration', '0.7s');
                 poster.one('webkitTransitionEnd', function(){
-                    poster.remove();
+                    poster.removeClass('fadein');
+                    poster.one('webkitTransitionEnd', function(){
+                        poster.remove();
+                    });
+                    
                 });
                 poster.css('transform', 'none');
                 ink.removeClass('animate');

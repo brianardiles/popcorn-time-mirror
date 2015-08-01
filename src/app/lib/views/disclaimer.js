@@ -11,11 +11,14 @@
         },
 
         initialize: function () {
+            Mousetrap.pause();
+
             win.warn('Show Disclaimer');
         },
 
         acceptDisclaimer: function (e) {
             e.preventDefault();
+            Mousetrap.unpause();
             AdvSettings.set('disclaimerAccepted', true);
             App.vent.trigger('disclaimer:close');
         },

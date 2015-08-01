@@ -1,7 +1,7 @@
 (function (App) {
     'use strict';
 
-    var torrentHealth = require('torrent-health');
+	var torrentHealth = require('torrent-tracker-health');
 
     var ShowDetail = Backbone.Marionette.ItemView.extend({
         template: '#show-detail-tpl',
@@ -84,7 +84,7 @@
         },
 
         onShow: function () {
-
+            this.ui.poster = $('#ink-poster');
             if (this.model.get('bookmarked')) {
                 this.ui.bookmarkedIcon.prop('icon', 'bookmark');
             }

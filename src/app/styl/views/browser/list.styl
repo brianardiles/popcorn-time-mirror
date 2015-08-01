@@ -222,10 +222,14 @@ disabled-text-color = rgb(122, 122, 122, 1)
 #ink-poster
     position: absolute
     box-shadow: 0 0 10px rgba(0,0,0,0.5)
-    transition: transform 1s
+    transition: transform 1s, opacity 0.5s
     transition-timing-function: cubic-bezier(.55,0,.1,1)
     transform-origin: 0 0
-    z-index 6   
+    z-index 6  
+    opacity: 0;
+    
+    &.fadein
+        opacity: 1
 
 @media (max-width: 2750px)
     .list-region #list-content .item

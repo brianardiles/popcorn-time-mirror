@@ -5,7 +5,7 @@
 <pt-summary-wrapper class="summary-wrapper" title="show.data.title" torrent-id="show.torrentId"></pt-summary-wrapper>
 
 <!-- Controls Container --> 
-<pt-controls-container></pt-controls-container>
+<pt-controls-container ng-if="show.currentTorrent"></pt-controls-container>
 
 <md-tabs md-selected="show.selectedSeason">
     <md-tab class="md-title">

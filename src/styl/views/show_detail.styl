@@ -39,9 +39,7 @@
         right 80px
 
 .info-container 
-    display block
     position relative
-    height 100vw
             
 md-tabs-wrapper
     display block
@@ -75,18 +73,19 @@ md-tabs-wrapper
             opacity: 1
 
     md-tabs
-        height: 100vw
-        z-index: 3
+        overflow visible
 
     md-icon
         outline none
 
+    md-tab-content
+        overflow: visible
+
     md-tabs-content-wrapper, .info-wrapper
-        position absolute
-        width 100vw
-        top 100px
-        height calc(100vh - 240px)
-        bottom 0
+        width: 100vw
+        top: 100px
+        height: calc(100vh - 420px)
+        overflow: visible
 
         .poster
             position absolute
@@ -102,26 +101,6 @@ md-tabs-wrapper
             &.fadein
                 transition: opacity .3s ease-in;
                 opacity: 1
-        
-        .meta-container
-            position absolute
-            top 0
-            bottom 0px
-            left calc(((100vh - 240px - 50px) * 2 / 3) + 170px)
-            right 60px
-            padding-left 20px
-            padding-right 20px
-            padding-bottom 30px
-            height calc(100% - 180px)
-            overflow-y auto
-            overflow-x hidden
-            z-index 2
-            &::-webkit-scrollbar
-                width 2px
-            &::-webkit-scrollbar-track
-                box-shadow inset 0 0 6px rgba(0, 0, 0, 0.1)
-            &::-webkit-scrollbar-thumb
-                background rgba(255, 255, 255, 0.22)
         
         .meta-item
             float left
@@ -221,7 +200,7 @@ md-tabs-wrapper
         left calc(((100vh - 240px - 50px) * 2 / 3) + 170px)
         right 60px
         padding-right 20px
-        height calc(100% - 280px)
+        margin-bottom: 40px
         overflow-y auto
         overflow-x hidden
         z-index 1
@@ -329,7 +308,6 @@ md-tabs-wrapper
         right 0
         bottom 0px
         background-color #111214
-        z-index 2
         .watchnow-btn
             cursor pointer
             padding 3px 21px
@@ -394,9 +372,13 @@ md-tabs-wrapper
                         &.visable
                             display block
                 &.quality-toggle
-                    pt-toggle::shadow #icon
-                        color: white
-                    p
+                    span
+                        display: inline-block
+                        margin-right: 25px
+                        text-decoration: none
+                        color: #7a7a7a
+                        transition: color 0.4s
+                        padding: 0.7em 0em
                         opacity 0.5
                         &.active
                             opacity 1

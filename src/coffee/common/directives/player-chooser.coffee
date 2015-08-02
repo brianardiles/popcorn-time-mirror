@@ -2,25 +2,18 @@
 
 angular.module 'com.module.common'
 
-.directive 'ptPlayerChooser', ->
-  scope: { torrent: '=', episodeid: '=' , episode: '=', season: '=' , quality: '=' , title: '=' }
-  templateUrl: 'common/views/player-chooser.html'
-  controller: 'playerSelectController as devices'
+.directive 'ptPlayTorrent', ->
+  restrict: 'E'
+  bindToController: true
+  scope: { torrent: '=', episode: '=', season: '=' , quality: '=' , title: '=', device: '=' }
+  template: '''
+    <md-button ng-disabled="!player.torrent" ng-click="player.startTorrent()" style="color: rgb(255, 255, 255); background-color: rgb(6, 124, 154);" class="watchnow-btn" role="button" tabindex="0">
+      <md-icon md-font-set="material-icons">play_arrow</md-icon> Play
+      <span ng-if="player.season && player.episode"> S{{ player.season | padNumber }}E{{ player.episode.episode | padNumber }}</span>
+    </md-button>'''
+  controller: 'playTorrentController as player'
 
-.controller 'playerSelectController', (Settings) ->
+.controller 'playTorrentController', (Settings) ->
   vm = this
-
-  vm.items = Settings.avaliableDevices
-
-  vm.toggleMenu = ($event) ->
-    $event.stopPropagation()
-    vm.menuOpen = !vm.menuOpen
-
-  vm.setItem = (item, $event) ->
-    vm.toggleMenu $event
-    Settings.chosenPlayer = vm.selected = item
-    
-  if not vm.selected
-    vm.selected = Settings.chosenPlayer
 
   return

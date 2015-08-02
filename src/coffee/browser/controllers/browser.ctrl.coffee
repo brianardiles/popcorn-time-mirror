@@ -36,11 +36,12 @@ angular.module 'com.module.browser'
 
   return 
 
-.controller 'movieDetailCtrl', ($scope, YTS, Haruhichan, $timeout, $stateParams) ->
+.controller 'movieDetailCtrl', ($scope, YTS, Haruhichan, $timeout, $stateParams, Settings) ->
   vm = this
 
   vm.currentTorrent = null
   vm.currentQuality = null 
+  vm.currentdDevice = Settings.chosenDevice
 
   vm.trakt_url = 'http://www.imdb.com/title/' + $stateParams.id
   vm.type = $stateParams.listType
@@ -63,12 +64,13 @@ angular.module 'com.module.browser'
 
   return
 
-.controller 'showDetailCtrl', ($scope, TVApi, Haruhichan, $timeout, $stateParams) ->
+.controller 'showDetailCtrl', ($scope, TVApi, Haruhichan, $timeout, $stateParams, Settings) ->
   vm = this
 
   vm.currentTorrent = null
   vm.currentQuality = '0'
-
+  vm.currentDevice = Settings.chosenPlayer
+  
   vm.trakt_url = 'http://www.imdb.com/title/' + $stateParams.id
   vm.type = $stateParams.listType
   vm.torrentId = $stateParams.id

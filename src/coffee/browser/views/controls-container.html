@@ -2,16 +2,8 @@
     <div class="meta-container-c">
         <li pt-quality-selector torrents="show.selectedEpisode.torrents" selected="show.currentQuality" class="quality-toggle"></li>
         <li class="subtitles-dropdown"></li>
-        <li pt-player-chooser torrent="show.currentTorrent.url" episodeid="" episode="show.selectedEpisode" season="show.selectedSeason" quality="show.currentQuality" title="show.selectedEpisode.title" id="player-option" class="device-dropdown"></li>
+        <li pt-device-selector selected="show.currentDevice" id="player-option" class="device-dropdown"></li>
     </div>
     
-    <md-button style="color: rgb(255, 255, 255); background-color: rgb(6, 124, 154);" class="watchnow-btn" role="button" tabindex="0">
-        <md-icon md-font-set="material-icons">
-            play_arrow
-        </md-icon>
-        Play&nbsp;
-        <span>
-            S01E01
-        </span>
-    </md-button>
+    <pt-play-torrent torrent="show.currentTorrent.url" episode="show.selectedEpisode" season="show.selectedSeason" quality="show.currentQuality" title="show.selectedEpisode.title" device="show.currentDevice"></pt-play-torrent
 </div>

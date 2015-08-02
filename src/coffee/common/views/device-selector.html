@@ -1,6 +1,7 @@
-<div class="button dropup" id="player-chooser"><div id="watch-now" class="left startStreaming">Watch Now</div>
+<div class="button dropup" id="player-chooser" ng-click="devices.toggleMenu($event)">
+  <div id="watch-now" class="left startStreaming">{{ devices.selected }}</div>
 
-  <div class="dropdown-toggle left playerchoice" ng-click="devices.toggleMenu($event)">
+  <div class="dropdown-toggle left playerchoice">
     <img class="imgplayerchoice" ng-src="images/icons/{{ devices.items[devices.selected].type }}-icon.png">
     <span class="caret"></span>
   </div>
@@ -11,7 +12,5 @@
         <img class="playerchoiceicon" ng-src="images/icons/{{ item.type }}-icon.png">
       </a>
     </li>
-
   </ul>
-
 </div>

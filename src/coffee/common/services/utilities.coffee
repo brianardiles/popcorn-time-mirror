@@ -6,6 +6,12 @@ angular.module 'com.module.common'
   (input) ->
     input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() if input
 
+.filter 'padNumber', ->
+  (number) ->
+    if number < 10
+      return '0' + number
+    else return number
+
 .filter 'traktSize', ->
   (input = '', size, type) ->
     if type is 'movie' and size isnt 'thumb'

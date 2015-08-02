@@ -32,3 +32,10 @@ angular.module 'com.module.browser'
         controllerProvider: ($stateParams) -> $stateParams.listType + 'DetailCtrl'
         controllerAs: 'show' 
         templateUrl: ($stateParams) -> 'browser/views/' + $stateParams.listType + '-detail.html'
+
+    .state 'app.browser.torrents',
+      url: '/torrents'
+      sticky: true
+      dsr: true
+      templateUrl: 'browser/views/torrents-list.html'
+      controller: 'torrentsListCtrl as torrents' 

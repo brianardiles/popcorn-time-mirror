@@ -7,6 +7,22 @@ angular.module 'com.module.browser'
 
   return 
 
+.controller 'torrentsListCtrl', (torrentProvider, $scope, $interval) ->
+  vm = this
+
+  vm.setStream = (torrent) ->
+    torrentProvider.setStreamTorrent torrent 
+
+  torrentProvider.getAllTorrents().then (data) ->
+    vm.data = data
+
+  $interval ->
+    if !$scope.$$phase
+      $scope.$apply()
+  , 1000
+
+  return 
+
 .controller 'browserListCtrl', (TVApi, YTS, $stateParams, Haruhichan, genres, sorters, types) ->
   vm = this
 

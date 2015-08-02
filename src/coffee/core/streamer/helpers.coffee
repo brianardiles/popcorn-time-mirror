@@ -43,41 +43,51 @@ angular.module 'com.module.core'
     'udp://tracker.ccc.de:80'
   ]
 
-.factory 'torrentProgress', ->
+.filter 'torrentProgress', ->
   (buffer) ->
     progress = []
-    counter = 0
-    downloaded = true
 
-    i = 0
+    if buffer 
 
-    while i < buffer.length
-      p = buffer[i]
+      counter = 0
+      downloaded = true
 
-      if downloaded and p > 0 or !downloaded and p == 0
-        counter++
-      else
-        progress.push counter
-        counter = 1
-        downloaded = !downloaded
+      i = 0
 
-      i++
+      while i < buffer.length
+        p = buffer[i]
 
-    progress.push counter
+        if downloaded and p > 0 or !downloaded and p == 0
+          counter++
+        else
+          progress.push counter
+          counter = 1
+          downloaded = !downloaded
 
-    progress.map (p) ->
-      p * 100 / buffer.length
+        i++
+
+      progress.push counter
+
+      progress.map (p) ->
+        p * 100 / buffer.length
+
+    progress.length + '%'
+
+.filter 'notChoked', ->
+  (wires = []) ->
+    notChoked = (prev, wire) ->
+      prev + !wire.peerChoking
+
+    wires.reduce notChoked, 0
 
 .factory 'torrentStats', ->
   (torrent) ->
     swarm = torrent.swarm
     
-    notChoked = (prev, wire) ->
-      prev + !wire.peerChoking
-
+    
     peers:
       total: swarm.wires.length
-      unchocked: swarm.wires.reduce notChoked, 0
+      unchocked: swarm.wires
     
     traffic:
       down: swarm.downloaded

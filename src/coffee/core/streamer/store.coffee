@@ -9,18 +9,22 @@ angular.module 'com.module.core'
   storagePath = path.join homePath, '.config', 'streamer'
   storageFile = path.join storagePath, 'torrents.json'
 
+  load = (infoHash) ->
+    console.log 'loading ' + infoHash
+    torrents[infoHash] = streamerEngine infoHash: infoHash
+
   mkdirp storagePath, (err) ->
     if err then throw err
     
     if nodeFs.existsSync storageFile
-      nodeFs.readFile storageFile, (err, data) =>
+      nodeFs.readFile storageFile, (err, data) ->
         if err then throw err
 
         torrents = JSON.parse data
         console.log 'resuming from previous state'
         
-        torrents.forEach (infoHash) =>
-          @load infoHash
+        torrents.forEach (infoHash) ->
+          load infoHash
 
   torrents = {}
 
@@ -83,10 +87,4 @@ angular.module 'com.module.core'
   hashList: ->
     Object.keys torrents
 
-  list: ->
-    Object.keys(torrents).map (infoHash) ->
-      torrents[infoHash]
-
-  load: (infoHash) ->
-    console.log 'loading ' + infoHash
-    torrents[infoHash] = streamerEngine infoHash: infoHash
+  list: torrents

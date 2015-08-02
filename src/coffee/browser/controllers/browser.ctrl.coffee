@@ -41,7 +41,7 @@ angular.module 'com.module.browser'
 
   vm.currentTorrent = null
   vm.currentQuality = null 
-  vm.currentdDevice = Settings.chosenDevice
+  vm.currentdDevice = Settings.chosenPlayer
 
   vm.trakt_url = 'http://www.imdb.com/title/' + $stateParams.id
   vm.type = $stateParams.listType
@@ -79,11 +79,12 @@ angular.module 'com.module.browser'
 
   vm.selectSeason = (season) ->
     vm.selectedSeason = season
-
-    if vm.seasons['' + vm.selectedSeason]
-      for first of vm.seasons['' + vm.selectedSeason]
-        vm.selectedEpisode = vm.seasons['' + vm.selectedSeason][first]
+    seasonIndex = '' + vm.selectedSeason - 1
+    if vm.seasons[seasonIndex]
+      for first of vm.seasons[seasonIndex]
+        vm.selectedEpisode = vm.seasons[seasonIndex][first]
         break
+    else vm.selectedEpisode = vm.currentTorrent = null
 
     vm.currentQuality = '0'
 

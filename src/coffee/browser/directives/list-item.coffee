@@ -18,7 +18,6 @@ angular.module 'com.module.browser'
 
 .directive 'ptControlsContainer', ->
   restrict: 'E'
-  scope: {}
   templateUrl: 'browser/views/controls-container.html'
 
 .directive 'ptPeopleContainer', ->

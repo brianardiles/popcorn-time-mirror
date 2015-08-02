@@ -44,7 +44,8 @@ angular.module 'com.module.browser'
 
   vm.trakt_url = 'http://www.imdb.com/title/' + $stateParams.id
   vm.type = $stateParams.listType
-
+  vm.torrentId = $stateParams.id
+  
   if $stateParams.id.charAt(0) is 'm'
     data = Haruhichan
   else
@@ -70,6 +71,7 @@ angular.module 'com.module.browser'
 
   vm.trakt_url = 'http://www.imdb.com/title/' + $stateParams.id
   vm.type = $stateParams.listType
+  vm.torrentId = $stateParams.id
 
   vm.seasons = {}
 

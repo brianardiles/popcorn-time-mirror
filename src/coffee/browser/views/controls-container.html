@@ -1,8 +1,8 @@
 <div class="controls-container">
     <div class="meta-container-c">
-        <li class="quality-toggle"></li>
+        <li pt-quality-selector torrents="show.selectedEpisode.torrents" selected="show.currentQuality" class="quality-toggle"></li>
         <li class="subtitles-dropdown"></li>
-        <li id="player-option" class="device-dropdown"></li>
+        <li pt-player-chooser torrent="show.currentTorrent.url" episodeid="" episode="show.selectedEpisode" season="show.selectedSeason" quality="show.currentQuality" title="show.selectedEpisode.title" id="player-option" class="device-dropdown"></li>
     </div>
     
     <md-button style="color: rgb(255, 255, 255); background-color: rgb(6, 124, 154);" class="watchnow-btn" role="button" tabindex="0">

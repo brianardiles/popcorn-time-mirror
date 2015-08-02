@@ -2,9 +2,9 @@
 
 angular.module 'com.module.core'
 
-.factory 'torrentStore', (streamerEngine, readTorrent, nodeFs, path, mkdirp, $q) ->
+.factory 'torrentStore', (streamerEngine, parseTorrent, nodeFs, path, mkdirp, $q) ->
 
-  homePath   = process.env if process.platform == 'win32' then 'USERPROFILE' else 'HOME'
+  homePath   = process.env[(if process.platform == 'win32' then 'USERPROFILE' else 'HOME')]
 
   storagePath = path.join homePath, '.config', 'streamer'
   storageFile = path.join storagePath, 'torrents.json'
@@ -24,13 +24,12 @@ angular.module 'com.module.core'
 
   torrents = {}
 
-  add: (link, callback) ->
+  add: (link) ->
     defer = $q.defer()
 
-    readTorrent link, (err, torrent) ->
-      if err
-        return defer.reject err
-      
+    torrent = parseTorrent link
+
+    if torrent
       infoHash = torrent.infoHash
       
       if torrents[infoHash]
@@ -39,12 +38,13 @@ angular.module 'com.module.core'
       console.log 'adding ' + infoHash
       
       try
-        e = engine torrent
+        e = streamerEngine torrent
         torrents[infoHash] = e
         @save()
         defer.resolve infoHash
       catch e then defer.reject e
-
+    else defer.reject err
+      
     defer.promise
 
   save: ->
@@ -89,4 +89,4 @@ angular.module 'com.module.core'
 
   load: (infoHash) ->
     console.log 'loading ' + infoHash
-    torrents[infoHash] = engine infoHash: infoHash
+    torrents[infoHash] = streamerEngine infoHash: infoHash

@@ -2,7 +2,7 @@
 
 angular.module 'com.module.common'
 
-.factory 'torrentProvider', (torrentStats, torrentProgress, torrentStore, streamServer) ->
+.factory 'torrentProvider', (torrentStats, torrentProgress, torrentStore, streamServer, $q) ->
   serializeFiles = (torrentFiles) ->
     torrentFiles.map (f) ->
       start = f.offset / pieceLength | 0
@@ -36,12 +36,8 @@ angular.module 'com.module.common'
     torrentStore.list().map(serialize)
 
   addTorrentLink: (link) ->
-    torrentStore.add link, (err, infoHash) ->
-      if err
-        console.error err
-        return
-      else
-        return infoHash: infoHash
+    torrentStore.add link
+    return
 
   uploadTorrent: (files) ->
     file = files and files.file

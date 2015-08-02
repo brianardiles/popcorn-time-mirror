@@ -12,16 +12,18 @@ angular.module 'com.module.common'
 .constant 'gui', require 'nw.gui'
 .constant 'request', require 'request'
 
+.constant 'parseTorrent', require 'parse-torrent'
 .constant 'torrenthealth', require 'torrent-health'
-
+.constant 'torrentStream', require 'torrent-stream'
+.constant 'semver', require 'semver'
 .constant 'os', require 'os'
+.constant 'mkdirp', require 'mkdirp'
 .constant 'data_path', require('nw.gui').App.dataPath
 .constant 'nativeWindow', require('nw.gui').Window.get()
 
 .constant 'nodeFs', require 'fs'
 .constant 'path', require 'path'
 .constant 'pump', require 'pump'
-.constant 'torrentStream', require 'torrent-stream'
 .constant 'crypto', require 'crypto'
 .constant 'ffmpeg', require 'fluent-ffmpeg'
 

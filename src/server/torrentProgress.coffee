@@ -1,6 +1,6 @@
 'use strict'
 
-exports.torrentProgress = (buffer) ->
+module.exports = (buffer) ->
   progress = []
   counter = 0
   downloaded = true

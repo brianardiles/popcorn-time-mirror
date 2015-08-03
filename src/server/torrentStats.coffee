@@ -1,6 +1,6 @@
 'use strict'
 
-exports.torrentStats = (torrent) ->
+module.exports = (torrent) ->
   swarm = torrent.swarm
   
   notChoked = (prev, wire) ->

@@ -1,8 +1,6 @@
 'use strict'
 
-torrentStore = require './torrentStore'
-
-exports.socketActions =
+module.exports = (torrentStore) ->
   pause: (infoHash) ->
     torrent = torrentStore.get(infoHash)
 

@@ -4,7 +4,7 @@ streamOptions = require './streamOptions'
 
 torrentStream = require 'torrent-stream'
 
-exports.streamerEngine = (torrent) ->
+module.exports = (torrent) ->
   engine = torrentStream torrent, streamOptions
 
   engine.once 'verifying', ->

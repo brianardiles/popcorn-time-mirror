@@ -2,36 +2,36 @@
 
 torrentProgress = require './torrentProgress'
 torrentStats    = require './torrentStats'
-torrentStore    = require './torrentStore'
 
 socket = require 'express-ws'
+throttle = require './throttle'
 
-module.exports = (express) ->
+module.exports = (express, torrentStore) ->
   ws = socket express
-  wss = ws.getWss '/ws'
 
   broadcast = (args...) ->
-    wss.clients.forEach (client) ->
-      client.send aargs...
+    wss = ws.getWss '/ws'
+
+    if wss
+      wss.clients.forEach (client) ->
+        client.send args...
 
   torrentStore.on 'torrent', (infoHash, torrent) ->
+
+    notifyProgress = ->
+      broadcast 'download', infoHash, torrentProgress(torrent.bitfield.buffer)
+
+    notifySelection = ->
+      pieceLength = torrent.torrent.pieceLength
+
+      broadcast 'selection', infoHash, torrent.files.map (f) ->
+        start = f.offset / pieceLength | 0
+        end = (f.offset + f.length - 1) / pieceLength | 0
+        
+        torrent.selection.some (s) ->
+          s.from <= start and s.to >= end
+
     listen = ->
-      notifyProgress = _.throttle((->
-        broadcast 'download', infoHash, torrentProgress(torrent.bitfield.buffer)
-      ), 1000, trailing: false)
-
-      notifySelection = _.throttle((->
-        pieceLength = torrent.torrent.pieceLength
-
-        broadcast 'selection', infoHash, torrent.files.map (f) ->
-          start = f.offset / pieceLength | 0
-          end = (f.offset + f.length - 1) / pieceLength | 0
-          
-          torrent.selection.some (s) ->
-            s.from <= start and s.to >= end
-
-      ), 2000, trailing: false)
-
       broadcast 'verifying', infoHash, torrentStats(torrent)
 
       torrent.once 'ready', ->
@@ -39,18 +39,18 @@ module.exports = (express) ->
 
       torrent.on 'uninterested', ->
         broadcast 'uninterested', infoHash
-        notifySelection()
+        throttle notifySelection, 2000
 
       torrent.on 'interested', ->
         broadcast 'interested', infoHash
-        notifySelection()
+        throttle notifySelection, 2000
 
       interval = setInterval ->
         broadcast 'torrentStats', infoHash, torrentStats(torrent)
-        notifySelection()
+        throttle notifySelection, 2000
       , 1000
 
-      torrent.on 'verify', notifyProgress
+      torrent.on 'verify', throttle notifyProgress, 1000
 
       torrent.once 'destroyed', ->
         clearInterval interval

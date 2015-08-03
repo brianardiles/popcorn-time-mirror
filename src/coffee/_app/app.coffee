@@ -15,6 +15,7 @@ angular.module 'app', [
   'com.module.common'
   'com.module.browser'
   'com.module.settings'
+  'com.module.player'
 ]
 
 .config ($compileProvider, $mdThemingProvider) ->

@@ -7,7 +7,7 @@ angular.module 'com.module.core'
   darwin: ['close', 'min', 'max']
   linux: ['min', 'max', 'close']
 
-.controller 'MainCtrl', ($scope, $rootScope, $state, titleButtons, nativeWindow, $location, CoreService) ->
+.controller 'MainCtrl', ($scope, $rootScope, $state, titleButtons, nativeWindow, $location) ->
   vm = this
 
   vm.platform = process.platform

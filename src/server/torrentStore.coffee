@@ -1,33 +1,38 @@
 'use strict'
 
-angular.module 'com.module.core'
+nodeFs       = require 'fs'
+mkdirp       = require 'mkdirp'
+parseTorrent = require 'parse-torrent'
+path         = require 'path'
+$q           = require 'Q'
 
-.factory 'torrentStore', (streamerEngine, parseTorrent, nodeFs, path, mkdirp, $q) ->
+streamerEngine = require './streamerEngine'
 
-  homePath   = process.env[(if process.platform == 'win32' then 'USERPROFILE' else 'HOME')]
+homePath   = process.env[(if process.platform == 'win32' then 'USERPROFILE' else 'HOME')]
 
-  storagePath = path.join homePath, '.config', 'streamer'
-  storageFile = path.join storagePath, 'torrents.json'
+storagePath = path.join homePath, '.config', 'streamer'
+storageFile = path.join storagePath, 'torrents.json'
 
-  load = (infoHash) ->
-    console.log 'loading ' + infoHash
-    torrents[infoHash] = streamerEngine infoHash: infoHash
+load = (infoHash) ->
+  console.log 'loading ' + infoHash
+  torrents[infoHash] = streamerEngine infoHash: infoHash
 
-  mkdirp storagePath, (err) ->
-    if err then throw err
-    
-    if nodeFs.existsSync storageFile
-      nodeFs.readFile storageFile, (err, data) ->
-        if err then throw err
+mkdirp storagePath, (err) ->
+  if err then throw err
+  
+  if nodeFs.existsSync storageFile
+    nodeFs.readFile storageFile, (err, data) ->
+      if err then throw err
 
-        torrents = JSON.parse data
-        console.log 'resuming from previous state'
-        
-        torrents.forEach (infoHash) ->
-          load infoHash
+      torrents = JSON.parse data
+      console.log 'resuming from previous state'
+      
+      torrents.forEach (infoHash) ->
+        load infoHash
 
-  torrents = {}
+torrents = {}
 
+exports.torrentStore =
   add: (link) ->
     defer = $q.defer()
 
@@ -87,4 +92,6 @@ angular.module 'com.module.core'
   hashList: ->
     Object.keys torrents
 
-  list: torrents
+  list: ->
+    Object.keys(torrents).map (infoHash) ->
+      torrents[infoHash]

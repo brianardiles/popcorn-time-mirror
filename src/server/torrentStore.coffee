@@ -98,8 +98,7 @@ class torrentStore extends EventEmitter
       delete @torrents[infoHash]
       @save()
 
-  hashList: ->
-    Object.keys @torrents
+  hashList: -> @torrents
 
   list: ->
     Object.keys(@torrents).map (infoHash) =>

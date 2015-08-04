@@ -7,19 +7,77 @@ angular.module 'com.module.browser'
 
   return 
 
-.controller 'torrentsListCtrl', (torrentProvider, $scope, $interval) ->
+.controller 'torrentsListCtrl', ($interval, $resource, $q, socketServer, streamServer) ->
   vm = this
 
-  vm.setStream = (torrent) ->
-    torrentProvider.setStreamTorrent torrent 
+  Torrent = $resource "http://127.0.0.1:#{streamServer.port}/torrents/:infoHash"
 
-  torrentProvider.getAllTorrents().then (data) ->
-    vm.data = data
+  load = ->
+    torrents = Torrent.get ->
+      vm.data = torrents
 
-  $interval ->
-    if !$scope.$$phase
-      $scope.$apply()
-  , 1000
+  loadTorrent = (hash) ->
+    Torrent.get(infoHash: hash).$promise.then (torrent) ->
+      vm.data[hash] = torrent
+      
+      torrent
+
+  findTorrent = (hash) ->
+    torrent = vm.data[hash]
+    
+    if torrent
+      $q.when torrent
+    else loadTorrent hash
+
+  load()
+
+  vm.keypress = (e) ->
+    if e.which == 13
+      vm.download()
+    return
+
+  vm.select = (torrent, file) ->
+    socketServer.emit (if file.selected then 'deselect' else 'select'), torrent.infoHash, torrent.files.indexOf(file)
+
+  socketServer.on 'verifying', (hash) ->
+    findTorrent(hash).then (torrent) ->
+      torrent.ready = false
+
+  socketServer.on 'ready', (hash) ->
+    loadTorrent hash
+
+  socketServer.on 'interested', (hash) ->
+    findTorrent(hash).then (torrent) ->
+      torrent.interested = true
+
+  socketServer.on 'uninterested', (hash) ->
+    findTorrent(hash).then (torrent) ->
+      torrent.interested = false
+
+  socketServer.on 'stats', (hash, stats) ->
+    findTorrent(hash).then (torrent) ->
+      torrent.stats = stats
+
+  socketServer.on 'download', (hash, progress) ->
+    findTorrent(hash).then (torrent) ->
+      torrent.progress = progress
+
+  socketServer.on 'selection', (hash, selection) ->
+    findTorrent(hash).then (torrent) ->
+      i = 0
+
+      while i < torrent.files.length
+        file = torrent.files[i]
+        file.selected = selection[i]
+        i++
+
+  socketServer.on 'destroyed', (hash) ->
+    delete vm.data[hash]
+
+  socketServer.on 'disconnect', ->
+    vm.data = []
+
+  socketServer.on 'connect', load
 
   return 
 

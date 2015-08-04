@@ -6,6 +6,9 @@ url         = require 'url'
 mime        = require 'mime'
 pump        = require 'pump'
 
+torrentProgress = require './torrentProgress'
+torrentStats    = require './torrentStats'
+
 serializeFiles = (torrent) ->
   torrentFiles = torrent.files
   pieceLength = torrent.torrent.pieceLength
@@ -16,7 +19,7 @@ serializeFiles = (torrent) ->
     
     name: f.name
     path: f.path
-    link: '/torrents/' + torrent.infoHash + '/files/' + encodeURIComponent(f.path)
+    link: 'http://127.0.0.1:' + process.argv[2] + '/torrents/' + torrent.infoHash + '/files/' + encodeURIComponent(f.path)
     length: f.length
     offset: f.offset
     selected: torrent.selection.some (s) ->
@@ -32,6 +35,14 @@ serialize = (torrent) ->
   ready: torrent.ready
   files: serializeFiles torrent
   progress: torrentProgress torrent.bitfield.buffer
+
+serializeObject = (torrents) ->
+  object = {}
+
+  for indx, torrent of torrents
+    object[indx] = serialize torrent
+
+  object
 
 module.exports = (torrentStore) ->
   getM3UPlaylist: (req, res) ->
@@ -84,7 +95,7 @@ module.exports = (torrentStore) ->
       fs.unlink file.path
 
   getAllTorrents: (req, res) ->
-    res.send torrentStore.list().map(serialize)
+    res.send serializeObject torrentStore.hashList()
 
   getTorrent: (req, res) ->
     res.send serialize(req.torrent)
@@ -106,43 +117,42 @@ module.exports = (torrentStore) ->
 
   streamTorrent: (req, res) ->
     torrent = req.torrent
-    file = _.find(torrent.files, path: req.params.path)
+    file = null
+
+    for torrentFile in torrent.files
+      if torrentFile.path is req.params.path
+        file = torrentFile
+        break
 
     if !file
       return res.send(404)
-
+    
     if typeof req.query.ffmpeg != 'undefined'
       return require('./ffmpeg')(req, res, torrent, file)
-
-    if torrent.ready
-      onReady()
-    else torrent.once 'ready', onReady
- 
-    onReady = ->
-      index = Number pathname.slice(1)
-      
-      if Number.isNaN(index) or index >= torrent.files.length
-        res.send 404
-        return res.end '404 Not Found'
-      
-      file = torrent.files[index]
-      
-      res.setHeader 'Accept-Ranges', 'bytes'
-      res.setHeader 'Content-Type', mime.lookup(file.name)
-      res.send 200
-      
-      # Support DLNA streaming
-      res.setHeader 'transferMode.dlna.org', 'Streaming'
-      res.setHeader 'contentFeatures.dlna.org', 'DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000'
-
-      if req.headers.range
-        res.statusCode = 206
-        range = rangeParser(file.length, req.headers.range)[0]
-        res.setHeader 'Content-Range', 'bytes ' + range.start + '-' + range.end + '/' + file.length
-        res.setHeader 'Content-Length', range.end - (range.start) + 1
-      else res.setHeader 'Content-Length', file.length
-      
+    
+    range = req.headers.range
+    range = range and rangeParser(file.length, range)[0]
+    
+    res.setHeader 'Accept-Ranges', 'bytes'
+    res.type file.name
+    
+    req.connection.setTimeout 3600000
+    
+    if !range
+      res.setHeader 'Content-Length', file.length
       if req.method == 'HEAD'
-        res.end()
+        return res.end()
+      return pump(file.createReadStream(), res)
+    
+    res.statusCode = 206
+    res.setHeader 'Content-Length', range.end - (range.start) + 1
+    res.setHeader 'Content-Range', 'bytes ' + range.start + '-' + range.end + '/' + file.length
+    
+    if req.method == 'HEAD'
+      return res.end()
+    
+    pump file.createReadStream(range), res
+    
+    return
 
-      pump file.createReadStream(range), res
+ 

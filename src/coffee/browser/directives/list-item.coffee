@@ -65,44 +65,48 @@ angular.module 'com.module.browser'
 .directive 'ptTorrentItem', ->
   restrict: 'E'
   scope: { data: '=' }
-  controllerAs: 'item'
+  controllerAs: 'torrent'
   bindToController: true
   template: '''
-    <div style="padding-top: 27px; font-size: 20pt; width: 80px; text-align: center">{{ bitfield.buffer | torrentProgress }}</div>
+    <div style="padding-top: 27px; font-size: 20pt; width: 80px; text-align: center">{{ torrent.data.progress[0].toFixed(0) }}%</div>
       <div class="md-list-item-text">
-        <h4>{{ torrent.name || 'Fetching metadata...' }}</h4>
+        <h4><a ng-href="{{ torrent.data.files[0].link }}" target="_blank">{{ torrent.data.name || 'Fetching metadata...' }}</a></h4>
         <p>
           <strong>Speed:</strong>
-          {{ swarm.downloadSpeed() / 1024 | number:1 }} / {{ swarm.uploadSpeed() / 1024 | number:1 }} KB/s
+          {{ torrent.data.stats.speed.down / 1024 | number:1 }} / {{ torrent.data.stats.speed.up / 1024 | number:1 }} KB/s
           <md-icon md-font-set="material-icons">swap_vertical_circle</md-icon>
 
           <strong>Traffic:</strong>
-          <span class="label label-success">{{ swarm.downloaded / 1024 / 1024 | number:1 }}</span> /
-          <span class="label label-danger">{{ swarm.uploaded / 1024 / 1024 | number:1 }}</span> MB
+          <span class="label label-success">{{ torrent.data.stats.traffic.down / 1024 / 1024 | number:1 }}</span> /
+          <span class="label label-danger">{{ torrent.data.stats.traffic.up / 1024 / 1024 | number:1 }}</span> MB
           <md-icon md-font-set="material-icons">swap_vertical_circle</md-icon>
 
           <strong>Peers:</strong>
-          <span class="label label-success">{{ swarm.wires | notChoked | number }}</span> /
-          <span class="label label-default">{{ swarm.wires.length | number }}</span>
+          <span class="label label-success">{{ torrent.data.stats.peers.unchocked | number }}</span> /
+          <span class="label label-default">{{ torrent.data.stats.peers.total | number }}</span>
           <md-icon md-font-set="material-icons">account_circle</md-icon>
 
           <strong>Queue:</strong>
-          <span class="label label-primary">{{ swarm.queued | number }}</span>
+          <span class="label label-primary">{{ torrent.data.stats.queue | number }}</span>
         </p>
       </div>
-      <md-button class="md-fab" ng-click="pause(torrent.torrent)" style="margin: 14px 20px">
-        <md-icon md-font-set="material-icons">{{ swarm.paused ? 'play_circle' : 'pause_circle' }}</md-icon>
+      <md-button class="md-fab" ng-click="torrent.pause(torrent.data)" style="margin: 14px 20px">
+        <md-icon md-font-set="material-icons">{{ torrent.data.stats.paused ? 'play_circle' : 'pause_circle' }}</md-icon>
       </md-button>'''
   controller: ($scope, torrentProvider) ->
     vm = this
 
-    $scope.$watchCollection 'item.data.torrent', (newData) ->
-      $scope.torrent = newData
+    vm.download = ->
+      if vm.link
+        Torrent.save(link: vm.link).$promise.then (torrent) ->
+          loadTorrent torrent.infoHash
+        vm.link = ''
 
-    $scope.$watchCollection 'item.data.swarm', (newData) ->
-      $scope.swarm = newData
+    vm.pause = (torrent) ->
+      socketServer.emit (if torrent.stats.paused then 'resume' else 'pause'), torrent.infoHash
 
-    $scope.$watchCollection 'item.data.bitfield', (newData) ->
-      $scope.bitfield = newData     
+    vm.remove = (torrent) ->
+      Torrent.remove infoHash: torrent.infoHash
+      delete vm.data[torrent.infoHash]
 
     return 

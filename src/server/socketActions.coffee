@@ -1,28 +1,29 @@
 'use strict'
 
-module.exports = (torrentStore) ->
-  pause: (infoHash) ->
-    torrent = torrentStore.get(infoHash)
+module.exports = (io, torrentStore) ->
+  io.sockets.on 'connection', (socket) ->
+    socket.on 'pause', (infoHash) ->
+      torrent = torrentStore.get(infoHash)
+      
+      if torrent and torrent.swarm
+        torrent.swarm.pause()
 
-    if torrent and torrent.swarm
-      torrent.swarm.pause()
+    socket.on 'resume', (infoHash) ->
+      torrent = torrentStore.get(infoHash)
+      
+      if torrent and torrent.swarm
+        torrent.swarm.resume()
 
-  resume: (infoHash) ->
-    torrent = torrentStore.get(infoHash)
+    socket.on 'select', (infoHash, file) ->
+      torrent = torrentStore.get(infoHash)
+      
+      if torrent and torrent.files
+        file = torrent.files[file]
+        file.select()
 
-    if torrent and torrent.swarm
-      torrent.swarm.resume()
-
-  select: (infoHash, file) ->
-    torrent = torrentStore.get(infoHash)
-
-    if torrent and torrent.files
-      file = torrent.files[file]
-      file.select()
-
-  deselect: (infoHash, file) ->
-    torrent = torrentStore.get(infoHash)
-    
-    if torrent and torrent.files
-      file = torrent.files[file]
-      file.deselect()
+    socket.on 'deselect', (infoHash, file) ->
+      torrent = torrentStore.get(infoHash)
+      
+      if torrent and torrent.files
+        file = torrent.files[file]
+        file.deselect()

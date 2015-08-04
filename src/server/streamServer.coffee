@@ -2,14 +2,14 @@
 
 express       = require 'express'
 expressJson   = require 'express-json'
+socket        = require 'socket.io'
+http          = require 'http'
 torrentStore  = require './torrentStore'
 
 port = process.argv[2]
 
 app = express()
 app.use expressJson()
-
-app.listen port
 
 console.log 'express listening at ' + port
 
@@ -20,7 +20,6 @@ app.use (req, res, next) ->
   
   next()
 
-socketServer  = require('./socketServer')(app, torrentStore)
 routeHandlers = require('./routeHandlers')(torrentStore)
 
 findTorrent = (req, res, next) ->
@@ -47,6 +46,11 @@ app.post '/torrents/:infoHash/pause', findTorrent, routeHandlers.pauseSwarm
 app.post '/torrents/:infoHash/resume', findTorrent, routeHandlers.resumeSwarm
 #app.post '/upload', multipart(), routeHandlers.uploadTorrent
 
-app.ws '/ws', (ws, res) ->
-  console.log ws, 'test'
+server = http.createServer app
 
+io = socket.listen server
+
+require('./socketServer')(io, torrentStore)
+require('./socketActions')(io, torrentStore)
+
+server.listen port

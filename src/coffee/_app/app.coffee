@@ -5,10 +5,12 @@ angular.module 'app', [
   'ngSanitize'
   'ngMaterial'
   'ngAnimate'
+  'ngResource'
   'ngAria'
 
   'ui.router'
   'ct.ui.router.extras'
+  'socket-io'
   
   # modules
   'com.module.core'

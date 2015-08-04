@@ -37,7 +37,6 @@
   "dependencies": {
     "express": "^4.13.3",
     "express-json": "^1.0.0",
-    "express-ws": "^0.2.6",
     "fluent-ffmpeg": "^2.0.1",
     "get-port": "^1.0.0",
     "mime": "^1.3.4",
@@ -51,6 +50,7 @@
     "readdirp": "^1.4.0",
     "request": "^2.60.0",
     "semver": "^5.0.1",
+    "socket.io": "^1.3.6",
     "torrent-health": "0.0.6",
     "torrent-stream": "^0.21.3"
   }

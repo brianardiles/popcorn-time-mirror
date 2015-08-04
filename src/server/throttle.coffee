@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = (func, wait) ->
   ctx = undefined
   args = undefined

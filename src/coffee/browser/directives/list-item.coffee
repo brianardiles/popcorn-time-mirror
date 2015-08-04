@@ -61,39 +61,13 @@ angular.module 'com.module.browser'
   scope: { seasons: '=', selectedSeason: '=' }
   templateUrl: 'browser/views/seasons-wrapper.html'
 
-
 .directive 'ptTorrentItem', ->
   restrict: 'E'
   scope: { data: '=' }
   controllerAs: 'torrent'
   bindToController: true
-  template: '''
-    <div style="padding-top: 27px; font-size: 20pt; width: 80px; text-align: center">{{ torrent.data.progress[0].toFixed(0) }}%</div>
-      <div class="md-list-item-text">
-        <h4><a ng-href="{{ torrent.data.files[0].link }}" target="_blank">{{ torrent.data.name || 'Fetching metadata...' }}</a></h4>
-        <p>
-          <strong>Speed:</strong>
-          {{ torrent.data.stats.speed.down / 1024 | number:1 }} / {{ torrent.data.stats.speed.up / 1024 | number:1 }} KB/s
-          <md-icon md-font-set="material-icons">swap_vertical_circle</md-icon>
-
-          <strong>Traffic:</strong>
-          <span class="label label-success">{{ torrent.data.stats.traffic.down / 1024 / 1024 | number:1 }}</span> /
-          <span class="label label-danger">{{ torrent.data.stats.traffic.up / 1024 / 1024 | number:1 }}</span> MB
-          <md-icon md-font-set="material-icons">swap_vertical_circle</md-icon>
-
-          <strong>Peers:</strong>
-          <span class="label label-success">{{ torrent.data.stats.peers.unchocked | number }}</span> /
-          <span class="label label-default">{{ torrent.data.stats.peers.total | number }}</span>
-          <md-icon md-font-set="material-icons">account_circle</md-icon>
-
-          <strong>Queue:</strong>
-          <span class="label label-primary">{{ torrent.data.stats.queue | number }}</span>
-        </p>
-      </div>
-      <md-button class="md-fab" ng-click="torrent.pause(torrent.data)" style="margin: 14px 20px">
-        <md-icon md-font-set="material-icons">{{ torrent.data.stats.paused ? 'play_circle' : 'pause_circle' }}</md-icon>
-      </md-button>'''
-  controller: ($scope, torrentProvider) ->
+  templateUrl: 'browser/views/pt-torrent-item.html'
+  controller: ($scope, torrentProvider, socketServer) ->
     vm = this
 
     vm.download = ->
@@ -102,7 +76,8 @@ angular.module 'com.module.browser'
           loadTorrent torrent.infoHash
         vm.link = ''
 
-    vm.pause = (torrent) ->
+    vm.pause = (torrent, $event) ->
+      $event.stopPropagation() 
       socketServer.emit (if torrent.stats.paused then 'resume' else 'pause'), torrent.infoHash
 
     vm.remove = (torrent) ->

@@ -35,6 +35,8 @@ angular.module 'com.module.webchimera'
       wcConfigLoader.loadConfig($scope.wcConfig).then @onLoadConfig.bind(this)
     else $scope.wcPlayerReady $chimera: this
 
+    $scope.$apply()
+
   @onLoadConfig = (config) ->
     @config = config
 
@@ -49,6 +51,7 @@ angular.module 'com.module.webchimera'
     return
 
   @onUpdateTime = (time) ->
+    @isBuffering = false
     @currentTime = time
 
     if @wcjsElement.length != 0
@@ -226,6 +229,7 @@ angular.module 'com.module.webchimera'
     return
 
   @onStartPlaying = (event) ->
+    @setState WC_STATES.PLAY
     @isBuffering = false
     $scope.$apply()
     return
@@ -286,7 +290,7 @@ angular.module 'com.module.webchimera'
       @isFullScreen = wcFullscreen.isFullScreen()
     
     @addBindings()
-    
+
     if wcFullscreen.isAvailable
       document.addEventListener wcFullscreen.onchange, @onFullScreenChange.bind(this)
     

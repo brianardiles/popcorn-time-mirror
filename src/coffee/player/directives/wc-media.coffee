@@ -10,6 +10,12 @@ angular.module 'com.module.webchimera'
     wcSrc: '=?'
   link: (scope, elem, attrs, chimera) ->
     sources = undefined
+
+    # INIT
+    chimera.wcjsElement = wcjsRenderer.init elem.find('canvas')[0]
+    chimera.sources = scope.wcSrc
+
+    chimera.addListeners()
     
     # FUNCTIONS
     scope.onChangeSource = (newValue, oldValue) ->
@@ -35,14 +41,9 @@ angular.module 'com.module.webchimera'
     $timeout ->
       if chimera.autoPlay
         chimera.play()
+
+      chimera.onVideoReady()
       return
-
-    # INIT
-    chimera.wcjsElement = wcjsRenderer.init elem.find('canvas')[0]
-    chimera.sources = scope.wcSrc
-
-    chimera.addListeners()
-    chimera.onVideoReady()
 
     scope.$watch 'wcSrc', scope.onChangeSource
     

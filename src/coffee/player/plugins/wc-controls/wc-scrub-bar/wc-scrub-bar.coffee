@@ -1,0 +1,151 @@
+'use strict'
+
+angular.module 'com.module.webchimera.plugins.controls'
+
+.directive 'wcScrubBar', (WC_STATES, WC_UTILS) ->
+  restrict: 'E'
+  require: '^chimerangular'
+  transclude: true
+  templateUrl: 'views/directives/wc-scrub-bar.html'
+  link: (scope, elem, attr, chimera) ->
+    isSeeking = false
+    isPlaying = false
+    isPlayingWhenSeeking = false
+    
+    touchStartX = 0
+    
+    LEFT = 37
+    RIGHT = 39
+    NUM_PERCENT = 5
+    
+    scope.chimera = chimera
+
+    scope.ariaTime = (time) ->
+      Math.round time / 1000
+
+    scope.onScrubBarTouchStart = ($event) ->
+      event = $event.originalEvent or $event
+      touches = event.touches
+      touchX = undefined
+      
+      if WC_UTILS.isiOSDevice()
+        touchStartX = (touches[0].clientX - (event.layerX)) * -1
+      else
+        touchStartX = event.layerX
+      
+      touchX = touches[0].clientX + touchStartX - (touches[0].target.offsetLeft)
+      isSeeking = true
+      
+      if isPlaying
+        isPlayingWhenSeeking = true
+      
+      chimera.pause()
+      chimera.seekTime touchX * chimera.wcjsElement[0].duration / elem[0].scrollWidth
+      
+      scope.$apply()
+      return
+
+    scope.onScrubBarTouchEnd = ($event) ->
+      event = $event.originalEvent or $event
+      
+      if isPlayingWhenSeeking
+        isPlayingWhenSeeking = false
+        chimera.play()
+      
+      isSeeking = false
+      scope.$apply()
+      return
+
+    scope.onScrubBarTouchMove = ($event) ->
+      event = $event.originalEvent or $event
+      touches = event.touches
+      touchX = undefined
+      
+      if isSeeking
+        touchX = touches[0].clientX + touchStartX - (touches[0].target.offsetLeft)
+        chimera.seekTime touchX * chimera.wcjsElement[0].duration / elem[0].scrollWidth
+      
+      scope.$apply()
+      return
+
+    scope.onScrubBarTouchLeave = (event) ->
+      isSeeking = false
+      scope.$apply()
+      return
+
+    scope.onScrubBarMouseDown = (event) ->
+      event = WC_UTILS.fixEventOffset(event)
+      isSeeking = true
+      
+      if isPlaying
+        isPlayingWhenSeeking = true
+      
+      chimera.pause()
+      chimera.seekTime event.offsetX * chimera.wcjsElement[0].duration / elem[0].scrollWidth
+      scope.$apply()
+      return
+
+    scope.onScrubBarMouseUp = (event) ->
+      #event = WC_UTILS.fixEventOffset(event);
+      if isPlayingWhenSeeking
+        isPlayingWhenSeeking = false
+        chimera.play()
+      
+      isSeeking = false
+      
+      #chimera.seekTime(event.offsetX * chimera.wcjsElement[0].duration / elem[0].scrollWidth);
+      scope.$apply()
+      return
+
+    scope.onScrubBarMouseMove = (event) ->
+      if isSeeking
+        event = WC_UTILS.fixEventOffset(event)
+        chimera.seekTime event.offsetX * chimera.wcjsElement[0].duration / elem[0].scrollWidth
+      
+      scope.$apply()
+      return
+
+    scope.onScrubBarMouseLeave = (event) ->
+      isSeeking = false
+      scope.$apply()
+      return
+
+    scope.onScrubBarKeyDown = (event) ->
+      currentPercent = chimera.currentTime / chimera.totalTime * 100
+      
+      if event.which == LEFT or event.keyCode == LEFT
+        chimera.seekTime currentPercent - NUM_PERCENT, true
+        event.preventDefault()
+      else if event.which == RIGHT or event.keyCode == RIGHT
+        chimera.seekTime currentPercent + NUM_PERCENT, true
+        event.preventDefault()
+      
+      return
+
+    scope.setState = (newState) ->
+      if !isSeeking
+        switch newState
+          when WC_STATES.PLAY
+            isPlaying = true
+          when WC_STATES.PAUSE
+            isPlaying = false
+          when WC_STATES.STOP
+            isPlaying = false
+
+    scope.$watch ->
+      chimera.currentState
+    , (newVal, oldVal) ->
+      if newVal != oldVal
+        scope.setState newVal
+
+    # Touch move is really buggy in Chrome for Android, maybe we could use mouse move that works ok
+    if WC_UTILS.isMobileDevice()
+      elem.bind 'touchstart', scope.onScrubBarTouchStart
+      elem.bind 'touchend', scope.onScrubBarTouchEnd
+      elem.bind 'touchmove', scope.onScrubBarTouchMove
+      elem.bind 'touchleave', scope.onScrubBarTouchLeave
+    else
+      elem.bind 'mousedown', scope.onScrubBarMouseDown
+      elem.bind 'mouseup', scope.onScrubBarMouseUp
+      elem.bind 'mousemove', scope.onScrubBarMouseMove
+      elem.bind 'mouseleave', scope.onScrubBarMouseLeave

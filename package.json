@@ -52,6 +52,7 @@
     "semver": "^5.0.1",
     "socket.io": "^1.3.6",
     "torrent-health": "0.0.6",
-    "torrent-stream": "^0.21.3"
+    "torrent-stream": "^0.21.3",
+    "webchimera.js": "^0.1.24"
   }
 }

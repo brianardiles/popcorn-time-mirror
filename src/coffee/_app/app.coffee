@@ -15,9 +15,9 @@ angular.module 'app', [
   # modules
   'com.module.core'
   'com.module.common'
+  'com.module.webchimera'
   'com.module.browser'
   'com.module.settings'
-  'com.module.player'
 ]
 
 .config ($compileProvider, $mdThemingProvider) ->

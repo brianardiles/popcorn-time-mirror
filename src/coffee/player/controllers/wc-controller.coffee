@@ -154,14 +154,12 @@ angular.module 'com.module.webchimera'
       @wcjsElement.time = 1000 * second
     else
       second = value
-      console.log 1000 * second
       @wcjsElement.time = 1000 * second
     
     @currentTime = 1000 * second
     return
 
   @playPause = ->
-    console.log @wcjsElement
     if @getState() is 'paused'
       @play()
     else @pause()
@@ -283,8 +281,7 @@ angular.module 'com.module.webchimera'
 
     @wcjsElement.onTimeChanged = @onUpdateTime.bind(this)
     #@wcjsElement.onPositionChanged =  
-    @wcjsElement.onSeekableChanged = ->
-      console.log 'seekable'
+    #@wcjsElement.onSeekableChanged = 
     #@wcjsElement.onPausableChanged =  
     #@wcjsElement.onLengthChanged =  
 

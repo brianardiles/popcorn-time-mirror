@@ -18,7 +18,7 @@ angular.module 'com.module.webchimera.plugins.controls'
           scope.currentVolume = scope.defaultVolume
         else
           scope.currentVolume = 0
-          scope.muteIcon = mute: true
+          scope.muteIcon = 'volume_up'
         
         isMuted = !isMuted
         chimera.setVolume scope.currentVolume
@@ -65,19 +65,17 @@ angular.module 'com.module.webchimera.plugins.controls'
         percentValue = Math.round(newVolume * 100)
         
         if percentValue == 0
-          scope.muteIcon = mute: true
-        else if percentValue > 0 and percentValue < 25
-          scope.muteIcon = level0: true
-        else if percentValue >= 25 and percentValue < 50
-          scope.muteIcon = level1: true
-        else if percentValue >= 50 and percentValue < 75
-          scope.muteIcon = level2: true
-        else if percentValue >= 75
-          scope.muteIcon = level3: true
+          scope.muteIcon = 'volume_off'
+        else if percentValue > 0 and percentValue < 33
+          scope.muteIcon = 'volume_mute'
+        else if percentValue >= 33 and percentValue < 66
+          scope.muteIcon = 'volume_down'
+        else if percentValue >= 66 
+          scope.muteIcon = 'volume_up'
 
-      scope.defaultVolume = 1
+      scope.defaultVolume = 100
       scope.currentVolume = scope.defaultVolume
-      scope.muteIcon = level3: true
+      scope.muteIcon = 'volume_up'
       
       #Update the mute button on initialization, then watch for changes
       scope.onSetVolume chimera.volume

@@ -29,7 +29,7 @@ angular.module 'com.module.webchimera'
     #Set media volume from localStorage if available
     if WC_UTILS.supportsLocalStorage()
       #Default to 100% volume if local storage setting does not exist.
-      @setVolume parseFloat($window.localStorage.getItem(WC_VOLUME_KEY) or '1')
+      @setVolume parseFloat($window.localStorage.getItem(WC_VOLUME_KEY) or '100')
     
     if $scope.wcConfig
       wcConfigLoader.loadConfig($scope.wcConfig).then @onLoadConfig.bind(this)
@@ -109,6 +109,17 @@ angular.module 'com.module.webchimera'
 
     return
 
+  @getState = ->
+    switch @wcjsElement.state
+      when 0 then 'idle'
+      when 1 then 'opening'
+      when 2 then 'buffering'
+      when 3 then 'playing'
+      when 4 then 'paused'
+      when 5 then 'stopping'
+      when 6 then 'ended'
+      when 7 then 'error'
+
   @onPlay = ->
     @setState WC_STATES.PLAY
     $scope.$apply()
@@ -140,16 +151,18 @@ angular.module 'com.module.webchimera'
     
     if byPercent
       second = value * @wcjsElement.length / 100
-      @wcjsElement.time = second
+      @wcjsElement.time = 1000 * second
     else
       second = value
-      @wcjsElement.time = second
+      console.log 1000 * second
+      @wcjsElement.time = 1000 * second
     
     @currentTime = 1000 * second
     return
 
   @playPause = ->
-    if @wcjsElement.paused
+    console.log @wcjsElement
+    if @getState() is 'paused'
       @play()
     else @pause()
 
@@ -219,7 +232,7 @@ angular.module 'com.module.webchimera'
 
   @setPlayback = (newPlayback) ->
     $scope.wcUpdatePlayback $playBack: newPlayback
-    @wcjsElement.input.rate = newPlayback
+    @wcjsElement.input.rate = parseFloat newPlayback
     @playback = newPlayback
     return
 
@@ -270,7 +283,8 @@ angular.module 'com.module.webchimera'
 
     @wcjsElement.onTimeChanged = @onUpdateTime.bind(this)
     #@wcjsElement.onPositionChanged =  
-    #@wcjsElement.onSeekableChanged =  
+    @wcjsElement.onSeekableChanged = ->
+      console.log 'seekable'
     #@wcjsElement.onPausableChanged =  
     #@wcjsElement.onLengthChanged =  
 

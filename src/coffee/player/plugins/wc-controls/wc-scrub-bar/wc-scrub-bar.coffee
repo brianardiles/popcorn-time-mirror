@@ -55,7 +55,7 @@ angular.module 'com.module.webchimera.plugins.controls'
         isPlayingWhenSeeking = true
       
       chimera.pause()
-      chimera.seekTime touchX * (chimera.wcjsElement.length / 1000) / elem[0].scrollWidth
+      chimera.seekTime touchX * chimera.wcjsElement.length / elem[0].scrollWidth
       
       scope.$apply()
       return
@@ -78,7 +78,7 @@ angular.module 'com.module.webchimera.plugins.controls'
       
       if isSeeking
         touchX = touches[0].clientX + touchStartX - (touches[0].target.offsetLeft)
-        chimera.seekTime touchX * (chimera.wcjsElement.length / 1000) / elem[0].scrollWidth
+        chimera.seekTime touchX * chimera.wcjsElement.length / elem[0].scrollWidth
       
       scope.$apply()
       return
@@ -96,7 +96,7 @@ angular.module 'com.module.webchimera.plugins.controls'
         isPlayingWhenSeeking = true
       
       chimera.pause()
-      chimera.seekTime event.offsetX * (chimera.wcjsElement.length / 1000)  / elem[0].scrollWidth
+      chimera.seekTime event.offsetX * (chimera.wcjsElement.length / 1000) / elem[0].scrollWidth
       scope.$apply()
       return
 
@@ -115,7 +115,7 @@ angular.module 'com.module.webchimera.plugins.controls'
     scope.onScrubBarMouseMove = (event) ->
       if isSeeking
         event = WC_UTILS.fixEventOffset(event)
-        chimera.seekTime event.offsetX * (chimera.wcjsElement.length / 1000) / elem[0].scrollWidth
+        chimera.seekTime event.offsetX * chimera.wcjsElement.length / elem[0].scrollWidth
       
       scope.$apply()
       return

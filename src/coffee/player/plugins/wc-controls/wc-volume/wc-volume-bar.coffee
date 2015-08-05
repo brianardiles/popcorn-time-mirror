@@ -17,7 +17,7 @@ angular.module 'com.module.webchimera.plugins.controls'
       volumeHeight = parseInt(volumeBackElem.prop('offsetHeight'))
       
       value = event.offsetY * 100 / volumeHeight
-      volValue = 1 - (value / 100)
+      volValue = 1 - value / 100
       
       chimera.setVolume volValue
 
@@ -36,7 +36,7 @@ angular.module 'com.module.webchimera.plugins.controls'
         volumeHeight = parseInt(volumeBackElem.prop('offsetHeight'))
         
         value = event.offsetY * 100 / volumeHeight
-        volValue = 1 - (value / 100)
+        volValue = 1 - value  / 100
         
         chimera.setVolume volValue
 

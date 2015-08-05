@@ -5,7 +5,7 @@ angular.module 'com.module.webchimera'
 .constant 'playerConfig',
   'controls': false
   'loop': false
-  'autoplay': false
+  'autoPlay': true
   'preload': 'auto'
   'sources': [
     {

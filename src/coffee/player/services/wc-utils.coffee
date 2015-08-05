@@ -45,13 +45,6 @@ angular.module 'com.module.webchimera'
     
     zIndex
 
-  # Very simple mobile detection, not 100% reliable
-  @isMobileDevice = ->
-    typeof window.orientation != 'undefined' or navigator.userAgent.indexOf('IEMobile') != -1
-
-  @isiOSDevice = ->
-    navigator.userAgent.match(/iPhone/i) or navigator.userAgent.match(/iPod/i) or navigator.userAgent.match(/iPad/i)
-
   ###*
   # Test the browser's support for HTML5 localStorage.
   # @returns {boolean}

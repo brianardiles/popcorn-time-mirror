@@ -15,11 +15,11 @@
 
         <wc-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime">
             <wc-play-pause-button></wc-play-pause-button>
-            <wc-time-display>{{ currentTime | date:'mm:ss' }}</wc-time-display>
+            <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>
             <wc-scrub-bar>
                 <wc-scrub-bar-current-time></wc-scrub-bar-current-time>
             </wc-scrub-bar>
-            <wc-time-display>{{ timeLeft | date:'mm:ss' }}</wc-time-display>
+            <wc-time-display>{{ timeLeft | formatTime }}</wc-time-display>
             <wc-playback-button></wc-playback-button>
             <wc-volume>
                 <wc-mute-button></wc-mute-button>

@@ -2,6 +2,21 @@
 
 angular.module 'com.module.webchimera.plugins.controls'
 
+.filter 'formatTime', ->
+  (input) ->
+    input = Math.floor(input/1000)
+
+    #Less than an hour
+    if input < 3600
+      minutes = Math.floor(input / 60)
+      seconds = input - (minutes * 60)
+      minutes + ':' + ('0' + seconds).slice(-2)
+    else
+      hours = Math.floor(input / 3600)
+      minutes = Math.floor((input - (hours * 3600)) / 60)
+      seconds = input - (hours * 3600) - (minutes * 60)
+      hours + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
+
 .directive 'wcScrubBar', (WC_STATES, WC_UTILS) ->
   restrict: 'E'
   require: '^chimerangular'
@@ -21,7 +36,7 @@ angular.module 'com.module.webchimera.plugins.controls'
     scope.chimera = chimera
 
     scope.ariaTime = (time) ->
-      Math.round time / 1000
+      Math.round time
 
     scope.onScrubBarTouchStart = ($event) ->
       event = $event.originalEvent or $event
@@ -40,7 +55,7 @@ angular.module 'com.module.webchimera.plugins.controls'
         isPlayingWhenSeeking = true
       
       chimera.pause()
-      chimera.seekTime touchX * chimera.wcjsElement[0].duration / elem[0].scrollWidth
+      chimera.seekTime touchX * (chimera.wcjsElement.length / 1000) / elem[0].scrollWidth
       
       scope.$apply()
       return
@@ -63,7 +78,7 @@ angular.module 'com.module.webchimera.plugins.controls'
       
       if isSeeking
         touchX = touches[0].clientX + touchStartX - (touches[0].target.offsetLeft)
-        chimera.seekTime touchX * chimera.wcjsElement[0].duration / elem[0].scrollWidth
+        chimera.seekTime touchX * (chimera.wcjsElement.length / 1000) / elem[0].scrollWidth
       
       scope.$apply()
       return
@@ -81,7 +96,7 @@ angular.module 'com.module.webchimera.plugins.controls'
         isPlayingWhenSeeking = true
       
       chimera.pause()
-      chimera.seekTime event.offsetX * chimera.wcjsElement[0].duration / elem[0].scrollWidth
+      chimera.seekTime event.offsetX * (chimera.wcjsElement.length / 1000)  / elem[0].scrollWidth
       scope.$apply()
       return
 
@@ -100,7 +115,7 @@ angular.module 'com.module.webchimera.plugins.controls'
     scope.onScrubBarMouseMove = (event) ->
       if isSeeking
         event = WC_UTILS.fixEventOffset(event)
-        chimera.seekTime event.offsetX * chimera.wcjsElement[0].duration / elem[0].scrollWidth
+        chimera.seekTime event.offsetX * (chimera.wcjsElement.length / 1000) / elem[0].scrollWidth
       
       scope.$apply()
       return
@@ -138,14 +153,7 @@ angular.module 'com.module.webchimera.plugins.controls'
       if newVal != oldVal
         scope.setState newVal
 
-    # Touch move is really buggy in Chrome for Android, maybe we could use mouse move that works ok
-    if WC_UTILS.isMobileDevice()
-      elem.bind 'touchstart', scope.onScrubBarTouchStart
-      elem.bind 'touchend', scope.onScrubBarTouchEnd
-      elem.bind 'touchmove', scope.onScrubBarTouchMove
-      elem.bind 'touchleave', scope.onScrubBarTouchLeave
-    else
-      elem.bind 'mousedown', scope.onScrubBarMouseDown
-      elem.bind 'mouseup', scope.onScrubBarMouseUp
-      elem.bind 'mousemove', scope.onScrubBarMouseMove
-      elem.bind 'mouseleave', scope.onScrubBarMouseLeave
+    elem.bind 'mousedown', scope.onScrubBarMouseDown
+    elem.bind 'mouseup', scope.onScrubBarMouseUp
+    elem.bind 'mousemove', scope.onScrubBarMouseMove
+    elem.bind 'mouseleave', scope.onScrubBarMouseLeave

@@ -10,7 +10,7 @@ angular.module 'com.module.webchimera.plugins.controls'
 
     scope.onUpdateTime = (newCurrentTime) ->
       if typeof newCurrentTime == 'number' and chimera.totalTime
-        percentTime = 100 * newCurrentTime / chimera.totalTime
+        percentTime = 100 * (newCurrentTime / chimera.totalTime)
         elem.css 'width', percentTime + '%'
       else elem.css 'width', 0
 

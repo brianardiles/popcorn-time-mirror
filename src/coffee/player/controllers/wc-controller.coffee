@@ -48,23 +48,22 @@ angular.module 'com.module.webchimera'
     @onUpdateTime evt
     return
 
-  @onUpdateTime = (event) ->
-    @currentTime = 1000 * event.target.currentTime
-    
-    if event.target.duration != Infinity
-      @totalTime = 1000 * event.target.duration
-      @timeLeft = 1000 * (event.target.duration - (event.target.currentTime))
+  @onUpdateTime = (time) ->
+    @currentTime = time
+
+    if @wcjsElement.length != 0
+      @totalTime = @wcjsElement.length
+      @timeLeft = (@wcjsElement.length - time)
       @isLive = false
     else
       # It's a live streaming without and end
       @isLive = true
-    
     if @cuePoints
-      @checkCuePoints event.target.currentTime
+      @checkCuePoints time
     
     $scope.wcUpdateTime
-      $currentTime: event.target.currentTime
-      $duration: event.target.duration
+      $currentTime: time
+      $duration: @wcjsElement.length
     
     $scope.$apply()
 
@@ -137,7 +136,7 @@ angular.module 'com.module.webchimera'
     second = undefined
     
     if byPercent
-      second = value * @wcjsElement.duration / 100
+      second = value * @wcjsElement.length / 100
       @wcjsElement.time = second
     else
       second = value

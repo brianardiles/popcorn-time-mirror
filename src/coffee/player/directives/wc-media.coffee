@@ -28,7 +28,7 @@ angular.module 'com.module.webchimera'
       
       while i < l
         #Trigger wcChangeSource($source) chimera callback in wcController
-        chimera.changeSource sources[i]
+        chimera.wcjsElement.playlist.add sources[i].src
         break
         i++
 

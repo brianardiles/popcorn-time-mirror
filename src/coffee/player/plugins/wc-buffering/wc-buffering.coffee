@@ -5,7 +5,7 @@ angular.module 'com.module.webchimera.plugins.buffering', []
 .directive 'wcBuffering', (WC_STATES, WC_UTILS) ->
   restrict: 'E'
   require: '^chimerangular'
-  templateUrl: 'views/directives/wc-buffering.html'
+  templateUrl: 'player/views/directives/wc-buffering.html'
   link: (scope, elem, attr, chimera) ->
 
     scope.showSpinner = ->

@@ -5,7 +5,7 @@ angular.module 'com.module.webchimera.plugins.controls'
 .directive 'wcVolumeBar', (WC_UTILS) ->
   restrict: 'E'
   require: '^chimerangular'
-  templateUrl: 'views/directives/wc-volume-bar.html'
+  templateUrl: 'player/views/directives/wc-volume-bar.html'
   link: (scope, elem, attr, chimera) ->
     isChangingVolume = false
     

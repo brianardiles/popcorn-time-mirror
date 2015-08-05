@@ -5,7 +5,7 @@ angular.module 'com.module.webchimera'
 .directive 'wcMedia', ($timeout, WC_UTILS, WC_STATES, wcjsRenderer) ->
   restrict: 'E'
   require: '^chimerangular'
-  templateUrl: 'views/directives/wc-media.html'
+  templateUrl: 'player/views/directives/wc-media.html'
   scope:
     wcSrc: '=?'
   link: (scope, elem, attrs, chimera) ->
@@ -23,35 +23,22 @@ angular.module 'com.module.webchimera'
         scope.changeSource()
 
     scope.changeSource = ->
-      canPlay = ''
-     
-      # It's a cool browser
-      if chimera.wcjsElement[0].canPlayType
-        i = 0
-        l = sources.length
-        
-        while i < l
-          canPlay = chimera.wcjsElement[0].canPlayType(sources[i].type)
-          
-          if canPlay == 'maybe' or canPlay == 'probably'
-            chimera.wcjsElement.attr 'src', sources[i].src
-            chimera.wcjsElement.attr 'type', sources[i].type
-            
-            #Trigger wcChangeSource($source) chimera callback in wcController
-            chimera.changeSource sources[i]
-            break
-          i++
+      i = 0
+      l = sources.length
+      
+      while i < l
+        #Trigger wcChangeSource($source) chimera callback in wcController
+        chimera.changeSource sources[i]
+        break
+        i++
 
-      $timeout ->
-        if chimera.autoPlay
-          chimera.play()
-        return
-
-      if canPlay == ''
-        chimera.onVideoError()
+    $timeout ->
+      if chimera.autoPlay
+        chimera.play()
+      return
 
     # INIT
-    chimera.wcjsElement = wcjsRenderer.init elem.find 'canvas'
+    chimera.wcjsElement = wcjsRenderer.init elem.find('canvas')[0]
     chimera.sources = scope.wcSrc
 
     chimera.addListeners()

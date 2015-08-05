@@ -2,9 +2,7 @@
 
 angular.module 'com.module.webchimera'
 
-.factory 'wcAddon', ->
-  webChimera = path.resolve(path.dirname(process.argv[0]) + '/WCjs/WebChimera.js.node')
-  require webChimera
+.constant 'wcAddon', require 'webchimera.js'
 
 .factory 'wcjsRenderer', (wcAddon) ->
   Texture = (gl, width, height) ->

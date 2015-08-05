@@ -1,9 +1,9 @@
 <button class='iconButton'
-        ng-class='muteIcon'
         ng-click='onClickMute()'
         ng-focus='onMuteButtonFocus()'
         ng-blur='onMuteButtonLoseFocus()'
         ng-keydown='onMuteButtonKeyDown($event)'
         aria-label='Mute'
         type='button'>
+        <md-icon md-font-set="material-icons" ng-class='muteIcon'>volume_mute</md-icon>
 </button>

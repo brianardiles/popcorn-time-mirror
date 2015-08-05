@@ -6,7 +6,7 @@ angular.module 'com.module.webchimera.plugins.controls'
   restrict: 'E'
   require: '^chimerangular'
   transclude: true
-  templateUrl: 'views/directives/wc-scrub-bar.html'
+  templateUrl: 'player/views/directives/wc-scrub-bar.html'
   link: (scope, elem, attr, chimera) ->
     isSeeking = false
     isPlaying = false

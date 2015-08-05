@@ -10,10 +10,8 @@ angular.module 'com.module.webchimera'
       lp = undefined
 
       scope.setLoop = (value) ->
-        if value
-          chimera.wcjsElement.attr 'loop', value
-        else chimera.wcjsElement.removeAttr 'loop'
-
+        console.log value
+        
       if chimera.isConfig
         scope.$watch ->
           chimera.config

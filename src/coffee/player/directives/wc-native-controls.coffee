@@ -10,9 +10,7 @@ angular.module 'com.module.webchimera'
       controls = undefined
 
       scope.setControls = (value) ->
-        if value
-          chimera.wcjsElement.attr 'controls', value
-        else chimera.wcjsElement.removeAttr 'controls'
+        console.log value
 
       if chimera.isConfig
         scope.$watch ->

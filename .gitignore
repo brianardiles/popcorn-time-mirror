@@ -44,3 +44,4 @@ dist/linux/*.deb
 *git.json
 *openvpn*
 src/WCjs
+src/lib

@@ -6,7 +6,7 @@ angular.module 'com.module.webchimera.plugins.controls', []
   restrict: 'E'
   require: '^chimerangular'
   transclude: true
-  templateUrl: 'views/directives/wc-controls.html'
+  templateUrl: 'player/views/directives/wc-controls.html'
   scope:
     wcAutohide: '=?'
     wcAutohideTime: '=?'

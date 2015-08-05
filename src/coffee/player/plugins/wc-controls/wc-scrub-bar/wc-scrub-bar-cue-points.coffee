@@ -5,7 +5,7 @@ angular.module 'com.module.webchimera.plugins.controls'
 .directive 'wcScrubBarCuePoints', ->
   restrict: 'E'
   require: '^chimerangular'
-  templateUrl: 'views/directives/wc-scrub-bar-cue-points.html'
+  templateUrl: 'player/views/directives/wc-scrub-bar-cue-points.html'
   scope: 'wcCuePoints': '='
   link: (scope, elem, attr, chimera) ->
 

@@ -5,8 +5,7 @@ angular.module 'com.module.webchimera.plugins.controls'
 .directive 'wcMuteButton', ->
     restrict: 'E'
     require: '^chimerangular'
-    templateUrl: (elem, attrs) ->
-      attrs.wcTemplate or 'wc-templates/wc-mute-button'
+    templateUrl: 'player/views/directives/wc-mute-button.html'
     link: (scope, elem, attr, chimera) ->
       isMuted = false
       

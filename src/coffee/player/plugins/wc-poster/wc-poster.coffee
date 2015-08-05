@@ -6,7 +6,7 @@ angular.module 'com.module.webchimera.plugins.poster', []
   restrict: 'E'
   require: '^chimerangular'
   scope: wcUrl: '=?'
-  templateUrl: 'views/directives/wc-poster.html'
+  templateUrl: 'player/views/directives/wc-poster.html'
   link: (scope, elem, attr, chimera) ->
     scope.chimera = chimera
     

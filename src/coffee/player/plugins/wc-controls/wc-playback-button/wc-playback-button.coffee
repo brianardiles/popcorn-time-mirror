@@ -5,7 +5,7 @@ angular.module 'com.module.webchimera.plugins.controls'
 .directive 'wcPlaybackButton', (WC_UTILS) ->
   restrict: 'E'
   require: '^chimerangular'
-  templateUrl: 'views/directives/wc-playback-button.html'
+  templateUrl: 'player/views/directives/wc-playback-button.html'
   link: (scope, elem, attr, chimera) ->
     scope.playback = '1.0'
 

@@ -6,7 +6,7 @@ angular.module 'com.module.webchimera.plugins.controls'
   restrict: 'E'
   require: '^chimerangular'
   scope: {}
-  templateUrl: 'views/directives/wc-fullscreen-button.html'
+  templateUrl: 'player/views/directives/wc-fullscreen-button.html'
   link: (scope, elem, attr, chimera) ->
 
     scope.onChangeFullScreen = (isFullScreen) ->

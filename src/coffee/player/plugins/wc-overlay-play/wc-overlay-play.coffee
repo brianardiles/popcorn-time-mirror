@@ -6,7 +6,7 @@ angular.module 'com.module.webchimera.plugins.overlayplay', []
   restrict: 'E'
   require: '^chimerangular'
   scope: {}
-  templateUrl: 'views/directives/wc-overlay-play.html'
+  templateUrl: 'player/views/directives/wc-overlay-play.html'
   link: (scope, elem, attr, chimera) ->
 
     scope.onChangeState = (newState) ->

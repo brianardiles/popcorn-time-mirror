@@ -5,7 +5,6 @@ angular.module 'com.module.webchimera'
 .directive 'chimerangular', ->
   restrict: 'EA'
   scope:
-    wcTheme: '=?'
     wcAutoPlay: '=?'
     wcPlaysInline: '=?'
     wcCuePoints: '=?'

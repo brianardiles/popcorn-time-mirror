@@ -3,7 +3,6 @@
 angular.module 'com.module.webchimera'
 
 .controller 'wcController', ($scope, $window, wcConfigLoader, wcFullscreen, WC_UTILS, WC_STATES, WC_VOLUME_KEY) ->
-  currentTheme = null
   isFullScreenPressed = false
   isMetaDataLoaded = false
 
@@ -39,7 +38,6 @@ angular.module 'com.module.webchimera'
   @onLoadConfig = (config) ->
     @config = config
 
-    $scope.wcTheme = @config.theme
     $scope.wcAutoPlay = @config.autoPlay
     $scope.wcPlaysInline = @config.playsInline
     $scope.wcCuePoints = @config.cuePoints
@@ -223,42 +221,6 @@ angular.module 'com.module.webchimera'
     @playback = newPlayback
     return
 
-  @updateTheme = (value) ->
-    links = document.getElementsByTagName('link')
-    i = undefined
-    l = undefined
-    
-    # Remove previous theme
-    if currentTheme
-      i = 0
-      l = links.length
-    
-      while i < l
-        if links[i].outerHTML.indexOf(currentTheme) >= 0
-          links[i].parentNode.removeChild links[i]
-          break
-        i++
-    
-    if value
-      headElem = angular.element(document).find('head')
-      exists = false
-    
-      # Look if theme already exists
-      i = 0
-      l = links.length
-    
-      while i < l
-        exists = links[i].outerHTML.indexOf(value) >= 0
-        if exists
-          break
-        i++
-    
-      if !exists
-        headElem.append '<link rel=\'stylesheet\' href=\'' + value + '\'>'
-    
-      currentTheme = value
-    return
-
   @onStartBuffering = (event) ->
     @isBuffering = true
     $scope.$apply()
@@ -324,16 +286,11 @@ angular.module 'com.module.webchimera'
     if wcFullscreen.isAvailable
       @isFullScreen = wcFullscreen.isFullScreen()
     
-    @updateTheme $scope.wcTheme
     @addBindings()
     
     if wcFullscreen.isAvailable
       document.addEventListener wcFullscreen.onchange, @onFullScreenChange.bind(this)
     
-    return
-
-  @onUpdateTheme = (newValue) ->
-    @updateTheme newValue
     return
 
   @onUpdateAutoPlay = (newValue) ->
@@ -352,7 +309,6 @@ angular.module 'com.module.webchimera'
     return
 
   @addBindings = ->
-    $scope.$watch 'wcTheme', @onUpdateTheme.bind(this)
     $scope.$watch 'wcAutoPlay', @onUpdateAutoPlay.bind(this)
     $scope.$watch 'wcPlaysInline', @onUpdatePlaysInline.bind(this)
     $scope.$watch 'wcCuePoints', @onUpdateCuePoints.bind(this)

@@ -1,0 +1,36 @@
+<div class="chimerangular-container">
+    <div chimerangular wc-player-ready="ctrl.onPlayerReady($API)"
+         wc-complete="ctrl.onCompleteVideo()"
+         wc-error="ctrl.onError($event)"
+         wc-update-time="ctrl.onUpdateTime($currentTime, $duration)"
+         wc-update-volume="ctrl.onUpdateVolume($volume)"
+         wc-update-state="ctrl.onUpdateState($state)"
+         wc-auto-play="ctrl.config.autoPlay"
+         wc-plays-inline="ctrl.config.playsInline">
+        <wc-media wc-src="ctrl.config.sources"
+                  wc-loop="ctrl.config.loop"
+                  wc-preload="ctrl.config.preload"
+                  wc-native-controls="ctrl.config.controls">
+        </wc-media>
+
+        <wc-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime">
+            <wc-play-pause-button></wc-play-pause-button>
+            <wc-time-display>{{ currentTime | date:'mm:ss' }}</wc-time-display>
+            <wc-scrub-bar>
+                <wc-scrub-bar-current-time></wc-scrub-bar-current-time>
+            </wc-scrub-bar>
+            <wc-time-display>{{ timeLeft | date:'mm:ss' }}</wc-time-display>
+            <wc-playback-button></wc-playback-button>
+            <wc-volume>
+                <wc-mute-button></wc-mute-button>
+                <wc-volume-bar></wc-volume-bar>
+            </wc-volume>
+            <wc-fullscreen-button></wc-fullscreen-button>
+        </wc-controls>
+
+        <wc-analytics wc-track-info="ctrl.config.plugins.analytics"></wc-analytics>
+        <wc-poster wc-url='ctrl.config.plugins.poster.url'></wc-poster>
+        <wc-buffering></wc-buffering>
+        <wc-overlay-play></wc-overlay-play>
+    </div>
+</div>

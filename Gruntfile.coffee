@@ -8,6 +8,10 @@ if platform == 'darwin'
 
 nwjs = if platform is 'osx' then 'nwjs.app/Contents/MacOS/nwjs' else 'nw'
 
+vlcsrc = if platform is 'win' then 'vlc_2.2.1_win_ia32_with_avi_fix.zips' if platform is 'osx' then 'vlc-deps/libvlc_2.2.1_mac.zip'
+
+vlcdest = if platform is 'win' then 'node_modules/webchimera.js/build/Release' if platform is 'osx' then 'put-mac-path-here'
+
 if platform == 'linux' or platform == 'osx'
   platform = platform + os.arch().replace('x', '')
 
@@ -102,6 +106,11 @@ module.exports = (grunt) ->
         dest: 'build/css/'
         ext: '.css'
     
+    unzip:
+	  src: vlcsrc
+	  dest: vlcdest
+
+
     copy: 
       build:
         src: [

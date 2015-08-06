@@ -45,3 +45,4 @@ dist/linux/*.deb
 *openvpn*
 src/WCjs
 src/lib
+vlc/lib

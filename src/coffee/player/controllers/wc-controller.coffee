@@ -14,10 +14,12 @@ angular.module 'com.module.webchimera'
     return
 
   @onCanPlay = (evt) ->
+    #console.log 'onCanPlay', evt
     @isBuffering = false
     $scope.$apply $scope.wcCanPlay($event: evt)
 
   @onVideoReady = ->
+    #console.log 'onVideoReady'
     @isReady = true
     @autoPlay = $scope.wcAutoPlay
     @playsInline = $scope.wcPlaysInline
@@ -38,6 +40,7 @@ angular.module 'com.module.webchimera'
     $scope.$apply()
 
   @onLoadConfig = (config) ->
+    #console.log 'onLoadConfig', config
     @config = config
 
     $scope.wcAutoPlay = @config.autoPlay
@@ -46,12 +49,13 @@ angular.module 'com.module.webchimera'
     $scope.wcPlayerReady $chimera: this
 
   @onLoadMetaData = (evt) ->
+    #console.log 'onLoadMetaData', evt
     @isBuffering = false
     @onUpdateTime evt
     return
 
   @onUpdateTime = (time) ->
-    @isBuffering = false
+    #console.log 'onUpdateTime', time
     @currentTime = time
 
     if @wcjsElement.length != 0
@@ -121,11 +125,13 @@ angular.module 'com.module.webchimera'
       when 7 then 'error'
 
   @onPlay = ->
+    #console.log 'onPlay'
     @setState WC_STATES.PLAY
     $scope.$apply()
     return
 
   @onPause = ->
+    #console.log 'onPause'
     if @wcjsElement.time == 0
       @setState WC_STATES.STOP
     else
@@ -135,24 +141,26 @@ angular.module 'com.module.webchimera'
     return
 
   @onVolumeChange = ->
-    @volume = @wcjsElement.volume
+    #console.log 'onVolumeChange'
+    @volume = @wcjsElement.volume / 100
     
     $scope.$apply()
     return
 
   @onPlaybackChange = ->
+    #console.log 'onPlaybackChange'
     @playback = @wcjsElement.playbackRate
     
     $scope.$apply()
     return
 
   @seekTime = (value, byPercent) ->
-    console.log 1000 * value, @wcjsElement.length
+    #console.log Math.round(1000 * value), @wcjsElement.length
     if byPercent
       second = value * @wcjsElement.length / 100
-      @wcjsElement.time = (1000 * second).toFixed()
+      @wcjsElement.time = Math.round(1000 * value)
     else
-      @wcjsElement.time = (1000 * value).toFixed()
+      @wcjsElement.time = Math.round(1000 * value)
     
     @currentTime = value
     return
@@ -232,17 +240,20 @@ angular.module 'com.module.webchimera'
     @playback = newPlayback
     return
 
-  @onStartBuffering = (event) ->
-    @isBuffering = true
+  @onStartBuffering = (buffer) ->
+    @isBuffering = buffer < 70 
+    #console.log buffer, 'onStartBuffering'
     $scope.$apply()
     return
 
   @onStartPlaying = (event) ->
+    #console.log event, 'onStartPlaying'
     @isBuffering = false
     $scope.$apply()
     return
 
   @onComplete = (event) ->
+    #console.log event, 'onComplete'
     $scope.wcComplete()
     @setState WC_STATES.STOP
     @isCompleted = true
@@ -252,6 +263,13 @@ angular.module 'com.module.webchimera'
   @onVideoError = (event) ->
     $scope.wcError $event: event
     return
+
+  @onMessage = (event, message) ->
+    console.log event
+
+  @registerEvent = (event) ->
+    @wcjsElement['on' + event] = (message) ->
+      console.log event, message
 
   @addListeners = ->
     #@wcjsElement.events.on 'canplay', @onCanPlay.bind(this), false
@@ -267,6 +285,9 @@ angular.module 'com.module.webchimera'
     #@wcjsElement.onMediaChanged =  
     #@wcjsElement.onNothingSpecial = @onCanPlay.bind(this) 
     
+    #for event in ['MediaChanged', 'NothingSpecial', 'Stopped', 'Forward', 'Backward', 'PositiChanged', 'SeekableChanged', 'PausableChanged']
+    #  @registerEvent event 
+
     @wcjsElement.onOpening = @onCanPlay.bind(this) 
     @wcjsElement.onBuffering = @onStartBuffering.bind(this)
     @wcjsElement.onPlaying = @onPlay.bind(this)

@@ -10,8 +10,8 @@ angular.module 'com.module.webchimera'
       preload = undefined
 
       scope.setPreload = (value) ->
-        console.log value 
-        
+        angular.noop()
+           
       if chimera.isConfig
         scope.$watch ->
           chimera.config

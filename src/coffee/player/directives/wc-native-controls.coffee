@@ -10,7 +10,7 @@ angular.module 'com.module.webchimera'
       controls = undefined
 
       scope.setControls = (value) ->
-        console.log value
+        angular.noop()
 
       if chimera.isConfig
         scope.$watch ->

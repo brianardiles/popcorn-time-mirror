@@ -5,7 +5,6 @@
   "main": "index.html",
   "node-main": "server/server.js",
   "scripts": {},
-  "chromium-args": "--d3d9 --disable-d3d11 --gpu-no-context-lost",
   "window": {
     "title": "Angular Popcorn Time",
     "icon": "assets/images/icon.png",

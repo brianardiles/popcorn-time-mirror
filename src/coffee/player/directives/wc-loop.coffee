@@ -10,7 +10,7 @@ angular.module 'com.module.webchimera'
       lp = undefined
 
       scope.setLoop = (value) ->
-        console.log value
+        angular.noop()
         
       if chimera.isConfig
         scope.$watch ->

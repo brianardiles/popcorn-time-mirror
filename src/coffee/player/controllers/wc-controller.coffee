@@ -29,7 +29,7 @@ angular.module 'com.module.webchimera'
     #Set media volume from localStorage if available
     if WC_UTILS.supportsLocalStorage()
       #Default to 100% volume if local storage setting does not exist.
-      @setVolume parseFloat($window.localStorage.getItem(WC_VOLUME_KEY) or '100')
+      @setVolume $window.localStorage.getItem(WC_VOLUME_KEY) or '99'
     
     if $scope.wcConfig
       wcConfigLoader.loadConfig($scope.wcConfig).then @onLoadConfig.bind(this)
@@ -147,16 +147,14 @@ angular.module 'com.module.webchimera'
     return
 
   @seekTime = (value, byPercent) ->
-    second = undefined
-    
+    console.log 1000 * value, @wcjsElement.length
     if byPercent
       second = value * @wcjsElement.length / 100
-      @wcjsElement.time = 1000 * second
+      @wcjsElement.time = (1000 * second).toFixed()
     else
-      second = value
-      @wcjsElement.time = 1000 * second
+      @wcjsElement.time = (1000 * value).toFixed()
     
-    @currentTime = 1000 * second
+    @currentTime = value
     return
 
   @playPause = ->
@@ -219,7 +217,7 @@ angular.module 'com.module.webchimera'
 
   @setVolume = (newVolume) ->
     $scope.wcUpdateVolume $volume: newVolume
-    @wcjsElement.volume = newVolume
+    @wcjsElement.volume = newVolume * 100
     @volume = newVolume
     
     #Push volume updates to localStorage so that future instances resume volume

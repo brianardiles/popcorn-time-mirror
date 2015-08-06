@@ -9,7 +9,7 @@ if platform == 'darwin'
 nwjs = if platform is 'osx' then 'nwjs.app/Contents/MacOS/nwjs' else 'nw'
 
 console.log platform
-vlcsrc = if platform is 'win32' then 'vlc/vlc_2.2.1_win_ia32_with_avi_fix.zip' else if platform is 'osx' then 'vlc/libvlc_2.2.1_mac_x64_with_avi_fix.zip'
+vlcsrc = if platform is 'win32' then 'vlc/vlc_2.2.1_win_ia32_with_avi_fix.zip' else if platform is 'osx' then 'vlc/libvlc_2.2.1_mac.zip'
 
 vlcdest = if platform is 'win32' then 'node_modules/webchimera.js/build/Release' else if platform is 'osx' then 'node_modules/webchimera.js/build/Release' #not sure about the mac path
 

@@ -6,6 +6,8 @@ angular.module 'com.module.webchimera'
   'controls': false
   'loop': false
   'autoPlay': true
+  'autoHide': true
+  'autoHideTime': 3000
   'preload': 'auto'
   'sources': [
     {
@@ -15,9 +17,6 @@ angular.module 'com.module.webchimera'
   ]
   'tracks': []
   'plugins':
-    'controls':
-      'autohide': true
-      'autohideTime': 3000
     'poster': 'url': 'http://static.videogular.com/assets/images/earth.png'
 
 .directive 'ptPlayerContainer', ->

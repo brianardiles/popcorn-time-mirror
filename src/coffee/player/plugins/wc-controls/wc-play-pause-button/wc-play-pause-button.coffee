@@ -12,16 +12,14 @@ angular.module 'com.module.webchimera.plugins.controls'
     scope.setState = (newState) ->
       switch newState
         when WC_STATES.PLAY
-          scope.playPauseIcon = pause: true
-        when WC_STATES.PAUSE
-          scope.playPauseIcon = play: true
-        when WC_STATES.STOP
-          scope.playPauseIcon = play: true
+          scope.playPauseIcon = 'pause'
+        when WC_STATES.PAUSE,  WC_STATES.STOP
+          scope.playPauseIcon = 'play_arrow'
 
     scope.onClickPlayPause = ->
       chimera.playPause()
 
-    scope.playPauseIcon = play: true
+    scope.playPauseIcon = 'play_arrow'
 
     scope.$watch ->
       chimera.currentState

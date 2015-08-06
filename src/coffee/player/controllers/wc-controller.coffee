@@ -240,7 +240,6 @@ angular.module 'com.module.webchimera'
     return
 
   @onStartPlaying = (event) ->
-    @setState WC_STATES.PLAY
     @isBuffering = false
     $scope.$apply()
     return
@@ -268,22 +267,25 @@ angular.module 'com.module.webchimera'
     #@wcjsElement.onFrameCleanup =  
 
     #@wcjsElement.onMediaChanged =  
-    #@wcjsElement.onNothingSpecial =  
+    #@wcjsElement.onNothingSpecial = @onCanPlay.bind(this) 
+    
     @wcjsElement.onOpening = @onCanPlay.bind(this) 
     @wcjsElement.onBuffering = @onStartBuffering.bind(this)
-    @wcjsElement.onPlaying = @onStartPlaying.bind(this)
+    @wcjsElement.onPlaying = @onPlay.bind(this)
     @wcjsElement.onPaused = @onPause.bind(this)
-    #@wcjsElement.onForward =  
-    #@wcjsElement.onBackward =  
+
     @wcjsElement.onEncounteredError = @onVideoError.bind(this)
     @wcjsElement.onEndReached = @onComplete.bind(this)
-    #@wcjsElement.onStopped =  
 
     @wcjsElement.onTimeChanged = @onUpdateTime.bind(this)
+    @wcjsElement.onLengthChanged = @onStartPlaying.bind(this)
+
+    #@wcjsElement.onStopped =  
+    #@wcjsElement.onForward =  
+    #@wcjsElement.onBackward =  
     #@wcjsElement.onPositionChanged =  
     #@wcjsElement.onSeekableChanged = 
     #@wcjsElement.onPausableChanged =  
-    #@wcjsElement.onLengthChanged =  
 
     return
 

@@ -5,12 +5,15 @@ platform  = os.platform()
 
 if platform == 'darwin'
   platform = 'osx'
+else if platform == 'win32'
+  platform = 'win'
 
 nwjs = if platform is 'osx' then 'nwjs.app/Contents/MacOS/nwjs' else 'nw'
 
-vlcsrc = if platform is 'win' then 'vlc_2.2.1_win_ia32_with_avi_fix.zips' if platform is 'osx' then 'vlc-deps/libvlc_2.2.1_mac.zip'
+console.log platform
+vlcsrc = if platform is 'win' then 'vlc/vlc_2.2.1_win_ia32_with_avi_fix.zip' else if platform is 'osx' then 'vlc/libvlc_2.2.1_mac_x64_with_avi_fix.zip'
 
-vlcdest = if platform is 'win' then 'node_modules/webchimera.js/build/Release' if platform is 'osx' then 'put-mac-path-here'
+vlcdest = if platform is 'win' then 'node_modules/webchimera.js/build/Release' else if platform is 'osx' then 'node_modules/webchimera.js/build/Release' #not sure about the mac path
 
 if platform == 'linux' or platform == 'osx'
   platform = platform + os.arch().replace('x', '')
@@ -107,9 +110,9 @@ module.exports = (grunt) ->
         ext: '.css'
     
     unzip:
-	  src: vlcsrc
-	  dest: vlcdest
-
+      vlc:
+        src: vlcsrc
+        dest: vlcdest
 
     copy: 
       build:
@@ -168,6 +171,7 @@ module.exports = (grunt) ->
     grunt.task.run 'stylus:build'
     grunt.task.run 'concat'
     grunt.task.run 'copy'
+    grunt.task.run 'unzip'
     grunt.task.run 'preprocess:build'
 
   grunt.registerTask 'buildAngular', (env) ->

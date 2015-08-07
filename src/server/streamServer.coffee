@@ -56,3 +56,5 @@ require('./socketServer')(io, torrentStore)
 require('./socketActions')(io, torrentStore)
 
 server.listen port
+
+process.send 'started'

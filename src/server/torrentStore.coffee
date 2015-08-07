@@ -43,17 +43,17 @@ class torrentStore extends EventEmitter
       infoHash = torrent.infoHash
       
       if @torrents[infoHash]
-        return defer.resolve infoHash
-      
-      console.log 'adding ' + infoHash
-      
-      try
-        e = streamerEngine torrent
-        @torrents[infoHash] = e
-        @emit 'torrent', infoHash, e
-        @save()
-        defer.resolve infoHash
-      catch e then defer.reject e
+        defer.resolve torrent
+      else
+        console.log 'adding ' + infoHash
+        
+        try
+          e = streamerEngine torrent
+          @torrents[infoHash] = e
+          @emit 'torrent', infoHash, e
+          @save()
+          defer.resolve e
+        catch e then defer.reject e
     else defer.reject err
       
     defer.promise

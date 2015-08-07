@@ -8,14 +8,15 @@ angular.module 'com.module.common'
   template: '<did ng-transclude></div>'
   controller: 'ptViewController as view'
 
-.controller 'ptViewController', (Settings, $sce) ->
+.controller 'ptViewController', (Settings, $sce, torrentProvider) ->
   vm = this
 
   vm.startPlayer = false
 
-  vm.setPlayer = (data, hash) ->
-    console.log data, hash
-    vm.startPlayer = true
+  vm.setPlayer = (hash, torrent) ->
+    torrentProvider.getTorrent(hash).then (torrentDetail) ->
+      console.log torrentDetail, torrent
+      vm.startPlayer = true
 
   vm.playerConfig =  
     'controls': false
@@ -58,6 +59,6 @@ angular.module 'com.module.common'
     view = ctrl
 
     scope.startTorrent = ->
-      torrentProvider.addTorrentLink(player.torrent).then (hash) ->
-        view.setPlayer hash, player
+      torrentProvider.addTorrentLink(player.torrent).then (data) ->
+        view.setPlayer data.infoHash, player
       return

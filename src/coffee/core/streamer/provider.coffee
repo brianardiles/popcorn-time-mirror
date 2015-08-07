@@ -7,7 +7,9 @@ angular.module 'com.module.common'
 
   Torrent = $resource "http://127.0.0.1:#{streamServer.port}/torrents/:infoHash"
 
-  getAllTorrents: -> Torrent.get
+  getAllTorrents: -> 
+    torrents = Torrent.query ->
+      data = torrents[0]
 
   _loadTorrent: (hash) ->
     Torrent.get(infoHash: hash).$promise.then (torrent) ->

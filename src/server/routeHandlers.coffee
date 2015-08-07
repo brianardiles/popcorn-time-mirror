@@ -40,6 +40,7 @@ serializeObject = (torrents) ->
   object = {}
 
   for indx, torrent of torrents
+    console.log torrents
     object[indx] = serialize torrent
 
   object
@@ -78,8 +79,8 @@ module.exports = (torrentStore) ->
 
   addTorrent: (req, res) ->
     torrentStore.add(req.body.link)
-    .then (infoHash) ->
-      res.send infoHash: infoHash
+    .then (torrent) ->
+      res.send serialize torrent
     .catch (err) ->
       res.send 500, err
  
@@ -96,7 +97,7 @@ module.exports = (torrentStore) ->
       fs.unlink file.path
 
   getAllTorrents: (req, res) ->
-    res.send serializeObject torrentStore.hashList()
+    res.send [serializeObject torrentStore.hashList()]
 
   getTorrent: (req, res) ->
     res.send serialize(req.torrent)

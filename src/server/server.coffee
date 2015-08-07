@@ -8,8 +8,13 @@ getPort (err, port) ->
   module.exports.port = port
 
 module.exports =
-  start: ->
+  start: (cb) ->
     streamer = child_process.fork 'server/streamServer.js', [@port]
+
+    streamer.on 'message', (msg) ->
+      console.log msg
+      if msg is 'started'
+        cb()
 
   port: null
 

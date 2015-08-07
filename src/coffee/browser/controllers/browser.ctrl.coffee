@@ -2,7 +2,7 @@
 
 angular.module 'com.module.browser'
 
-.controller 'browserCtrl', ($state, $stateParams) ->
+.controller 'browserCtrl', ($state, $stateParams, torrentProvider) ->
   vm = this
 
   return 
@@ -17,48 +17,6 @@ angular.module 'com.module.browser'
 
   vm.select = (torrent, file) ->
     socketServer.emit (if file.selected then 'deselect' else 'select'), torrent.infoHash, torrent.files.indexOf(file)
-
-  socketServer.on 'verifying', (hash) ->
-    torrentProvider.findTorrent(hash).then (torrent) ->
-      torrent.ready = false
-
-  socketServer.on 'ready', (hash) ->
-    torrentProvider.loadTorrent hash
-
-  socketServer.on 'interested', (hash) ->
-    findTorrent(hash).then (torrent) ->
-      torrent.interested = true
-
-  socketServer.on 'uninterested', (hash) ->
-    findTorrent(hash).then (torrent) ->
-      torrent.interested = false
-
-  socketServer.on 'stats', (hash, stats) ->
-    findTorrent(hash).then (torrent) ->
-      torrent.stats = stats
-
-  socketServer.on 'download', (hash, progress) ->
-    findTorrent(hash).then (torrent) ->
-      torrent.progress = progress
-
-  socketServer.on 'selection', (hash, selection) ->
-    findTorrent(hash).then (torrent) ->
-      i = 0
-
-      while i < torrent.files.length
-        file = torrent.files[i]
-        file.selected = selection[i]
-        i++
-
-  socketServer.on 'destroyed', (hash) ->
-    delete vm.data[hash]
-
-  socketServer.on 'disconnect', ->
-    vm.data = []
-
-  socketServer.on 'connect', torrentProvider.load
-
-  torrentProvider.load()
 
   return 
 

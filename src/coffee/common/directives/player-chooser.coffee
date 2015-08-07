@@ -15,7 +15,6 @@ angular.module 'com.module.common'
 
   vm.setPlayer = (hash, torrent) ->
     torrentProvider.getTorrent(hash).then (torrentDetail) ->
-      console.log torrentDetail, torrent
       vm.startPlayer = true
 
   vm.playerConfig =  

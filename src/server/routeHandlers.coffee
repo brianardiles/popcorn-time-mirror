@@ -40,7 +40,6 @@ serializeObject = (torrents) ->
   object = {}
 
   for indx, torrent of torrents
-    console.log torrents
     object[indx] = serialize torrent
 
   object

@@ -23,9 +23,6 @@ angular.module 'com.module.core'
         torrentProvider.getTorrent(hash).then (torrent) ->
           torrent.ready = false
 
-      connection.on 'message', (data) ->
-        console.log data
-
       connection.on 'ready', (hash) ->
         torrentProvider._loadTorrent hash
 

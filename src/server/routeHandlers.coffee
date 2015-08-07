@@ -77,11 +77,12 @@ module.exports = (torrentStore) ->
     res.send 200
 
   addTorrent: (req, res) ->
-    torrentStore.add req.body.link, (err, infoHash) ->
-      if err
-        res.send 500, err
-      else res.send infoHash: infoHash
-
+    torrentStore.add(req.body.link)
+    .then (infoHash) ->
+      res.send infoHash: infoHash
+    .catch (err) ->
+      res.send 500, err
+ 
   uploadTorrent: (req, res) ->
     file = req.files and req.files.file
 

@@ -59,5 +59,5 @@ angular.module 'com.module.common'
 
     scope.startTorrent = ->
       torrentProvider.addTorrentLink(player.torrent).then (hash) ->
-        view.setPlayer hash, { episode: player.episode, season: player.season, quality: player.quality, title: player.title, device: player.device }
+        view.setPlayer hash, player
       return

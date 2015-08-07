@@ -7,29 +7,8 @@ angular.module 'com.module.browser'
 
   return 
 
-.controller 'torrentsListCtrl', ($interval, $resource, $q, socketServer, streamServer) ->
+.controller 'torrentsListCtrl', ($interval, $resource, $q, socketServer, streamServer, torrentProvider) ->
   vm = this
-
-  Torrent = $resource "http://127.0.0.1:#{streamServer.port}/torrents/:infoHash"
-
-  load = ->
-    torrents = Torrent.get ->
-      vm.data = torrents
-
-  loadTorrent = (hash) ->
-    Torrent.get(infoHash: hash).$promise.then (torrent) ->
-      vm.data[hash] = torrent
-      
-      torrent
-
-  findTorrent = (hash) ->
-    torrent = vm.data[hash]
-    
-    if torrent
-      $q.when torrent
-    else loadTorrent hash
-
-  load()
 
   vm.keypress = (e) ->
     if e.which == 13
@@ -40,11 +19,11 @@ angular.module 'com.module.browser'
     socketServer.emit (if file.selected then 'deselect' else 'select'), torrent.infoHash, torrent.files.indexOf(file)
 
   socketServer.on 'verifying', (hash) ->
-    findTorrent(hash).then (torrent) ->
+    torrentProvider.findTorrent(hash).then (torrent) ->
       torrent.ready = false
 
   socketServer.on 'ready', (hash) ->
-    loadTorrent hash
+    torrentProvider.loadTorrent hash
 
   socketServer.on 'interested', (hash) ->
     findTorrent(hash).then (torrent) ->
@@ -77,11 +56,13 @@ angular.module 'com.module.browser'
   socketServer.on 'disconnect', ->
     vm.data = []
 
-  socketServer.on 'connect', load
+  socketServer.on 'connect', torrentProvider.load
+
+  torrentProvider.load()
 
   return 
 
-.controller 'browserListCtrl', (TVApi, YTS, $stateParams, Haruhichan, genres, sorters, types) ->
+.controller 'browserListCtrl', ($sce, TVApi, YTS, $stateParams, Haruhichan, genres, sorters, types) ->
   vm = this
 
   vm.type = $stateParams.listType

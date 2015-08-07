@@ -1,7 +1,7 @@
 'use strict'
 
+bodyParser    = require 'body-parser'
 express       = require 'express'
-expressJson   = require 'express-json'
 socket        = require 'socket.io'
 http          = require 'http'
 torrentStore  = require './torrentStore'
@@ -9,7 +9,9 @@ torrentStore  = require './torrentStore'
 port = process.argv[2]
 
 app = express()
-app.use expressJson()
+
+app.use bodyParser.urlencoded({ extended: false })
+app.use bodyParser.json()
 
 console.log 'express listening at ' + port
 

@@ -9,3 +9,4 @@ angular.module 'com.module.webchimera.plugins.top-controls'
   link: (scope, elem, attr, chimera) ->
     scope.onClosePlayer = ->
       scope.ctrl.player.start = false
+      chimera.stop()

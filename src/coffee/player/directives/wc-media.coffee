@@ -2,7 +2,7 @@
 
 angular.module 'com.module.webchimera'
 
-.directive 'wcMedia', ($timeout, WC_UTILS, WC_STATES, wcjsRenderer) ->
+.directive 'wcMedia', ($timeout, $sce, WC_UTILS, WC_STATES, wcjsRenderer) ->
   restrict: 'E'
   require: '^chimerangular'
   templateUrl: 'player/views/directives/wc-media.html'
@@ -34,16 +34,16 @@ angular.module 'com.module.webchimera'
       
       while i < l
         if sources[i].selected
-          chimera.wcjsElement.playlist.add sources[i].src
+          chimera.wcjsElement.playlist.add $sce.trustAsResourceUrl(sources[i].src)
           break
         i++
 
-    $timeout ->
-      if chimera.autoPlay
-        chimera.play()
+      $timeout ->
+        if chimera.autoPlay
+          chimera.play()
 
-      chimera.onVideoReady()
-      return
+        chimera.onVideoReady()
+        return
 
     scope.$watch 'wcSrc', scope.onChangeSource
     

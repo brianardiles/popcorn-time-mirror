@@ -10,6 +10,7 @@ angular.module 'com.module.webchimera.plugins.top-controls', []
   scope:
     wcAutohide: '=?'
     wcAutohideTime: '=?'
+    wcAutohideClass: '='
   link: (scope, elem, attr, chimera) ->
     w = 0
     h = 0
@@ -26,7 +27,7 @@ angular.module 'com.module.webchimera.plugins.top-controls', []
       if value and chimera.currentState == WC_STATES.PLAY
         hideInterval = $timeout(scope.hideControls, autoHideTime)
       else
-        scope.animationClass = ''
+        scope.wcAutohideClass = ''
         $timeout.cancel hideInterval
         scope.showControls()
 
@@ -34,10 +35,10 @@ angular.module 'com.module.webchimera.plugins.top-controls', []
       autoHideTime = value
 
     scope.hideControls = ->
-      scope.animationClass = 'hide-animation'
+      scope.wcAutohideClass = 'hide-animation'
 
     scope.showControls = ->
-      scope.animationClass = 'show-animation'
+      scope.wcAutohideClass = 'show-animation'
       $timeout.cancel hideInterval
       
       if scope.wcAutohide and chimera.currentState == WC_STATES.PLAY

@@ -2,14 +2,20 @@
 
 angular.module 'com.module.webchimera.plugins.controls', []
 
-.directive 'wcControls', ($timeout, WC_STATES) ->
+.directive 'wcControlsContainer', ->
+  restrict: 'A'
+  link: (scope, elem, attr) ->
+    scope.wcAutohideClass = value: null
+
+.directive 'wcBottomControls', ($timeout, WC_STATES) ->
   restrict: 'E'
   require: '^chimerangular'
   transclude: true
-  templateUrl: 'player/views/directives/wc-controls.html'
+  templateUrl: 'player/views/directives/wc-bottom-controls.html'
   scope:
     wcAutohide: '=?'
     wcAutohideTime: '=?'
+    wcAutohideClass: '='
   link: (scope, elem, attr, chimera) ->
     w = 0
     h = 0
@@ -26,7 +32,7 @@ angular.module 'com.module.webchimera.plugins.controls', []
       if value and chimera.currentState == WC_STATES.PLAY
         hideInterval = $timeout(scope.hideControls, autoHideTime)
       else
-        scope.animationClass = ''
+        scope.wcAutohideClass = ''
         $timeout.cancel hideInterval
         scope.showControls()
 
@@ -34,10 +40,10 @@ angular.module 'com.module.webchimera.plugins.controls', []
       autoHideTime = value
 
     scope.hideControls = ->
-      scope.animationClass = 'hide-animation'
+      scope.wcAutohideClass = 'hide-animation'
 
     scope.showControls = ->
-      scope.animationClass = 'show-animation'
+      scope.wcAutohideClass = 'show-animation'
       $timeout.cancel hideInterval
       
       if scope.wcAutohide and chimera.currentState == WC_STATES.PLAY

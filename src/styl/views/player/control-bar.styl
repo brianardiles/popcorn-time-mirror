@@ -1,7 +1,7 @@
   /*********************/
   /* Controlbar plugin */
   /*********************/
-  wc-controls 
+  wc-bottom-controls 
     width: 100%
     height: 50px
     display: block
@@ -9,7 +9,7 @@
     z-index: 3
     top: calc(100% - 50px)
   
-  wc-controls .controls-container 
+  wc-bottom-controls .controls-container 
     width: 100%
     height: 50px
     background-color: rgba(0, 0, 0, 0.5)
@@ -137,7 +137,7 @@
     height: 100%
     position: absolute
   
-  wc-controls .hide-animation 
+  wc-bottom-controls .hide-animation 
     animation: hideControlsAnimationFrames ease-out 0.5s
     animation-iteration-count: 1
     animation-fill-mode: forwards /*when the spec is finished*/
@@ -163,7 +163,7 @@
     }
   }    
 
-  wc-controls .show-animation 
+  wc-bottom-controls .show-animation 
     animation: showControlsAnimationFrames ease-out 0.5s
     animation-iteration-count: 1
     animation-fill-mode: forwards /*when the spec is finished*/

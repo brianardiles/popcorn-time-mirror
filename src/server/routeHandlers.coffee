@@ -6,43 +6,8 @@ url         = require 'url'
 mime        = require 'mime'
 pump        = require 'pump'
 
-torrentProgress = require './torrentProgress'
-torrentStats    = require './torrentStats'
-
-serializeFiles = (torrent) ->
-  torrentFiles = torrent.files
-  pieceLength = torrent.torrent.pieceLength
-    
-  torrentFiles.map (f) ->
-    start = f.offset / pieceLength | 0
-    end = (f.offset + f.length - 1) / pieceLength | 0
-    
-    name: f.name
-    path: f.path
-    link: 'http://127.0.0.1:' + process.argv[2] + '/torrents/' + torrent.infoHash + '/files/' + encodeURIComponent(f.path)
-    length: f.length
-    offset: f.offset
-    selected: torrent.selection.some (s) ->
-      s.from <= start and s.to >= end
-
-serialize = (torrent) ->
-  if !torrent.torrent
-    return { infoHash: torrent.infoHash }
-
-  infoHash: torrent.infoHash
-  name: torrent.torrent.name
-  interested: torrent.amInterested
-  ready: torrent.ready
-  files: serializeFiles torrent
-  progress: torrentProgress torrent.bitfield.buffer
-
-serializeObject = (torrents) ->
-  object = {}
-
-  for indx, torrent of torrents
-    object[indx] = serialize torrent
-
-  object
+torrentStats = require './torrentStats'
+torrentUtils = require './torrentUtils'
 
 module.exports = (torrentStore) ->
   getM3UPlaylist: (req, res) ->
@@ -79,7 +44,7 @@ module.exports = (torrentStore) ->
   addTorrent: (req, res) ->
     torrentStore.add(req.body.link)
     .then (torrent) ->
-      res.send serialize torrent
+      res.send torrentUtils.serialize torrent
     .catch (err) ->
       res.send 500, err
  
@@ -96,10 +61,10 @@ module.exports = (torrentStore) ->
       fs.unlink file.path
 
   getAllTorrents: (req, res) ->
-    res.send [serializeObject torrentStore.hashList()]
+    res.send torrentUtils.serializeObject torrentStore.hashList()
 
   getTorrent: (req, res) ->
-    res.send serialize(req.torrent)
+    res.send torrentUtils.serialize(req.torrent)
 
   pauseSwarm: (req, res) ->
     req.torrent.swarm.pause()

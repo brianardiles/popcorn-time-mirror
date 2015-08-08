@@ -20,7 +20,7 @@ angular.module 'com.module.common'
       params.sort = filters?.sort_by 
 
     url = AdvSettings.get('tvshowAPI').url + 'shows/' + (filters?.page or 1)
-    $log.info 'Request to TVApi', url
+    $log.info 'Request to TVApi', url, params
     
     $http
       method: 'GET'

@@ -5,7 +5,6 @@ angular.module 'app', [
   'ngSanitize'
   'ngMaterial'
   'ngAnimate'
-  'ngResource'
   'ngAria'
 
   'ui.router'

@@ -23,17 +23,17 @@ module.exports = (torrent) ->
 
     file.select()
     
-  engine.on 'uninterested', ->
-    console.log 'uninterested ' + engine.infoHash
+  #engine.on 'uninterested', ->
+  #  console.log 'uninterested ' + engine.infoHash
     
-  engine.on 'interested', ->
-    console.log 'interested ' + engine.infoHash
+  #engine.on 'interested', ->
+  #  console.log 'interested ' + engine.infoHash
     
-  engine.on 'idle', ->
-    console.log 'idle ' + engine.infoHash
+  #engine.on 'idle', ->
+  #  console.log 'idle ' + engine.infoHash
     
-  engine.on 'error', (e) ->
-    console.log 'error ' + engine.infoHash + ': ' + e
+  #engine.on 'error', (e) ->
+  #  console.log 'error ' + engine.infoHash + ': ' + e
     
   engine.once 'destroyed', ->
     console.log 'destroyed ' + engine.infoHash

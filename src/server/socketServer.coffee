@@ -2,19 +2,23 @@
 
 torrentProgress = require './torrentProgress'
 torrentStats    = require './torrentStats'
+torrentUtils    = require './torrentUtils'
 
 throttle = require './throttle'
 
 module.exports = (io, torrentStore) ->
+
   torrentStore.on 'torrent', (infoHash, torrent) ->
+    emit = (event, data = null) ->
+      io.sockets.emit infoHash, event, data
 
     notifyProgress = ->
-      io.sockets.emit 'download', infoHash, torrentProgress(torrent.bitfield.buffer)
+      emit 'download', torrentProgress(torrent.bitfield.buffer)
 
     notifySelection = ->
       pieceLength = torrent.torrent.pieceLength
 
-      io.sockets.emit 'selection', infoHash, torrent.files.map (f) ->
+      emit 'selection', torrent.files.map (f) ->
         start = f.offset / pieceLength | 0
         end = (f.offset + f.length - 1) / pieceLength | 0
         
@@ -22,21 +26,21 @@ module.exports = (io, torrentStore) ->
           s.from <= start and s.to >= end
 
     listen = ->
-      io.sockets.emit 'verifying', infoHash, torrentStats(torrent)
+      emit 'verifying', torrentStats(torrent)
 
       torrent.once 'ready', ->
-        io.sockets.emit 'ready', infoHash, torrentStats(torrent)
+        emit 'ready', torrentUtils.serialize torrent
 
       torrent.on 'uninterested', ->
-        io.sockets.emit 'uninterested', infoHash
+        emit 'uninterested'
         throttle notifySelection, 2000
 
       torrent.on 'interested', ->
-        io.sockets.emit 'interested', infoHash
+        emit 'interested'
         throttle notifySelection, 2000
 
       interval = setInterval ->
-        io.sockets.emit 'stats', infoHash, torrentStats(torrent)
+        emit 'stats', torrentStats(torrent)
         throttle notifySelection, 2000
       , 1000
 
@@ -44,8 +48,12 @@ module.exports = (io, torrentStore) ->
 
       torrent.once 'destroyed', ->
         clearInterval interval
-        io.sockets.emit 'destroyed', infoHash
+        emit 'destroyed'
 
-    if torrent.torrent
-      listen()
-    else torrent.once 'verifying', listen
+    io.sockets.on 'connection', (socket) ->
+      socket.on infoHash, (event, data) ->
+        if event is 'subscribe'
+          if torrent.torrent
+            listen()
+          else torrent.once 'verifying', listen
+

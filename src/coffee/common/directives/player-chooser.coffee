@@ -11,11 +11,11 @@ angular.module 'com.module.common'
 .controller 'ptViewController', (Settings, $sce, torrentProvider) ->
   vm = this
 
-  vm.player = detail: null, start: false
+  vm.player = detail: null, start: false, player: null
 
-  vm.setPlayer = (data, torrent) ->
+  vm.setPlayer = (data, player) ->
     torrentProvider.getTorrent(data.infoHash).then (torrentDetail) ->
-      vm.player = { detail: torrentDetail, start: true }
+      vm.player = { player: player, torrent: torrentDetail, start: true }
         
   return
 
@@ -28,11 +28,11 @@ angular.module 'com.module.common'
   restrict: 'E'
   require: '^ptViewContainer'
   bindToController: true
-  scope: { torrent: '=', episode: '=', season: '=' , quality: '=' , title: '=', device: '=' }
+  scope: { torrent: '=', episode: '=', show: '=' , quality: '=' , device: '=' }
   template: '''
     <md-button ng-click="startTorrent()" style="color: rgb(255, 255, 255); background-color: rgb(6, 124, 154);" class="watchnow-btn" role="button" tabindex="0">
       <md-icon md-font-set="material-icons">play_arrow</md-icon> Play
-      <span ng-if="player.season && player.episode"> S{{ player.season | padNumber }}E{{ player.episode.episode | padNumber }}</span>
+      <span ng-if="player.episode.season && player.episode.episode"> S{{ player.episode.season | padNumber }}E{{ player.episode.episode | padNumber }}</span>
     </md-button>'''
   controller: 'playTorrentController as player'
   link: (scope, element, attrs, ctrl) ->

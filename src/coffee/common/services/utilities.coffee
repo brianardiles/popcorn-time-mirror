@@ -2,46 +2,6 @@
 
 angular.module 'com.module.common'
 
-.factory 'defaultHelpers', ->
-  deepKeys = (obj, stack, parent) ->
-    stack = stack or []
-    keys = Object.keys(obj)
-
-    keys.forEach (el) ->
-      if angular.isObject(obj[el]) and !angular.isArray(obj[el])
-        p = if parent then parent + '.' + el else parent
-        deepKeys obj[el], stack, p or el
-      else
-        key = if parent then parent + '.' + el else el
-        stack.push key
-
-    stack
-
-  deepKeys: deepKeys
-  
-  toArray: (object) ->
-    if angular.isArray(object) then object else Object.keys(object).map (key) ->
-      object[key]
-
-.filter 'defaults', ($parse, defaultHelpers) ->
-  (collection, defaults) ->
-    collection = if angular.isObject(collection) then defaultHelpers.toArray(collection) else collection
-    
-    if !angular.isArray(collection) or !angular.isObject(defaults)
-      return collection
-    
-    keys = defaultHelpers.deepKeys(defaults)
-    
-    collection.forEach (elm) ->
-      keys.forEach (key) ->
-        getter = $parse(key)
-        setter = getter.assign
-
-        if angular.isUndefined(getter(elm))
-          setter elm, getter(defaults)
-
-    collection
-
 .filter 'titleCase', ->
   (input) ->
     input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() if input

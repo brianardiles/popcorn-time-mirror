@@ -33,9 +33,9 @@ angular.module 'com.module.webchimera'
       l = sources.length
       
       while i < l
-        #Trigger wcChangeSource($source) chimera callback in wcController
-        chimera.wcjsElement.playlist.add sources[i].src
-        break
+        if sources[i].selected
+          chimera.wcjsElement.playlist.add sources[i].src
+          break
         i++
 
     $timeout ->

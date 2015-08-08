@@ -62,5 +62,4 @@ angular.module 'com.module.webchimera'
   preload: 'auto'
   sources: []
   tracks: []
-  plugins:
-    poster: url: null
+  poster: null

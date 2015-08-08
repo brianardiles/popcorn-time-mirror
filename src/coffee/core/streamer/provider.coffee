@@ -2,17 +2,18 @@
 
 angular.module 'com.module.common'
 
-.factory 'torrentResource', (socketServer) ->
+.factory 'torrentResource', (socketServer, $q) ->
   class torrentResource
     constructor: (torrent) ->
       angular.extend @, torrent
 
+      @$ready = $q.defer()
       @connection = socketServer.connection
 
       @connection.on torrent.infoHash, (event, data) =>
         switch event 
           when 'verifying' then @ready = false
-          when 'ready' then angular.extend @, data
+          when 'ready' then angular.extend @, data; @$ready.resolve()
           when 'interested' then @interested = true
           when 'uninterested' then @interested = false
           when 'stats' then @stats = data
@@ -21,6 +22,7 @@ angular.module 'com.module.common'
 
     listen: ->
       @connection.emit 'subscribe', @infoHash
+      @$ready.promise
 
     destroy: ->
       # TODO add deconstructor

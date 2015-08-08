@@ -10,7 +10,7 @@ exports.serializeFiles = (torrent) ->
     
     name: f.name
     path: f.path
-    link: 'http://127.0.0.1:' + process.argv[2] + '/torrents/' + torrent.infoHash + '/files/' + encodeURIComponent(f.path)
+    src: 'http://127.0.0.1:' + process.argv[2] + '/torrents/' + torrent.infoHash + '/files/' + encodeURIComponent(f.path)
     length: f.length
     offset: f.offset
     selected: torrent.selection.some (s) ->

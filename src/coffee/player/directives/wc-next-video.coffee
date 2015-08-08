@@ -2,63 +2,62 @@
 
 angular.module 'com.module.webchimera'
 
-.directive 'wcNextVideo', ->
+###.directive 'wcNextVideo', ($timeout) ->
   restrict: 'E'
   require: '^chimerangular'
   templateUrl: 'player/views/directives/wc-next-video.html'
   scope:
-    wcSrc: '='
+    wcNext: '='
     wcTime: '=?'
-  controller: 'wcNextVideo as video'
   link: (scope, elem, attr, chimera) ->
-    scope.chimera = chimera
+    max = scope.wcTime or 5000
 
-.controller 'wcNextVideo', ($scope, $timeout, wcNextVideoService) ->
-  @max = $scope.wcTime or 5000
-  @current = 0
-  @timer = null
-  @isCompleted = false
-  @currentVideo = 0
-  @sources = null
+    current = 0
+    currentVideo = 0
 
-  @onLoadData = (sources) ->
-    @sources = sources
-    $scope.chimera.sources = @sources[@currentVideo]
+    timer = null
+    isCompleted = false
 
-  @onLoadDataError = ->
-    $scope.chimera.onVideoError()
+    nextVideos = []
 
-  @count = ->
-    @current += 10
-    
-    if @current >= @max
-      $timeout.cancel @timer
-      $scope.chimera.autoPlay = true
-      @current = 0
-      @isCompleted = false
-      $scope.chimera.isCompleted = false
-      @currentVideo++
+    onLoadData = (episodes) ->
+      nextVideos = episodes
+
+    count = ->
+      current += 10
       
-      if @currentVideo == @sources.length
-        @currentVideo = 0
-      $scope.chimera.sources = @sources[@currentVideo]
-    else
-      @timer = $timeout(@count.bind(this), 10)
+      if current >= max
+        $timeout.cancel timer
 
-  @cancelTimer = ->
-    $timeout.cancel @timer
-    
-    @current = 0
-    @isCompleted = false
+        chimera.autoPlay = true
+        chimera.isCompleted = false
 
-  @onComplete = (newVal) ->
-    @isCompleted = newVal
+        current = 0
+        isCompleted = false
 
-    if newVal
-      @timer = $timeout(@count.bind(this), 10)
+        currentVideo++
+        
+        if currentVideo is nextVideos.length
+          currentVideo = 0
+      else
+        timer = $timeout(count.bind(this), 10)
 
-  $scope.$watch ->
-    $scope.chimera.isCompleted
-  , @onComplete.bind(this)
+    cancelTimer = ->
+      $timeout.cancel timer
+      
+      current = 0
+      isCompleted = false
 
-  wcNextVideoService.loadData($scope.wcSrc).then @onLoadData.bind(this), @onLoadDataError.bind(this)
+    onComplete = (newVal) ->
+      isCompleted = newVal
+
+      if newVal
+        timer = $timeout(count.bind(this), 10)
+
+    scope.$watch ->
+      chimera.isCompleted
+    , onComplete
+
+
+    scope.$watch 'wcNext', onLoadData
+###

@@ -1,0 +1,78 @@
+  /*********************/
+  /* Controlbar plugin */
+  /*********************/
+  wc-top-controls
+    width: 100%
+    height: 50px
+    display: block
+    position: absolute
+    z-index: 3
+    top: 0
+  
+  wc-top-controls .controls-container 
+    width: 100%
+    height: 50px
+    background-color: rgba(0, 0, 0, 0.5)
+    position: absolute
+    display: table
+    zoom: 1
+         
+  wc-close-button 
+    display: table-cell
+    width: 50px
+    height: 50px
+    vertical-align: middle
+    text-align: center
+    cursor: pointer
+  
+  wc-top-controls .hide-animation 
+    animation: hideControlsAnimationFrames ease-out 0.5s
+    animation-iteration-count: 1
+    animation-fill-mode: forwards /*when the spec is finished*/
+    -webkit-animation: hideControlsAnimationFrames ease-out 0.5s
+    -webkit-animation-iteration-count: 1
+    -webkit-animation-fill-mode: forwards /*Chrome 16+, Safari 4+*/
+    -moz-animation: hideControlsAnimationFrames ease-out 0.5s
+    -moz-animation-iteration-count: 1
+    -moz-animation-fill-mode: forwards /*FF 5+*/
+    -o-animation: hideControlsAnimationFrames ease-out 0.5s
+    -o-animation-iteration-count: 1
+    -o-animation-fill-mode: forwards /*Not implemented yet*/
+    -ms-animation: hideControlsAnimationFrames ease-out 0.5s
+    -ms-animation-iteration-count: 1
+    -ms-animation-fill-mode: forwards /*IE 10+*/
+  
+  @keyframes hideControlsAnimationFrames {
+    0% {
+      opacity: 0.5
+    }
+    100% {
+      opacity: 0
+    }
+  }    
+
+  wc-top-controls .show-animation 
+    animation: showControlsAnimationFrames ease-out 0.5s
+    animation-iteration-count: 1
+    animation-fill-mode: forwards /*when the spec is finished*/
+    -webkit-animation: showControlsAnimationFrames ease-out 0.5s
+    -webkit-animation-iteration-count: 1
+    -webkit-animation-fill-mode: forwards /*Chrome 16+, Safari 4+*/
+    -moz-animation: showControlsAnimationFrames ease-out 0.5s
+    -moz-animation-iteration-count: 1
+    -moz-animation-fill-mode: forwards /*FF 5+*/
+    -o-animation: showControlsAnimationFrames ease-out 0.5s
+    -o-animation-iteration-count: 1
+    -o-animation-fill-mode: forwards /*Not implemented yet*/
+    -ms-animation: showControlsAnimationFrames ease-out 0.5s
+    -ms-animation-iteration-count: 1
+    -ms-animation-fill-mode: forwards /*IE 10+*/
+  
+  @keyframes showControlsAnimationFrames {
+    0% {
+      background-color: rgba(0, 0, 0, 0)
+    }
+    100% {
+      background-color: rgba(0, 0, 0, 0.5)
+    }
+  }

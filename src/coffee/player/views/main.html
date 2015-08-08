@@ -13,6 +13,11 @@
                   wc-native-controls="ctrl.config.controls">
         </wc-media>
 
+        <wc-top-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime">
+            <wc-close-button></wc-close-button>
+            <wc-title></wc-title>
+        </wc-top-controls>
+
         <wc-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime">
             <wc-play-pause-button></wc-play-pause-button>
             <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>

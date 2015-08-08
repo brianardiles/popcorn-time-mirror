@@ -6,7 +6,7 @@ angular.module 'com.module.common'
   class torrentResource
     constructor: (torrent) ->
       angular.extend @, torrent
-      console.log torrent
+
       @connection = socketServer.connection
 
       @connection.on torrent.infoHash, (event, data) =>

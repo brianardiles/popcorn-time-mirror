@@ -6,10 +6,10 @@ angular.module 'com.module.common'
   class torrentResource
     constructor: (torrent) ->
       angular.extend @, torrent
-
+      console.log torrent
       @connection = socketServer.connection
 
-      @connection.on torrent.infoHash, (event, data) ->
+      @connection.on torrent.infoHash, (event, data) =>
         switch event 
           when 'verifying' then @ready = false
           when 'ready' then angular.extend @, data
@@ -20,11 +20,11 @@ angular.module 'com.module.common'
           when 'selection' then @files[i].selected = true
 
     listen: ->
-      @connection.emit @infoHash, 'subscribe'
+      @connection.emit 'subscribe', @infoHash
 
     destroy: ->
       # TODO add deconstructor
-      @connection.emit @infoHash, 'unsubscribe'
+      @connection.emit 'unsubscribe', @infoHash
 
 .factory 'torrentProvider', ($http, $q, streamServer, torrentResource) ->
   data = {}

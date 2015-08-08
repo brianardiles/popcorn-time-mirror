@@ -13,8 +13,8 @@ angular.module 'com.module.common'
 
   vm.player = detail: null, start: false
 
-  vm.setPlayer = (hash, torrent) ->
-    torrentProvider.getTorrent(hash).then (torrentDetail) ->
+  vm.setPlayer = (data, torrent) ->
+    torrentProvider.getTorrent(data.infoHash).then (torrentDetail) ->
       vm.player = { detail: torrentDetail, start: true }
         
   return
@@ -40,6 +40,6 @@ angular.module 'com.module.common'
     view = ctrl
 
     scope.startTorrent = ->
-      torrentProvider.addTorrentLink(player.torrent).then (data) ->
-        view.setPlayer data.infoHash, player
+      torrentProvider.addTorrentLink(player.torrent).then (resp) ->
+        view.setPlayer resp.data, player
       return

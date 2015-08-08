@@ -13,6 +13,8 @@ angular.module 'com.module.webchimera'
   vm = this
 
   $scope.$watchCollection 'ctrl.player', (newVal, oldVal) ->
+    if newVal.detail?.connection
+      newVal.detail.listen()
     console.log newVal, oldVal
 
   return

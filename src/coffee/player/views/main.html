@@ -1,4 +1,4 @@
-<div class="chimerangular-container">
+<div class="chimerangular-container" ng-if="ctrl.player.start">
     <div chimerangular wc-player-ready="ctrl.onPlayerReady($API)"
          wc-complete="ctrl.onCompleteVideo()"
          wc-error="ctrl.onError($event)"

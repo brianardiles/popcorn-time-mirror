@@ -11,31 +11,12 @@ angular.module 'com.module.common'
 .controller 'ptViewController', (Settings, $sce, torrentProvider) ->
   vm = this
 
-  vm.startPlayer = false
+  vm.player = detail: null, start: false
 
   vm.setPlayer = (hash, torrent) ->
     torrentProvider.getTorrent(hash).then (torrentDetail) ->
-      torrentDetail.listen()
-      vm.startPlayer = true
-
-  vm.playerConfig =  
-    'controls': false
-    'loop': false
-    'autoPlay': true
-    'autoHide': true
-    'autoHideTime': 3000
-    'preload': 'auto'
-    'sources': [
-      {
-        'src': $sce.trustAsResourceUrl('http://static.videogular.com/assets/videos/videogular.mp4')
-        'type': 'video/mp4'
-      }
-    ]
-    'tracks': []
-    'plugins':
-      'poster': 
-        'url': 'http://static.videogular.com/assets/images/earth.png'
-
+      vm.player = { detail: torrentDetail, start: true }
+        
   return
 
 .controller 'playTorrentController', (Settings, torrentProvider) ->

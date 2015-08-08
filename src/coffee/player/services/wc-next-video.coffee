@@ -33,3 +33,5 @@ angular.module 'com.module.webchimera'
 
   @onLoadError = (error) ->
     deferred.reject error
+
+  @

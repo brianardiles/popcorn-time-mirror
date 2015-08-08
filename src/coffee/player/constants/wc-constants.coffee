@@ -52,3 +52,15 @@ angular.module 'com.module.webchimera'
     exit: 'msExitFullscreen'
     onchange: 'MSFullscreenChange'
     onerror: 'MSFullscreenError'
+
+.constant 'playerConfig', 
+  controls: false
+  loop: false
+  autoPlay: true
+  autoHide: true
+  autoHideTime: 3000
+  preload: 'auto'
+  sources: []
+  tracks: []
+  plugins:
+    poster: url: null

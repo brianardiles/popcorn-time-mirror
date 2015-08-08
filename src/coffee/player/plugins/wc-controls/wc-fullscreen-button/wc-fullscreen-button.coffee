@@ -10,14 +10,14 @@ angular.module 'com.module.webchimera.plugins.controls'
   link: (scope, elem, attr, chimera) ->
 
     scope.onChangeFullScreen = (isFullScreen) ->
-      scope.fullscreenIcon =
-        enter: !isFullScreen
-        exit: isFullScreen
+      if isFullScreen
+        scope.fullscreenIcon = 'fullscreen_exit'
+      else scope.fullscreenIcon = 'fullscreen'
 
     scope.onClickFullScreen = ->
       chimera.toggleFullScreen()
 
-    scope.fullscreenIcon = enter: true
+    scope.fullscreenIcon = 'fullscreen'
 
     scope.$watch ->
       chimera.isFullScreen

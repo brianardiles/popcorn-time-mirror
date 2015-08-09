@@ -43,14 +43,18 @@ angular.module 'com.module.browser'
     genres: genres[vm.type] or null
 
   data.fetch().then (resp) ->
-    getBackdrop (resp.results[Object.keys(resp.results)[0]])
+    for first of resp.results
+      getBackdrop resp.results[first]
+      break
     vm.data = resp.results
 
   vm.onChangeFilter = (filter) ->
     vm.data = null
 
     data.fetch(filter.params).then (resp) ->
-      getBackdrop (resp.results[Object.keys(resp.results)[0]])
+      for first of resp.results
+        getBackdrop resp.results[first]
+        break
       vm.data = resp.results
 
   return 

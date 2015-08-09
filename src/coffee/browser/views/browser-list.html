@@ -6,7 +6,7 @@
       <h1 id="section-title" class="title">{{ list.type | titleCase }}</h1>
 
       <div ng-show="list.filters" id="filterbar-toolbar" class="filters-wrapper">
-        <div filter-bar list="list.filters" on-change="list.onChangeFilter({params: params})" class="bottom filter-bar">
+        <div filter-bar list="list.filters" on-change="list.onChange({params: params})" class="bottom filter-bar">
         </div>
       </div>
     </div>

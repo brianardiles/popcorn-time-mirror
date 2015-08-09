@@ -48,7 +48,7 @@ angular.module 'com.module.browser'
       break
     vm.data = resp.results
 
-  vm.onChangeFilter = (filter) ->
+  vm.onChange = (filter) ->
     vm.data = null
 
     data.fetch(filter.params).then (resp) ->

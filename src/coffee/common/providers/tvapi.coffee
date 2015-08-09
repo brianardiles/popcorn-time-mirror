@@ -12,7 +12,7 @@ angular.module 'com.module.common'
     params = 
       sort: 'seeds'
       limit: '50'
-      keywords: filters?.keywords?.replace(/\s/g, '% ')
+      keywords: filters?.query or null
       genre: filters?.genre or null
       order: filters?.order or null
     

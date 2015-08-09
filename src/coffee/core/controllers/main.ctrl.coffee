@@ -29,9 +29,7 @@ angular.module 'com.module.core'
       vm.state.maximized = true
 
   vm.min = ->
-    if AdvSettings.get('minimizeToTray')
-      minimizeToTray()
-    else nativeWindow.minimize()
+    nativeWindow.minimize()
 
   vm.close = ->
     nativeWindow.close()

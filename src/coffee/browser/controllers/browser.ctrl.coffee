@@ -48,6 +48,13 @@ angular.module 'com.module.browser'
       break
     vm.data = resp.results
 
+  page = 1
+
+  vm.loadMoreItems = (filters) ->
+    page = page + 1
+    data.fetch({page: page}).then (resp) ->
+      console.log resp.results
+
   vm.onChange = (filter) ->
     vm.data = null
 

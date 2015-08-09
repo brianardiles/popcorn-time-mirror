@@ -23,20 +23,37 @@ header
         div
             cursor pointer
             color #ffffff
-    .os-controls:not(.darwin)
-        margin-right 11px
-        right 0px
+    .os-controls.win32
+        margin-right 13px
+        right 0
         div
-            margin-right 6px
-            opacity 0.6
-            height 16px
-            width 16px
-            float right
+            margin-left 8px
+            border-radius 20px
+            opacity 1
+            height 12px
+            width 12px
+            float left
+            background-image url(../images/icons/topbar_sprite.png)
+            background-size auto 12px
+            background-position -9999px center
+            background-repeat no-repeat
+            i
+                display none
             &:hover
-                opacity 0.9
-            &.close
-                position relative
-                top -2px
+                opacity 1
+        .max
+            background-color #2ED147
+            &:hover
+                background-position -52px center
+        .min
+            background-color #FCBC42
+            &:hover
+                background-position -39px center
+        .close
+            background-color #FB605B
+            &:hover
+                background-position -65px center
+
     .os-controls.darwin
         margin-left 13px
         left 0

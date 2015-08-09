@@ -3,12 +3,13 @@
 angular.module 'com.module.common'
 
 .factory 'cloudFlareApi', ($q, request, timeoutCache)->
+
   cache = timeoutCache 10 * 60 * 1000
 
   (url, params) ->
     defer = $q.defer()
-    
-    cachedData = cache.get url
+
+    cachedData = cache.get url + JSON.stringify params
 
     if cachedData
       defer.resolve cachedData

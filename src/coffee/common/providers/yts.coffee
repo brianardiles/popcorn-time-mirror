@@ -75,12 +75,11 @@ angular.module 'com.module.common'
     if filters?.order_by isnt 1 and filters?.order_by
       params.order_by = 'desc'
 
-    if filters?.genre isnt 'all' and filters?.genre
+    if filters?.genre isnt 'All' and filters?.genre
       params.genre = filters?.genre
 
-    if filters?.query isnt '' and filters?.query
+    if filters?.query
       params.query_term = filters?.query
-
 
     request = cloudFlareApi('http://cloudflare.com/api/v2/list_movies_pct.json', params)
     

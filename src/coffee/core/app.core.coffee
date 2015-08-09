@@ -4,8 +4,8 @@ angular.module 'com.module.core', []
 
   .constant 'sorters',
     movie: [
-      'popularity'
       'trending'
+      'popularity'
       'last added'
       'year'
       'title'
@@ -13,8 +13,8 @@ angular.module 'com.module.core', []
       ]
 
     show: [
-      'popularity'
       'trending'
+      'popularity'
       'updated'
       'year'
       'name'

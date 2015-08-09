@@ -10,13 +10,13 @@ angular.module 'com.module.common'
     deferred = $q.defer()
 
     params = 
-      sort: 'seeds'
+      sort: 'trending'
       limit: '50'
       keywords: filters?.query or null
       genre: filters?.genre or null
       order: filters?.order or null
     
-    if filters?.sort_by != 'popularity'
+    if filters?.sort_by isnt 'trending' and filters?.sort_by
       params.sort = filters?.sort_by 
 
     url = AdvSettings.get('tvshowAPI').url + 'shows/' + (filters?.page or 1)

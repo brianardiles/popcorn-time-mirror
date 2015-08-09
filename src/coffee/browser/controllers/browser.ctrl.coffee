@@ -33,18 +33,24 @@ angular.module 'com.module.browser'
     when 'anime'
       Haruhichan
 
+  getBackdrop = (item) ->
+    if item.images.fanart
+      vm.backdrop = item.images.fanart
+
   vm.filters = 
     sorters: sorters[vm.type] or null
     types: types[vm.type] or null
     genres: genres[vm.type] or null
 
   data.fetch().then (resp) ->
+    getBackdrop (resp.results[Object.keys(resp.results)[0]])
     vm.data = resp.results
 
   vm.onChange = (filter) ->
     vm.data = null
 
     data.fetch(filter.params).then (resp) ->
+      getBackdrop (resp.results[Object.keys(resp.results)[0]])
       vm.data = resp.results
 
   return 

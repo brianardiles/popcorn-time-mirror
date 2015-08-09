@@ -62,18 +62,25 @@ angular.module 'com.module.common'
       sort_by: 'seeds'
       limit: 50
       with_rt_ratings: true
-      page: filters.page if filters.page
-      query_term: filters.keywords if filters.keywords
-      genre: filters.genre if filters.genre
-      order_by: 'asc' if filters.order is 1
-      quality: Settings.movies_quality if Settings.movies_quality isnt 'all'
+      page: filters.page or 1
+      quality: Settings.movies_quality or 'all'
       lang: Settings.language if Settings.translateSynopsis
   
-    if filters?.sort_by isnt 'popularity'
+    if filters?.sort_by isnt 'seeds' and filters?.sort_by
       params.sort_by = switch filters.sort_by
         when 'last added' then 'date_added'
         when 'trending' then 'trending_score'
         else filters.sort_by
+
+    if filters?.order_by isnt 1 and filters?.order_by
+      params.order_by = 'desc'
+
+    if filters?.genre isnt 'all' and filters?.genre
+      params.genre = filters?.genre
+
+    if filters?.query isnt '' and filters?.query
+      params.query_term = filters?.query
+
 
     request = cloudFlareApi('http://cloudflare.com/api/v2/list_movies_pct.json', params)
     

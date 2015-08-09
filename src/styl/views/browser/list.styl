@@ -137,6 +137,7 @@ disabled-text-color = rgb(122, 122, 122, 1)
                 transition opacity 300ms ease-in
                 &.fadein
                     opacity: 1
+
             .info
                 position absolute
                 bottom 0
@@ -161,8 +162,15 @@ disabled-text-color = rgb(122, 122, 122, 1)
                         height 18px
                 .meta
                     font-size 13px
-                    .zmdi
-                        font-size 14px
+                    .rating
+                        display: inline-block
+                        md-icon
+                            font-size 14px
+                            float: left
+                            height: 12px
+                            color: inherit
+                            width: 14px
+                            margin-right: 1px
                     .dot
                         display inline-block
                         width 5px
@@ -182,14 +190,14 @@ disabled-text-color = rgb(122, 122, 122, 1)
                     transform scale(0,0)
 
                     md-icon
-                        fill white
+                        color inherit
                         margin-left -4px
                         margin-top -4px
-
-                    &:hover
-                        transform scale(1,1)
-                        background-image linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1))   
+ 
             &:hover
+                .md-button.md-fab                    
+                    transform scale(1,1)
+                    background-image linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1))         
                 .info
                     transform translateY(0)
 

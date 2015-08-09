@@ -6,14 +6,14 @@
       <h1 id="section-title" class="title">{{ list.type | titleCase }}</h1>
 
       <div ng-show="list.filters" id="filterbar-toolbar" class="filters-wrapper">
-        <div filter-bar list="list.filters" on-change="list.onChange({params: params})" class="bottom filter-bar">
+        <div filter-bar list="list.filters" on-change="list.onChangeFilter({params: params})" class="bottom filter-bar">
         </div>
       </div>
     </div>
                    
     <div class="content">
       <div>
-        <div id="list-content" ng-show="list.data" class="items">
+        <div id="list-content" scroll ng-show="list.data" class="items">
           <li ui-sref="app.browser.list.detail({ id: id, listType: item.type })" browser-list-item ng-repeat="(id, item) in list.data track by id" class="item" type="item.type" id="id" item="item"></li>
         </div>
       </div>

@@ -46,7 +46,7 @@ angular.module 'com.module.browser'
     getBackdrop (resp.results[Object.keys(resp.results)[0]])
     vm.data = resp.results
 
-  vm.onChange = (filter) ->
+  vm.onChangeFilter = (filter) ->
     vm.data = null
 
     data.fetch(filter.params).then (resp) ->

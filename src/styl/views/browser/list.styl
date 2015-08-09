@@ -95,7 +95,6 @@ disabled-text-color = rgb(122, 122, 122, 1)
         position absolute
         width 100%
         top 0
-        opacity 0
         height 60vh
         overflow hidden
         background-size cover
@@ -103,9 +102,7 @@ disabled-text-color = rgb(122, 122, 122, 1)
         background-attachment fixed
         background-repeat no-repeat
         -webkit-filter brightness(55%)
-        transition: opacity .6s ease-in;
-        &.fadein
-            opacity 1
+        transition: background-image 300ms ease-in-out
             
     #list-content
         display flex

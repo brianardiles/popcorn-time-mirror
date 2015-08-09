@@ -53,7 +53,7 @@ angular.module 'com.module.browser'
   vm.loadMoreItems = (filters) ->
     page = page + 1
     data.fetch({page: page}).then (resp) ->
-      console.log resp.results
+      vm.data = angular.extend(vm.data, resp.results)
 
   vm.onChange = (filter) ->
     vm.data = null

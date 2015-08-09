@@ -1,3 +1,6 @@
+.summary-wrapper.movie
+    height 18vh
+
 .summary-wrapper
     display block
     width 100vw
@@ -14,13 +17,15 @@
         md-icon
             height 42px
             width 42px
-            font-size: 42px
+            color #FFF
+            font-size: 35px
 
     .title
         color #FFF
         margin-top 54px
         float left
         position: relative
+        margin-left: 11px
         font-size 42px
         font-weight 500
 
@@ -29,9 +34,9 @@
         z-index 2
         top 60px
         right 140px
-        color #fff
 
         md-icon
+            color: #fff
             width: 28px
             height: 28px
 
@@ -40,7 +45,16 @@
 
 .info-container 
     position relative
-            
+
+.info-container.movie .info-wrapper .poster
+    height: calc(100vh - 140px - 50px)
+    width: auto
+    max-height: 75vh
+
+.info-container.movie .episode-container
+    left: calc(((100vh - 160px - 50px) * 2 / 3) + 170px)
+
+
 md-tabs-wrapper
     display block
     margin 0 auto
@@ -92,6 +106,7 @@ md-tabs-wrapper
             top 0
             bottom 50px
             left 110px
+            max-width: 50vh
             height calc(100vh - 240px - 50px)
             width calc((100vh - 240px - 50px) * 2 / 3)
             opacity 0
@@ -106,10 +121,12 @@ md-tabs-wrapper
             float left
             color #ffffff
             line-height: 20px
-            i
+            md-icon
+                color: #ffffff
                 font-size 17px
             p
                 float none
+                color: #ffffff
                 display inline-block
                 text-transform capitalize
                 font-size 15px

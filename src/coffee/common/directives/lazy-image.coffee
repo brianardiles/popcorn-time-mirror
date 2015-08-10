@@ -38,120 +38,202 @@ angular.module 'com.module.common'
       @element.src = @source
       return
 
-.factory 'lazyLoader', ($window, $document) ->
+.directive 'ptLazyScroll', (lazyLoader) ->
+  restrict: 'A'
+  link: (scope, element, attrs) ->
+    container = lazyLoader.setContainer element
+
+    scope.$on '$destroy', -> container()
+
+.factory 'lazyLoader', ($document, $timeout, $interval) ->
   do ->
+    # maintain a list of images that lazy-loading
+    # and have yet to be rendered.
     images = []
 
+    # define the render timer for the lazy loading
+    # images to that the DOM-querying (for offsets)
+    # is chunked in groups.
     renderTimer = null
     renderDelay = 100
 
-    win = $window
-    doc = angular.element($document)
+    # the container element as a reference.
+    container = null
+
+    # cache the document document height so that
+    # we can respond to changes in the height due to
+    # dynamic content.
+    doc = $document
 
     documentHeight = doc.clientHeight
     documentTimer = null
     documentDelay = 2000
 
-    isWatchingWindow = false
+    # determine if the container dimension events
+    # (ie. resize, scroll) are currenlty being
+    # monitored for changes.
+    isWatchingContainer = false
 
+    # start monitoring the given image for visibility
+    # and then render it when necessary.
+    addImage = (image) ->
+      images.push image
+
+      if not renderTimer
+        startRenderTimer()
+
+      if not isWatchingContainer
+        startWatchingContainer()
+
+      return
+
+    # remove the given image from the render queue.
+    removeImage = (image) ->
+      # Remove the given image from the render queue.
+      i = 0
+
+      while i < images.length
+        if images[i] is image
+          images.splice i, 1
+          break
+        i++
+     
+      # destroy image constructor
+      image.destroy()
+
+      # If removing the given image has cleared the
+      # render queue, then we can stop monitoring
+      # the container and the image queue.
+      if not images.length
+        clearRenderTimer()
+        stopWatchingContainer()
+
+      return
+
+    # check the document height to see if it's changed.
     checkDocumentHeight = ->
+      # If the render time is currently active, then
+      # don't bother getting the document height -
+      # it won't actually do anything.
       if renderTimer
         return
 
       currentDocumentHeight = doc.clientHeight
-      if currentDocumentHeight == documentHeight
+
+      # If the height has not changed, then ignore -
+      # no more images could have come into view.
+      if currentDocumentHeight is documentHeight
         return
+
+      # Cache the new document height.
       documentHeight = currentDocumentHeight
+
       startRenderTimer()
 
+      return
+
+    # check the lazy-load images that have yet to
+    # be rendered.
     checkImages = ->
-      console.log 'Checking for visible images...'
+      if images.length 
+        visible = []
+        hidden = []
+        cont = angular.element(container)
+        console.log cont
+        # Determine the containers dimensions.
+        containerHeight = cont[0].clientHeight
+        scrollTop = cont[0].scrollTop
 
-      visible = []
-      hidden = []
-      
-      windowHeight = win.innerHeight
-      topFoldOffset = win.scrollTop
-      bottomFoldOffset = topFoldOffset + windowHeight
-      
-      i = 0
-      
-      while i < images.length
-        image = images[i]
-      
-        if image.isVisible(topFoldOffset, bottomFoldOffset)
-          visible.push image
-        else hidden.push image
-        i++
-      
-      i = 0
-      
-      while i < visible.length
-        visible[i].render()
-        i++
-      
-      images = hidden
-      clearRenderTimer()
-      
-      if !images.length
-        stopWatchingWindow()
-      
-      return
+        # Calculate the viewport offsets.
+        topFoldOffset = scrollTop
+        console.log topFoldOffset + containerHeight, cont[0].scrollTop, cont[0].clientHeight
+        bottomFoldOffset = topFoldOffset + containerHeight
 
-    clearRenderTimer = ->
-      clearTimeout renderTimer
-      renderTimer = null
-      return
+        # Query the DOM for layout and seperate the
+        # images into two different categories: those
+        # that are now in the viewport and those that
+        # still remain hidden.
+        i = 0
 
-    startRenderTimer = ->
-      renderTimer = setTimeout(checkImages, renderDelay)
-      return
+        while i < images.length
+          image = images[i]
+          if image.isVisible(topFoldOffset, bottomFoldOffset)
+            visible.push image
+          else hidden.push image
+          i++
 
-    startWatchingWindow = ->
-      isWatchingWindow = true
+        # Update the DOM with new image source values.
+        i = 0
 
-      angular.element(win).on 'resize', windowChanged
-      angular.element(win).on 'scroll', windowChanged
+        while i < visible.length
+          visible[i].render()
+          i++
 
-      documentTimer = setInterval(checkDocumentHeight, documentDelay)
-      return
+        # Keep the still-hidden images as the new
+        # image queue to be monitored.
+        images = hidden
 
-    stopWatchingWindow = ->
-      isWatchingWindow = false
-
-      angular.element(win).off 'resize'
-      angular.element(win).off 'scroll'
-
-      clearInterval documentTimer
-      return
-
-    windowChanged = ->
-      if !renderTimer
-        startRenderTimer()
-      return
-
-    addImage: (image) ->
-      images.push image
-
-      if !renderTimer
-        startRenderTimer()
-
-      if !isWatchingWindow
-        startWatchingWindow()
-
-    removeImage: (image) ->
-      i = 0
-
-      while i < images.length
-        if images[i] == image
-          images.splice i, 1
-          break
-        i++
-
-      if !images.length
+        # Clear the render timer so that it can be set
+        # again in response to container changes.
         clearRenderTimer()
-        stopWatchingWindow()
-      return
+
+        # If we've rendered all the images, then stop
+        # monitoring the container for changes.
+        if not images.length
+          stopWatchingContainer()
+        
+        return
+
+    setContainer = (element) ->
+      container = element
+
+      -> 
+        stopWatchingContainer()
+
+        @
+
+    # clear the render timer so that we can easily
+    # check to see if the timer is running.
+    clearRenderTimer = ->
+      $timeout.cancel renderTimer
+      renderTimer = null
+
+    # start the render time, allowing more images to
+    # be added to the images queue before the render
+    # action is executed.
+    startRenderTimer = ->
+      renderTimer = $timeout checkImages, renderDelay
+
+    # start watching the container for changes in dimension.
+    startWatchingContainer = ->
+      isWatchingContainer = true
+      
+      # Listen for container changes.
+      container.on 'scroll', containerChanged
+
+      # Set up a timer to watch for document-height changes.
+      documentTimer = $interval checkDocumentHeight, documentDelay
+     
+    # stop watching the container for changes in dimension.
+
+    stopWatchingContainer = ->
+      isWatchingContainer = false
+
+      # Stop watching for container changes.
+      container.off 'scroll', containerChanged
+
+      # Stop watching for document changes.
+      $interval.cancel documentTimer
+
+    # start the render time if the container changes.
+    containerChanged = ->
+      if not renderTimer
+        startRenderTimer()
+
+    setContainer: setContainer
+    addImage: addImage
+    removeImage: removeImage
+    checkElements: -> checkImages()
 
 .directive 'ptLazySrc', (LazyImageService, lazyLoader) ->
   restrict: 'A'

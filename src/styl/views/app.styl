@@ -5,8 +5,6 @@ vendor-prefixes = webkit official
 
 @import 'nib'
 
-global-reset()
-
 $TitleHeight = 32px
 $FilterBarHeight = 35px
 $HeaderHeight = 65px
@@ -42,6 +40,8 @@ $MovieListPadding = calc(100% - 67px)
 @import 'updater_detail'
 @import 'disclaimer'
 
+@import 'material/material'
+
 // Behold, here are all the video components.
 @import 'player/chimerangular-container'
 @import 'player/chimerangular'
@@ -52,3 +52,5 @@ $MovieListPadding = calc(100% - 67px)
 @import 'player/overlay-play'
 @import 'player/poster'
 @import 'player/next-video'
+
+global-reset()

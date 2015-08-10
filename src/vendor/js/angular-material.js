@@ -3664,7 +3664,6 @@ angular.module('material.core.theming', ['material.core.theming.palette'])
   .directive('mdTheme', ThemingDirective)
   .directive('mdThemable', ThemableDirective)
   .provider('$mdTheming', ThemingProvider)
-  .run(generateThemes);
 
 /**
  * @ngdoc provider

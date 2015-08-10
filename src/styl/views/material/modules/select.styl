@@ -10,9 +10,9 @@ md-select.md-pct-theme
   &:not([disabled]):focus
     .md-select-value
       border-bottom-color: $primary-color
-      color: '{{ foreground-1 }}'
+      color: $foreground-1
       &.md-select-placeholder
-        color: '{{ foreground-1 }}'
+        color: $foreground-1
     &.md-accent .md-select-value
       border-bottom-color: $accent-color
     &.md-warn .md-select-value
@@ -39,3 +39,5 @@ md-select-menu.md-pct-theme
         color: $accent-600
   md-option:focus:not([selected])
     background: $background-200
+  md-option
+    font-family: RobotoDraft,Roboto,'Helvetica Neue',sans-serif

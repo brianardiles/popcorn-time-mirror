@@ -25,55 +25,9 @@ angular.module 'app', [
   # (this debug info is required for protractor to run)
   $compileProvider.debugInfoEnabled true
 
-  $mdThemingProvider
-    .definePalette 'PopcornTimeAccent',
-      50: '000000'
-      100: '000000'
-      200: '000000'
-      300: '000000'
-      400: '000000'
-      500: 'F0F0F0'
-      600: 'F0F0F0'
-      700: '000000'
-      800: '000000'
-      900: '000000'
+  $mdThemingProvider.theme 'pct'
 
-      A100: '757575'
-      A200: '616161'
-      A400: '424242'
-      A700: 'F0F0F0'
-
-    .definePalette 'PopcornTimePrimary',
-      50: 'E0E0E0'
-      100: 'BDBDBD'
-      200: '303030'
-      300: '616161'
-      400: '424242'
-      500: 'F0F0F0'
-      600: 'F0F0F0'
-      700: '434343'
-      800: '232323'
-      900: '000000'
-
-      A100: '757575'
-      A200: '616161'
-      A400: '424242'
-      A700: 'F0F0F0'
-
-      contrastDefaultColor: 'dark'
-
-      contrastDarkColors: undefined
-
-      contrastLightColors: [
-        '50'
-        '100'
-      ]
-
-    .theme 'default'
-    .primaryPalette 'PopcornTimePrimary'
-    .accentPalette 'PopcornTimeAccent'
-    .dark()
-
+  $mdThemingProvider.setDefaultTheme 'pct'
 
 .factory 'ScreenResolution', ->
   SD: window.screen.width < 1280 or window.screen.height < 720

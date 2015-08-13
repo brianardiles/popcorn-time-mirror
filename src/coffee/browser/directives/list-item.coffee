@@ -2,20 +2,6 @@
 
 angular.module 'com.module.browser'
 
-.directive 'browserListItem', ->
-  scope: { id: '=', item: '=', type: '=' }
-  templateUrl: 'browser/views/list-item.html'
-
-.directive 'browserListGhost', ($timeout) ->
-  restrict: 'A'
-  scope: true
-  link: (scope, element, attr, ctrl) ->
-    ghost = angular.element('<div class="item ghost"></div>')
-
-    $timeout ->
-      if scope.$last then console.log element.children()
-    , 0
-
 .directive 'ptControlsContainer', ->
   restrict: 'E'
   templateUrl: 'browser/views/controls-container.html'

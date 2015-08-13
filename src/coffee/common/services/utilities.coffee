@@ -54,57 +54,50 @@ angular.module 'com.module.common'
 
     healthMap[scaledTotal]
 
-.filter 'fileSize', (os, Settings) ->
-  (num) ->
-    if isNaN(num)
-      return
-    
-    num = parseInt(num)
-    neg = num < 0
-    
-    switch os.platform()
-      when 'linux'
-        base = 1024
-        units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
-      when 'win32'
-        base = 1024
-        units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-      else
-        base = 1000
-        units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    
-    if neg
-      num = -num
-    
-    if num < 1
-      unit = units[0]
-      
-      if Settings.language == 'fr'
-        unit = unit.replace('B', 'o')
-      
-      return (if neg then '-' else '') + num + ' ' + unit
-    
-    exponent = Math.min(Math.floor(Math.log(num) / Math.log(base)), units.length - 1)
-    
-    num = (num / base ** exponent).toFixed(2) * 1
-    unit = units[exponent]
-    
-    matchers = [
-      'sq', 'es', 'hy', 'az', 'be'
-      'qu', 'pt', 'bs', 'ca', 'bg' 
-      'hr', 'cs', 'da', 'et', 'fo' 
-      'fi', 'fr', 'de', 'ka', 'el' 
-      'hu', 'is', 'id', 'it', 'kk' 
-      'lv', 'lt', 'mn', 'nl', 'nn' 
-      'nb', 'no', 'pl', 'ro', 'ru' 
-      'sr', 'sk', 'sl', 'sv', 'tr' 
-      'uk', 'uz', 'vi'
-    ]
+.factory 'fileSizeLocale', (os, Settings) ->
+  switch os.platform()
+    when 'linux'
+      base = 1024
+      units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+    when 'win32'
+      base = 1024
+      units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    else
+      base = 1000
+      units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 
-    if Settings.language in matchers
-      num = num.toString().replace '.', ','
+  matchers = [
+    'sq', 'es', 'hy', 'az', 'be'
+    'qu', 'pt', 'bs', 'ca', 'bg' 
+    'hr', 'cs', 'da', 'et', 'fo' 
+    'fi', 'fr', 'de', 'ka', 'el' 
+    'hu', 'is', 'id', 'it', 'kk' 
+    'lv', 'lt', 'mn', 'nl', 'nn' 
+    'nb', 'no', 'pl', 'ro', 'ru' 
+    'sr', 'sk', 'sl', 'sv', 'tr' 
+    'uk', 'uz', 'vi'
+  ]
 
-    if Settings.language is 'fr'
+  frUnit: Settings.language is 'fr'
+  delimeter: if Settings.language in matchers then '.' else false
+  base: base
+  units: units
+
+.filter 'fileSize', (fileSizeLocale) ->
+  (bytes = 0) ->
+    unitCount = 0
+
+    while bytes >= fileSizeLocale.base
+      bytes /= fileSizeLocale.base
+      unitCount++
+
+    unit = fileSizeLocale.units[unitCount]
+    num = bytes.toFixed(2).toString()
+
+    if fileSizeLocale.delimeter
+      num = num.replace '.', ','
+
+    if fileSizeLocale.frUnit
       unit = unit.replace 'B', 'o'
 
-    (if neg then '-' else '') + num + ' ' + unit
+    num + ' ' + unit

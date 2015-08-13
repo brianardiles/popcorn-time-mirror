@@ -196,6 +196,8 @@ angular.module 'com.module.webchimera'
     
     @currentTime = 0
     @setState WC_STATES.STOP
+    
+    @onStop()
     return
 
   @toggleFullScreen = ->
@@ -262,6 +264,10 @@ angular.module 'com.module.webchimera'
 
   @onVideoError = (event) ->
     $scope.wcError $event: event
+    return
+
+  @onStop = (event) ->
+    $scope.wcStop $event: event
     return
 
   @onMessage = (event, message) ->

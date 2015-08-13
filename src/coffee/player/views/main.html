@@ -2,6 +2,7 @@
     <div chimerangular wc-player-ready="ctrl.onPlayerReady($API)"
          wc-complete="ctrl.onCompleteVideo()"
          wc-error="ctrl.onError($event)"
+         wc-stop="ctrl.player.start = false"
          wc-update-time="ctrl.onUpdateTime($currentTime, $duration)"
          wc-update-volume="ctrl.onUpdateVolume($volume)"
          wc-update-state="ctrl.onUpdateState($state)"
@@ -34,7 +35,8 @@
         </wc-bottom-controls>
 
         <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
-        <wc-poster wc-url='ctrl.poster'></wc-poster>
+        <wc-torrent-info wc-torrent="ctrl.player.torrent"></wc-torrent-info>
+        <wc-poster wc-url="ctrl.poster"></wc-poster>
         <wc-buffering></wc-buffering>
         <wc-overlay-play></wc-overlay-play>
     </div>

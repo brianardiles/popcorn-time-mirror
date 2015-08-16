@@ -20,8 +20,7 @@ angular.module 'com.module.webchimera'
       if quality then return torrent.url
     episode.torrents[0].url
 
-  sortNextEpisodes = (data) ->
-    player = data.player
+  sortNextEpisodes = (player) ->
     show = player.show
 
     selectedEpisode = player.episode
@@ -39,18 +38,15 @@ angular.module 'com.module.webchimera'
 
     $q.when playNextEpisodes
 
-  $scope.$watchCollection 'ctrl.player', (newVal, oldVal) ->
-    if newVal?.torrent and newVal.torrent.infoHash isnt oldVal?.torrent?.infoHash
-      if newVal.player.show
-        vm.poster = newVal.player.show.images.fanart
-        
-      if newVal.torrent.connection
-        $q.all [
-          sortNextEpisodes(newVal)
-          newVal.torrent.listen()
-        ]
-        .then (data) ->
-          vm.config.sources = newVal.torrent.files
-          vm.next = data[0] 
+  $scope.$watch 'ctrl.state.torrent', (newTorrent) ->
+    if newTorrent?.connection
+      newTorrent.listen()
+
+  $scope.$watchCollection 'ctrl.state.player', (newPlayer, oldPlayer) ->
+    if newPlayer
+      vm.config.sources = newPlayer.torrent.files
+    
+      sortNextEpisodes(newPlayer).then (data) ->
+        vm.next = data
 
   return

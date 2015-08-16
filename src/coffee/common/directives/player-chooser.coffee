@@ -15,14 +15,6 @@ angular.module 'com.module.common'
     show: 'list' 
     type: 'movie'
     torrentId: null
-
-  vm.player = detail: null, start: false, player: null
-
-  vm.setPlayer = (data, player) ->
-    vm.show = 'player'
-
-    torrentProvider.getTorrent(data.infoHash).then (torrentDetail) ->
-      vm.player = { player: player, torrent: torrentDetail, start: true }
         
   return
 
@@ -34,8 +26,8 @@ angular.module 'com.module.common'
 .directive 'ptPlayTorrent', (torrentProvider) ->
   restrict: 'E'
   require: '^ptViewContainer'
-  bindToController: true
-  scope: { torrent: '=', episode: '=', show: '=' , quality: '=' , device: '=' }
+  bindToController: { torrent: '=', episode: '=', show: '=' , quality: '=' , device: '=' }
+  scope: { state: '=' }
   template: '''
     <md-button ng-click="startTorrent()" style="color: rgb(255, 255, 255); background-color: rgb(6, 124, 154);" class="watchnow-btn" role="button" tabindex="0">
       <md-icon md-font-set="material-icons">play_arrow</md-icon> Play
@@ -47,6 +39,10 @@ angular.module 'com.module.common'
     view = ctrl
 
     scope.startTorrent = ->
+      scope.state.player = player
+
       torrentProvider.addTorrentLink(player.torrent).then (resp) ->
-        view.setPlayer resp.data, player
+        torrentProvider.getTorrent(resp.data.infoHash).then (torrentDetail) ->
+          scope.state.torrent = torrentDetail
+      
       return

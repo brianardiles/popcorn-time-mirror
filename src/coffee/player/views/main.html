@@ -1,9 +1,8 @@
-
 <div chimerangular wc-player-ready="ctrl.onPlayerReady($API)"
      wc-config="ctrl.config"
      wc-complete="ctrl.onCompleteVideo()"
      wc-error="ctrl.onError($event)"
-     wc-stop="ctrl.player.start = false"
+     wc-stop="ctrl.state.player = null"
      wc-update-time="ctrl.onUpdateTime($currentTime, $duration)"
      wc-update-volume="ctrl.onUpdateVolume($volume)"
      wc-update-state="ctrl.onUpdateState($state)"
@@ -18,33 +17,35 @@
 
     <wc-poster></wc-poster>
 
-    <wc-detail config="ctrl.config" state="ctrl.state"></wc-detail>
+    <wc-detail ng-hide="ctrl.state.player.torrent" config="ctrl.config" state="ctrl.state"></wc-detail>
 
-    <wc-top-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
-        <wc-close-button></wc-close-button>
-    </wc-top-controls>
+    <div ng-if="ctrl.state.player.torrent">
+        <wc-top-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+            <wc-close-button></wc-close-button>
+        </wc-top-controls>
 
-    <wc-bottom-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
-        <wc-play-pause-button></wc-play-pause-button>
-        <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>
-        
-        <wc-scrub-bar>
-            <wc-scrub-bar-current-time></wc-scrub-bar-current-time>
-        </wc-scrub-bar>
-        
-        <wc-time-display>{{ timeLeft | formatTime }}</wc-time-display>
-        <wc-playback-button></wc-playback-button>
-        
-        <wc-volume>
-            <wc-mute-button></wc-mute-button>
-            <wc-volume-bar></wc-volume-bar>
-        </wc-volume>
-        
-        <wc-fullscreen-button></wc-fullscreen-button>
-    </wc-bottom-controls>
+        <wc-bottom-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+            <wc-play-pause-button></wc-play-pause-button>
+            <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>
+            
+            <wc-scrub-bar>
+                <wc-scrub-bar-current-time></wc-scrub-bar-current-time>
+            </wc-scrub-bar>
+            
+            <wc-time-display>{{ timeLeft | formatTime }}</wc-time-display>
+            <wc-playback-button></wc-playback-button>
+            
+            <wc-volume>
+                <wc-mute-button></wc-mute-button>
+                <wc-volume-bar></wc-volume-bar>
+            </wc-volume>
+            
+            <wc-fullscreen-button></wc-fullscreen-button>
+        </wc-bottom-controls>
 
-    <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
-    <wc-torrent-info wc-torrent="ctrl.player.torrent"></wc-torrent-info>
-    <wc-buffering></wc-buffering>
-    <wc-overlay-play></wc-overlay-play>
+        <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
+        <wc-torrent-info wc-torrent="ctrl.state.torrent"></wc-torrent-info>
+        <wc-buffering></wc-buffering>
+        <wc-overlay-play></wc-overlay-play>
+    </div>
 </div>

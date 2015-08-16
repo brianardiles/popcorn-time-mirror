@@ -34,8 +34,8 @@ angular.module 'com.module.browser'
 
   $scope.$watch 'list.state.type', (newListType, oldListType) ->
     if newListType isnt oldListType or not page
-      vm.data = null
-      vm.backdrop = null
+      vm.data = {}
+      vm.backdrop = {}
 
       data = switch newListType
         when 'movie'
@@ -68,7 +68,7 @@ angular.module 'com.module.browser'
       vm.data = angular.extend vm.data, resp.results
 
   vm.onChange = (filter) ->
-    vm.data = null
+    vm.data = {}
 
     data.fetch(filter.params).then (resp) ->
       getBackdrop resp.results

@@ -12,18 +12,23 @@ angular.module 'com.module.webchimera.plugins.overlayplay', []
     scope.onChangeState = (newState) ->
       switch newState
         when WC_STATES.PLAY
-          scope.overlayPlayIcon = {}
+          scope.overlayPlayIcon = false
         when WC_STATES.PAUSE
-          scope.overlayPlayIcon = play: true
+          scope.overlayPlayIcon = true
         when WC_STATES.STOP
-          scope.overlayPlayIcon = play: true
+          scope.overlayPlayIcon = true
 
     scope.onClickOverlayPlay = (event) ->
       chimera.playPause()
 
-    scope.overlayPlayIcon = play: true
+    scope.overlayPlayIcon = false
     
     scope.$watch ->
       chimera.currentState
     , (newVal, oldVal) ->
       scope.onChangeState newVal
+
+    scope.$watch ->
+      chimera.config
+    , (newVal, oldVal) ->
+      scope.controls = newVal.controls

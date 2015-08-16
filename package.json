@@ -47,6 +47,7 @@
     "parse-torrent": "^5.3.0",
     "pump": "^1.0.0",
     "q": "^1.4.1",
+    "quantize": "^1.0.1",
     "range-parser": "^1.0.2",
     "readdirp": "^1.4.0",
     "request": "^2.60.0",

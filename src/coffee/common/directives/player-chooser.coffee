@@ -5,15 +5,22 @@ angular.module 'com.module.common'
 .directive 'ptViewContainer', ->
   restrict: 'E'
   transclude: true
-  template: '<did ng-transclude></div>'
+  template: '<div ng-transclude></div>'
   controller: 'ptViewController as view'
 
 .controller 'ptViewController', (Settings, $sce, torrentProvider) ->
   vm = this
 
+  vm.state = 
+    show: 'list' 
+    type: 'movie'
+    torrentId: null
+
   vm.player = detail: null, start: false, player: null
 
   vm.setPlayer = (data, player) ->
+    vm.show = 'player'
+
     torrentProvider.getTorrent(data.infoHash).then (torrentDetail) ->
       vm.player = { player: player, torrent: torrentDetail, start: true }
         

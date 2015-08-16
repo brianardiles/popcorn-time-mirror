@@ -11,6 +11,19 @@ angular.module 'com.module.browser'
   scope: { people: '=' }
   templateUrl: 'browser/views/people-container.html'
 
+.directive 'ptSidebar', ->
+  restrict: 'E'
+  scope: { state: '=' }
+  bindToController: true
+  controller: 'sideNavCtrl as sidenav' 
+  templateUrl: 'browser/views/sidebar.html' 
+
+.directive 'ptList', ->
+  scope: { state: '=' }
+  bindToController: true
+  controller: 'browserListCtrl as list' 
+  templateUrl: 'browser/views/browser.html'
+
 .directive 'ptEpisodeContainer', ->
   restrict: 'E'
   scope: { episodes: '=', selectedEpisode: '=' }
@@ -30,15 +43,13 @@ angular.module 'com.module.browser'
   scope: { show: '=' }
   templateUrl: 'browser/views/meta-container.html'
 
-.directive 'ptSummaryWrapper', ($previousState) ->
+.directive 'ptSummaryWrapper', ->
   restrict: 'E'
   scope: { title: '=', torrentId: '=?' }
   templateUrl: 'browser/views/summary-wrapper.html'
   bindToController: true
   controllerAs: 'summary'
   controller: ->
-    @goPrevious = ->
-      $previousState.go()
 
     return
 

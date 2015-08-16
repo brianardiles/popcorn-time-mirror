@@ -120,8 +120,6 @@ angular.module 'com.module.common'
         depth: 3)
       
       fileStream.on 'data', (d) ->
-        console.log players[d.name]
-
         birthtime = d.stat.birthtime
         previousBirthTime = birthtimes[d.name]
         

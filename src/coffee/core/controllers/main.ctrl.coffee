@@ -7,7 +7,11 @@ angular.module 'com.module.core'
   darwin: ['close', 'min', 'max']
   linux: ['min', 'max', 'close']
 
-.controller 'MainCtrl', ($scope, $rootScope, $state, titleButtons, nativeWindow, $location) ->
+.directive 'ptHeader', ->
+  templateUrl: 'core/views/header.html'
+  controller: 'ptHeaderCtrl as title'
+
+.controller 'ptHeaderCtrl', ($scope, $rootScope, titleButtons, nativeWindow, $location) ->
   vm = this
 
   vm.platform = process.platform

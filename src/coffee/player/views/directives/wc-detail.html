@@ -1,18 +1,23 @@
-<div class="bg-backdrop fadein">
-    <img image-loaded ng-src="{{ show.data.images.fanart | traktSize:'medium':data.type }}" width="100%"/>
-</div>
-
-<pt-summary-wrapper class="summary-wrapper" title="show.data.title" torrent-id="show.torrentId"></pt-summary-wrapper>
+<pt-summary-wrapper class="summary-wrapper {{show.state.type}}" title="show.data.title" torrent-id="show.state.torrentId"></pt-summary-wrapper>
 
 <!-- Controls Container --> 
 <pt-controls-container ng-if="show.currentTorrent"></pt-controls-container>
 
-<md-tabs md-selected="show.selectedSeason">
+<div ng-if="show.state.type === 'movie'" class="info-container movie">
+    <div class="info-wrapper no-seasons">
+        <!-- Poster Image -->
+        <img image-loaded ng-src="{{ show.data.images.poster | traktSize:'thumb':show.state.type }}" class="poster">
+        <!-- Meta Container -->
+        <pt-meta-container show="show.data"></pt-meta-container>
+    </div>
+</div>
+
+<md-tabs ng-if="show.state.type === 'show'" md-selected="show.selectedSeason">
     <md-tab class="md-title">
         <md-tab-label>Show Info</md-tab-label>
         <md-tab-body class="info-wrapper">
             <!-- Poster Image -->
-            <img image-loaded ng-src="{{ show.data.images.poster | traktSize:'thumb':show.data.type }}" class="poster">
+            <img image-loaded ng-src="{{ show.data.images.poster | traktSize:'thumb':show.state.type }}" class="poster">
             <!-- Meta Container -->
             <pt-meta-container show="show.data"></pt-meta-container>
         </md-tab-body>
@@ -24,7 +29,7 @@
         </md-tab-label>
         <md-tab-body class="info-wrapper">
             <!-- Poster Image -->
-            <img image-loaded ng-src="{{ show.data.images.poster | traktSize:'thumb':show.data.type }}" class="poster">
+            <img image-loaded ng-src="{{ show.data.images.poster | traktSize:'thumb':show.state.type }}" class="poster">
             <!-- Episode Container --> 
             <pt-episode-container ng-show="show.selectedSeason" episodes="show.seasons[number]" selected-episode="show.selectedEpisode"></pt-episode-container>
         </md-tab-body>

@@ -52,8 +52,8 @@ angular.module 'com.module.webchimera.plugins.controls', []
     if chimera.isConfig
       scope.$watch 'chimera.config', ->
         if scope.chimera.config
-          ahValue = scope.chimera.config.plugins.controls.autohide or false
-          ahtValue = scope.chimera.config.plugins.controls.autohideTime or 2000
+          ahValue = scope.chimera?.config?.plugins?.controls.autohide or false
+          ahtValue = scope.chimera?.config?.plugins?.controls.autohideTime or 2000
           scope.wcAutohide = ahValue
           scope.wcAutohideTime = ahtValue
           scope.setAutohideTime ahtValue
@@ -67,3 +67,7 @@ angular.module 'com.module.webchimera.plugins.controls', []
       if scope.wcAutohideTime != undefined
         scope.$watch 'wcAutohideTime', scope.setAutohideTime
 
+    scope.$watch ->
+      chimera.config
+    , (newVal, oldVal) ->
+      scope.controls = newVal.controls

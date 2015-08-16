@@ -2,7 +2,7 @@
 
 angular.module 'com.module.webchimera'
 
-.controller 'wcController', ($scope, $window, wcConfigLoader, wcFullscreen, WC_UTILS, WC_STATES, WC_VOLUME_KEY) ->
+.controller 'wcController', ($scope, $window, wcFullscreen, WC_UTILS, WC_STATES, WC_VOLUME_KEY) ->
   isFullScreenPressed = false
   isMetaDataLoaded = false
 
@@ -13,10 +13,9 @@ angular.module 'com.module.webchimera'
     @wcjsElement.src = ''
     return
 
-  @onCanPlay = (evt) ->
-    #console.log 'onCanPlay', evt
+  @onCanPlay = ->
     @isBuffering = false
-    $scope.$apply $scope.wcCanPlay($event: evt)
+    $scope.$apply $scope.wcCanPlay()
 
   @onVideoReady = ->
     #console.log 'onVideoReady'
@@ -34,8 +33,7 @@ angular.module 'com.module.webchimera'
       @setVolume $window.localStorage.getItem(WC_VOLUME_KEY) or '99'
     
     if $scope.wcConfig
-      wcConfigLoader.loadConfig($scope.wcConfig).then @onLoadConfig.bind(this)
-    else $scope.wcPlayerReady $chimera: this
+      @onLoadConfig $scope.wcConfig
 
     $scope.$apply()
 
@@ -243,7 +241,9 @@ angular.module 'com.module.webchimera'
     return
 
   @onStartBuffering = (buffer) ->
-    @isBuffering = buffer < 70 
+    if buffer is 100
+      @onCanPlay()
+    else @isBuffering = true
     #console.log buffer, 'onStartBuffering'
     $scope.$apply()
     return
@@ -271,7 +271,7 @@ angular.module 'com.module.webchimera'
     return
 
   @onMessage = (event, message) ->
-    console.log event
+    #console.log event
 
   @registerEvent = (event) ->
     @wcjsElement['on' + event] = (message) ->
@@ -350,6 +350,7 @@ angular.module 'com.module.webchimera'
     return
 
   @addBindings = ->
+    $scope.$watch 'wcConfig', @onLoadConfig.bind(this)
     $scope.$watch 'wcAutoPlay', @onUpdateAutoPlay.bind(this)
     $scope.$watch 'wcPlaysInline', @onUpdatePlaysInline.bind(this)
     $scope.$watch 'wcCuePoints', @onUpdateCuePoints.bind(this)

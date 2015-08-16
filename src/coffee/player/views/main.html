@@ -1,43 +1,50 @@
-<div class="chimerangular-container" ng-if="ctrl.player.start" wc-controls-container>
-    <div chimerangular wc-player-ready="ctrl.onPlayerReady($API)"
-         wc-complete="ctrl.onCompleteVideo()"
-         wc-error="ctrl.onError($event)"
-         wc-stop="ctrl.player.start = false"
-         wc-update-time="ctrl.onUpdateTime($currentTime, $duration)"
-         wc-update-volume="ctrl.onUpdateVolume($volume)"
-         wc-update-state="ctrl.onUpdateState($state)"
-         wc-auto-play="ctrl.config.autoPlay"
-         wc-plays-inline="ctrl.config.playsInline">
-        <wc-media wc-src="ctrl.config.sources"
-                  wc-loop="ctrl.config.loop"
-                  wc-preload="ctrl.config.preload"
-                  wc-native-controls="ctrl.config.controls">
-        </wc-media>
 
-        <wc-top-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
-            <wc-close-button></wc-close-button>
-            <wc-title></wc-title>
-        </wc-top-controls>
+<div chimerangular wc-player-ready="ctrl.onPlayerReady($API)"
+     wc-config="ctrl.config"
+     wc-complete="ctrl.onCompleteVideo()"
+     wc-error="ctrl.onError($event)"
+     wc-stop="ctrl.player.start = false"
+     wc-update-time="ctrl.onUpdateTime($currentTime, $duration)"
+     wc-update-volume="ctrl.onUpdateVolume($volume)"
+     wc-update-state="ctrl.onUpdateState($state)"
+     wc-auto-play="ctrl.config.autoPlay"
+     wc-plays-inline="ctrl.config.playsInline">
 
-        <wc-bottom-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
-            <wc-play-pause-button></wc-play-pause-button>
-            <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>
-            <wc-scrub-bar>
-                <wc-scrub-bar-current-time></wc-scrub-bar-current-time>
-            </wc-scrub-bar>
-            <wc-time-display>{{ timeLeft | formatTime }}</wc-time-display>
-            <wc-playback-button></wc-playback-button>
-            <wc-volume>
-                <wc-mute-button></wc-mute-button>
-                <wc-volume-bar></wc-volume-bar>
-            </wc-volume>
-            <wc-fullscreen-button></wc-fullscreen-button>
-        </wc-bottom-controls>
+    <wc-media wc-src="ctrl.config.sources"
+              wc-loop="ctrl.config.loop"
+              wc-preload="ctrl.config.preload"
+              wc-native-controls="ctrl.config.controls">
+    </wc-media>
 
-        <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
-        <wc-torrent-info wc-torrent="ctrl.player.torrent"></wc-torrent-info>
-        <wc-poster wc-url="ctrl.poster"></wc-poster>
-        <wc-buffering></wc-buffering>
-        <wc-overlay-play></wc-overlay-play>
-    </div>
+    <wc-poster></wc-poster>
+
+    <wc-detail config="ctrl.config" state="ctrl.state"></wc-detail>
+
+    <wc-top-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+        <wc-close-button></wc-close-button>
+    </wc-top-controls>
+
+    <wc-bottom-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+        <wc-play-pause-button></wc-play-pause-button>
+        <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>
+        
+        <wc-scrub-bar>
+            <wc-scrub-bar-current-time></wc-scrub-bar-current-time>
+        </wc-scrub-bar>
+        
+        <wc-time-display>{{ timeLeft | formatTime }}</wc-time-display>
+        <wc-playback-button></wc-playback-button>
+        
+        <wc-volume>
+            <wc-mute-button></wc-mute-button>
+            <wc-volume-bar></wc-volume-bar>
+        </wc-volume>
+        
+        <wc-fullscreen-button></wc-fullscreen-button>
+    </wc-bottom-controls>
+
+    <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
+    <wc-torrent-info wc-torrent="ctrl.player.torrent"></wc-torrent-info>
+    <wc-buffering></wc-buffering>
+    <wc-overlay-play></wc-overlay-play>
 </div>

@@ -1,40 +1,38 @@
 <nav id="main-nav" class="main-nav viewfadein" style="display: block;">
   <ul>
     <li id="nav-movies" class="source showMovies providerinfo" title="YTS">
-        <a href="#" ng-class="{ 'active': filters.type === 'movie' }" ui-sref="app.browser.list.view({ listType: 'movie' })">
+        <a href="#" ng-class="{ 'active': sidenav.state.type === 'movie' }" ng-click="sidenav.state.type = 'movie'">
             <md-icon md-font-set="material-icons">local_movies</md-icon>
             <span class="nav-text">Movies</span>
         </a>
     </li>
 
     <li id="nav-shows" class="source showShows providerinfo" title="TVApi">
-        <a href="#" ng-class="{ 'active': filters.type === 'show' }" ui-sref="app.browser.list.view({ listType: 'show' })">
+        <a href="#" ng-class="{ 'active': sidenav.state.type === 'show' }" ng-click="sidenav.state.type = 'show'">
             <md-icon md-font-set="material-icons">tv</md-icon>
             <span class="nav-text">TV Series</span>
         </a>
     </li>
 
     <li id="nav-anime" class="source showAnime providerinfo" title="Haruhichan">
-        <a href="#" ng-class="{ 'active': filters.type === 'anime' }" ui-sref="app.browser.list.view({ listType: 'anime' })">
+        <a href="#" ng-class="{ 'active': sidenav.state.type === 'anime' }" ng-click="sidenav.state.type = 'anime'">
             <md-icon md-font-set="material-icons">mood</md-icon>
             <span class="nav-text">Anime</span>
         </a>
     </li>
     
     <li id="nav-bookmarks">
-        <a href="#" ui-sref-active="active" ui-sref="app.browser.torrents">
+        <a href="#" ui-sref-active="active" ng-click="sidenav.state.show = 'bookmarks'">
             <md-icon md-font-set="material-icons">bookmark</md-icon>
             <span class="nav-text">Torrents</span>
         </a>
     </li>
 
     <li id="nav-settings">
-        <a href="#" ui-sref-active="active" ui-sref="app.settings">
+        <a href="#" ui-sref-active="active" ng-click="sidenav.state.show = 'settings'">
             <md-icon md-font-set="material-icons">settings</md-icon>
             <span class="nav-text">Settings</span>
         </a>
     </li>
   </ul>
 </nav>
-
-<div ui-view></div>

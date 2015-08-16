@@ -2,14 +2,14 @@
 
 angular.module 'com.module.webchimera'
 
-.directive 'ptPlayerContainer', ->
+.directive 'ptDetail', ->
   restrict: 'E'
-  scope: { player: '=' }
+  scope: { state: '=' }
   bindToController: true
   templateUrl: 'player/views/main.html'
-  controller: 'playerController as ctrl'
+  controller: 'playerDetailController as ctrl'
 
-.controller 'playerController', ($sce, $q, $filter, $scope, playerConfig) ->
+.controller 'playerDetailController', ($sce, $q, $filter, $scope, playerConfig) ->
   vm = this
 
   vm.config = playerConfig
@@ -40,7 +40,7 @@ angular.module 'com.module.webchimera'
     $q.when playNextEpisodes
 
   $scope.$watchCollection 'ctrl.player', (newVal, oldVal) ->
-    if newVal.torrent and newVal.torrent.infoHash isnt oldVal?.torrent?.infoHash
+    if newVal?.torrent and newVal.torrent.infoHash isnt oldVal?.torrent?.infoHash
       if newVal.player.show
         vm.poster = newVal.player.show.images.fanart
         

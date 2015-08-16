@@ -7,11 +7,21 @@
   <link rel="stylesheet" href="css/vendor.css"/>
   <link rel="stylesheet" href="css/Official_-_FlaX_theme.css"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel='stylesheet'/>
-  <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,300,700' rel='stylesheet' type='text/css'/>
-</head>
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,300,700' rel='stylesheet' type='text/css'/> 
 
   <body>
-    <ui-view class="main-window-region"></ui-view>
+    <div id="main-window">
+      <pt-header></pt-header>
+      
+      <pt-view-container>
+        <pt-list state="view.state" ng-show="view.state.show === 'list'"></pt-list>
+        <pt-detail state="view.state" ng-show="view.state.show === 'player'" class="chimerangular-container"></pt-detail>
+
+        <pt-bookmarks state="view.state" ng-show="view.state.show === 'bookmarks'"></pt-bookmarks>
+        <pt-settings state="view.state" ng-show="view.state.show === 'settings'"></pt-settings>
+    </div>
+
+
 
   <!-- App -->
   <script src="js/angular.js"></script>

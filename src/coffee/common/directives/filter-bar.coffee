@@ -4,16 +4,14 @@ angular.module 'com.module.common'
 
 .directive 'filterBar', ->
   restrict: 'A'
-  scope: { list: '=', onChange: '&' }
+  scope: { type: '=', list: '=', onChange: '&' }
   bindToController: true
   templateUrl: 'common/views/filter-bar.html'
   controller: 'filterCtrl as filters'
 
-.controller 'filterCtrl', ($scope, $stateParams) ->
+.controller 'filterCtrl', ($scope) ->
   vm = this
 
-  vm.type = $stateParams.listType
-  
   vm.menuOpen = null
 
   $scope.$watchCollection 'filters.params', (newParams, oldParams) ->

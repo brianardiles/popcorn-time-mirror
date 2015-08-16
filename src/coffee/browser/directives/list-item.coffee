@@ -53,11 +53,6 @@ angular.module 'com.module.browser'
 
     return
 
-.directive 'ptSeasonsWrapper', ->
-  restrict: 'E'
-  scope: { seasons: '=', selectedSeason: '=' }
-  templateUrl: 'browser/views/seasons-wrapper.html'
-
 .directive 'ptTorrentItem', ->
   restrict: 'E'
   scope: { data: '=' }

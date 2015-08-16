@@ -2,18 +2,16 @@
 pt-summary-wrapper
     display block
     width 100vw
-    height 15vh
+    padding-top 50px
+    height 8vh
 
     &.movie
-        height 18vh
+        height 12vh
         
     .back
         float left
-        margin-top 54px
-        margin-left 28px
-        z-index 2
-        height: 60px
-        width: 60px
+        position relative
+        left 20px
 
         md-icon
             height 42px
@@ -23,26 +21,22 @@ pt-summary-wrapper
 
     .title
         color #FFF
-        margin-top 54px
         float left
         position: relative
-        margin-left: 11px
+        left: 33px
+        line-height 43px
         font-size 42px
         font-weight 500
 
     .watched-toggle, .bookmark-toggle
-        position absolute
-        z-index 2
-        top 60px
-        right 140px
+        position relative
+        float right
+        right 60px
 
         md-icon
             color: #fff
             width: 28px
             height: 28px
-
-    .bookmark-toggle
-        right 80px
 
 .info-container 
     position relative

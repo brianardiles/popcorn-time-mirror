@@ -10,7 +10,7 @@ angular.module 'com.module.webchimera'
   controller: 'detailCtrl as show'
 
 
-.controller 'detailCtrl', ($scope, $filter, TVApi, YTS, Haruhichan, $timeout, Settings) ->
+.controller 'detailCtrl', ($scope, $filter, playerConfig, TVApi, YTS, Haruhichan, $timeout, Settings) ->
   vm = this
 
   api = null
@@ -18,13 +18,24 @@ angular.module 'com.module.webchimera'
   movieWatcher = ->
   tvShowWatcher = ->
 
-  vm.currentTorrent = null
-  vm.currentQuality = '0'
-  vm.currentDevice = Settings.chosenPlayer
-  vm.torrentId = null
+  vm.goBack = ->
+    vm.config = playerConfig
+    vm.state = show: 'list', type: vm.state.type
+    init()
 
-  vm.seasons = {}
+  init = ->
+    vm.currentTorrent = null
+    vm.currentQuality = '0'
+    vm.selectedSeason = null
+    vm.selectedEpisode = null
+    vm.currentDevice = Settings.chosenPlayer
+    vm.state.torrentId = null
+    vm.data = null
+     
+    vm.seasons = {}
 
+  init()
+  
   vm.selectSeason = (season) ->
     vm.selectedSeason = season
     seasonIndex = '' + vm.selectedSeason - 1
@@ -55,12 +66,12 @@ angular.module 'com.module.webchimera'
         vm.currentTorrent = newTorrent
 
   $scope.$watch 'show.state.torrentId', (newTorrent, oldTorrent) ->
-    if newTorrent isnt oldTorrent 
+    if newTorrent? and newTorrent isnt oldTorrent 
       vm.trakt_url = 'http://www.imdb.com/title/' + newTorrent
 
       api.detail(newTorrent, vm.state.type).then (resp) ->
         vm.data = resp.data
-        vm.config.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.state.type) 
+        vm.state.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.state.type) 
 
         if vm.state.type is 'show'
           angular.forEach resp.data.episodes, (value, currentEpisode) ->
@@ -71,7 +82,7 @@ angular.module 'com.module.webchimera'
             vm.currentQuality = key
             break
 
-        return
+    return
 
   $scope.$watch 'show.state.type', (newListType, oldListType) ->
     if newListType isnt oldListType or not api

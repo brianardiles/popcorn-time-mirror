@@ -15,7 +15,7 @@
               wc-native-controls="ctrl.config.controls">
     </wc-media>
 
-    <wc-poster></wc-poster>
+    <wc-poster ng-if="ctrl.state.poster" poster="ctrl.state.poster"></wc-poster>
 
     <wc-detail ng-hide="ctrl.state.player.torrent" config="ctrl.config" state="ctrl.state"></wc-detail>
 

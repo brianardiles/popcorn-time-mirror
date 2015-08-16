@@ -45,7 +45,7 @@ angular.module 'com.module.browser'
 
 .directive 'ptSummaryWrapper', ->
   restrict: 'E'
-  scope: { title: '=', torrentId: '=?' }
+  scope: { goBack: '&', title: '=', torrentId: '=?' }
   templateUrl: 'browser/views/summary-wrapper.html'
   bindToController: true
   controllerAs: 'summary'

@@ -72,6 +72,8 @@ angular.module 'com.module.webchimera'
       api.detail(newTorrent, vm.state.type).then (resp) ->
         vm.data = resp.data
         vm.state.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.state.type) 
+        if resp.data.type
+          vm.state.type = resp.data.type
 
         if vm.state.type is 'show'
           angular.forEach resp.data.episodes, (value, currentEpisode) ->

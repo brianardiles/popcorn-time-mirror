@@ -9,7 +9,7 @@
      wc-auto-play="ctrl.config.autoPlay"
      wc-plays-inline="ctrl.config.playsInline">
 
-    <wc-media wc-src="ctrl.config.sources"
+    <wc-media wc-src="ctrl.state.torrent.files"
               wc-loop="ctrl.config.loop"
               wc-preload="ctrl.config.preload"
               wc-native-controls="ctrl.config.controls">
@@ -20,11 +20,11 @@
     <wc-detail ng-hide="ctrl.state.player.torrent" config="ctrl.config" state="ctrl.state"></wc-detail>
 
     <div ng-if="ctrl.state.player.torrent">
-        <wc-top-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+        <wc-top-controls ng-if="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
             <wc-close-button></wc-close-button>
         </wc-top-controls>
 
-        <wc-bottom-controls wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+        <wc-bottom-controls ng-if="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
             <wc-play-pause-button></wc-play-pause-button>
             <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>
             
@@ -44,8 +44,8 @@
         </wc-bottom-controls>
 
         <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
-        <wc-torrent-info wc-torrent="ctrl.state.torrent"></wc-torrent-info>
+        <wc-torrent-info ng-hide="ctrl.config.controls" wc-torrent="ctrl.state.torrent"></wc-torrent-info>
         <wc-buffering></wc-buffering>
-        <wc-overlay-play></wc-overlay-play>
+        <wc-overlay-play ng-if="ctrl.config.controls"></wc-overlay-play>
     </div>
 </div>

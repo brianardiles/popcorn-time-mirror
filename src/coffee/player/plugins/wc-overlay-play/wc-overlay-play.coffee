@@ -8,6 +8,7 @@ angular.module 'com.module.webchimera.plugins.overlayplay', []
   scope: {}
   templateUrl: 'player/views/directives/wc-overlay-play.html'
   link: (scope, elem, attr, chimera) ->
+    scope.chimera = chimera
 
     scope.onChangeState = (newState) ->
       switch newState
@@ -27,8 +28,3 @@ angular.module 'com.module.webchimera.plugins.overlayplay', []
       chimera.currentState
     , (newVal, oldVal) ->
       scope.onChangeState newVal
-
-    scope.$watch ->
-      chimera.config
-    , (newVal, oldVal) ->
-      scope.controls = newVal.controls

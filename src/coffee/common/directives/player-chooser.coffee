@@ -44,5 +44,6 @@ angular.module 'com.module.common'
       torrentProvider.addTorrentLink(player.torrent).then (resp) ->
         torrentProvider.getTorrent(resp.data.infoHash).then (torrentDetail) ->
           scope.state.torrent = torrentDetail
+          scope.state.torrent.listen()
       
       return

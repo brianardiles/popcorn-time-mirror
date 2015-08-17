@@ -38,9 +38,8 @@ angular.module 'com.module.webchimera'
 
     $q.when playNextEpisodes
 
-  $scope.$watch 'ctrl.state.torrent', (newTorrent) ->
-    if newTorrent?.connection
-      newTorrent.listen()
+  $scope.$watch 'ctrl.state.torrent.ready', (readyState) ->
+    vm.config.controls = readyState
 
   $scope.$watchCollection 'ctrl.state.player', (newPlayer, oldPlayer) ->
     if newPlayer

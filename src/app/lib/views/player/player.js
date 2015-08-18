@@ -3,8 +3,7 @@
 
     var that,
         util = require('util'),
-        Q = require('q'),
-        prettyBytes = require('pretty-bytes');
+        Q = require('q');
 
     var Player = Backbone.Marionette.ItemView.extend({
         template: '#player-tpl',
@@ -463,8 +462,8 @@
                 return;
             }
 
-            this.ui.downloadSpeed.text(this.prettySpeed(Stream.downloadSpeed()));
-            this.ui.uploadSpeed.text(this.prettySpeed(Stream.uploadSpeed()));
+            this.ui.downloadSpeed.text(Common.fileSize(Stream.downloadSpeed()) + '/s');
+            this.ui.uploadSpeed.text(Common.fileSize(Stream.uploadSpeed()) + '/s');
             this.ui.activePeers.text(Stream.wires.length);
             var downloadedsize = Stream.downloaded;
             var totalsize = Streamer.client.torrent.files[Streamer.fileindex].length;
@@ -479,7 +478,7 @@
                 } else { //we just update
                     $('.remaining').html(this.remainingTime());
                 }
-                this.ui.percentCompleted.text(prettyBytes(downloadedsize) + ' / ' + prettyBytes(totalsize) + ' (' + percent.toFixed() + '%)');
+                this.ui.percentCompleted.text(Common.fileSize(downloadedsize) + ' / ' + Common.fileSize(totalsize) + ' (' + percent.toFixed() + '%)');
             } else {
                 if (!this.PreloadStarted) { //we create it
                     this.PreloadStarted = true;
@@ -561,17 +560,6 @@
                 return i18n.__('%s second(s) remaining', timeLeft);
             }
         },
-
-        prettySpeed: function (speed) {
-            speed = speed || 0;
-            if (speed === 0) {
-                return util.format('%s %s', 0, 'B/s');
-            }
-
-            var converted = Math.floor(Math.log(speed) / Math.log(1024));
-            return util.format('%s %s/s', (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
-        },
-
 
         processNext: function () {
             var that = this;

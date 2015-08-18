@@ -22,8 +22,6 @@
 
             <!-- downloading info -->
             <div class="loading-info">
-                <span class="buffer_percent"></span><br><br>
-
                 <span class="loading-info-text"><%= i18n.__("Download") %>:&nbsp;</span>
                     <span class="download_speed value">0 B/s</span><br>
                 <span class="loading-info-text"><%= i18n.__("Upload") %>:&nbsp;</span>

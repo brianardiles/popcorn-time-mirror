@@ -105,7 +105,6 @@
             } else {
                 this.player = 'local';
             }
-            //TODO: this.checkFreeSpace(this.model.get('streamInfo').get('size'));
             this.StateUpdate();
         },
 
@@ -201,17 +200,21 @@
             }
             var that = this;
 
-            var Stream = App.Streamer.client.swarm;
+            var Swarm = App.Streamer.client.swarm;
             if (App.Streamer.fileindex !== null) {
                 this.ui.stateTextDownload.text(i18n.__('Connecting'));
 
                 this.ui.seedStatus.css('visibility', 'visible');
-                if (!this.initializedLoadingPlayer && Stream.downloadSpeed() > 10) {
+                if (!this.initializedLoadingPlayer && Swarm.downloadSpeed() > 10) {
                     this.initializedLoadingPlayer = true;
                     this.initializeLoadingPlayer();
                     this.backupCountdown();
                 }
-                if (Stream.downloadSpeed()) {
+                if (Swarm.downloadSpeed()) {
+                    if (App.Streamer && App.Streamer.client && !this.freeSpaceChecked) {
+                        var totalsize = App.Streamer.client.torrent.files[App.Streamer.fileindex].length;
+                        this.checkFreeSpace(totalsize);
+                    }
                     if (!this.initializedLoadingPlayer) {
                         this.initializedLoadingPlayer = true;
                         this.initializeLoadingPlayer();
@@ -219,9 +222,9 @@
                     if (!this.playingExternally) {
                         this.ui.stateTextDownload.text(i18n.__('Downloading'));
                     }
-                    this.ui.progressTextPeers.text(Stream.wires.length);
-                    this.ui.downloadSpeed.text(this.prettySpeed(Stream.downloadSpeed()));
-                    this.ui.uploadSpeed.text(this.prettySpeed(Stream.uploadSpeed()));
+                    this.ui.progressTextPeers.text(Swarm.wires.length);
+                    this.ui.downloadSpeed.text(Common.fileSize(Swarm.downloadSpeed()) + '/s');
+                    this.ui.uploadSpeed.text(Common.fileSize(Swarm.uploadSpeed()) + '/s');
                 }
                 if (this.playingExternally) {
                     this.ui.stateTextDownload.text(i18n.__('Downloaded'));
@@ -236,15 +239,7 @@
 
 
         },
-        prettySpeed: function (speed) {
-            speed = speed || 0;
-            if (speed === 0) {
-                return util.format('%s %s', 0, 'B/s');
-            }
 
-            var converted = Math.floor(Math.log(speed) / Math.log(1024));
-            return util.format('%s %s/s', (speed / Math.pow(1024, converted)).toFixed(2), ['B', 'KB', 'MB', 'GB', 'TB'][converted]);
-        },
         cancelStreaming: function () {
             this.playing = true; // stop text update
             this.playingExternally = false;
@@ -267,8 +262,8 @@
             });
 
         },
-        loadBackground: function (data, change) {
-            var backgroundUrl = data;
+        loadBackground: function (backgroundUrl, change) {
+            console.log('loadBackground', backgroundUrl, change)
             var that = this;
             var bgError = false;
             var bgCache = new Image();
@@ -293,20 +288,11 @@
 
         },
         waitForSelection: function () {
-
             var that = this;
 
-            function removeExtension(filename) {
-                var lastDotPosition = filename.lastIndexOf('.');
-                if (lastDotPosition === -1) {
-                    return filename;
-                } else {
-                    return filename.substr(0, lastDotPosition);
-                }
-            }
             var watchFileSelected = function () {
                 require('watchjs').unwatch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
-                that.model.attributes.data.metadata.title = removeExtension(App.Streamer.updatedInfo.fileSelectorIndexName);
+                that.model.attributes.data.metadata.title = App.Streamer.updatedInfo.fileSelectorIndexName;
                 that.augmentDropModel(that.model.attributes.data); // olny call if droped torrent/magnet
             };
             require('watchjs').watch(App.Streamer.updatedInfo, 'fileSelectorIndexName', watchFileSelected);
@@ -317,94 +303,62 @@
         augmentDropModel: function (data) {
             var metadata = data.metadata;
             var that = this;
-            var title = $.trim(metadata.title.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.');
 
-            var se_re = title.match(/(.*)S(\d\d)E(\d\d)/i); // regex try (ex: title.s01e01)
-            if (se_re === null) { // if fails
-                se_re = title.match(/(.*)(\d\d\d\d)+\W/i); // try another regex (ex: title.0101)
-                if (se_re !== null) {
-                    se_re[3] = se_re[2].substr(2, 4);
-                    se_re[2] = se_re[2].substr(0, 2);
-                } else {
-                    se_re = title.match(/(.*)(\d\d\d)+\W/i); // try a last one (ex: title.101)
-                    if (se_re !== null) {
-                        se_re[3] = se_re[2].substr(1, 2);
-                        se_re[2] = se_re[2].substr(0, 1);
-                    }
-                }
+            // TODO
+            /*var torrentMetadata;
+            if (torrent.info && torrent.info.name) {
+                torrentMetadata = torrent.info.name.toString();
+            }*/
+            var torrentMetadata;
+            if (App.Streamer && App.Streamer.client) {
+                torrentMetadata = App.Streamer.client.torrent.info.name.toString();
             }
-            if (se_re != null) {
-                // function in case it's a movie (or not, it also handles errors)
-                var tryMovie = function (moviename) {
-                    App.Trakt.search(moviename, 'movie')
-                        .then(function (summary) {
-                            if (!summary || summary.length === 0) {
-                                win.warn('Unable to fetch data from Trakt.tv');
-                            } else {
-                                var data = summary[0].movie;
-                                that.model.attributes.data.type = 'movie';
-                                that.model.attributes.data.metadata.title = data.title;
-                                that.model.attributes.data.metadata.cover = data.images.poster;
-                                that.model.attributes.data.metadata.imdb_id = data.imdb_id;
-                                that.model.attributes.data.metadata.backdrop = data.images.fanart.full;
-                                that.ui.title.text(that.model.attributes.data.metadata.title);
-                                that.loadBackground(that.model.attributes.data.metadata.backdrop);
-                            }
 
-                        }).catch(function (err) {
-                            // Ok then, it's not a tv show, it's not a movie. I give up, deal with it.
-                            win.error('An error occured while trying to get subtitles', err);
-                        });
-                };
-
-                // we're going to start by assuming it's a TV Series
-                var tvshowname = $.trim(se_re[1].replace(/[\.]/g, ' '))
-                    .replace(/^\[.*\]/, '') // starts with brackets
-                    .replace(/[^\w ]+/g, '') // remove brackets
-                    .replace(/ +/g, '-') // has spaces
-                    .replace(/_/g, '-') // has '_'
-                    .replace(/\-$/, '') // ends with '-'
-                    .replace(/^\./, ''); // starts with '.'
-                App.Trakt.shows.summary(tvshowname)
-                    .then(function (summary) {
-                        if (!summary) {
-                            win.warn('Unable to fetch data from Trakt.tv');
-                        } else {
-                            that.model.attributes.data.metadata.showName = summary.title;
-                            App.Trakt.episodes.summary(tvshowname, se_re[2], se_re[3])
-                                .then(function (episodeSummary) {
-                                    if (!episodeSummary) {
-                                        win.warn('Unable to fetch data from Trakt.tv');
-                                    } else {
-                                        var data = episodeSummary;
-
-                                        that.model.attributes.data.type = 'show';
-                                        that.model.attributes.data.metadata.title = summary.title + ' - ' + i18n.__('Season') + ' ' + data.season + ', ' + i18n.__('Episode') + ' ' + data.number + ' - ' + data.title;
-                                        that.model.attributes.data.metadata.season = data.season.toString();
-                                        that.model.attributes.data.metadata.episode = data.number.toString();
-                                        that.model.attributes.data.metadata.tvdb_id = summary.ids.tvdb;
-                                        that.model.attributes.data.metadata.episode_id = data.ids.tvdb;
-                                        that.model.attributes.data.metadata.imdb_id = summary.ids.imdb;
-                                        that.model.attributes.data.metadata.backdrop = data.images.screenshot.full;
-                                        that.ui.title.text(that.model.attributes.data.metadata.title);
-
-                                        that.loadBackground(that.model.attributes.data.metadata.backdrop, true);
-
-                                    }
-                                }).catch(function (err) {
-                                    tryMovie(tvshowname);
-                                });
+            Common.matchTorrent(metadata.title, torrentMetadata)
+                .then(function (res) {
+                    if (res.error) {
+                        win.warn('Common.matchTorrent()', res.error);
+                        that.ui.title.text(res.filename);
+                    } else {
+                        switch (res.type) {
+                        case 'movie':
+                            that.model.attributes.data.type = 'movie';
+                            that.model.attributes.data.metadata.title = res.movie.title;
+                            //that.model.attributes.data.metadata.cover = data.images.poster;
+                            that.model.attributes.data.metadata.imdb_id = res.movie.imdbid;
+                            that.model.attributes.data.metadata.backdrop = res.movie.image;
+                            // QUALITY??
+                            that.ui.title.text(that.model.attributes.data.metadata.title);
+                            that.loadBackground(that.model.attributes.data.metadata.backdrop);
+                            break;
+                        case 'episode':
+                            that.model.attributes.data.type = 'show';
+                            that.model.attributes.data.metadata.title = res.show.title + ' - ' + i18n.__('Season') + ' ' + res.show.episode.season + ', ' + i18n.__('Episode') + ' ' + res.show.episode.episode + ' - ' + res.show.episode.title;
+                            that.model.attributes.data.metadata.season = res.show.episode.season;
+                            that.model.attributes.data.metadata.episode = res.show.episode.episode;
+                            that.model.attributes.data.metadata.tvdb_id = res.show.tvdbid;
+                            // QUALITY???
+                            that.model.attributes.data.metadata.episode_id = res.show.episode.tvdbid;
+                            that.model.attributes.data.metadata.imdb_id = res.show.imdbid;
+                            that.model.attributes.data.metadata.backdrop = res.show.episode.image;
+                            that.ui.title.text(that.model.attributes.data.metadata.title);
+                            that.loadBackground(that.model.attributes.data.metadata.backdrop);
+                            break;
+                        default:
                         }
-                    }).catch(function (err) {
-                        tryMovie(tvshowname);
-                    });
-            }
+                    }
+                })
+                .catch(function (err) {
+                    that.ui.title.text($.trim(metadata.title.replace('[rartv]', '').replace('[PublicHD]', '').replace('[ettv]', '').replace('[eztv]', '')).replace(/[\s]/g, '.'));
+                    win.error('An error occured while trying to get metadata and subtitles', err);
+                });
         },
 
         checkFreeSpace: function (size) {
             if (!size) {
                 return;
             }
+            this.freeSpaceChecked = true;
             size = size / (1024 * 1024 * 1024);
             var reserved = size * 20 / 100;
             reserved = reserved > 0.25 ? 0.25 : reserved;

@@ -3,7 +3,7 @@
 angular.module 'com.module.common'
 
 .factory 'YTS', ($q, $http, Settings, cloudFlareApi) ->
-  results = null
+  movies = {}
 
   any = (list, fn) ->
     idx = 0
@@ -28,12 +28,11 @@ angular.module 'com.module.common'
     torrentsObject
 
   format = (data) ->
-    results = {}
     for idx, movie of data.movies
       torrents = formatTorrents movie.torrents
 
       if torrents     
-        results[movie.imdb_code] =
+        movies[movie.imdb_code] =
           title: movie.title_english
           year: movie.year
           genres: movie.genres
@@ -52,7 +51,7 @@ angular.module 'com.module.common'
           directors: movie.directors
           type: 'movie'
 
-    results: results or null
+    results: movies or null
     hasMore: data.movie_count > data.page_number * data.limit
   
   fetch: (filters = {}) ->
@@ -114,4 +113,4 @@ angular.module 'com.module.common'
     items.results.map (item) -> item['imdb_id']
 
   detail: (torrent_id) ->
-    $q.when data: results[torrent_id]
+    $q.when data: movies[torrent_id]

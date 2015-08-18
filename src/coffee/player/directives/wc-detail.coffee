@@ -35,7 +35,7 @@ angular.module 'com.module.webchimera'
   
   vm.selectSeason = (season) ->
     vm.selectedSeason = season
-    seasonIndex = '' + vm.selectedSeason - 1
+    seasonIndex = '' + vm.selectedSeason 
     
     if vm.seasons[seasonIndex]
       for first of vm.seasons[seasonIndex]

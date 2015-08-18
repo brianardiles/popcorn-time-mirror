@@ -80,7 +80,7 @@ angular.module 'com.module.browser'
     page = page + 1
 
     data.fetch({page: page}).then (resp) ->
-      vm.data = angular.extend vm.data, resp.results
+      vm.data = resp.results
 
   vm.onChange = (filter) ->
     vm.data = {}

@@ -11,15 +11,17 @@
         className: 'torrent-collection',
 
         events: {
-            'click .file-item': 'openFileSelector',
-            'click .result-item': 'onlineOpen',
-            'click .item-delete': 'deleteItem',
-            'click .item-rename': 'renameItem',
+            'mousedown .file-item': 'openFileSelector',
+            'mousedown .result-item': 'onlineOpen',
+            'mousedown .item-delete': 'deleteItem',
+            'mousedown .item-rename': 'renameItem',
+            'mousedown .magnet-icon': 'openMagnet',
             'click .collection-delete': 'clearCollection',
             'click .collection-open': 'openCollection',
             'click .collection-import': 'importItem',
             'click .notorrents-frame': 'importItem',
             'click .online-search': 'onlineSearch',
+            'click .engine-icon': 'changeEngine',
             'submit #online-form': 'onlineSearch',
             'click .online-back': 'onlineClose',
             'contextmenu #online-input': 'rightclick_search'
@@ -31,6 +33,7 @@
                 win.debug('TorrentCollection: data directory created');
             }
             this.files = fs.readdirSync(collection);
+            this.searchEngine = Settings.onlineSearchEngine;
         },
 
         onShow: function () {
@@ -45,6 +48,8 @@
         },
 
         onRender: function () {
+            $('.engine-icon').removeClass('active');
+            $('#' + this.searchEngine.toLowerCase() + '-icon').addClass('active');
             $('#online-input').focus();
             if (this.files[0]) {
                 $('.notorrents-info').css('display', 'none');
@@ -60,10 +65,26 @@
             });
         },
 
-        onlineSearch: function (e) {
+        changeEngine: function (e) {
             e.preventDefault();
+
+            Settings.onlineSearchEngine = this.searchEngine = e.currentTarget.dataset.id;
+            AdvSettings.set('onlineSearchEngine', this.searchEngine);
+
+            if ($('#online-input').val().length !== 0) {
+                $('.engine-icon').removeClass('active');
+                $('#' + this.searchEngine.toLowerCase() + '-icon').addClass('active');
+                this.onlineSearch();
+            } else {
+                this.render();
+            }
+        },
+
+        onlineSearch: function (e) {
+            if (e) {
+                e.preventDefault();
+            }
             var that = this;
-            var strike = require('strike-api');
             var input = $('#online-input').val();
             var category = $('.online-categories > select').val();
             AdvSettings.set('OnlineSearchCategory', category);
@@ -83,50 +104,100 @@
 
             $('.online-search').removeClass('fa-search').addClass('fa-spin fa-spinner');
 
-            strike.search(input, category).then(function (result) {
-                win.debug('Strike search: %s results', result.results);
-                result.torrents.forEach(function (item) {
-                    var itemModel = {
-                        title: item.torrent_title,
-                        magnet: item.magnet_uri,
-                        seeds: item.seeds,
-                        peers: item.leeches,
-                        size: require('pretty-bytes')(parseInt(item.size))
-                    };
+            if (this.searchEngine === 'KAT') {
 
-                    that.onlineAddItem(itemModel);
-                });
+                var kat = require('kat-api');
+                kat.search({
+                    query: input,
+                    min_seeds: 5,
+                    category: category
+                }).then(function (data) {
+                    win.debug('KAT search: %s results', data.results.length);
+                    data.results.forEach(function (item) {
+                        var itemModel = {
+                            title: item.title,
+                            magnet: item.magnet,
+                            seeds: item.seeds,
+                            peers: item.peers,
+                            size: Common.fileSize(parseInt(item.size))
+                        };
 
-                that.$('.tooltipped').tooltip({
-                    html: true,
-                    delay: {
-                        'show': 50,
-                        'hide': 50
+                        that.onlineAddItem(itemModel);
+                    });
+
+                    that.$('.tooltipped').tooltip({
+                        html: true,
+                        delay: {
+                            'show': 50,
+                            'hide': 50
+                        }
+                    });
+                    $('.notorrents-info,.torrents-info').hide();
+                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
+                    $('.onlinesearch-info').show();
+                }).catch(function (err) {
+                    win.debug('KAT search failed:', err.message);
+                    var error;
+                    if (err.message === 'No results') {
+                        error = 'No results found';
+                    } else {
+                        error = 'Failed!';
                     }
-                });
-                $('.notorrents-info,.torrents-info').hide();
-                $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
-                $('.onlinesearch-info').show();
-            }).catch(function (err) {
-                win.debug('Strike search failed:', err.message);
-                var error;
-                if (err.message === 'Not Found') {
-                    error = 'No results found';
-                } else {
-                    error = 'Failed!';
-                }
-                $('.onlinesearch-info>ul.file-list').html('<br><br><div style="text-align:center;font-size:30px">' + i18n.__(error) + '</div>');
+                    $('.onlinesearch-info>ul.file-list').html('<br><br><div style="text-align:center;font-size:30px">' + i18n.__(error) + '</div>');
 
-                $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
-                $('.notorrents-info,.torrents-info').hide();
-                $('.onlinesearch-info').show();
-            });
+                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
+                    $('.notorrents-info,.torrents-info').hide();
+                    $('.onlinesearch-info').show();
+                });
+
+            } else {
+
+                var strike = require('strike-api');
+                strike.search(input, category).then(function (result) {
+                    win.debug('Strike search: %s results', result.results);
+                    result.torrents.forEach(function (item) {
+                        var itemModel = {
+                            title: item.torrent_title,
+                            magnet: item.magnet_uri,
+                            seeds: item.seeds,
+                            peers: item.leeches,
+                            size: Common.fileSize(parseInt(item.size))
+                        };
+
+                        that.onlineAddItem(itemModel);
+                    });
+
+                    that.$('.tooltipped').tooltip({
+                        html: true,
+                        delay: {
+                            'show': 50,
+                            'hide': 50
+                        }
+                    });
+                    $('.notorrents-info,.torrents-info').hide();
+                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
+                    $('.onlinesearch-info').show();
+                }).catch(function (err) {
+                    win.debug('Strike search failed:', err.message);
+                    var error;
+                    if (err.message === 'Not Found') {
+                        error = 'No results found';
+                    } else {
+                        error = 'Failed!';
+                    }
+                    $('.onlinesearch-info>ul.file-list').html('<br><br><div style="text-align:center;font-size:30px">' + i18n.__(error) + '</div>');
+
+                    $('.online-search').removeClass('fa-spin fa-spinner').addClass('fa-search');
+                    $('.notorrents-info,.torrents-info').hide();
+                    $('.onlinesearch-info').show();
+                });
+            }
         },
 
         onlineAddItem: function (item) {
             var ratio = item.peers > 0 ? item.seeds / item.peers : +item.seeds;
             $('.onlinesearch-info>ul.file-list').append(
-                '<li class="result-item" data-file="' + item.magnet + '"><a>' + item.title + '</a><div class="item-icon magnet-icon"></div><i class="online-size tooltipped" data-toggle="tooltip" data-placement="left" title="' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + '<br>' + i18n.__('Seeds:') + ' ' + item.seeds + ' - ' + i18n.__('Peers:') + ' ' + item.peers + '">' + item.size + '</i></li>'
+                '<li class="result-item" data-file="' + item.magnet + '"><a>' + item.title + '</a><div class="item-icon magnet-icon tooltipped" data-toogle="tooltip" data-placement="right" title="' + i18n.__('Magnet link') + '"></div><i class="online-size tooltipped" data-toggle="tooltip" data-placement="left" title="' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + '<br>' + i18n.__('Seeds:') + ' ' + item.seeds + ' - ' + i18n.__('Peers:') + ' ' + item.peers + '">' + item.size + '</i></li>'
             );
         },
 
@@ -249,6 +320,34 @@
             App.Streamer.start(torrentStart);
 
         },
+
+        openMagnet: function (e) {
+            this.$('.tooltip').css('display', 'none');
+            e.preventDefault();
+            e.stopPropagation();
+
+            var magnetLink,
+                gui = require('nw.gui');
+
+            if ($(e.currentTarget.parentNode).context.className === 'file-item') {
+                // stored
+                var _file = $(e.currentTarget.parentNode).context.innerText,
+                    file = _file.substring(0, _file.length - 2); // avoid ENOENT
+                magnetLink = fs.readFileSync(collection + file, 'utf8');
+            } else {
+                // search result
+                magnetLink = $(e.currentTarget.parentNode).context.attributes['data-file'].value;
+            }
+
+            if (e.button === 2) { //if right click on magnet link
+                var clipboard = gui.Clipboard.get();
+                clipboard.set(magnetLink, 'text'); //copy link to clipboard
+                $('.notification_alert').text(i18n.__('The magnet link was copied to the clipboard')).fadeIn('fast').delay(2500).fadeOut('fast');
+            } else {
+                gui.Shell.openExternal(magnetLink);
+            }
+        },
+
         deleteItem: function (e) {
             this.$('.tooltip').css('display', 'none');
             e.preventDefault();

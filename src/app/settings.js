@@ -58,6 +58,7 @@ Settings.traktTokenRefresh = '';
 Settings.traktTokenTTL = '';
 Settings.traktTvVersion = '0.0.2';
 Settings.traktLastSync = '';
+Settings.traktLastActivities = '';
 Settings.traktSyncOnStart = true;
 Settings.traktPlayback = true;
 
@@ -81,6 +82,7 @@ Settings.activateTorrentCollection = true;
 Settings.activateWatchlist = true;
 Settings.activateVpn = true;
 Settings.activateRandomize = true;
+Settings.onlineSearchEngine = 'KAT';
 
 // Ratio
 Settings.totalDownloaded = 0;
@@ -91,28 +93,44 @@ Settings.vpn = false;
 Settings.vpnUsername = '';
 Settings.vpnPassword = '';
 
-Settings.tvshowAPI = {
-    url: 'http://eztvapi.re/',
-    index: 0,
-    proxies: [{
-        url: 'http://eztvapi.re/',
-        ssl: false,
-        fingerprint: /"status":"online"/,
-    }, {
-        url: 'http://api.popcorntime.io/',
-        ssl: false,
-        fingerprint: /"status":"online"/
-    }]
-};
+Settings.tvAPI = [{
+    url: 'https://eztvapi.re/',
+    strictSSL: true
+}, {
+    url: 'https://api.popcorntime.io/',
+    strictSSL: true
+}, {
+    url: 'http://tv.ytspt.re/',
+    strictSSL: false
+}];
+
+Settings.ytsAPI = [{
+    uri: 'https://yts.to/',
+    strictSSL: true
+}, {
+    uri: 'https://cloudflare.com/',
+    headers: {
+        'Host': 'xor.image.yt',
+        'User-Agent': 'Mozilla/5.0 (Linux) AppleWebkit/534.30 (KHTML, like Gecko) PT/3.8.0'
+    },
+    strictSSL: true
+}, {
+    uri: 'http://cloudflare.com/',
+    headers: {
+        'Host': 'xor.image.yt',
+        'User-Agent': 'Mozilla/5.0 (Linux) AppleWebkit/534.30 (KHTML, like Gecko) PT/3.8.0'
+    },
+    strictSSL: false
+}];
 
 Settings.updateEndpoint = {
-    url: 'https://popcorntime.io/',
+    url: 'https://popcorntime.re/',
     index: 0,
     proxies: [{
-        url: 'https://popcorntime.io/',
+        url: 'https://popcorntime.re/',
         fingerprint: '30:A6:BA:6C:19:A4:D5:C3:5A:E8:F1:56:C6:B4:E1:DC:EF:DD:EC:8C',
     }, {
-        url: 'https://popcorntime.re/',
+        url: 'https://popcorntime.io/',
         fingerprint: '30:A6:BA:6C:19:A4:D5:C3:5A:E8:F1:56:C6:B4:E1:DC:EF:DD:EC:8C'
     }, {
         url: 'https://popcorntime.cc/',
@@ -183,7 +201,6 @@ var AdvSettings = {
 
     setup: function () {
         AdvSettings.performUpgrade();
-        AdvSettings.checkAdmin();
         return AdvSettings.getHardwareInfo();
     },
 

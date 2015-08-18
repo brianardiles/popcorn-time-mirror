@@ -1,7 +1,7 @@
 (function (App) {
     'use strict';
 
-    var torrentHealth = require('torrent-health');
+    var torrentHealth = require('torrent-tracker-health');
     var cancelTorrentHealth = function () {};
     var torrentHealthRestarted = null;
 
@@ -15,7 +15,6 @@
             q1080p: '#q1080',
             q720p: '#q720',
             q480p: '#q480',
-            qinfo: '.quality-info',
             bookmarkIcon: '.favourites-toggle'
         },
 
@@ -633,6 +632,30 @@
             AdvSettings.set('shows_default_quality', quality.text());
             _this.resetHealth();
         },
+        toggleQuality: function (e) {
+            var qualities = {
+                q480p: {
+                    active: _this.ui.q480p.hasClass('active'),
+                    next: 'q720p'
+                },
+                q720p: {
+                    active: _this.ui.q720p.hasClass('active'),
+                    next: 'q1080p'
+                },
+                q1080p: {
+                    active: _this.ui.q1080p.hasClass('active'),
+                    next: 'q480p'
+                },
+            };
+
+            for (var q in qualities) {
+                if (qualities[q].active) {
+                    var fake_e = {};
+                    fake_e.currentTarget = $(_this.ui[qualities[q].next]);
+                    _this.toggleShowQuality(fake_e);
+                }
+            }
+        },
 
         nextEpisode: function (e) {
             var index = $('.tab-episode.active').index();
@@ -714,19 +737,6 @@
             }
         },
 
-        toggleQuality: function (e) {
-
-            if ($('.quality').is(':visible')) {
-                if ($('#switch-hd-off').is(':checked')) {
-                    $('#switch-hd-on').trigger('click');
-                } else {
-                    $('#switch-hd-off').trigger('click');
-                }
-                _this.resetHealth();
-            }
-
-        },
-
         toggleEpisodeWatched: function (e) {
             var data = {};
             data.currentTarget = $('.tab-episode.active .watched')[0];
@@ -763,18 +773,20 @@
             cancelTorrentHealth();
 
             // Use fancy coding to cancel
-            // pending torrent-health's
+            // pending torrent-tracker-health's
             var cancelled = false;
             cancelTorrentHealth = function () {
                 cancelled = true;
             };
 
             if (torrent.substring(0, 8) === 'magnet:?') {
-                // if 'magnet:?' is because eztv sends back links, not magnets
+                // if 'magnet:?' is because TVApi sends back links, not magnets
 
                 torrent = torrent.split('&tr')[0] + '&tr=udp://tracker.openbittorrent.com:80/announce' + '&tr=udp://open.demonii.com:1337/announce' + '&tr=udp://tracker.coppersurfer.tk:6969';
 
-                torrentHealth(torrent).then(function (res) {
+                torrentHealth(torrent, {
+                    timeout: 1000
+                }).then(function (res) {
 
                     if (cancelled) {
                         return;

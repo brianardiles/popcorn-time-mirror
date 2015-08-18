@@ -131,7 +131,7 @@
             });
 
             // display stars or number
-            if (!AdvSettings.get('ratingStars')) {
+            if (AdvSettings.get('ratingStars') === false) {
                 $('.star-container').addClass('hidden');
                 $('.number-container').removeClass('hidden');
             }

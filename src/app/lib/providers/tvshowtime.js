@@ -62,7 +62,7 @@
                 'client_id': API_CLIENT_ID
             })
             .then(function (data) {
-                data = JSON.parse(data);
+                data = Common.sanitize(JSON.parse(data));
                 if (data.result === 'OK') {
                     var activateUri = data.verification_url + '?user_code=' + data.user_code;
                     self.oauthAuthorizing = setInterval(function () {
@@ -122,15 +122,23 @@
     };
 
     function onShowWatched(show, channel) {
+<<<<<<< HEAD
         if (App.TVShowTime.authenticated && channel === 'seen') {
             win.debug('TVShow Time: report %s as watched', show.episode_id);
+=======
+        if (App.TVShowTime.authenticated) {
+>>>>>>> master
             App.TVShowTime.checkin(show);
         }
     }
 
     function onShowUnWatched(show, channel) {
+<<<<<<< HEAD
         if (App.TVShowTime.authenticated && channel === 'seen') {
             win.debug('TVShow Time: report %s as unwatched', show.episode_id);
+=======
+        if (App.TVShowTime.authenticated) {
+>>>>>>> master
             App.TVShowTime.checkout(show);
         }
     }

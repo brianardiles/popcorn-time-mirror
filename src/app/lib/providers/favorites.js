@@ -43,9 +43,9 @@
                     .then(function (data) {
                         data.type = 'bookmarkedshow';
                         data.imdb = data.imdb_id;
-                        // Fallback for old bookmarks without provider in database
-                        if (typeof (data.provider) === 'undefined') {
-                            data.provider = 'Eztv';
+                        // Fallback for old bookmarks without provider in database or marked as Eztv
+                        if (typeof (data.provider) === 'undefined' || data.provider === 'Eztv') {
+                            data.provider = 'TVApi';
                         }
                         // This is an old boxart, fetch the latest boxart
                         if (/slurm.trakt.us/.test(data.images.poster)) {

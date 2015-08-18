@@ -31,12 +31,14 @@
 
 
     browser.on('deviceOn', function (device) {
+
         collection.add(new Airplay({
             device: device
         }));
     });
 
     browser.on('deviceOff', function (device) {
+
         var model = collection.get({
             id: makeID(device.id)
         });
@@ -44,7 +46,8 @@
             model.destroy();
         }
     });
-
+    win.info('Scanning: Local Network for Airplay devices');
+    browser.start();
     App.Device.Airplay = Airplay;
 
 })(window.App);

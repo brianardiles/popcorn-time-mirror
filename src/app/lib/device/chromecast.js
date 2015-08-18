@@ -86,6 +86,10 @@
         },
 
         stop: function () {
+          win.info('Closing Chromecast Casting');
+          App.vent.trigger('stream:stop');
+          App.vent.trigger('player:close');
+          App.vent.trigger('torrentcache:stop');
             var device = this.get('device');
             // Also stops player and closes connection.
             device.stop(function () {
@@ -133,7 +137,10 @@
         updateStatus: function () {
             var self = this;
 
-            this.get('device').getStatus(function (status) {
+            this.get('device').getStatus(function (err, status) {
+                if (err) {
+                    return win.info('Chromecast.updateStatus:Error', err);
+                }
                 self._internalStatusUpdated(status);
             });
         },

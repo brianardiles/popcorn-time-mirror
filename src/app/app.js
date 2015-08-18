@@ -51,7 +51,7 @@ win.error = function () {
     var params = Array.prototype.slice.call(arguments, 1);
     params.unshift('%c[%cERROR%c] ' + arguments[0], 'color: black;', 'color: red;', 'color: black;');
     console.error.apply(console, params);
-    fs.appendFileSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'), '\n\n' + arguments[0]); // log errors;
+    fs.appendFileSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'), '\n\n' + (arguments[0].stack || arguments[0])); // log errors;
 };
 
 
@@ -119,7 +119,7 @@ App.addRegions({
     Window: '.main-window-region'
 });
 
-// Menu for mac 
+// Menu for mac
 if (os.platform() === 'darwin') {
     var nativeMenuBar = new gui.Menu({
         type: 'menubar'
@@ -336,17 +336,7 @@ Mousetrap.bind('mod+,', function (e) {
 });
 Mousetrap.bind('f11', function (e) {
     Settings.deleteTmpOnClose = false;
-    var spawn = require('child_process').spawn,
-        argv = gui.App.fullArgv,
-        CWD = process.cwd();
-
-    argv.push(CWD);
-    spawn(process.execPath, argv, {
-        cwd: CWD,
-        detached: true,
-        stdio: ['ignore', 'ignore', 'ignore']
-    }).unref();
-    gui.App.quit();
+    App.vent.trigger('restartPopcornTime');
 });
 Mousetrap.bind(['?', '/', '\''], function (e) {
     e.preventDefault();
@@ -536,7 +526,7 @@ if (gui.App.fullArgv.indexOf('-m') !== -1) {
 }
 
 
-// Show 404 page on uncaughtException
+// On uncaught exceptions, log to console.
 process.on('uncaughtException', function (err) {
     try {
         if (err.message.indexOf('[sprintf]') !== -1) {

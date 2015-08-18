@@ -91,7 +91,6 @@
                 }
             });
 
-
             this.setupSubs();
         },
 
@@ -106,6 +105,7 @@
             } else {
                 this.player = 'local';
             }
+            //TODO: this.checkFreeSpace(this.model.get('streamInfo').get('size'));
             this.StateUpdate();
         },
 
@@ -398,6 +398,55 @@
                     }).catch(function (err) {
                         tryMovie(tvshowname);
                     });
+            }
+        },
+
+        checkFreeSpace: function (size) {
+            if (!size) {
+                return;
+            }
+            size = size / (1024 * 1024 * 1024);
+            var reserved = size * 20 / 100;
+            reserved = reserved > 0.25 ? 0.25 : reserved;
+            var minspace = size + reserved;
+
+            var exec = require('child_process').exec,
+                cmd;
+
+            if (process.platform === 'win32') {
+                var drive = Settings.tmpLocation.substr(0, 2);
+
+                cmd = 'dir /-C ' + drive;
+
+                exec(cmd, function (error, stdout, stderr) {
+                    if (error) {
+                        return;
+                    }
+                    var stdoutParse = stdout.split('\n');
+                    stdoutParse = stdoutParse[stdoutParse.length - 1] !== '' ? stdoutParse[stdoutParse.length - 1] : stdoutParse[stdoutParse.length - 2];
+                    var regx = stdoutParse.match(/(\d+)/g);
+                    if (regx !== null) {
+                        var freespace = regx[regx.length - 1] / (1024 * 1024 * 1024);
+                        if (freespace < minspace) {
+                            $('#player .warning-nospace').css('display', 'block');
+                        }
+                    }
+                });
+            } else {
+                var path = Settings.tmpLocation;
+
+                cmd = 'df -Pk "' + path + '" | awk \'NR==2 {print $4}\'';
+
+                exec(cmd, function (error, stdout, stderr) {
+                    if (error) {
+                        return;
+                    }
+
+                    var freespace = stdout.replace(/\D/g, '') / (1024 * 1024);
+                    if (freespace < minspace) {
+                        $('#player .warning-nospace').css('display', 'block');
+                    }
+                });
             }
         }
 

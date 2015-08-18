@@ -223,6 +223,15 @@
                     padding-left: 4px
                     padding-right: 8px
 
+            .reset-tvAPI
+                font-size: 13px
+                color: $SettingsText2
+                transition: all .5s;
+                &:hover
+                    cursor: pointer;
+                    color: $ButtonBgActive;
+                    transition: all .5s;
+
         #cache
             .open-tmp-folder
                 font-size: 16px
@@ -285,10 +294,10 @@
                 &:active
                     background-color $ButtonBgDisabled
 
-            &.green
-                background-color #27AE60
-            &.red
-                background-color #F15153
+            &.ok
+                background-color $ButtonBgOk
+            &.warning
+                background-color $ButtonBgWarning
             &:active
                 box-shadow: inset 0 1px 4px rgba(0,0,0,0.6)
                 background: $ButtonBgActive
@@ -373,6 +382,10 @@
         font-size 13px
         cursor text
         outline 0 !important
+		
+        &#fakedatabaseLocation
+            pointer-events: none
+            -webkit-user-select: none;
 
         &#fakedatabaseLocation,&#settingsIpAddr
             pointer-events: none

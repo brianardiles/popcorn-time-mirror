@@ -1,4 +1,4 @@
-# [Popcorn Time](https://git.popcorntime.io/popcorntime/desktop/tree/master) [![Build Status](http://ci.popcorntime.io/job/Popcorn-Time/badge/icon)](http://ci.popcorntime.io/job/Popcorn-Time/)
+# [Popcorn Time](https://git.popcorntime.io/popcorntime/desktop/tree/master) [![Build Status](http://ci.popcorntime.io/job/Popcorn-Desktop/badge/icon)](http://ci.popcorntime.io/job/Popcorn-Desktop/)
 
 Allow any computer user to watch movies easily streaming from torrents, without any particular knowledge.
 
@@ -26,7 +26,6 @@ The [master](https://git.popcorntime.io/popcorntime/desktop/tree/master) branch 
 1. `npm install`
 1. `grunt build`
 1. `grunt start`
-
 
 If you encounter trouble with the above method, you can try:
 
@@ -84,4 +83,4 @@ You should have received a copy of the GNU General Public License along with thi
 
 If you want to contact us : [hello@popcorntime.io](mailto:hello@popcorntime.io)
  
-Copyright (c) 2014 Popcorn Time Foundation - Released under the [GLV v3 license](LICENSE.txt).
+Copyright (c) 2015 Popcorn Time Foundation - Released under the [GPL v3 license](LICENSE.txt).

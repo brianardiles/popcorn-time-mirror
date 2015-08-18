@@ -337,6 +337,13 @@ LangString desktopShortcut ${LANG_Welsh} "Llwybr Byr ar y Bwrdd Gwaith"
 ; ------------------- ;
 ;    Install code     ;
 ; ------------------- ;
+Function .onInit ; check for previous version
+    ReadRegStr $0 HKCU "${UNINSTALL_KEY}" "InstallString"
+    StrCmp $0 "" done
+    StrCpy $INSTDIR $0
+done:
+FunctionEnd
+
 Section ; Node Webkit Files
 
     ;Delete existing install

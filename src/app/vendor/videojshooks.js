@@ -460,6 +460,47 @@ vjs.ErrorDisplay.prototype.update = function () {
     }
 };
 
+/**
+ * The custom progressbar we create. Updated in player.js
+ *
+ * @constructor
+ */
+vjs.LoadProgressBar = vjs.Component.extend({
+    init: function (player, options) {
+        vjs.Component.call(this, player, options);
+        this.on(player, 'progress', this.update);
+    }
+});
+vjs.LoadProgressBar.prototype.createEl = function () {
+    return vjs.Component.prototype.createEl.call(this, 'div', {
+        className: 'vjs-load-progress',
+        innerHTML: '<span class="vjs-control-text"><span>Loaded</span>: 0%</span>'
+    });
+};
+vjs.LoadProgressBar.prototype.update = function () {
+    return;
+};
+
+//Display our own error
+var suggestedExternal = function () {
+    var link = '<a href="http://www.videolan.org/vlc/" class="links">VLC</a>';
+    try {
+        App.Device.Collection.models.forEach(function (player) {
+            link = (player.id === 'VLC') ? player.id : link;
+        });
+    } catch (e) {}
+    return link;
+};
+vjs.ErrorDisplay.prototype.update = function () {
+    if (this.player().error()) {
+        if (this.player().error().message === 'The video playback was aborted due to a corruption problem or because the video used features your browser did not support.') {
+            this.contentEl_.innerHTML = i18n.__('The video playback encountered an issue. Please try an external player like %s to view this content.', suggestedExternal());
+        } else {
+            this.contentEl_.innerHTML = this.player().error().message;
+        }
+    }
+};
+
 // Remove videojs key listeners
 vjs.Button.prototype.onKeyPress = function (event) {
     return;

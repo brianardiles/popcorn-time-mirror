@@ -36,6 +36,7 @@
             'click #unauthTrakt': 'disconnectTrakt',
             'click #connect-with-tvst': 'connectWithTvst',
             'click #disconnect-tvst': 'disconnectTvst',
+            'click .reset-tvAPI': 'resetTVShowAPI',
             'change #tmpLocation': 'updateCacheDirectory',
             'click #syncTrakt': 'syncTrakt',
             'click .qr-code': 'generateQRcode',
@@ -125,6 +126,29 @@
             App.vent.trigger('settings:close');
         },
 
+        resetTVShowAPI: function () {
+            var value = [{
+                url: 'https://eztvapi.re/',
+                strictSSL: true
+            }, {
+                url: 'https://api.popcorntime.io/',
+                strictSSL: true
+            }, {
+                url: 'http://tv.ytspt.re/',
+                strictSSL: false
+            }];
+            App.settings['tvAPI'] = value;
+            //save to db
+            App.db.writeSetting({
+                key: 'tvAPI',
+                value: value
+            }).then(function () {
+                that.ui.success_alert.show().delay(3000).fadeOut(400);
+            });
+
+            that.syncSetting('tvAPI', value);
+        },
+
         generateQRcode: function () {
             var qrcodecanvus = document.getElementById('qrcode'),
                 QRCodeInfo = {
@@ -163,7 +187,7 @@
                 apiDataChanged = true;
                 value = parseInt(field.val());
                 break;
-            case 'tvshowAPI':
+            case 'tvAPI':
                 value = field.val();
                 if (value.substr(-1) !== '/') {
                     value += '/';
@@ -171,11 +195,10 @@
                 if (value.substr(0, 8) !== 'https://' && value.substr(0, 7) !== 'http://') {
                     value = 'http://' + value;
                 }
-                value = {
+                value = [{
                     url: value,
-                    index: 0,
-                    proxies: ['']
-                };
+                    strictSSL: value.substr(0, 8) === 'https://'
+                }];
                 break;
             case 'subtitle_size':
             case 'tv_detail_jump_to':
@@ -327,8 +350,8 @@
                 App.vent.trigger('movies:list');
                 App.vent.trigger('settings:show');
                 break;
-            case 'tvshowAPI':
-                App.Providers.delete('Eztv');
+            case 'tvAPI':
+                App.Providers.delete('TVApi');
                 App.vent.trigger('movies:list');
                 App.vent.trigger('settings:show');
                 break;
@@ -427,7 +450,6 @@
                     icon: 'src/app/images/icon.png',
                     toolbar: false,
                     resizable: false,
-                    show_in_taskbar: false,
                     width: 600,
                     height: 600
                 });
@@ -513,17 +535,7 @@
         },
 
         restartApplication: function () {
-            var spawn = require('child_process').spawn,
-                argv = gui.App.fullArgv,
-                CWD = process.cwd();
-
-            argv.push(CWD);
-            spawn(process.execPath, argv, {
-                cwd: CWD,
-                detached: true,
-                stdio: ['ignore', 'ignore', 'ignore']
-            }).unref();
-            gui.App.quit();
+            App.vent.trigger('restartPopcornTime');
         },
 
         showCacheDirectoryDialog: function () {
@@ -591,7 +603,7 @@
 
         areYouSure: function (btn, waitDesc) {
             if (!btn.hasClass('confirm')) {
-                btn.addClass('confirm red').css('width', btn.css('width')).text(i18n.__('Are you sure?'));
+                btn.addClass('confirm warning').css('width', btn.css('width')).text(i18n.__('Are you sure?'));
                 return false;
             }
             btn.text(waitDesc).addClass('disabled').prop('disabled', true);
@@ -599,46 +611,45 @@
         },
 
         alertMessageWait: function (waitDesc) {
-            var $el = $('#notification');
-
-            $el.removeClass().addClass('red').show();
-            $el.html('<h1>' + i18n.__('Please wait') + '...</h1><p>' + waitDesc + '.</p>');
-            $('body').addClass('has-notification');
+            App.vent.trigger('notification:show', new App.Model.Notification({
+                title: i18n.__('Please wait') + '...',
+                body: waitDesc + '.',
+                type: 'danger'
+            }));
         },
 
         alertMessageSuccess: function (btnRestart, btn, btnText, successDesc) {
-            var $el = $('#notification');
-
-            $el.removeClass().addClass('green');
-            $el.html('<h1>' + i18n.__('Success') + '</h1>');
+            var notificationModel = new App.Model.Notification({
+                title: i18n.__('Success'),
+                body: successDesc,
+                type: 'success'
+            });
 
             if (btnRestart) {
-                // Add restart button
-                $el.append('<p>' + i18n.__('Please restart your application') + '.</p><span class="btn-grp"><a class="btn restart">' + i18n.__('Restart') + '</a></span>');
-                $('.btn.restart').on('click', function () {
-                    that.restartApplication();
-                });
+                notificationModel.set('showRestart', true);
+                notificationModel.set('body', i18n.__('Please restart your application'));
             } else {
-                // Hide notification after 2 seconds
-                $el.append('<p>' + successDesc + '.</p>');
+                // Hide notification after 3 seconds
                 setTimeout(function () {
-                    btn.text(btnText).removeClass('confirm red disabled').prop('disabled', false);
-                    $('body').removeClass('has-notification');
-                    $el.hide();
+                    btn.text(btnText).removeClass('confirm warning disabled').prop('disabled', false);
+                    App.vent.trigger('notification:close');
                 }, 3000);
             }
+
+            // Open the notification
+            App.vent.trigger('notification:show', notificationModel);
         },
 
         alertMessageFailed: function (errorDesc) {
-            var $el = $('#notification');
-
-            $el.html('<h1>' + i18n.__('Error') + '</h1>');
+            App.vent.trigger('notification:show', new App.Model.Notification({
+                title: i18n.__('Error'),
+                body: errorDesc + '.',
+                type: 'danger'
+            }));
 
             // Hide notification after 5 seconds
-            $el.append('<p>' + errorDesc + '.</p>');
             setTimeout(function () {
-                $('body').removeClass('has-notification');
-                $el.hide();
+                App.vent.trigger('notification:close');
             }, 5000);
         },
 
@@ -659,11 +670,11 @@
                     $('#syncTrakt')
                         .text(i18n.__('Done'))
                         .removeClass('disabled')
-                        .addClass('green')
+                        .addClass('ok')
                         .delay(3000)
                         .queue(function () {
                             $('#syncTrakt')
-                                .removeClass('green')
+                                .removeClass('ok')
                                 .prop('disabled', false);
                             document.getElementById('syncTrakt').innerHTML = oldHTML;
                             $('#syncTrakt').dequeue();
@@ -674,11 +685,11 @@
                     $('#syncTrakt')
                         .text(i18n.__('Error'))
                         .removeClass('disabled')
-                        .addClass('red')
+                        .addClass('warning')
                         .delay(3000)
                         .queue(function () {
                             $('#syncTrakt')
-                                .removeClass('red')
+                                .removeClass('warning')
                                 .prop('disabled', false);
                             document.getElementById('syncTrakt').innerHTML = oldHTML;
                             $('#syncTrakt').dequeue();

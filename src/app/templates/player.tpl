@@ -11,8 +11,8 @@
             <i class="fa fa-eye eye-info-player"></i>
             <div class="details-info-player">
                 <div class="arrow-up"></div>
-                <span class="speed-info-player"><%= i18n.__("Download") %>:&nbsp;</span><span class="download_speed_player value">0 B/s</span><br>
-                <span class="speed-info-player"><%= i18n.__("Upload") %>:&nbsp;</span><span class="upload_speed_player value">0 B/s</span><br>
+                <span class="speed-info-player"><%= i18n.__("Download") %>:&nbsp;</span><span class="download_speed_player value"><%= Common.fileSize(0) %>/s</span><br>
+                <span class="speed-info-player"><%= i18n.__("Upload") %>:&nbsp;</span><span class="upload_speed_player value"><%= Common.fileSize(0) %>/s</span><br>
                 <span class="speed-info-player"><%= i18n.__("Active Peers") %>:&nbsp;</span><span class="active_peers_player value">0</span><br>
                 <span class="speed-info-player"><%= i18n.__("Downloaded") %>:&nbsp;</span><span class="downloaded_player value">0</span>
             </div>
@@ -21,11 +21,22 @@
 </div>
 <div class="trailer_mouse_catch"></div>
 <div class="playing_next vjs-control-window">
-    <p><%= i18n.__("Playing Next Episode in") %>: 
-        <span id="nextCountdown">60</span>
-    </p>
-    <div class="auto-next-btn playnownext"><%= i18n.__("Play Now") %></div>
-    <div class="auto-next-btn playnownextNOT"><%= i18n.__("No thank you") %></div>
+    <div class="pn_poster">
+        <img class="playing_next_poster" src="images/posterholder.png">
+    </div>
+    <div class="pn_epinfo">
+        <p class="playing_next_show"></p>
+        <p class="playing_next_episode"></p>
+        <p class="playing_next_number"></p>
+    </div>
+    <div class="pn_counter">
+        <p class="playing_next_countertext"><%= i18n.__("Playing Next") %></p>
+        <p id="nextCountdown">60</p>
+    </div>
+    <div class="pn_btns">
+        <div class="auto-next-btn playnownextNOT"><%= i18n.__("No thank you") %></div>
+        <div class="auto-next-btn playnownext"><%= i18n.__("Play Now") %></div>
+    </div>
 </div>
 <%
             if(type === 'trailer'){

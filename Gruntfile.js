@@ -56,12 +56,14 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('css', [
-        'officalcss'
+        'stylus:official'
     ]);
 
     grunt.registerTask('themes', [
         'shell:themes',
-        'unofficalcss'
+        'clean:css',
+        'stylus:official',
+        'stylus:third_party'
     ]);
 
     grunt.registerTask('js', [
@@ -69,10 +71,10 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build', [
-        'css',
         'injectgit',
         'bower_clean',
         'lang',
+        'themes',
         'nodewebkit',
         'shell:setexecutable'
     ]);
@@ -107,14 +109,6 @@ module.exports = function (grunt) {
             grunt.log.writeln('OS not supported.');
         }
     });
-
-    grunt.registerTask('officalcss', [
-        'stylus:offical'
-    ]);
-    grunt.registerTask('unofficalcss', [
-        'clean:css',
-        'stylus:third_party'
-    ]);
 
     grunt.registerTask('package', [
         'shell:packageLinux64',
@@ -181,12 +175,12 @@ module.exports = function (grunt) {
                     paths: ['src/app/styl']
                 },
                 expand: true,
-                cwd: 'src/app/styl/third_party',
-                src: '*.styl',
+                cwd: 'src/app/styl',
+                src: 'third_party/*.styl',
                 dest: 'src/app/themes/',
                 ext: '.css'
             },
-            offical: {
+            official: {
                 options: {
                     'resolve url': true,
                     use: ['nib'],
@@ -216,9 +210,15 @@ module.exports = function (grunt) {
                 download_url: 'http://get.popcorntime.io/nw/'
             },
             src: ['./src/**', '!./src/app/styl/**',
-                './node_modules/**', '!./node_modules/bower/**', '!./node_modules/*grunt*/**', '!./node_modules/stylus/**',
-                '!./**/test*/**', '!./**/doc*/**', '!./**/example*/**', '!./**/demo*/**', '!./**/bin/**', '!./**/build/**', '!./**/.*/**',
-                './package.json', './README.md', './CHANGELOG.md', './LICENSE.txt', './.git.json'
+                './node_modules/**', '!./node_modules/bower/**',
+                '!./node_modules/*grunt*/**', '!./node_modules/stylus/**',
+                '!./node_modules/nw-gyp/**', '!./node_modules/**/*.bin',
+                '!./node_modules/**/*.c', '!./node_modules/**/*.h',
+                '!./node_modules/**/Makefile', '!./node_modules/**/*.h',
+                '!./**/test*/**', '!./**/doc*/**', '!./**/example*/**',
+                '!./**/demo*/**', '!./**/bin/**', '!./**/build/**', '!./**/.*/**',
+                './package.json', './README.md', './CHANGELOG.md', './LICENSE.txt',
+                './.git.json'
             ]
         },
 

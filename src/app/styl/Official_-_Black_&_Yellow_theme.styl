@@ -5,6 +5,7 @@
     YellowL = #f3cc16
     YellowM = #ffe035
     YellowD = #ffcc00
+    YellowD2 = #e3bd0c
 
 //Fonts
     $Font = 'Open Sans'
@@ -26,11 +27,11 @@
     $CloseButton = #fff
     $CloseButtonHover = YellowL
 
-    $SpinnerColor1 = #e3bd0c
-    $SpinnerColor2 = #FFCC00
+    $SpinnerColor1 = YellowD2
+    $SpinnerColor2 = YellowD
     
     $ScrollBarBg = #30333c
-    $ScrollBarThumb = #e3bd0c
+    $ScrollBarThumb = YellowD2
     $ScrollBarThumbHover = YellowD
     
 //Top Bar
@@ -64,7 +65,9 @@
     $ButtonBgActive = YellowD
     
     $ButtonBgDisabled = #737577
-    $ButtonBgDisabled = $ButtonBgDisabled
+
+    $ButtonBgOk = #27AE60
+    $ButtonBgWarning = #F15153
     
     $ButtonText = #000
     $ButtonTextHover = #000
@@ -93,7 +96,7 @@
     $SaisonListText = $Text1
     $EpisodeListText = $Text2
 
-    $EpisodeSelectorBg = darken(#e3bd0c,2%)
+    $EpisodeSelectorBg = darken(YellowD2,2%)
     $EpisodeSelectorHover = #26272d
     $EpisodeSelectorText = $ButtonText
 
@@ -121,10 +124,26 @@
     $SettingsButtonText = $ButtonText
     $SettingsButtonTextHover = $ButtonText
 
+// Notifications
+    $NotificationText = #fff
+    $NotificationInfo = #3498DB
+    $NotificationSuccess = #27AE60
+    $NotificationWarning = #dbb756
+    $NotificationOrange = #f07f53
+    $NotificationError = #f15153
+    $NotificationBorderColor = #000
+
+    $NotificationBtn = #000
+    $NotificationBtnText = #fff
+
+    $NotifAlertBg = #000
+    $NotifAlertText = #fff
+
 //Misc
     $FavoriteColor = #df2d37
     $WarningColor = #FFA500
-    $PngLogo = brightness(1)
+    $PngLogo = brightness(1.0)
+    $PngLogo_BgColo1 = brightness(1.0)
     
 //Player
     $PlayerColor = YellowL
@@ -132,4 +151,4 @@
     
 // OFFICIAL POPCORN-THEME: BLACK AND YELLOW - END
 
-@import 'views/app' 
+@import 'views/app'

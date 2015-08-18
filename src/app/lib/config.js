@@ -33,14 +33,16 @@
 
         sorters: [
             'popularity',
+            'trending',
             'last added',
             'year',
-            'rating',
-            'title'
+            'title',
+            'rating'
         ],
 
         sorters_tv: [
             'popularity',
+            'trending',
             'updated',
             'year',
             'name',
@@ -145,7 +147,7 @@
 
         providers: {
             movie: ['Yts'],
-            tvshow: ['Eztv'],
+            tvshow: ['TVApi'],
             anime: ['Haruhichan'],
             subtitle: 'YSubs',
             metadata: 'Trakttv',

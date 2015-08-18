@@ -105,7 +105,7 @@
             } else if (response.statusCode >= 400) {
                 defer.resolve({});
             } else {
-                defer.resolve(JSON.parse(body));
+                defer.resolve(Common.sanitize(JSON.parse(body)));
             }
         });
 
@@ -137,7 +137,7 @@
             } else if (response.statusCode >= 400) {
                 defer.resolve({});
             } else {
-                defer.resolve(JSON.parse(body));
+                defer.resolve(Common.sanitize(JSON.parse(body)));
             }
         });
 
@@ -206,6 +206,9 @@
     };
 
     TraktTv.prototype.scrobble = function (action, type, id, progress) {
+        if (!isValid(id)) {
+            return;
+        }
         if (type === 'movie') {
             return this.post('scrobble/' + action, {
                 movie: {
@@ -334,6 +337,9 @@
             }
         },
         addToHistory: function (type, id) {
+            if (!isValid(id)) {
+                return;
+            }
             if (type === 'movie') {
                 return this.post('sync/history', {
                     movies: [{
@@ -354,6 +360,9 @@
             }
         },
         removeFromHistory: function (type, id) {
+            if (!isValid(id)) {
+                return;
+            }
             if (type === 'movie') {
                 return this.post('sync/history/remove', {
                     movies: [{
@@ -419,7 +428,7 @@
             var defer = Q.defer();
             var url = false;
 
-            var API_URI = 'http://trakt.tv';
+            var API_URI = 'https://trakt.tv';
             var OAUTH_URI = API_URI + '/oauth/authorize?response_type=code&client_id=' + CLIENT_ID;
 
             var gui = require('nw.gui');
@@ -431,7 +440,6 @@
                 icon: 'src/app/images/icon.png',
                 toolbar: false,
                 resizable: false,
-                show_in_taskbar: false,
                 width: 600,
                 height: 600
             });
@@ -498,10 +506,13 @@
     };
 
     TraktTv.prototype.syncTrakt = {
+        isSyncing: function () {
+            return this.syncing && this.syncing.isPending();
+        },
         all: function () {
             var self = this;
             AdvSettings.set('traktLastSync', new Date().valueOf());
-            return Q.all([self.syncTrakt.movies(), self.syncTrakt.shows()]);
+            return this.syncing = Q.all([self.syncTrakt.movies(), self.syncTrakt.shows()]);
         },
         movies: function () {
             return this.sync.getWatched('movies')
@@ -644,8 +655,24 @@
     }
 
     function onMoviesWatched(movie, channel) {
-        if (App.Trakt.authenticated && channel === 'seen') {
-            win.debug('Trakt: report %s as watched', movie.imdb_id);
+        win.debug('Mark Movie as watched on channel:', channel);
+        switch (channel) {
+        case 'database':
+            switch (Settings.watchedCovers) {
+            case 'fade':
+                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"] .actions-watched').addClass('selected');
+                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"]').addClass('watched');
+                break;
+            case 'hide':
+                $('li[data-imdb-id="' + App.MovieDetailView.model.get('imdb_id') + '"]').remove();
+                break;
+            }
+            $('.watched-toggle').addClass('selected').text(i18n.__('Seen'));
+            App.MovieDetailView.model.set('watched', true);
+            break;
+        case 'seen':
+            /* falls through */
+        default:
             App.Trakt.sync.addToHistory('movie', movie.imdb_id);
         }
     }
@@ -656,6 +683,14 @@
             App.Trakt.sync.removeFromHistory('movie', movie.imdb_id);
         }
     }
+
+    var isValid = function (id) {
+        if (!id || id.toString().indexOf('mal') > -1 || id.toString().indexOf('-') > -1) {
+            return false;
+        } else {
+            return true;
+        }
+    };
 
     App.vent.on('show:watched', onShowWatched);
     App.vent.on('show:unwatched', onShowUnWatched);

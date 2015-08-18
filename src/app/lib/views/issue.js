@@ -20,13 +20,36 @@
             'click .issue-title': 'showIssueDetails',
             'click .found-issue': 'closeIssue',
             'click .notfound-issue': 'newIssue',
-            'click .anonymous-issue': 'anonIssue',
+            //'click .anonymous-issue': 'anonIssue',
             'click .login-issue': 'login'
         },
 
         onShow: function () {
+            if (AdvSettings.get('gitlabPassword') && AdvSettings.get('gitlabMail')) {
+                $('#issue-email').val(AdvSettings.get('gitlabMail')),
+                    $('#issue-pw').val(AdvSettings.get('gitlabPassword'));
+            }
+
+            $('#issue-content').on('keyup', function (e) {
+                var userInput = document.getElementById('issue-content').value.replace(/(\w|\W)\1{3}/igm, '').length;
+                if (userInput > 200) {
+                    $('#issue-length').hide();
+                } else {
+                    $('#issue-length').show().text('(' + userInput + '/200)');
+                }
+            });
+
             Mousetrap.bind(['esc', 'backspace'], function (e) {
                 App.vent.trigger('issue:close');
+            });
+            Mousetrap(document.getElementById('issue-pw')).bind(['enter'], function (e, combo) {
+                $('.login-issue').click();
+            });
+            Mousetrap(document.getElementById('issue-email')).bind(['enter'], function (e, combo) {
+                $('.login-issue').click();
+            });
+            Mousetrap(document.getElementById('issue-search-field')).bind(['enter'], function (e, combo) {
+                $('.search-issue').click();
             });
         },
 
@@ -41,9 +64,12 @@
                 results = [];
 
             gitlab.projects.issues.list(PT_id, function (data) {
-
+                data = Common.sanitize(data);
                 //stores in 'results' all issues (id + title) containing the keyword
                 data.forEach(function (item) {
+                    if (item.state === 'closed') {
+                        return;
+                    }
                     issue_desc =
                         item.description.toLowerCase() + ' ' + item.title.toLowerCase();
 
@@ -62,8 +88,10 @@
 
                 //interpret results
                 if (results.length === 0) {
+                    $('.search-issue').removeClass('fa-spinner fa-spin').addClass('fa-search');
                     $('#issue-results').append('<p>' + i18n.__('No issues found...') + '</p>');
                 } else {
+                    $('.search-issue').removeClass('fa-spinner fa-spin').addClass('fa-search');
                     var newLine = function (id, title, description) {
                         $('#issue-results').append(
                             '<li>' + '<a class="issue-title">' + title + '</a>' + '<div class="issue-details">' + '<p>' + description + '</p>' + '<a class="links" href="' + PT_url + id + '">' + i18n.__('Open in your browser') + '</a>' + '</div>' + '</li>'
@@ -111,6 +139,11 @@
         },
 
         reportBug: function (title, content, token) {
+            var that = this;
+            if (this.isReporting) {
+                return;
+            }
+            this.isReporting = true;
 
             var gitlab = require('gitlab')({
                 url: 'https://git.popcorntime.io/',
@@ -131,7 +164,7 @@
                     labels: 'In-App Reporter'
                 },
                 function (callback) {
-
+                    callback = Common.sanitize(callback);
                     issue_id = PT_url + callback.iid;
 
                     win.debug('Issue created:', issue_id);
@@ -141,6 +174,7 @@
 
                     $('#issue-form').hide();
                     $('#issue-success').show();
+                    that.isReporting = false;
 
                 }
             );
@@ -148,12 +182,17 @@
 
         login: function () {
             var that = this;
+            $('#issue-auth .issue-loading-icon').show();
             this.getToken(function (data) {
                 if (data) {
                     token = data;
                     win.debug('GitLab API: auth success');
+                    AdvSettings.set('gitlabMail', $('#issue-email').val());
+                    AdvSettings.set('gitlabPassword', $('#issue-pw').val());
+                    $('#issue-auth .issue-loading-icon').hide();
                     that.anonIssue();
                 } else {
+                    $('#issue-auth .issue-loading-icon').hide();
                     $('.notification_alert').show().text(i18n.__('Invalid credentials')).delay(2500).fadeOut(400);
                 }
             });
@@ -181,7 +220,7 @@
                 $('.notification_alert').show().text(i18n.__('Fields cannot be empty')).delay(2500).fadeOut(400);
                 return;
             }
-            if (content.length < 200) {
+            if (content.replace(/(\w|\W)\1{3}/igm, '').length < 200) {
                 $('.notification_alert').show().text(i18n.__('200 characters minimum')).delay(2500).fadeOut(400);
                 return;
             }
@@ -194,12 +233,14 @@
         },
 
         searchIssue: function () {
+            $('.search-issue').removeClass('fa-search').addClass('fa-spinner fa-spin');
             document.getElementById('issue-results').innerHTML = ''; //clear
 
             var keyword = $('#issue-search-field').val();
 
             if (!keyword) {
                 $('.notification_alert').show().text(i18n.__('Fields cannot be empty')).delay(2500).fadeOut(400);
+                $('.search-issue').removeClass('fa-spinner fa-spin').addClass('fa-search');
                 return;
             }
             this.searchGitLab(keyword);

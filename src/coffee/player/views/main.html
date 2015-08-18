@@ -19,12 +19,12 @@
 
     <wc-detail ng-hide="ctrl.state.player.torrent" config="ctrl.config" state="ctrl.state"></wc-detail>
 
-    <div ng-if="ctrl.state.player.torrent">
-        <wc-top-controls ng-if="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+    <div ng-if="ctrl.state.player.torrent" ng-init="wcAutohideClass = { value: 'hide-animation' }">
+        <wc-top-controls ng-show="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
             <wc-close-button></wc-close-button>
         </wc-top-controls>
 
-        <wc-bottom-controls ng-if="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+        <wc-bottom-controls ng-show="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
             <wc-play-pause-button></wc-play-pause-button>
             <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>
             

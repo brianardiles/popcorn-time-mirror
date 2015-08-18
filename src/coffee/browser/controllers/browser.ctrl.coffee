@@ -20,17 +20,32 @@ angular.module 'com.module.browser'
 
   return 
 
-.controller 'browserListCtrl', ($sce, $scope, TVApi, YTS, Haruhichan, genres, sorters, types) ->
+.controller 'browserListCtrl', ($interval, $sce, $scope, TVApi, YTS, Haruhichan, genres, sorters, types) ->
   vm = this
 
   page = null
   data = null
+  bgCycler = null
 
+  vm.activeBgImageIndex = 0
+
+  vm.cycleBgImages = ->
+    if bgCycler
+      $interval.cancel bgCycler
+
+    cycle = ->
+      if vm.bgImages
+        selectedKey = vm.activeBgImageIndex++ % vm.bgImagesKeys.length
+        vm.backdrop = vm.bgImages[vm.bgImagesKeys[selectedKey]].images?.fanart
+
+    bgCycler = $interval cycle, 10000
+
+    cycle()
+  
   getBackdrop = (results) ->
-    for first, item of results
-      if item.images.fanart
-        vm.backdrop = item.images.fanart
-        break
+    vm.bgImages = results
+    vm.bgImagesKeys = Object.keys results
+    vm.cycleBgImages()
 
   $scope.$watch 'list.state.type', (newListType, oldListType) ->
     if newListType isnt oldListType or not page

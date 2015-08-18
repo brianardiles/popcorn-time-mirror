@@ -6,7 +6,7 @@ angular.module 'com.module.common'
   restrict: 'A'
   scope: { torrents: '=', selected: '=' }
   bindToController: true
-  templateUrl: 'common/views/tv-quality.html'
+  templateUrl: 'common/views/quality-selector.html'
   controller: 'qualityCtrl as quality'
 
 .controller 'qualityCtrl', ->
@@ -17,24 +17,6 @@ angular.module 'com.module.common'
   vm.select = (quality) ->
     vm.selected = quality
 
-  vm.selected = '0'
+  vm.selected = '0' unless vm.selected
 
   return
-
-.directive 'movieQualitySelector', ->
-  restrict: 'A'
-  scope: { torrents: '=', selected: '=' }
-  bindToController: true
-  templateUrl: 'common/views/movie-quality.html'
-  controller: 'movieQualityCtrl as quality'
-
-.controller 'movieQualityCtrl', ->
-  vm = this
-
-  vm.list = ['720p', '1080p']
-
-  vm.select = (quality) ->
-    vm.selected = quality
-
-  return
-

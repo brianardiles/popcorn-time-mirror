@@ -15,9 +15,6 @@ angular.module 'com.module.webchimera'
 
   api = null
 
-  movieWatcher = ->
-  tvShowWatcher = ->
-
   vm.goBack = ->
     vm.config = playerConfig
     vm.state = show: 'list', type: vm.state.type
@@ -27,7 +24,7 @@ angular.module 'com.module.webchimera'
     vm.currentTorrent = null
     vm.currentQuality = '0'
     vm.selectedSeason = null
-    vm.selectedEpisode = null
+    vm.selected = null
     vm.currentDevice = Settings.chosenPlayer
     vm.state.torrentId = null
     vm.data = null
@@ -42,54 +39,46 @@ angular.module 'com.module.webchimera'
     
     if vm.seasons[seasonIndex]
       for first of vm.seasons[seasonIndex]
-        vm.selectedEpisode = vm.seasons[seasonIndex][first]
+        vm.selected = vm.seasons[seasonIndex][first]
         break
-    else vm.selectedEpisode = vm.currentTorrent = null
+    else vm.selected = vm.currentTorrent = null
 
     vm.currentQuality = '0'
 
-  watchers = 
-    anime: ->
+  getTorrentDetails = (newTorrent) ->
+    api.detail(newTorrent, vm.state.type).then (resp) ->
+      vm.data = resp.data
+      vm.state.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.state.type) 
+      
+      if resp.data.type
+        vm.state.type = resp.data.type
 
-    show: ->
-      movieWatcher()
+      if vm.state.type is 'show'
+        angular.forEach resp.data.episodes, (value, currentEpisode) ->
+          vm.seasons[value.season] ?= {}
+          vm.seasons[value.season][value.episode] = value
+      else
+        vm.selected = resp.data
+        
+        for key, first of resp.data.torrents
+          vm.currentQuality = key
+          break
 
-      tvShowWatcher = $scope.$watch 'show.selectedEpisode.torrents[show.currentQuality]', (newTorrent) ->
-        vm.currentTorrent = newTorrent
+  $scope.$watch 'show.selected.torrents[show.currentQuality]', (newTorrent) ->
+    vm.currentTorrent = newTorrent
 
-      $scope.$watch 'show.selectedSeason', (newSeason) ->
-        vm.selectSeason newSeason
-    movie: ->
-      tvShowWatcher()
-
-      movieWatcher = $scope.$watch 'show.data.torrents[show.currentQuality]', (newTorrent) ->
-        vm.currentTorrent = newTorrent
+  $scope.$watch 'show.selectedSeason', (newSeason) ->
+    vm.selectSeason newSeason
 
   $scope.$watch 'show.state.torrentId', (newTorrent, oldTorrent) ->
     if newTorrent? and newTorrent isnt oldTorrent 
       vm.trakt_url = 'http://www.imdb.com/title/' + newTorrent
-
-      api.detail(newTorrent, vm.state.type).then (resp) ->
-        vm.data = resp.data
-        vm.state.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.state.type) 
-        if resp.data.type
-          vm.state.type = resp.data.type
-
-        if vm.state.type is 'show'
-          angular.forEach resp.data.episodes, (value, currentEpisode) ->
-            vm.seasons[value.season] ?= {}
-            vm.seasons[value.season][value.episode] = value
-        else
-          for key, first of resp.data.torrents
-            vm.currentQuality = key
-            break
+      getTorrentDetails newTorrent
 
     return
 
   $scope.$watch 'show.state.type', (newListType, oldListType) ->
     if newListType isnt oldListType or not api
-      watchers[newListType]()
-
       if newListType is 'anime'
         api = Haruhichan
       else if newListType is 'show'

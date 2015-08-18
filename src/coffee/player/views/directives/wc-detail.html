@@ -31,7 +31,7 @@
             <!-- Poster Image -->
             <img image-loaded ng-if="show.data.images" ng-src="{{ show.data.images.poster | traktSize:'thumb':show.state.type }}" class="poster">
             <!-- Episode Container --> 
-            <pt-episode-container ng-show="show.selectedSeason" episodes="show.seasons[number]" selected-episode="show.selectedEpisode"></pt-episode-container>
+            <pt-episode-container ng-show="show.selectedSeason" episodes="show.seasons[number]" selected-episode="show.selected"></pt-episode-container>
         </md-tab-body>
     </md-tab>
 </md-tabs>

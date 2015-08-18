@@ -2,38 +2,38 @@
 
 angular.module 'com.module.browser'
 
-.directive 'backgroundCycler', ($compile, $animate) ->
+.directive 'backgroundCycler', ($compile, $animate, $q) ->
   restrict: 'E'
   link: (scope, element, attr) ->
+    image = null
 
-    animate = (newImageUrl) ->
-      child = element.children()[0]
-      
-      scope = scope.$new()
-      scope.url = newImageUrl
-      
-      img = $compile('<background-image></background-image>')(scope)
-      
-      $animate.enter img, element, null, ->
-        console.log 'Inserted'
-      
-      if child
-        $animate.leave angular.element(child), ->
-          console.log 'Removed'
+    $animate.enabled element
 
-    scope.$watch 'list.backdrop', (url) ->
-      if url
-        console.log 'Active bg image changed', url
-        animate url
-   
+    scope.$watch 'list.backdrop', (newImageUrl) ->
+      if newImageUrl
+        newScope = scope.$new()
+        newScope.url = newImageUrl
+        
+        animations = []
+
+        if image
+          animations.push $animate.leave image
+
+        image = angular.element '<background-image></background-image>'
+        newImage = $compile(image) newScope
+        
+        animations.push $animate.enter newImage, element, null
+
+        $q.all animations
+
+        return
+
 .directive 'backgroundImage', ($compile, $animate) ->
   restrict: 'E'
-  template: '<div class="list-backdrop fadein"></div>'
+  template: '<div class="bg-image"></div>'
   replace: true
   scope: true
   link: (scope, element, attr) ->
     if scope.url
-      element[0].style.backgroundImage = 'url(' + scope.url + ')'
+      element.css 'background-image': 'url(' + scope.url + ')'
     return
-
-

@@ -6,6 +6,32 @@ main-text-color-inactive = rgba(255, 255, 255, 0.3)
 main-color-accent = rgb(63, 81, 181, 1)
 disabled-text-color = rgb(122, 122, 122, 1)
 
+.bg-image
+    position absolute
+    width 100%
+    top 0
+    height 60vh
+    z-index 1
+    overflow hidden
+    background-size cover
+    background-position top center
+    background-attachment fixed
+    background-repeat no-repeat
+    -webkit-filter brightness(55%)
+    
+.bg-fade >
+  .ng-enter
+    opacity: 0
+    -webkit-transition: opacity 2s ease-in-out
+  .ng-enter-active
+    opacity: 1
+  .ng-leave
+    opacity: 1
+    -webkit-transition: opacity 2s ease-in-out
+  .ng-leave-active
+    opacity: 0
+
+
 .list-region
     height 100vh
     position: absolute
@@ -88,21 +114,7 @@ disabled-text-color = rgb(122, 122, 122, 1)
                     label, input
                         color #fff
 
-        
-    .list-backdrop
-        position absolute
-        width 100%
-        top 0
-        height 60vh
-        z-index 1
-        overflow hidden
-        background-size cover
-        background-position top center
-        background-attachment fixed
-        background-repeat no-repeat
-        -webkit-filter brightness(55%)
-        transition: background-image 300ms ease-in-out
-    
+
     .list 
         z-index 2
             

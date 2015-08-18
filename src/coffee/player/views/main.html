@@ -9,7 +9,7 @@
      wc-auto-play="ctrl.config.autoPlay"
      wc-plays-inline="ctrl.config.playsInline">
 
-    <wc-media wc-src="ctrl.state.torrent.files"
+    <wc-media ng-show="ctrl.state.player.torrent" wc-src="ctrl.state.torrent.files"
               wc-loop="ctrl.config.loop"
               wc-preload="ctrl.config.preload"
               wc-native-controls="ctrl.config.controls">

@@ -3,7 +3,8 @@
 angular.module 'com.module.common'
 
 .factory 'Haruhichan', ($q, $http, Settings, $log, timeoutCache) ->
-  
+  results = {}
+
   statusMap = [
     'Not Airing Yet'
     'Currently Airing'
@@ -19,7 +20,6 @@ angular.module 'com.module.common'
     (if time[1] then time[1] else 0) * 60 + Number(time[2])
 
   formatForPopcorn = (items) ->
-    results = {}
     for idx, item of items
       aired = if item.aired.indexOf(', ') != -1 then item.aired.split(', ')[1] else item.aired
       

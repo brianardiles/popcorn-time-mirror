@@ -1,6 +1,6 @@
 <pt-sidebar state="list.state"></pt-sidebar>
 
-<md-content class="list-region viewfadein" when-scrolled="list.loadMoreItems()" id="content">
+<md-content class="list-region viewfadein" id="content">
   <div class="top-tools">
     <h1 id="section-title" class="title">{{ list.title }}</h1>
 
@@ -14,10 +14,10 @@
     <background-cycler class="bg-fade"></background-cycler>
 
     <md-content layout-padding>
-      <md-grid-list class="list" md-row-height="4:3" md-cols-sm="2" md-cols-gt-sm="3" md-cols-md="4" md-cols-gt-md="5" md-cols-lg="6" md-cols-gt-lg="8" md-gutter-sm="8px" md-gutter-md="12px" md-gutter-lg="16px" md-gutter-gt-lg="16px">
+      <md-grid-list in-view-container class="list" md-row-height="4:3" md-cols-sm="2" md-cols-gt-sm="3" md-cols-md="4" md-cols-gt-md="5" md-cols-lg="6" md-cols-gt-lg="8" md-gutter-sm="8px" md-gutter-md="12px" md-gutter-lg="16px" md-gutter-gt-lg="16px">
 
-        <md-grid-tile md-rowspan="2" ng-repeat="(id, item) in list.data track by id" ng-click="list.state.torrentId = id; list.state.type = item.type; list.state.show = 'player'" class="item" >
-          <div style="display: inline-block; height: 100%; width: 100%">
+        <md-grid-tile in-view="showItem = true" md-rowspan="2" ng-repeat="(id, item) in list.data track by id" ng-click="list.state.torrentId = id; list.state.type = item.type; list.state.show = 'player'" class="item" >
+          <div ng-if="showItem" style="display: inline-block; height: 100%; width: 100%">
             <img image-loaded vibrant colors="colors" ng-src="{{ item.images.poster | traktSize:'thumb':item.type }}" width="100%"/>
             <div class="info" ng-style="colors">
               <md-button class="md-fab" ng-style="{ 'background-color': colors.fab }">
@@ -34,6 +34,13 @@
             </div>
           </div>
         </md-grid-tile>
+
+        <md-grid-tile in-view="list.loadMoreItems()" md-rowspan="2" class="item">
+          <div ng-if="showItem" style="display: inline-block; height: 100%; width: 100%">
+            Load More Poster
+          </div>
+        </md-grid-tile>
+
       </md-grid-list>
     </md-content>
   </div>

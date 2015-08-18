@@ -5,7 +5,7 @@ angular.module 'com.module.common'
 .directive 'ptViewContainer', ->
   restrict: 'E'
   transclude: true
-  template: '<div ng-transclude></div>'
+  template: '<div class="main-container" ng-transclude></div>'
   controller: 'ptViewController as view'
 
 .controller 'ptViewController', (Settings, $sce, torrentProvider) ->

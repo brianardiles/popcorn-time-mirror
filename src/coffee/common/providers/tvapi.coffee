@@ -6,6 +6,8 @@ angular.module 'com.module.common'
   tvdb.getLanguages().then (langlist) ->
     AdvSettings.set 'tvdbLangs', langlist
 
+  shows = {}
+
   fetch: (filters) ->
     deferred = $q.defer()
 
@@ -33,11 +35,11 @@ angular.module 'com.module.common'
         $log.error 'API error:', err
         deferred.reject err
       else
-        results = {}
+
         for idx, show of data
-          results[show._id] = show
-          results[show._id].type = 'show'
-        deferred.resolve { results: results, hasMore: true }
+          shows[show._id] = show
+          shows[show._id].type = 'show'
+        deferred.resolve { results: shows, hasMore: true }
     .error (error, response) ->
       deferred.reject error
 

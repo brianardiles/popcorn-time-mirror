@@ -224,14 +224,16 @@ angular.module 'com.module.webchimera'
     return
 
   @setVolume = (newVolume) ->
-    $scope.wcUpdateVolume $volume: newVolume
-    @wcjsElement.volume = newVolume * 100
-    @volume = newVolume
+    volume = Math.max 0, newVolume
+
+    $scope.wcUpdateVolume $volume: volume
+    @wcjsElement.volume = volume * 100
+    @volume = volume
     
     #Push volume updates to localStorage so that future instances resume volume
     if WC_UTILS.supportsLocalStorage()
       #TODO: Improvement: concat key with current page or "video player id" to create separate stored volumes.
-      $window.localStorage.setItem WC_VOLUME_KEY, newVolume.toString()
+      $window.localStorage.setItem WC_VOLUME_KEY, volume.toString()
     return
 
   @setPlayback = (newPlayback) ->

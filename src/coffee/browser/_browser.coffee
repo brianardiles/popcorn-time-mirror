@@ -29,14 +29,6 @@ angular.module 'app.browser', []
 
   vm.type = type
 
-  vm.title = switch type
-    when 'movie'
-      'Movies'
-    when 'show'
-      'TV Shows'
-    when 'anime'
-      'Anime'
-
   vm.currentFilters = 
     page: 0
 

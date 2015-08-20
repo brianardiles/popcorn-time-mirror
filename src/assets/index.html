@@ -10,19 +10,7 @@
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,300,700' rel='stylesheet' type='text/css'/> 
 
   <body>
-    <div id="main-window">
-      <pt-header></pt-header>
-      
-      <pt-view-container>
-        <pt-list state="view.state" ng-show="view.state.show === 'list'"></pt-list>
-        <pt-detail state="view.state" ng-show="view.state.show === 'player'" class="chimerangular-container"></pt-detail>
-
-        <pt-bookmarks state="view.state" ng-show="view.state.show === 'bookmarks'"></pt-bookmarks>
-        <pt-settings state="view.state" ng-show="view.state.show === 'settings'"></pt-settings>
-      </pt-view-container>
-    </div>
-
-
+  <ui-view></ui-view>
 
   <!-- App -->
   <script src="js/angular.js"></script>

@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module 'com.module.settings'
+angular.module 'app.settings'
 
 .factory 'Settings', (os, data_path, path, gui) ->
   # User interface

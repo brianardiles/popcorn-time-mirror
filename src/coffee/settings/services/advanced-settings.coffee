@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module 'com.module.settings'
+angular.module 'app.settings'
 
 .factory 'AdvSettings', (Settings, http, tls, url, gui) ->
   get: (variable) ->

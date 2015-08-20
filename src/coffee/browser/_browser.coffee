@@ -51,7 +51,7 @@ angular.module 'app.browser', []
       vm.data = resp.results
 
   vm.loadMoreItems = ->
-    vm.currentFilters.page = vm.currentFilters.page++
+    vm.currentFilters.page = vm.currentFilters.page + 1
     fetchData()
 
   vm.onChange = (filter) ->

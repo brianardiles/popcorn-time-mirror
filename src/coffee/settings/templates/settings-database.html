@@ -1,11 +1,11 @@
-<section id="database" ng-if="vm.settings.showAdvancedSettings">
+<section id="database" ng-if="settings.config.showAdvancedSettings">
     <h1>Database</h1>
     <div class="content">
         <div class="content-row">
             <p>Database Directory</p>
-            <input type="text" placeholder="Database Directory" id="fakedatabaseLocation" ng-model="vm.settings.databaseLocation" readonly="readonly" size="65" />
+            <input type="text" placeholder="Database Directory" id="fakedatabaseLocation" ng-model="settings.config.databaseLocation" readonly="readonly" size="65" />
             <i class="open-database-folder fa fa-folder-open-o tooltipped" data-toggle="tooltip" data-placement="auto" title="Open Database Directory"></i>
-            <input type="file" name="fakedatabaseLocation" id="fakedatabaseLocation" nwdirectory style="display: none;" nwworkingdir="{{ vm.settings.databaseLocation }}" />
+            <input type="file" name="fakedatabaseLocation" id="fakedatabaseLocation" nwdirectory style="display: none;" nwworkingdir="{{ settings.config.databaseLocation }}" />
         </div>
         <div class="btns advanced database">
             <div class="btn-settings database import-database">

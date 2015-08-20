@@ -16,6 +16,7 @@ angular.module 'app', [
   'app.detail'
   'app.filter-bar'
   'app.header'
+  'app.page-header'
   'app.providers'
   'app.services'
   'app.settings'
@@ -23,7 +24,6 @@ angular.module 'app', [
   'app.streamer'
   'app.torrents'
   'app.view-container'
-  'app.summary-wrapper'
   'app.webchimera'
   
 ]
@@ -45,6 +45,8 @@ angular.module 'app', [
     .state 'app.movie',
       url: '/movie'
       sticky: true
+      title: 'Movies'
+      root: true
       views: app:
         templateUrl: 'browser/browser.html'
         controller: 'browserController as browser'
@@ -55,6 +57,8 @@ angular.module 'app', [
     .state 'app.show',
       url: '/show'
       sticky: true
+      title: 'TV Shows'
+      root: true
       views: app:
         templateUrl: 'browser/browser.html'
         controller: 'browserController as browser'
@@ -65,6 +69,8 @@ angular.module 'app', [
     .state 'app.anime',
       url: '/anime'
       sticky: true
+      title: 'Anime'
+      root: true
       views: app:
         templateUrl: 'browser/browser.html'
         controller: 'browserController as browser'
@@ -75,6 +81,8 @@ angular.module 'app', [
     .state 'app.bookmarks',
       url: '/bookmarks'
       sticky: true
+      title: 'Bookmarks'
+      root: true
       views: app:
         templateUrl: 'browser/browser.html'
         controller: 'browserController as browser'
@@ -82,11 +90,13 @@ angular.module 'app', [
     .state 'app.torrents',
       url: '/torrents'
       sticky: true
+      title: 'Torrents List'
       views: app:
         templateUrl: 'torrents/torrents.html'
 
     .state 'app.detail',
-      url: '/detail/:id?type'
+      url: '/detail/:id?type?title'
+      title: null
       views: detail:
         controller: 'playerDetailController as player'
         resolve:
@@ -102,9 +112,11 @@ angular.module 'app', [
     .state 'app.settings',
       url: '/settings'
       sticky: true
+      title: 'Settings'
       views: app:
         templateUrl: 'settings/settings.html'
-
+        controller: 'settingsController as settings'
+        
   $urlRouterProvider.otherwise '/movie'
   $uiViewScrollProvider.useAnchorScroll()
 

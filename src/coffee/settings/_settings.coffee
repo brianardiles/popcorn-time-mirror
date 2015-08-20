@@ -7,10 +7,13 @@ angular.module 'app.settings', []
   templateUrl: (element, attrs) ->
     'settings/templates/settings-' + attrs.template + '.html'
 
-.controller 'settingsController', ($scope, $http, $rootScope, $q, path, Settings) ->
+.controller 'settingsController', ($scope, $http, $rootScope, $q, path, Settings, $previousState) ->
   vm = this
 
-  vm.settings = Settings
+  vm.goBack = ->
+    $previousState.go()
+
+  vm.config = Settings
 
   vm.tv_detail_jump_to = 
     firstUnwatched: 'First Unwatched Episode'

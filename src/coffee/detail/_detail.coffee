@@ -11,7 +11,9 @@ angular.module 'app.detail', []
 
 .controller 'detailController', ($scope, $filter, playerConfig, $timeout, Settings, $stateParams, $state) ->
   vm = this
-
+  
+  $state.current.title = $stateParams.title
+  
   vm.currentDevice = Settings.chosenPlayer
   vm.currentQuality = '0' 
   vm.currentTorrent = null

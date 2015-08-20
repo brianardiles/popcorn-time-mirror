@@ -4,26 +4,26 @@
         <div class="content-row">
             <div class="dropdown subtitles-language-default">
                 <p>Default Subtitle</p>
-                <md-select class="settings-dropdown" ng-model="vm.settings.sub_lang">
-                   <md-option ng-repeat="lang in vm.settings.sub_langs" name="subtitle_language">{{ lang }}</md-option>
+                <md-select class="settings-dropdown" ng-model="settings.config.sub_lang">
+                   <md-option ng-repeat="lang in settings.config.sub_langs" name="subtitle_language">{{ lang }}</md-option>
                 </md-select>
             </div>
         </div>
 
-        <div class="content-row" ng-if="vm.settings.showAdvancedSettings">
+        <div class="content-row" ng-if="settings.config.showAdvancedSettings">
             <div class="dropdown subtitles-font">
                 <p>Font</p>
-                <md-select class="settings-dropdown" ng-model="vm.settings.sub_font">
-                   <md-option ng-repeat="font in vm.sub_fonts" name="sub_fonts">{{ font }}</md-option>
+                <md-select class="settings-dropdown" ng-model="settings.config.sub_font">
+                   <md-option ng-repeat="font in settings.sub_fonts" name="sub_fonts">{{ font }}</md-option>
                 </md-select>
             </div>
         </div>
 
-        <div class="content-row" ng-if="vm.settings.showAdvancedSettings">
+        <div class="content-row" ng-if="settings.config.showAdvancedSettings">
             <div class="dropdown subtitles-decoration">
                 <p>Decoration</p>
-                <md-select class="settings-dropdown" ng-model="vm.settings.sub_deco">
-                   <md-option ng-repeat="deco in vm.sub_deco" name="sub_deco">{{ deco }}</md-option>
+                <md-select class="settings-dropdown" ng-model="settings.config.sub_deco">
+                   <md-option ng-repeat="deco in settings.sub_deco" name="sub_deco">{{ deco }}</md-option>
                 </md-select>
             </div>
         </div>
@@ -31,16 +31,16 @@
         <div class="content-row">
             <div class="dropdown subtitles-size">
                 <p>Size</p>
-                <md-select class="settings-dropdown" ng-model="vm.settings.sub_size">
-                   <md-option ng-repeat="size in vm.sub_sizes" name="sub_size">{{ size }}</md-option>
+                <md-select class="settings-dropdown" ng-model="settings.config.sub_size">
+                   <md-option ng-repeat="size in settings.sub_sizes" name="sub_size">{{ size }}</md-option>
                 </md-select>
             </div>
         </div>
 
-        <div class="content-row" ng-if="vm.settings.showAdvancedSettings">
+        <div class="content-row" ng-if="settings.config.showAdvancedSettings">
             <div class="subtitles-custom">
                 <label>Color</label>
-                <input class="colorsub" id="subtitles_color" type="color" size="7" name="subtitle_color" ng-model="vm.settings.subtitle_color" list="subs_colors">
+                <input class="colorsub" id="subtitles_color" type="color" size="7" name="subtitle_color" ng-model="settings.config.subtitle_color" list="subs_colors">
                     <datalist id="subs_colors">
                         <option>#ffffff</option>
                         <option>#ffff00</option>

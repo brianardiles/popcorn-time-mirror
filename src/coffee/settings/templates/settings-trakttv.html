@@ -8,13 +8,13 @@
                 </div>
                 <md-input-container>
                     <label>Automatically Sync on Start</label>
-                    <md-checkbox ng-model="vm.settings.traktSyncOnStart"></md-checkbox>
+                    <md-checkbox ng-model="settings.config.traktSyncOnStart"></md-checkbox>
                 </md-input-container>
                 <md-input-container>
                     <label>Resume Playback</label>
-                    <md-checkbox ng-model="vm.settings.traktPlayback"></md-checkbox>
+                    <md-checkbox ng-model="settings.config.traktPlayback"></md-checkbox>
                 </md-input-container>
-                <div class="content-row" ng-if="vm.settings.showAdvancedSettings">
+                <div class="content-row" ng-if="settings.config.showAdvancedSettings">
                     <div class="btn-settings syncTrakt" id="syncTrakt">
                         <i class="fa fa-refresh">&nbsp;&nbsp;</i>
                         Sync With Trakt

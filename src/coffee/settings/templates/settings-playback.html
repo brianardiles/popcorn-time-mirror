@@ -1,13 +1,13 @@
 <section id="playback">
     <h1>Playback</h1>
     <div class="content">
-        <md-input-container ng-if="vm.settings.showAdvancedSettings">
-            <md-checkbox ng-model="vm.settings.alwaysFullscreen"></md-checkbox>
+        <md-input-container ng-if="settings.config.showAdvancedSettings">
+            <md-checkbox ng-model="settings.config.alwaysFullscreen"></md-checkbox>
             <label>Always start playing in fullscreen</label>
         </md-input-container>
         <md-input-container>
             <label>Play next episode automatically</label>
-            <md-checkbox ng-model="vm.settings.playNextEpisodeAuto"></md-checkbox>
+            <md-checkbox ng-model="settings.config.playNextEpisodeAuto"></md-checkbox>
         </md-input-container>
     </div>
 </section>

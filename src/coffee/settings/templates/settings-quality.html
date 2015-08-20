@@ -1,10 +1,10 @@
-<section id="quality" ng-if="vm.settings.showAdvancedSettings">
+<section id="quality" ng-if="settings.config.showAdvancedSettings">
     <h1>Quality</h1>
     <div class="content">
         <div class="content-row">
             <div class="dropdown movies-quality">
                 <p>Only list movies in</p>
-                <md-select class="settings-dropdown" ng-model="vm.settings.movies_quality" name="movies_quality">
+                <md-select class="settings-dropdown" ng-model="settings.config.movies_quality" name="movies_quality">
                     <md-option value="all">All</md-option>
                     <md-option value="1080p">1080p</md-option>
                     <md-option value="720p">720p</md-option>
@@ -13,7 +13,7 @@
         </div>
         <md-input-container>
             <label>Show movie quality on list</label>
-            <md-checkbox ng-model="vm.settings.moviesShowQuality"></md-checkbox>
+            <md-checkbox ng-model="settings.config.moviesShowQuality"></md-checkbox>
         </md-input-container>
     </div>
 </section>

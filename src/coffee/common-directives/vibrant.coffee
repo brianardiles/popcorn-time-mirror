@@ -1,15 +1,6 @@
 'use strict'
 
-angular.module 'app.detail'
-
-.directive 'imageLoaded', ($timeout) ->
-  restrict: 'A'
-  link: (scope, element, attrs) ->
-    element.bind 'load', (e) ->
-      element.parent().addClass 'fadeout'
-      element.addClass 'fadein'
-      return
-    return
+angular.module 'app.common-directives'
 
 .directive 'vibrant', ($parse, $Vibrant, $timeout) ->
   restrict: 'A'

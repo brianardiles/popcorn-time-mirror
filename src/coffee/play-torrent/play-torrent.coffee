@@ -1,22 +1,13 @@
 'use strict'
 
-angular.module 'app.detail'
-
-.controller 'playTorrentController', (Settings, torrentProvider) ->
-  vm = this
-
-  return
+angular.module 'app.play-torrent', []
 
 .directive 'ptPlayTorrent', (torrentProvider) ->
   restrict: 'E'
   require: '^ptViewContainer'
   bindToController: true
   scope: { torrent: '=', episode: '=', show: '=' , quality: '=' , device: '=' }
-  template: '''
-    <md-button ng-click="startTorrent()" style="color: rgb(255, 255, 255); background-color: rgb(6, 124, 154);" class="watchnow-btn" role="button" tabindex="0">
-      <md-icon md-font-set="material-icons">play_arrow</md-icon> Play
-      <span ng-if="player.episode.season && player.episode.episode"> S{{ player.episode.season | padNumber }}E{{ player.episode.episode | padNumber }}</span>
-    </md-button>'''
+  templateUrl: 'play-torrent/play-torrent.html'
   controller: 'playTorrentController as player'
   link: (scope, element, attrs, ctrl) ->
     player = scope.player
@@ -31,3 +22,8 @@ angular.module 'app.detail'
           scope.state.torrent.listen()
       
       return
+
+.controller 'playTorrentController', (Settings, torrentProvider) ->
+  vm = this
+
+  return

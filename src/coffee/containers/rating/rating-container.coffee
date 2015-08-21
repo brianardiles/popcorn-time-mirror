@@ -1,12 +1,12 @@
 'use strict'
 
-angular.module 'app.detail'
+angular.module 'app.containers'
 
 .directive 'ratingContainer', ->
   restrict: 'A'
   scope: { rating: '=' }
   bindToController: true
-  templateUrl: 'detail/views/rating-container.html'
+  templateUrl: 'containers/rating/rating-container.html'
   controller: 'ratingCtrl as rating'
 
 .controller 'ratingCtrl', ->

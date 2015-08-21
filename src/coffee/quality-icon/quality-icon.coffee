@@ -1,16 +1,12 @@
 'use strict'
 
-angular.module 'app.detail'
+angular.module 'app.quality-icon', []
 
 .directive 'qualityIcon', ->
   restrict: 'A'
   scope: { torrent: '=' }
   bindToController: true
-  template: '''
-    <div ng-click="quality.getTorrentHealth(quality.torrent.url)" data-toggle="tooltip" data-placement="left" 
-      title="Health {{quality.health | titleCase}}" 
-      class="fa health-icon" ng-class="quality.health ? quality.health + ' fa-circle' : 'fa-spinner fa-spin'">
-    </div>'''
+  templateUrl: 'quality-icon/quality-icon.html'
   controller: 'qualityIconCtrl as quality'
 
 .controller 'qualityIconCtrl', (torrentHealth, $filter, $scope) ->

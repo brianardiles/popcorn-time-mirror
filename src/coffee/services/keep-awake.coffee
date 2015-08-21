@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module 'app.detail'
+angular.module 'app.services'
 
 .factory 'keepAwake', ->
   video = null

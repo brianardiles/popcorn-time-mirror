@@ -1,11 +1,11 @@
 'use strict'
 
-angular.module 'app.detail'
+angular.module 'app.device-selector', []
 
 .directive 'ptDeviceSelector', ->
   scope: { selected: '=' }
   bindToController: true
-  templateUrl: 'detail/views/device-selector.html'
+  templateUrl: 'device-selector/device-selector.html'
   controller: 'deviceSelectController as devices'
 
 .controller 'deviceSelectController', (Settings) ->

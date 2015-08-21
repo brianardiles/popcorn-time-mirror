@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module 'app.detail'
+angular.module 'app.common-directives'
 
 .directive 'extOpen', (gui) ->
   scope: { link: '=' }

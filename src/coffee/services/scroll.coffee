@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module 'app.browser'
+angular.module 'app.services'
 
 .directive 'inView', ($parse) ->
   # Evaluate the expression passet to the attribute `in-view` when the DOM

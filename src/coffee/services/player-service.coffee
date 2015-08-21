@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module 'app.detail'
+angular.module 'app.services'
 
 .factory 'playerService', ($q) ->
   findTorrentUrl = (episode, selected, defaultQuality) ->
@@ -28,18 +28,3 @@ angular.module 'app.detail'
           torrent: findTorrentUrl episode, selected, defaultQuality
 
     $q.when playNextEpisodes
-
-.controller 'playerDetailController', ($sce, playerService, api, $filter, $scope, playerConfig) ->
-  vm = this
-
-  vm.config = angular.copy playerConfig
-  vm.api = api 
-  
-  $scope.$watch 'ctrl.torrent.ready', (readyState) ->
-    vm.config.controls = readyState
-
-  $scope.$watchCollection 'ctrl.player', (newPlayer, oldPlayer) ->
-    playerService.sortNextEpisodes(newPlayer).then (data) ->
-      vm.next = data
-
-  return

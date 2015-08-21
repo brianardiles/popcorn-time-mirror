@@ -47,7 +47,7 @@ angular.module 'app.browser', []
     fetchData()
 
   vm.onChange = (filter) ->
-    vm.currentFilters = angular.merge filter.params, vm.currentFilters
+    vm.currentFilters = angular.merge vm.currentFilters, filter.params
     vm.data = {}
     fetchData()
 

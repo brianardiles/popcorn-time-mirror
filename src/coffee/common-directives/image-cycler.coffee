@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module 'app.browser'
+angular.module 'app.common-directives'
 
 .directive 'backgroundCycler', ($compile, $animate, $q) ->
   restrict: 'E'

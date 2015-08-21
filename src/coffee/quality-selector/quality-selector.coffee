@@ -1,12 +1,12 @@
 'use strict'
 
-angular.module 'app.detail'
+angular.module 'app.quality-selector', []
 
 .directive 'ptQualitySelector', ->
   restrict: 'A'
   scope: { torrents: '=', selected: '=' }
   bindToController: true
-  templateUrl: 'detail/views/quality-selector.html'
+  templateUrl: 'quality-selector/quality-selector.html'
   controller: 'qualityCtrl as quality'
 
 .controller 'qualityCtrl', ->

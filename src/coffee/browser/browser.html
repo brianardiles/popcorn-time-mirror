@@ -1,14 +1,14 @@
-<pt-sidebar state="browser.state"></pt-sidebar>
+<pt-sidebar></pt-sidebar>
 
-<md-content class="list-region viewfadein" id="content">
+<md-content>
   <pt-page-header></pt-page-header>
 
   <div class="top-tools">
-    <pt-filter-bar ng-show="browser.filters" type="browser.state.type" list="browser.filters" on-change="browser.onChange({params: params})">
+    <pt-filter-bar type="browser.type"on-change="browser.onChange({params: params})">
     </pt-filter-bar>
   </div>
 
-  <div id="main-list-content" ng-show="browser.data && browser.backdrop">
+  <div ng-show="browser.data && browser.backdrop">
     <background-cycler class="bg-fade" ng-animate-ref="bg-fade"></background-cycler>
 
     <md-content layout-padding>

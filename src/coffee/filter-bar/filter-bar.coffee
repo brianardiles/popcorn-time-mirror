@@ -4,15 +4,20 @@ angular.module 'app.filter-bar', []
 
 .directive 'ptFilterBar', ->
   restrict: 'E'
-  scope: { type: '=', list: '=', onChange: '&' }
+  scope: { type: '=', onChange: '&' }
   bindToController: true
   templateUrl: 'filter-bar/filter-bar.html'
   controller: 'filterCtrl as filters'
 
-.controller 'filterCtrl', ($scope) ->
+.controller 'filterCtrl', ($scope, genres, sorters, types) ->
   vm = this
 
   vm.menuOpen = null
+
+  vm.list = 
+    sorters: sorters[vm.type]
+    types: types[vm.type]
+    genres: genres[vm.type]
 
   $scope.$watchCollection 'filters.params', (newParams, oldParams) ->
     if not angular.equals(newParams, oldParams) and angular.isDefined oldParams

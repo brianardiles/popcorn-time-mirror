@@ -2,7 +2,7 @@
 
 angular.module 'app.browser', []
 
-.controller 'browserController', ($interval, $sce, $scope, api, type, genres, sorters, types, $state) ->
+.controller 'browserController', ($interval, api, type) ->
   vm = this
 
   bgCycler = null
@@ -31,11 +31,6 @@ angular.module 'app.browser', []
 
   vm.currentFilters = 
     page: 0
-
-  vm.filters = 
-    sorters: sorters[vm.type] or null
-    types: types[vm.type] or null
-    genres: genres[vm.type] or null
 
   fetchData = ->
     api.fetch(vm.currentFilters).then (resp) ->

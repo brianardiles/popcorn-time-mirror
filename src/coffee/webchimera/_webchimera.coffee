@@ -9,30 +9,17 @@ angular.module 'app.webchimera', [
   'app.webchimera.plugins.torrent-info'
 ]
 
-.controller 'playerDetailController', ($sce, playerService, api, $filter, $scope, playerConfig) ->
-  vm = this
-
-  vm.config = angular.copy playerConfig
-  vm.api = api 
-  
-  $scope.$watch 'ctrl.torrent.ready', (readyState) ->
-    vm.config.controls = readyState
-
-  $scope.$watchCollection 'ctrl.player', (newPlayer, oldPlayer) ->
-    playerService.sortNextEpisodes(newPlayer).then (data) ->
-      vm.next = data
-
-  return
-
 .directive 'ptDetail', ->
   restrict: 'E'
   templateUrl: 'webchimera/webchimera.html'
   controller: 'detailCtrl as ctrl'
 
-.controller 'detailCtrl', ($sce, playerService, $filter, $scope, playerConfig) ->
+.controller 'detailCtrl', ($sce, playerService, $filter, $scope, playerConfig, $stateParams) ->
   vm = this
 
   vm.config = angular.copy playerConfig
+  
+  vm.player = null
 
   $scope.$watch 'ctrl.torrent.ready', (readyState) ->
     vm.config.controls = readyState

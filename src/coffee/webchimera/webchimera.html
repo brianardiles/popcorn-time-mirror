@@ -9,15 +9,15 @@
      wc-auto-play="ctrl.config.autoPlay"
      wc-plays-inline="ctrl.config.playsInline">
 
-    <wc-media ng-show="ctrl.player.torrent" wc-src="ctrl.torrent.files"
+    <wc-media ng-show="ctrl.player.torrentLink" wc-src="ctrl.torrent.files"
               wc-loop="ctrl.config.loop"
               wc-preload="ctrl.config.preload"
               wc-native-controls="ctrl.config.controls">
     </wc-media>
 
-    <div ui-view='detail'></div>
+    <div ng-hide="ctrl.player.torrentLink" ui-view='detail'></div>
 
-    <div ng-if="ctrl.player.torrent" ng-init="wcAutohideClass = { value: 'hide-animation' }">
+    <div ng-if="ctrl.player.torrentLink" ng-init="wcAutohideClass = { value: 'hide-animation' }">
         <wc-top-controls ng-show="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
             <wc-close-button></wc-close-button>
         </wc-top-controls>

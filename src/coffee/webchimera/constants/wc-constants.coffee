@@ -60,6 +60,6 @@ angular.module 'app.webchimera'
   autoHide: true
   autoHideTime: 3000
   preload: 'auto'
-  sources: []
+  sources: null
   tracks: []
   poster: null

@@ -4,22 +4,20 @@ angular.module 'app.play-torrent', []
 
 .directive 'ptPlayTorrent', (torrentProvider) ->
   restrict: 'E'
-  require: '^ptViewContainer'
-  bindToController: true
-  scope: { torrent: '=', episode: '=', show: '=' , quality: '=' , device: '=' }
+  bindToController: { torrentLink: '=', episode: '=', show: '=' , quality: '=' , device: '=' }
+  scope: { torrent: '=', player: '=' }
   templateUrl: 'play-torrent/play-torrent.html'
-  controller: 'playTorrentController as player'
-  link: (scope, element, attrs, ctrl) ->
-    player = scope.player
-    view = ctrl
+  controller: 'playTorrentController as ctrl'
+  link: (scope, element, attrs) ->
+    ctrl = scope.ctrl
 
     scope.startTorrent = ->
-      scope.player = player
+      scope.player = ctrl
 
-      torrentProvider.addTorrentLink(player.torrent).then (resp) ->
+      torrentProvider.addTorrentLink(ctrl.torrentLink).then (resp) ->
         torrentProvider.getTorrent(resp.data.infoHash).then (torrentDetail) ->
-          scope.state.torrent = torrentDetail
-          scope.state.torrent.listen()
+          scope.torrent = torrentDetail
+          scope.torrent.listen()
       
       return
 

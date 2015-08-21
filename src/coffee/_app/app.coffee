@@ -103,16 +103,8 @@ angular.module 'app', [
       url: '/detail/:id?type?title'
       title: null
       views: detail:
-        controller: 'playerDetailController as player'
-        resolve:
-          api: ($stateParams, TVApi, YTS, Haruhichan) ->
-            if $stateParams.type is 'anime'
-              return Haruhichan
-            else if $stateParams.type is 'show'
-              return TVApi
-            else return YTS
-        template: '''<wc-poster ng-if="player.config.poster" poster="player.config.poster"></wc-poster>
-          <wc-detail ng-hide="player.player.torrent" api="player.api" config="player.config"></wc-detail>'''
+        template: '''<wc-poster ng-if="ctrl.config.poster" poster="ctrl.config.poster"></wc-poster>
+          <wc-detail player="ctrl.player" torrent="ctrl.torrent" config="ctrl.config"></wc-detail>'''
 
     .state 'app.settings',
       url: '/settings'

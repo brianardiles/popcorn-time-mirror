@@ -3,15 +3,15 @@
 angular.module 'app.detail', []
 
 .directive 'wcDetail', ->
-  scope: { api: '=', config: '=' }
+  scope: { player: '=', config: '=', torrent: '=' }
   bindToController: true
   restrict: 'E'
   templateUrl: 'detail/detail.html'
   controller: 'detailController as detail'
 
-.controller 'detailController', ($scope, $filter, playerConfig, $timeout, Settings, $stateParams, $state) ->
+.controller 'detailController', ($scope, $filter, playerConfig, $timeout, Settings, $stateParams, $state, TVApi, YTS, Haruhichan) ->
   vm = this
-  
+
   $state.current.title = $stateParams.title
   
   vm.currentDevice = Settings.chosenPlayer
@@ -24,6 +24,13 @@ angular.module 'app.detail', []
   vm.torrentId = $stateParams.id
   vm.trakt_url = 'http://www.imdb.com/title/' + $stateParams.id
   vm.type = $stateParams.type
+
+  api = switch vm.type
+    when 'anime'
+      Haruhichan
+    when 'show'
+      TVApi
+    else YTS
 
   vm.goBack = ->
     $state.go 'app.' + vm.type
@@ -40,7 +47,7 @@ angular.module 'app.detail', []
     vm.currentQuality = '0'
 
   getTorrentDetails = (newTorrent) ->
-    vm.api.detail(newTorrent, vm.type).then (resp) ->
+    api.detail(newTorrent, vm.type).then (resp) ->
       vm.data = resp.data
       vm.config.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.type) 
       

@@ -1,9 +1,7 @@
-<header id="header" style="display: block">
-  <div>
-    <div class="os-controls {{ title.platform }}">
-        <div ng-repeat="button in title.buttons" ng-click="title[button]()" class="{{ button }}"></div>
-    </div>
-
-    <span>Popcorn Time</span>
+<div>
+  <div class="os-controls {{ title.platform }}">
+      <div ng-repeat="button in title.buttons" ng-click="title[button]()" class="{{ button }}"></div>
   </div>
-</header>
+
+  <span>Popcorn Time</span>
+</div>

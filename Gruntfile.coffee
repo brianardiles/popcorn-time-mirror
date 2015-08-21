@@ -56,7 +56,7 @@ module.exports = (grunt) ->
       coffee: 
         files: ['src/coffee/*.coffee', 'src/coffee/**/*.coffee'], tasks: ['coffee', 'ngtemplates', 'ngAnnotate']
       stylus: 
-        files: ['src/styl/*.styl', 'src/styl/**/*.styl'], tasks: ['stylus']
+        files: ['src/**/*.styl'], tasks: ['stylus']
 
     # https://www.npmjs.com/package/grunt-angular-templates
     ngtemplates:
@@ -101,10 +101,8 @@ module.exports = (grunt) ->
           paths: [ '/styl' ]
         
         expand: true
-        cwd: 'src/styl'
-        src: '*.styl'
-        dest: 'build/css/'
-        ext: '.css'
+        join: true
+        files: 'build/css/app.css': ['src/**/*.styl', 'src/**/**.styl']
     
     unzip:
       vlc:

@@ -29,7 +29,6 @@ angular.module 'app', [
   'app.sidebar'
   'app.streamer'
   'app.torrents'
-  'app.view-container'
   'app.webchimera'
   
 ]

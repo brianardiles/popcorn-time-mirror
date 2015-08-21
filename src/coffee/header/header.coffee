@@ -3,6 +3,7 @@
 angular.module 'app.header', []
 
 .directive 'ptHeader', ->
+  restrict: 'E'
   templateUrl: 'header/header.html'
   controller: 'ptHeaderCtrl as title'
 

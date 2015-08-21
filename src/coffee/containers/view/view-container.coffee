@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module 'app.view-container', []
+angular.module 'app.containers'
 
 .directive 'ptViewContainer', ->
   restrict: 'E'

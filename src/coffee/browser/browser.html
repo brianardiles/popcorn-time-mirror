@@ -4,19 +4,17 @@
   <pt-page-header></pt-page-header>
 
   <div class="top-tools">
-    <div ng-show="browser.filters" id="filterbar-toolbar" class="filters-wrapper">
-      <pt-filter-bar type="browser.state.type" list="browser.filters" on-change="browser.onChange({params: params})" class="bottom filter-bar">
-      </pt-filter-bar>
-    </div>
+    <pt-filter-bar ng-show="browser.filters" type="browser.state.type" list="browser.filters" on-change="browser.onChange({params: params})">
+    </pt-filter-bar>
   </div>
 
   <div id="main-list-content" ng-show="browser.data && browser.backdrop">
     <background-cycler class="bg-fade" ng-animate-ref="bg-fade"></background-cycler>
 
     <md-content layout-padding>
-      <md-grid-list in-view-container class="list" md-row-height="4:3" md-cols-sm="2" md-cols-gt-sm="3" md-cols-md="4" md-cols-gt-md="5" md-cols-lg="6" md-cols-gt-lg="8" md-gutter-sm="8px" md-gutter-md="12px" md-gutter-lg="16px" md-gutter-gt-lg="16px">
+      <md-grid-list in-view-container md-row-height="4:3" md-cols-sm="2" md-cols-gt-sm="3" md-cols-md="4" md-cols-gt-md="5" md-cols-lg="6" md-cols-gt-lg="8" md-gutter-sm="8px" md-gutter-md="12px" md-gutter-lg="16px" md-gutter-gt-lg="16px">
 
-        <md-grid-tile in-view="showItem = true" md-rowspan="2" ng-repeat="(id, item) in browser.data track by id" ui-sref="app.detail({ id: id, type: item.type, title: item.title})" class="item" >
+        <md-grid-tile in-view="showItem = true" md-rowspan="2" ng-repeat="(id, item) in browser.data track by id" ui-sref="app.detail({ id: id, type: item.type, title: item.title})">
           <div ng-if="showItem" style="display: inline-block; height: 100%; width: 100%">
             <img image-loaded vibrant colors="colors" ng-src="{{ item.images.poster | traktSize:'thumb':item.type }}" width="100%"/>
             <div class="info" ng-style="colors">

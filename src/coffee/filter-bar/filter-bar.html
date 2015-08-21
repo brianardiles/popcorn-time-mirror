@@ -1,9 +1,10 @@
-<pt-filter-bar-item class="filter-element" ng-if="filters.list.types" items="filters.list.types" selected="filters.params.type" menu-open="filters.menuOpen" label='Type'></pt-filter-bar-item>
+<div>
+  <pt-filter-bar-item ng-if="filters.list.types" items="filters.list.types" selected="filters.params.type" menu-open="filters.menuOpen" label='Type'></pt-filter-bar-item>
 
-<pt-filter-bar-item class="filter-element" ng-if="filters.list.genres" items="filters.list.genres" selected="filters.params.genre" menu-open="filters.menuOpen" label='Genre'></pt-filter-bar-item>
+  <pt-filter-bar-item ng-if="filters.list.genres" items="filters.list.genres" selected="filters.params.genre" menu-open="filters.menuOpen" label='Genre'></pt-filter-bar-item>
 
-<pt-filter-bar-item class="filter-element" ng-if="filters.list.sorters" items="filters.list.sorters" selected="filters.params.sort_by" menu-open="filters.menuOpen" label='Sort by'></pt-filter-bar-item>
-
+  <pt-filter-bar-item ng-if="filters.list.sorters" items="filters.list.sorters" selected="filters.params.sort_by" menu-open="filters.menuOpen" label='Sort by'></pt-filter-bar-item>
+</div>
 <!--<div class="right search">
     <form id="filterbar-search">
         <md-input-container flex>

@@ -225,7 +225,7 @@ angular.module 'app.webchimera'
     return
 
   @setVolume = (newVolume) ->
-    volume = Math.max 0, newVolume
+    volume = Math.min Math.max(0, newVolume), 1
 
     $scope.wcUpdateVolume $volume: volume
     @wcjsElement.volume = volume * 100

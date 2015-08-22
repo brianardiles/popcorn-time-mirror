@@ -10,9 +10,9 @@ angular.module 'app.services'
     episode.torrents[0].url
 
   sortNextEpisodes: (player) ->
-    return $q.reject() unless player?.show
+    return $q.reject() unless player?.detail
 
-    show = player.show
+    show = player.detail
 
     selected = player.episode
     defaultQuality = player.quality 

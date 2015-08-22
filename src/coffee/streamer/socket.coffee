@@ -6,16 +6,14 @@ angular.module 'app.streamer'
 
 .run (streamServer, torrentProvider, socketServer) ->
   streamServer.start ->
-    socketServer.start()
-    torrentProvider.getAllTorrents()
+    socketServer.start().then ->
+      torrentProvider.getAllTorrents()
 
-.factory 'socketServer', (socketFactory, streamServer) ->
-  socket = io "http://127.0.0.1:#{streamServer.port}/"
-  
+.factory 'socketServer', (socketFactory, streamServer, $q) ->
+
   connection: null
 
   start: ->
     if not @connection 
-      @connection = socketFactory ioSocket: socket
-      return
-    return
+      @connection = socketFactory ioSocket: io "http://127.0.0.1:#{streamServer.port}/"
+    $q.when()

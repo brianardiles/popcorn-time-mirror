@@ -4,7 +4,7 @@ angular.module 'app.play-torrent', []
 
 .directive 'ptPlayTorrent', (torrentProvider) ->
   restrict: 'E'
-  bindToController: { torrentLink: '=', episode: '=', show: '=' , quality: '=' , device: '=' }
+  bindToController: { torrentLink: '=', episode: '=', quality: '=' , device: '=', detail: '=' }
   scope: { torrent: '=', player: '=' }
   templateUrl: 'play-torrent/play-torrent.html'
   controller: 'playTorrentController as ctrl'

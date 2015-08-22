@@ -21,18 +21,18 @@ class torrentStore extends EventEmitter
 
     @torrents = {}
 
-    mkdirp @storagePath, (err) =>
-      if err then throw err
-      
-      if nodeFs.existsSync @storageFile
-        nodeFs.readFile @storageFile, (err, data) =>
-          if err then throw err
-
-          torrents = JSON.parse data
-          console.log 'resuming from previous state'
-          
-          torrents.forEach (infoHash) =>
-            @load infoHash
+    #mkdirp @storagePath, (err) =>
+    #  if err then throw err
+    #  
+    #  if nodeFs.existsSync @storageFile
+    #    nodeFs.readFile @storageFile, (err, data) =>
+    #      if err then throw err
+    #
+    #      torrents = JSON.parse data
+    #      console.log 'resuming from previous state'
+    #      
+    #      torrents.forEach (infoHash) =>
+    #        @load infoHash
 
   add: (link) ->
     defer = $q.defer()

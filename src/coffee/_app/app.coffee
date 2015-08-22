@@ -101,6 +101,7 @@ angular.module 'app', [
 
     .state 'app.detail',
       url: '/detail/:id?type?title'
+      sticky: true
       title: null
       views: detail:
         template: '''<wc-poster ng-if="ctrl.config.poster" poster="ctrl.config.poster"></wc-poster>

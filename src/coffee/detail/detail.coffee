@@ -33,6 +33,7 @@ angular.module 'app.detail', []
     else YTS
 
   vm.goBack = ->
+    vm.config = angular.copy playerConfig
     $state.go 'app.' + vm.type
 
   vm.selectSeason = (season) ->

@@ -22,6 +22,7 @@ angular.module 'app.webchimera', [
   vm.player = null
 
   $scope.$watch 'ctrl.torrent.ready', (readyState) ->
+    console.log vm.torrent
     vm.config.controls = readyState
 
   $scope.$watchCollection 'ctrl.player', (newPlayer, oldPlayer) ->

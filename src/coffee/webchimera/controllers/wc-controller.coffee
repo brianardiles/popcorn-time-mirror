@@ -2,7 +2,7 @@
 
 angular.module 'app.webchimera'
 
-.controller 'wcController', ($scope, $window, wcFullscreen, WC_UTILS, WC_STATES, WC_VOLUME_KEY) ->
+.controller 'wcController', ($scope, $window, wcFullscreen, wcjsRenderer, WC_UTILS, WC_STATES, WC_VOLUME_KEY) ->
   isFullScreenPressed = false
   isMetaDataLoaded = false
 
@@ -10,7 +10,7 @@ angular.module 'app.webchimera'
   @chimerangularElement = null
 
   @clearMedia = ->
-    @wcjsElement.src = ''
+    wcjsRenderer.clearCanvas()
     return
 
   @onCanPlay = ->
@@ -191,7 +191,8 @@ angular.module 'app.webchimera'
     if @wcjsElement
       @wcjsElement.stop()
       @wcjsElement.playlist.clear()
-      
+
+    @clearMedia()
     @currentTime = 0
     @setState WC_STATES.STOP
     

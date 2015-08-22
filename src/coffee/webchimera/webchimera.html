@@ -3,6 +3,7 @@
      wc-complete="ctrl.onCompleteVideo()"
      wc-error="ctrl.onError($event)"
      wc-stop="ctrl.player = null"
+     wc-can-play="ctrl.player.canplay = true"
      wc-update-time="ctrl.onUpdateTime($currentTime, $duration)"
      wc-update-volume="ctrl.onUpdateVolume($volume)"
      wc-update-state="ctrl.onUpdateState($state)"
@@ -11,18 +12,17 @@
 
     <wc-media ng-show="ctrl.player.torrentLink" wc-src="ctrl.torrent.files"
               wc-loop="ctrl.config.loop"
-              wc-preload="ctrl.config.preload"
-              wc-native-controls="ctrl.config.controls">
+              wc-preload="ctrl.config.preload">
     </wc-media>
 
-    <div ng-hide="ctrl.player.torrentLink" ui-view='detail'></div>
+    <div ui-view='detail'></div>
 
     <div ng-if="ctrl.player.torrentLink" ng-init="wcAutohideClass = { value: 'hide-animation' }">
-        <wc-top-controls ng-show="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+        <wc-top-controls ng-show="ctrl.config.controls && ctrl.player.canplay" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
             <wc-close-button></wc-close-button>
         </wc-top-controls>
 
-        <wc-bottom-controls ng-show="ctrl.config.controls" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
+        <wc-bottom-controls ng-show="ctrl.config.controls && ctrl.player.canplay" wc-autohide="ctrl.config.autoHide" wc-autohide-time="ctrl.config.autoHideTime" wc-autohide-class="wcAutohideClass.value">
             <wc-play-pause-button></wc-play-pause-button>
             <wc-time-display>{{ currentTime | formatTime }}</wc-time-display>
             
@@ -42,8 +42,8 @@
         </wc-bottom-controls>
 
         <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
-        <wc-torrent-info ng-hide="ctrl.config.controls" wc-torrent="ctrl.torrent" wc-player="ctrl.player"></wc-torrent-info>
+        <wc-torrent-info ng-hide="ctrl.config.controls && ctrl.player.canplay" wc-torrent="ctrl.torrent" wc-player="ctrl.player"></wc-torrent-info>
         <wc-buffering></wc-buffering>
-        <wc-overlay-play ng-if="ctrl.config.controls"></wc-overlay-play>
+        <wc-overlay-play ng-if="ctrl.config.controls && ctrl.player.canplay"></wc-overlay-play>
     </div>
 </div>

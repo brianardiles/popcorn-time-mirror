@@ -1,6 +1,10 @@
 'use strict'
 
-module.exports = (buffer) ->
+torrentUtils    = require './torrentUtils'
+
+module.exports = (torrent) ->
+  buffer = torrent.bitfield.buffer
+
   progress = []
   counter = 0
   downloaded = true
@@ -21,5 +25,6 @@ module.exports = (buffer) ->
 
   progress.push counter
 
-  progress.map (p) ->
-    p * 100 / buffer.length
+  progress
+    .map (p) -> p * 100 / buffer.length
+    .filter (p, i) -> torrentUtils.isVideo torrent.files[i].name

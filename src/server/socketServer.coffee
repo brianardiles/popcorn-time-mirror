@@ -15,7 +15,7 @@ module.exports = (io, torrentStore) ->
       io.sockets.emit infoHash, event, data
 
     notifyProgress = ->
-      emit 'download', torrentProgress(torrent.bitfield.buffer)
+      emit 'download', torrentProgress torrent
 
     notifySelection = ->
       pieceLength = torrent.torrent.pieceLength
@@ -26,8 +26,12 @@ module.exports = (io, torrentStore) ->
         
         torrent.selection.some (s) ->
           s.from <= start and s.to >= end
-
+    
     emit 'verifying', torrentStats(torrent)
+
+    if torrent.ready
+      emit 'ready', torrentUtils.serialize torrent
+      throttle notifyProgress, 1000
 
     torrent.once 'ready', ->
       emit 'ready', torrentUtils.serialize torrent
@@ -61,7 +65,7 @@ module.exports = (io, torrentStore) ->
       torrent = torrents[hash]
 
       if torrent
-        if torrent.torrent
+        if torrent.ready
           listen hash, torrent
         else torrent.once 'verifying', ->
           listen hash, torrent

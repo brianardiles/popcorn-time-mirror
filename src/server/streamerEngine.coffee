@@ -9,13 +9,14 @@ module.exports = (torrent) ->
 
   engine.once 'verifying', ->
     console.log 'verifying ' + engine.infoHash
-    engine.verified = true
 
     engine.files.forEach (file, i) ->
       console.log i + ' ' + file.name
 
+  engine.once 'verify', ->
+    engine.verified = true
+
   engine.once 'ready', ->
-    console.log 'ready ' + engine.infoHash
     engine.ready = true
     
     # select the largest file

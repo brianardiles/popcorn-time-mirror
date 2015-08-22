@@ -2,7 +2,7 @@ torrentProgress = require './torrentProgress'
 
 regexPattern = /^((?!sample).)*\.(3g2|3gp|3gpp|asf|asx|avi|dvb|f4v|fli|flv|fvt|h261|h263|h264|jpgm|jpgv|mp4|jpm|m1v|m2v|m4u|m4v|mj2|mjp2|mk3d|mks|mkv|mng|mov|movie|mpe|mpeg|mpg|mxu|ogv|pyv|qt|smv|uvh|uvm|uvp|uvs|uvu|uvv|uvvh|uvvm|uvvp|uvvs|uvvu|uvvv|viv|vob|webm|wm|wmv|wmx|wvx)$/gmi
 
-isVideo = (file) ->
+exports.isVideo = (file) ->
   regexPattern.test file.replace /\s+/g,''
 
 exports.serializeFiles = (torrent) ->
@@ -12,7 +12,7 @@ exports.serializeFiles = (torrent) ->
   cleanedTorrentFiles = []
 
   for torrentFile in torrentFiles
-    if isVideo torrentFile.name 
+    if exports.isVideo torrentFile.name 
 
       start = torrentFile.offset / pieceLength | 0
       end = (torrentFile.offset + torrentFile.length - 1) / pieceLength | 0
@@ -37,7 +37,7 @@ exports.serialize = (torrent) ->
   interested: torrent.amInterested
   ready: torrent.ready
   files: exports.serializeFiles torrent
-  progress: torrentProgress torrent.bitfield.buffer
+  progress: torrentProgress torrent
 
 exports.serializeObject = (torrents) ->
   object = {}

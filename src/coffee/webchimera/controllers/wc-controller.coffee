@@ -296,7 +296,7 @@ angular.module 'app.webchimera'
     #for event in ['MediaChanged', 'NothingSpecial', 'Stopped', 'Forward', 'Backward', 'PositiChanged', 'SeekableChanged', 'PausableChanged']
     #  @registerEvent event 
 
-    @wcjsElement.onOpening = @onCanPlay.bind(this) 
+    #@wcjsElement.onOpening = @onCanPlay.bind(this) 
     @wcjsElement.onBuffering = @onStartBuffering.bind(this)
     @wcjsElement.onPlaying = @onPlay.bind(this)
     @wcjsElement.onPaused = @onPause.bind(this)

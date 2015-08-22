@@ -104,8 +104,8 @@ angular.module 'app', [
       sticky: true
       title: null
       views: detail:
-        template: '''<wc-poster ng-if="ctrl.config.poster" poster="ctrl.config.poster"></wc-poster>
-          <wc-detail player="ctrl.player" torrent="ctrl.torrent" config="ctrl.config"></wc-detail>'''
+        template: '''<wc-poster ng-hide="ctrl.config.controls && ctrl.player.canplay" ng-if="ctrl.config.poster" poster="ctrl.config.poster"></wc-poster>
+          <wc-detail ng-hide="ctrl.player.torrentLink" player="ctrl.player" torrent="ctrl.torrent" config="ctrl.config"></wc-detail>'''
 
     .state 'app.settings',
       url: '/settings'

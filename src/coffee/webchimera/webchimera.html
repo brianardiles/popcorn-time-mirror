@@ -43,7 +43,7 @@
 
         <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
         <wc-torrent-info ng-hide="ctrl.config.controls && ctrl.player.canplay" wc-torrent="ctrl.torrent" wc-player="ctrl.player"></wc-torrent-info>
-        <wc-buffering></wc-buffering>
+        <wc-buffering ng-show="ctrl.player.canplay"></wc-buffering>
         <wc-overlay-play ng-if="ctrl.config.controls && ctrl.player.canplay"></wc-overlay-play>
     </div>
 </div>

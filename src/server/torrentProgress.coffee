@@ -27,4 +27,6 @@ module.exports = (torrent) ->
 
   progress
     .map (p) -> p * 100 / buffer.length
-    .filter (p, i) -> torrentUtils.isVideo torrent.files[i].name
+    .filter (p, i) -> 
+      if torrent.files[i]?.name
+        torrentUtils.isVideo torrent.files[i].name

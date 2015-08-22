@@ -189,9 +189,9 @@ angular.module 'app.webchimera'
 
   @stop = ->
     if @wcjsElement
-      @wcjsElement.pause()
-      @wcjsElement.time = 0
-    
+      @wcjsElement.stop()
+      @wcjsElement.playlist.clear()
+      
     @currentTime = 0
     @setState WC_STATES.STOP
     

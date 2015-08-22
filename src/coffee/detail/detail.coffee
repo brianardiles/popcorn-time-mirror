@@ -12,7 +12,7 @@ angular.module 'app.detail', []
 .controller 'detailController', ($scope, $filter, playerConfig, $timeout, Settings, $stateParams, $state, TVApi, YTS, Haruhichan) ->
   vm = this
 
-  $state.current.title = $stateParams.title
+  $state.current.title = vm.show = $stateParams.title
   
   vm.currentDevice = Settings.chosenPlayer
   vm.currentQuality = '0' 

@@ -9,6 +9,6 @@
 
 <div class="meta-container">
     <div class="status">{{ state }}</div>
-    <md-progress-linear class="progressbar" md-mode="indeterminate"></md-progress-linear>
+    <md-progress-linear class="md-warn progressbar" md-mode="indeterminate"></md-progress-linear>
     <div class="stats">Download: {{ torrent.stats.speed.down | fileSize }} &bullet; Upload: {{ torrent.stats.speed.up | fileSize }} &bullet; Active Peers: {{ torrent.stats.peers.total }}</div>
 </div>

@@ -1,53 +1,14 @@
-<md-content>
-    <md-list>
-      <md-subheader>
-        <div layout="row" class="title"></div>
-        <div layout="row" class="external-play">Streaming to<span class="player-name"></span></div>
-        <!-- download -->
-        <div layout="row" class="text_download">{{ state }}</div>
+<page-header>
+    <md-button ng-click="stopPlaying()" class="back md-icon-button" role="button">
+        <md-icon md-font-set="material-icons" role="button" tabindex="0" aria-label="arrow-back">close</md-icon>
+    </md-button>
 
-        <md-progress-linear md-mode="determinate" value="{{ torrent.progress[0] }}"></md-progress-linear>
-      </md-subheader>
-      <md-list-item>
-        <p>Download</p>
-        <span>{{ torrent.stats.speed.down | fileSize }}</span>
-      </md-list-item>
-      <md-list-item>
-        <p>Upload</p>
-        <span>{{ torrent.stats.speed.up | fileSize }}</span>
-      </md-list-item>
-      <md-list-item>
-        <p>Active Peers</p>
-        <span>{{ torrent.stats.peers.total }}</span>
-      </md-list-item>
-    </md-list>
+    <div class="title">{{ player.show }}</div>
+    <div class="episode-info">{{ player.episode.title }}</div>
+</page-header>
 
-    <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
-        <md-button class="md-fab md-mini" aria-label="Stop">
-            <md-icon md-font-set="material-icons">skip_previous</md-icon>
-        </md-button>
-        <md-button class="md-fab md-mini" aria-label="Play">
-           <md-icon md-font-set="material-icons">play_arrow</md-icon>
-        </md-button>
-        <md-button class="md-fab md-mini" aria-label="Pause">
-            <md-icon md-font-set="material-icons">pause</md-icon>
-        </md-button>
-        <md-button class="md-fab md-mini" aria-label="Stop">
-            <md-icon md-font-set="material-icons">stop</md-icon>
-        </md-button>
-        <md-button class="md-fab md-mini" aria-label="Stop">
-            <md-icon md-font-set="material-icons">skip_next</md-icon>
-        </md-button>
-    </section>
-
-    <section layout="row" layout-align="center center">
-        <md-button class="md-raised md-warn" ng-click="stopPlaying()">Cancel</md-button>
-    </section>
-
-    <section layout="row" ng-if="ctrl.noSpace">
-        <span class="warn">Your disk is almost full.</span><br>
-        <span class="detail">You need to make more space available on your disk by deleting files.</span>
-    </section>
-
-</md-content>
-
+<div class="meta-container">
+    <div class="status">{{ state }}</div>
+    <md-progress-linear class="progressbar" md-mode="indeterminate"></md-progress-linear>
+    <div class="stats">Download: {{ torrent.stats.speed.down | fileSize }} &bullet; Upload: {{ torrent.stats.speed.up | fileSize }} &bullet; Active Peers: {{ torrent.stats.peers.total }}</div>
+</div>

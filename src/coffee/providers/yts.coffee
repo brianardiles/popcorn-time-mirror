@@ -18,8 +18,7 @@ angular.module 'app.providers'
     for idx, torrent of torrents
       if torrent.quality isnt '3D'
         torrentsObject[torrent.quality] =
-          url: torrent.url
-          magnet: 'magnet:?xt=urn:btih:' + torrent.hash + '&tr=udp://open.demonii.com:1337&tr=udp://tracker.coppersurfer.tk:6969'
+          url: 'magnet:?xt=urn:btih:' + torrent.hash + '&tr=udp://open.demonii.com:1337&tr=udp://tracker.coppersurfer.tk:6969'
           size: torrent.size_bytes
           filesize: torrent.size
           seeds: torrent.seeds

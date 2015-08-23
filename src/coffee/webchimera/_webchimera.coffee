@@ -25,7 +25,8 @@ angular.module 'app.webchimera', [
     vm.config.controls = readyState
 
   $scope.$watchCollection 'ctrl.player', (newPlayer, oldPlayer) ->
-    playerService.sortNextEpisodes(newPlayer).then (data) ->
-      vm.next = data
+    if $stateParams.type is 'show'
+      playerService.sortNextEpisodes(newPlayer).then (data) ->
+        vm.next = data
 
   return

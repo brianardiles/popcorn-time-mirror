@@ -2,7 +2,7 @@
 
 angular.module 'app.settings'
 
-.factory 'AdvSettings', (Settings, http, tls, url, gui) ->
+.factory 'AdvSettings', (Settings, tls, url, gui) ->
   get: (variable) ->
     if typeof Settings[variable] != 'undefined'
       return Settings[variable]

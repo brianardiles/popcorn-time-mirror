@@ -3,8 +3,8 @@
 angular.module 'app.services'
 
 .factory '$Vibrant', ($q, Vibrant) ->
-  defaultQuality = 32
-  defaultColorCount = 6
+  defaultQuality = 16
+  defaultColorCount = 4
 
   get: (image, colorCount, quality) ->
     defer = $q.defer()
@@ -131,7 +131,7 @@ angular.module 'app.services'
 
     constructor: (sourceImage, colorCount, quality) ->
       if typeof colorCount == 'undefined'
-        colorCount = 32
+        colorCount = 4
       if typeof quality == 'undefined'
         quality = 5
 

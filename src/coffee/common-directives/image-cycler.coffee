@@ -6,6 +6,7 @@ angular.module 'app.common-directives'
   restrict: 'E'
   link: (scope, element, attr) ->
     image = null
+    imageScope = null
 
     $animate.enabled element
 
@@ -24,7 +25,10 @@ angular.module 'app.common-directives'
         
         animations.push $animate.enter newImage, element, null
 
-        $q.all animations
+        $q.all(animations).then ->
+          if imageScope
+            imageScope.$destroy()
+          imageScope = newScope
 
         return
 

@@ -20,7 +20,13 @@ wc-poster
     height 100vh
     width 100vw
     margin: auto
-
+    opacity 0
+    background-size cover
+    transition opacity 200ms ease-in
+    
+    &.fadein
+        opacity: 1
+          
   wc-poster img.pause,
   wc-poster img.play 
     display: none

@@ -34,7 +34,7 @@ angular.module 'app', [
   
 ]
 
-.config ($compileProvider, $mdThemingProvider, $stateProvider, $urlRouterProvider, $uiViewScrollProvider) ->
+.config ($compileProvider, $httpProvider, $mdThemingProvider, $stateProvider, $urlRouterProvider, $uiViewScrollProvider) ->
 
   $stateProvider
     .state 'app',
@@ -119,7 +119,9 @@ angular.module 'app', [
   $urlRouterProvider.otherwise '/movie'
   $uiViewScrollProvider.useAnchorScroll()
 
-  $compileProvider.debugInfoEnabled true
+  $httpProvider.useApplyAsync true
+
+  $compileProvider.debugInfoEnabled false
 
   $mdThemingProvider.definePalette 'white',
     '50': '#ffffff'

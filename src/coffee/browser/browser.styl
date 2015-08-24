@@ -12,12 +12,18 @@ md-content
         md-grid-tile
             list-style: none
             overflow hidden
-            opacity 1
             cursor pointer
             border-radius 1px
             box-shadow 0 0 3px rgba(0, 0, 0, 0.2)
-            background-size cover
-            
+
+            img
+                opacity 0
+                background-size cover
+                transition opacity 200ms ease-in
+                
+                &.fadein
+                    opacity: 1
+                    
             .info
                 position absolute
                 bottom 0

@@ -2,7 +2,7 @@
 
 angular.module 'app.browser', []
 
-.controller 'browserController', ($interval, api, type) ->
+.controller 'browserController', ($scope, $interval, api, type) ->
   vm = this
 
   bgCycler = null
@@ -47,5 +47,8 @@ angular.module 'app.browser', []
     fetchData()
 
   fetchData()
-  
+
+  $scope.$on '$destroy', ->
+    $interval.cancel bgCycler
+
   return 

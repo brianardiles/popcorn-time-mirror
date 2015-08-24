@@ -3,8 +3,8 @@
 angular.module 'app.services'
 
 .factory '$Vibrant', ($q, Vibrant) ->
-  defaultQuality = 64
-  defaultColorCount = 10
+  defaultQuality = 32
+  defaultColorCount = 6
 
   get: (image, colorCount, quality) ->
     defer = $q.defer()
@@ -48,6 +48,11 @@ angular.module 'app.services'
         fab: fabColor
     else
       defer.resolve null
+
+    vibrant = null
+    color = null
+    textColor = null
+    fabColor = null
 
     defer.promise
 
@@ -126,7 +131,7 @@ angular.module 'app.services'
 
     constructor: (sourceImage, colorCount, quality) ->
       if typeof colorCount == 'undefined'
-        colorCount = 64
+        colorCount = 32
       if typeof quality == 'undefined'
         quality = 5
 
@@ -329,9 +334,9 @@ angular.module 'app.services'
 .factory 'CanvasImage', ->
   class CanvasImage
     constructor: (image) ->
-      @canvas = document.createElement('canvas')
+      @canvas = angular.element('<canvas></canvas>')[0]
       @context = @canvas.getContext('2d')
-      document.body.appendChild @canvas
+
       @width = @canvas.width = image.width
       @height = @canvas.height = image.height
       @context.drawImage image, 0, 0, @width, @height
@@ -349,4 +354,4 @@ angular.module 'app.services'
       @context.getImageData 0, 0, @width, @height
 
     removeCanvas: ->
-      @canvas.parentNode.removeChild @canvas
+      @canvas.remove()

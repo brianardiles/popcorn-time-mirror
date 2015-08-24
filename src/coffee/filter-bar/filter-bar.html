@@ -1,3 +1,7 @@
+<md-button class="md-icon-button" style="position: fixed; right: 40px; top: 25px" role="button" ng-if="!header.torrentId">
+    <md-icon style="font-size: 3em; color: white; height: 1em; width: 1em">search</md-icon>
+</md-button>
+
 <div>
   <pt-filter-bar-item ng-if="filters.list.types" items="filters.list.types" selected="filters.params.type" menu-open="filters.menuOpen" label='Type'></pt-filter-bar-item>
 

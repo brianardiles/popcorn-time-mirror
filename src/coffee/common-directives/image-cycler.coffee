@@ -30,7 +30,7 @@ angular.module 'app.common-directives'
 
 .directive 'backgroundImage', ($compile, $animate) ->
   restrict: 'E'
-  template: '<div class="bg-image"></div>'
+  template: '<div class="bg-image" pt-parallax="background" parallax-ratio="1.22"></div>'
   replace: true
   scope: true
   link: (scope, element, attr) ->

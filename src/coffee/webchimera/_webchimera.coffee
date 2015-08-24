@@ -14,7 +14,7 @@ angular.module 'app.webchimera', [
   templateUrl: 'webchimera/webchimera.html'
   controller: 'detailCtrl as ctrl'
 
-.controller 'detailCtrl', ($sce, playerService, $filter, $scope, playerConfig, $stateParams) ->
+.controller 'detailCtrl', (playerService, $scope, playerConfig, $stateParams) ->
   vm = this
 
   vm.config = angular.copy playerConfig

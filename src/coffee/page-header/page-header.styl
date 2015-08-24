@@ -1,13 +1,22 @@
 pt-page-header
     display block
-    padding 50px 40px 0 40px
-    height 8vh
-    position relative
+    padding 0px 40px 0 40px
+    position fixed
     z-index 3
+    height 120px
+    top 0 
+    left 100px
+    right 0px 
     
-    &.movie
-        height 12vh
+    &.detail
+        height 12vh  
+        position relative
+        padding 40px 40px 0 40px
+        left 0px
         
+        .title
+            padding-top 0px  
+     
     .back
         float left
         position relative
@@ -18,6 +27,7 @@ pt-page-header
         float left
         position: relative
         line-height 43px
+        padding-top 40px
         font-size 42px
         font-weight 500
         letter-spacing 0.7

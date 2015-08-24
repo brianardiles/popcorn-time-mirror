@@ -9,7 +9,8 @@ angular.module 'app', [
 
   'socket-io'
   'ct.ui.router.extras'
-
+  'xmlrpc'
+  
   'app.about'
   'app.bookmarks'
   'app.browser'

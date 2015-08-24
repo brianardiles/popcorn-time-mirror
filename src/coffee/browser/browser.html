@@ -1,15 +1,16 @@
 <pt-sidebar></pt-sidebar>
 
-<md-content>
-  <pt-page-header></pt-page-header>
-
-  <div class="top-tools">
-    <pt-filter-bar type="browser.type"on-change="browser.onChange({params: params})">
-    </pt-filter-bar>
-  </div>
+<md-content style="overflow: hidden; padding-top: 25vh">
+  <pt-page-header pt-parallax="fade" parallax-ratio="0.66" ></pt-page-header>
 
   <div ng-show="browser.data && browser.backdrop">
-    <background-cycler class="bg-fade" ng-animate-ref="bg-fade"></background-cycler>
+
+    <div class="top-tools">
+      <pt-filter-bar type="browser.type" pt-parallax="sticky" on-change="browser.onChange({params: params})">
+      </pt-filter-bar>
+    </div>
+
+    <background-cycler class="bg-fade"></background-cycler>
 
     <md-content layout-padding>
       <md-grid-list in-view-container md-row-height="4:3" md-cols-sm="2" md-cols-gt-sm="3" md-cols-md="4" md-cols-gt-md="5" md-cols-lg="6" md-cols-gt-lg="8" md-gutter-sm="8px" md-gutter-md="12px" md-gutter-lg="16px" md-gutter-gt-lg="16px">

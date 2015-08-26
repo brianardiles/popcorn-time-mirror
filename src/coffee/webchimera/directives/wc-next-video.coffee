@@ -2,7 +2,7 @@
 
 angular.module 'app.webchimera'
 
-###.directive 'wcNextVideo', ($timeout) ->
+.directive 'wcNextVideo', ($timeout) ->
   restrict: 'E'
   require: '^chimerangular'
   templateUrl: 'webchimera/views/directives/wc-next-video.html'
@@ -58,6 +58,4 @@ angular.module 'app.webchimera'
       chimera.isCompleted
     , onComplete
 
-
     scope.$watch 'wcNext', onLoadData
-###

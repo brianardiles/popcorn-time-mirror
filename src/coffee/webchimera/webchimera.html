@@ -33,6 +33,8 @@
             <wc-time-display>{{ timeLeft | formatTime }}</wc-time-display>
             <wc-playback-button></wc-playback-button>
             
+            <wc-subtitle subtitles="ctrl.config.tracks" current-subtitle="ctrl.config.track"></wc-subtitle>
+            
             <wc-volume>
                 <wc-mute-button></wc-mute-button>
                 <wc-volume-bar></wc-volume-bar>
@@ -41,7 +43,7 @@
             <wc-fullscreen-button></wc-fullscreen-button>
         </wc-bottom-controls>
 
-        <wc-next-video wc-next="ctrl.next" wc-time="3000"></wc-next-video>
+        <wc-next-video wc-next="ctrl.config.next" wc-time="3000"></wc-next-video>
         <wc-torrent-info ng-hide="ctrl.config.controls && ctrl.player.canplay" wc-torrent="ctrl.torrent" wc-player="ctrl.player"></wc-torrent-info>
         <wc-buffering ng-show="ctrl.player.canplay"></wc-buffering>
         <wc-overlay-play ng-if="ctrl.config.controls && ctrl.player.canplay"></wc-overlay-play>

@@ -41,10 +41,7 @@ angular.module 'app.webchimera'
       return
 
 .factory 'wcjsRenderer', (Texture, os) ->
-  wcAddon =  switch os.platform() 
-    when 'win32' then require 'webchimera.js'
-    when 'darwin', 'osx' then require 'wcjs-darwin'
-    else null 
+  wcAddon = require 'wcjs-prebuilt'
     
   render = (canvas, videoFrame, vlc) ->
     if !vlc.playing

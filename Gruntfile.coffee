@@ -8,14 +8,7 @@ if platform == 'darwin'
 
 nwjs = if platform is 'osx' then 'nwjs.app/Contents/MacOS/nwjs' else 'nw'
 
-vlcsrc = switch platform 
-  when 'win32' then 'vlc/vlc_2.2.1_win_ia32_with_avi_fix.zip' 
-
-vlcdest = switch platform 
-  when 'win32' then 'node_modules/webchimera.js/build/Release' 
-
-if platform == 'linux' or platform == 'osx'
-  platform = platform + os.arch().replace('x', '')
+platform = platform + os.arch().replace('x', '')
 
 module.exports = (grunt) ->
 
@@ -34,7 +27,7 @@ module.exports = (grunt) ->
         
       nwjs: 
         exe: nwjs
-        version: '0.12.2'
+        version: '0.12.3'
     
     clean:
       build: src: [ '<%= config.path.build %>' ]
@@ -105,11 +98,6 @@ module.exports = (grunt) ->
         expand: true
         join: true
         files: 'build/css/app.css': ['src/**/*.styl', 'src/**/**.styl']
-    
-    unzip:
-      vlc:
-        src: vlcsrc
-        dest: vlcdest
 
     copy: 
       build:
@@ -175,9 +163,6 @@ module.exports = (grunt) ->
     grunt.task.run 'stylus:build'
     grunt.task.run 'concat'
     grunt.task.run 'copyDeps'
-
-    if platform is 'win32'
-      grunt.task.run 'unzip'
     
     grunt.task.run 'preprocess:build'
 

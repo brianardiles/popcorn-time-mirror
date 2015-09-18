@@ -8,7 +8,8 @@ if platform == 'darwin'
 
 nwjs = if platform is 'osx' then 'nwjs.app/Contents/MacOS/nwjs' else 'nw'
 
-platform = platform + os.arch().replace('x', '')
+if platform == 'linux' or platform == 'osx'
+  platform = platform + os.arch().replace('x', '')
 
 module.exports = (grunt) ->
 

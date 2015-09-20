@@ -2,7 +2,7 @@
 
 angular.module 'app.providers'
 
-.factory 'TraktTv', ($http, $q, gui, AdvSettings, Settings) ->
+.factory 'TraktTv', ($http, $q, ipc, AdvSettings, Settings) ->
   authenticated = false
 
   API_ENDPOINT = 'https://api-v2launch.trakt.tv'
@@ -217,51 +217,49 @@ angular.module 'app.providers'
 
       defer.promise
     
-    authorize: ->
-      defer = $q.defer()
-      
-      url = false
-      API_URI = 'http://trakt.tv'
-      OAUTH_URI = API_URI + '/oauth/authorize?response_type=code&client_id=' + CLIENT_ID
+    #authorize: ->
+    #  defer = $q.defer()
+    #  
+    #  url = false
+    #  API_URI = 'http://trakt.tv'
+    #  OAUTH_URI = API_URI + '/oauth/authorize?response_type=code&client_id=' + CLIENT_ID
+    #
+    #  window.loginWindow = gui.Window.open(OAUTH_URI + '&redirect_uri=' + encodeURIComponent(REDIRECT_URI),
+    #    position: 'center'
+    #    focus: true
+    #    title: 'Trakt.tv'
+    #    icon: 'src/app/images/icon.png'
+    #    toolbar: false
+    #    resizable: false
+    #    show_in_taskbar: false
+    #    width: 600
+    #    height: 600)
+    #  
+    #  window.loginWindow.on 'loaded', ->
+    #    url = window.loginWindow.window.document.URL
+    #    
+    #    if url.indexOf('&') == -1 and url.indexOf('auth/signin') == -1
+    #      if url.indexOf('oauth/authorize/') != -1
+    #        url = url.split('/')
+    #        url = url[url.length - 1]
+    #      else
+    #        ipc.send 'open-url-in-external', url
+    #      @close true
+    #    else
+    #      url = false
+    #    return
+    #  
+    #  window.loginWindow.on 'closed', ->
+    #    if url
+    #      defer.resolve url
+    #    else
+    #      AdvSettings.set 'traktToken', ''
+    #      AdvSettings.set 'traktTokenTTL', ''
+    #      AdvSettings.set 'traktTokenRefresh', ''
+    #      defer.reject 'Trakt window closed without exchange token'
+    #    return
+    #  defer.promise
 
-      gui.App.addOriginAccessWhitelistEntry API_URI, 'app', 'host', true
-      
-      window.loginWindow = gui.Window.open(OAUTH_URI + '&redirect_uri=' + encodeURIComponent(REDIRECT_URI),
-        position: 'center'
-        focus: true
-        title: 'Trakt.tv'
-        icon: 'src/app/images/icon.png'
-        toolbar: false
-        resizable: false
-        show_in_taskbar: false
-        width: 600
-        height: 600)
-      
-      window.loginWindow.on 'loaded', ->
-        url = window.loginWindow.window.document.URL
-        
-        if url.indexOf('&') == -1 and url.indexOf('auth/signin') == -1
-          if url.indexOf('oauth/authorize/') != -1
-            url = url.split('/')
-            url = url[url.length - 1]
-          else
-            gui.Shell.openExternal url
-          @close true
-        else
-          url = false
-        return
-      
-      window.loginWindow.on 'closed', ->
-        if url
-          defer.resolve url
-        else
-          AdvSettings.set 'traktToken', ''
-          AdvSettings.set 'traktTokenTTL', ''
-          AdvSettings.set 'traktTokenRefresh', ''
-          defer.reject 'Trakt window closed without exchange token'
-        return
-      defer.promise
-    
     checkToken: ->
       if Settings.traktTokenTTL <= (new Date).valueOf() and Settings.traktTokenRefresh != ''
         $log.info 'Trakt: refreshing access token'

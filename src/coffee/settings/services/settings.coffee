@@ -2,7 +2,7 @@
 
 angular.module 'app.settings'
 
-.factory 'Settings', (os, data_path, path, gui) ->
+.factory 'Settings', (os, data_path, path) ->
   # User interface
   language: 'en'
   translateSynopsis: true
@@ -143,7 +143,6 @@ angular.module 'app.settings'
     ]
   
   # App Settings
-  version: gui.App.manifest.version
   dbversion: '0.1.0'
   font: 'tahoma'
   

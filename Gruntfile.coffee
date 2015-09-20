@@ -6,8 +6,6 @@ platform  = os.platform()
 if platform == 'darwin'
   platform = 'osx'
 
-nwjs = if platform is 'osx' then 'nwjs.app/Contents/MacOS/nwjs' else 'nw'
-
 if platform == 'linux' or platform == 'osx'
   platform = platform + os.arch().replace('x', '')
 
@@ -26,10 +24,6 @@ module.exports = (grunt) ->
         cache: 'cache'
         icons: 'src/icons'
         
-      nwjs: 
-        exe: nwjs
-        version: '0.12.3'
-    
     clean:
       build: src: [ '<%= config.path.build %>' ]
       dist: src: [ '<%= config.path.dist %>' ]
@@ -47,6 +41,8 @@ module.exports = (grunt) ->
         src: [ '*.coffee' ]
         dest: 'build/server/'
         ext: '.js'
+      main:
+        files: 'build/server.js': ['src/server.coffee']
 
     watch: 
       coffee: 
@@ -56,7 +52,7 @@ module.exports = (grunt) ->
 
     # https://www.npmjs.com/package/grunt-angular-templates
     ngtemplates:
-      app: 
+      ng: 
         cwd: 'src/coffee'
         src: ['**/*.html']
         dest: 'build/js/templates.js'
@@ -120,29 +116,6 @@ module.exports = (grunt) ->
         src: ['src/server/package.json']
         dest: '<%= config.path.build %>/server/package.json'
 
-    run: 
-      build:
-        options:
-          cwd: '.'
-          wait: false
-          quiet: false
-        cmd: '<%= config.path.cache %>/<%= config.nwjs.version %>/<%= config.platform %>/<%= config.nwjs.exe %>'
-        args: [ '<%= config.path.build %>/', '--debug' ]
-      
-    nwjs: 
-      build:
-        options:
-          macIcns: '<%= config.path.icons %>/popcorntime.icns'
-          winIco: '<%= config.path.icons %>/popcorntime.ico'
-          platforms: [
-            'osx'
-            'linux'
-            'win'
-          ]
-          buildDir: './<%= config.path.dist %>'
-          version: '<%= config.nwjs.version %>'
-        src: [ '<%= config.path.build %>/**/*' ]
-  
   # load the tasks
   require('load-grunt-tasks') grunt
   
@@ -159,7 +132,7 @@ module.exports = (grunt) ->
 
     grunt.task.run 'clean:build'
     grunt.task.run 'coffee'
-    grunt.task.run 'ngtemplates:app'
+    grunt.task.run 'ngtemplates:ng'
     grunt.task.run 'ngAnnotate:build'
     grunt.task.run 'stylus:build'
     grunt.task.run 'concat'
@@ -173,7 +146,7 @@ module.exports = (grunt) ->
     grunt.config.set 'config.env', env
 
     grunt.task.run 'coffee'
-    grunt.task.run 'ngtemplates:app'
+    grunt.task.run 'ngtemplates:ng'
     grunt.task.run 'ngAnnotate:build'
     grunt.task.run 'concat'
     grunt.task.run 'copyDeps'
@@ -193,7 +166,6 @@ module.exports = (grunt) ->
     grunt.config.set 'config.env', env
 
     grunt.task.run 'build'
-    grunt.task.run 'run:build'
     grunt.task.run 'watch'
 
   grunt.event.on 'watch', (action, filepath, target) ->
@@ -205,8 +177,6 @@ module.exports = (grunt) ->
 
     grunt.config.set 'config.env', env
 
-    grunt.task.run 'run:build'
-
   grunt.task.registerTask 'dist', (env) ->
     env = env or 'dev'
 
@@ -214,4 +184,3 @@ module.exports = (grunt) ->
 
     grunt.task.run 'build:' + env
     grunt.task.run 'copy:node_modules'
-    grunt.task.run 'nwjs:build'

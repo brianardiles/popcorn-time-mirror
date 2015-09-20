@@ -28,11 +28,11 @@ angular.module 'app.streamer', []
       # TODO add deconstructor
       @connection.emit 'unsubscribe', @infoHash
 
-.factory 'torrentProvider', ($http, $q, streamServer, torrentResource) ->
+.factory 'torrentProvider', ($http, $q, torrentResource, serverPort) ->
   data = {}
 
   getAllTorrents: -> 
-    $http.get "http://127.0.0.1:#{streamServer.port}/torrents/"
+    $http.get "http://127.0.0.1:#{serverPort}/torrents/"
       .success (torrents) ->
         for index, torrent of torrents
           data[index] = new torrentResource torrent
@@ -48,6 +48,6 @@ angular.module 'app.streamer', []
 
   addTorrentLink: (link) ->
     if link
-      $http.post "http://127.0.0.1:#{streamServer.port}/torrents/", link: link
+      $http.post "http://127.0.0.1:#{serverPort}/torrents/", link: link
         .success (resp) -> data[resp.infoHash] = new torrentResource resp
     else $q.reject()

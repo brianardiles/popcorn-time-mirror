@@ -2,23 +2,7 @@
   "name": "Angular-Popcorn-Time",
   "version": "0.0.0",
   "description": "There's nothing on TV",
-  "main": "index.html",
-  "node-main": "server/server.js",
-  "scripts": {
-    "build-osx": "unzip -oqq vlc/wcjs-darwin.zip -d $(pwd)/node_modules/;"
-  },
-  "window": {
-    "title": "Angular Popcorn Time",
-    "icon": "assets/images/icon.png",
-    "toolbar": false,
-    "frame": false,
-    "transparent": true,
-    "min_width": 960,
-    "min_height": 520,
-    "resizable": true,
-    "show": false,
-    "position": "center"
-  },
+  "main": "build/server.js",
   "devDependencies": {
     "coffee-script": "~1.9.0",
     "grunt": "^0.4.5",
@@ -31,7 +15,6 @@
     "grunt-contrib-stylus": "^0.21.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-ng-annotate": "^1.0.1",
-    "grunt-nw-builder": "2.0.0",
     "grunt-preprocess": "~4.1.0",
     "grunt-run": "~0.3.0",
     "grunt-zip": "^0.17.0",
@@ -42,6 +25,7 @@
     "express": "^4.13.3",
     "fluent-ffmpeg": "^2.0.1",
     "get-port": "^1.0.0",
+    "electron-packager": "^5.1.0",
     "mime": "^1.3.4",
     "mkdirp": "^0.5.1",
     "nedb": "^1.1.2",
@@ -57,6 +41,14 @@
     "socket.io": "^1.3.6",
     "torrent-health": "0.0.6",
     "torrent-stream": "^0.21.3",
-    "wcjs-prebuilt": "git+https://git.popcorntime.io/mirrors/wcjs-prebuilt.git"
+    "wcjs-prebuilt": "git://github.com/Ivshti/wcjs-prebuilt.git#download-redo"
+  },
+  "scripts": {
+    "start": "electron build/server.js",
+    "dev": "electron build/server.js",
+    "wcjs-prebuilt": "git://github.com/Ivshti/wcjs-prebuilt.git#download-redo",
+    "mac-bundle": "electron-packager . Angular-Popcorn-Time --platform=darwin --arch=x64 --version=0.33.0 --ignore=node_modules/electron-prebuilt && cp info.plist Angular-Popcorn-Time.app/Contents/info.plist && cp icon.icns Angular-Popcorn-Time.app/Contents/Resources/atom.icns",
+    "win-bundle": "electron-packager . Angular-Popcorn-Time --platform=win32 --arch=ia32 --version=0.33.0 --icon=icon.ico",
+    "linux-64-bundle": "electron-packager . Angular-Popcorn-Time --platform=linux --arch=x64 --version=0.33.0 ignore='node_modules/(electron-packager|electron-prebuilt)'"
   }
 }

@@ -2,18 +2,16 @@
 
 angular.module 'app.streamer'
 
-.constant 'streamServer', process.mainModule.exports
+.value 'serverPort', require('ipc').sendSync 'get-port'
 
-.run (streamServer, torrentProvider, socketServer) ->
-  streamServer.start ->
-    socketServer.start().then ->
-      torrentProvider.getAllTorrents()
+.run (torrentProvider, socketServer, serverPort) ->
+  socketServer.start().then ->
+    torrentProvider.getAllTorrents()
 
-.factory 'socketServer', (socketFactory, streamServer, $q) ->
-
+.factory 'socketServer', (socketFactory, $q, serverPort) ->
   connection: null
 
   start: ->
     if not @connection 
-      @connection = socketFactory ioSocket: io "http://127.0.0.1:#{streamServer.port}/"
+      @connection = socketFactory ioSocket: io "http://127.0.0.1:#{serverPort}/"
     $q.when()

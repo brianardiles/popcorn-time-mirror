@@ -6,14 +6,13 @@ angular.module 'app.services'
 
 .constant 'tls', require 'tls'
 .constant 'url', require 'url'
-.constant 'gui', require 'nw.gui'
+.constant 'ipc', require 'ipc'
 .constant 'os', require 'os'
 
 .constant 'request', require 'request'
 .constant 'torrenthealth', require 'torrent-health'
 
-.constant 'data_path', require('nw.gui').App.dataPath
-.constant 'nativeWindow', require('nw.gui').Window.get()
+.constant 'data_path', 'test'
 
 .constant 'nodeFs', require 'fs'
 .constant 'path', require 'path'

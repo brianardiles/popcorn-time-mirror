@@ -2,7 +2,7 @@
 
 angular.module 'app.settings'
 
-.factory 'AdvSettings', (Settings, tls, url, gui) ->
+.factory 'AdvSettings', (Settings, tls, url, ipc) ->
   get: (variable) ->
     if typeof Settings[variable] != 'undefined'
       return Settings[variable]
@@ -100,21 +100,24 @@ angular.module 'app.settings'
 
   performUpgrade: ->
     # This gives the official version (the package.json one)
-    currentVersion = gui.App.manifest.version
+    ipc.send 'version', (version) => 
+      currentVersion = version
     
-    if currentVersion != @get('version')
-      # Nuke the DB if there's a newer version
-      # Todo: Make this nicer so we don't lose all the cached data
-      cacheDb = openDatabase('cachedb', '', 'Cache database', 50 * 1024 * 1024)
-      
-      cacheDb.transaction (tx) ->
-        tx.executeSql 'DELETE FROM subtitle'
-        tx.executeSql 'DELETE FROM metadata'
+      if currentVersion != @get('version')
+        # Nuke the DB if there's a newer version
+        # Todo: Make this nicer so we don't lose all the cached data
+        cacheDb = openDatabase('cachedb', '', 'Cache database', 50 * 1024 * 1024)
+        
+        cacheDb.transaction (tx) ->
+          tx.executeSql 'DELETE FROM subtitle'
+          tx.executeSql 'DELETE FROM metadata'
 
-      # Add an upgrade flag
-      window.__isUpgradeInstall = true
+        # Add an upgrade flag
+        window.__isUpgradeInstall = true
     
-    @set 'version', currentVersion
-    @set 'releaseName', gui.App.manifest.releaseName
+      @set 'version', currentVersion
+
+    ipc.send 'releaseName', (name) => 
+      @set 'releaseName', name
 
     return

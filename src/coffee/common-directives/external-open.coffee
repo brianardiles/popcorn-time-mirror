@@ -2,11 +2,11 @@
 
 angular.module 'app.common-directives'
 
-.directive 'extOpen', (gui) ->
+.directive 'extOpen', (ipc) ->
   scope: { link: '=' }
   link: (scope, element, attrs) ->
     open = ->
-      gui.Shell.openExternal scope.link
+      ipc.send 'open-url-in-external', scope.link
 
     element.on 'click', open
 

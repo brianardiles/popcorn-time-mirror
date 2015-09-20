@@ -11,14 +11,15 @@ angular.module 'app.services', []
   Standard: window.devicePixelRatio <= 1
   Retina: window.devicePixelRatio > 1
 
-.constant 'splashwin', splashwin
-
 .constant 'titleButtons',  
   win32: ['min', 'max', 'close']
   darwin: ['close', 'min', 'max']
   linux: ['min', 'max', 'close']
 
-.run (nativeWindow, Settings, ScreenResolution, $timeout, deviceScan, splashwin) ->
+.run (ipc, Settings, ScreenResolution, $timeout, deviceScan, $templateCache) ->
+
+  console.log $templateCache
+  
   zoom = 0
   screen = window.screen
   
@@ -47,15 +48,12 @@ angular.module 'app.services', []
   if y < 0 or y + height > screen.height
     y = Math.round((screen.availHeight - height) / 2)
 
-  nativeWindow.once 'move', ->         
-    $timeout -> 
-      splashwin.close(true)
-      nativeWindow.show()
-      deviceScan()
-    , 1000, false
+  ipc.send 'ready', 
+    size: [width, height]
+    coords: [x, y] 
 
-  nativeWindow.zoomLevel = zoom
-  nativeWindow.resizeTo width, height
-  nativeWindow.moveTo x, y
-    
+  $timeout -> 
+    deviceScan()
+  , 1000, false
+
   return

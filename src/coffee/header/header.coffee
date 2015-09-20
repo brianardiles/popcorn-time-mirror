@@ -7,7 +7,7 @@ angular.module 'app.header', []
   templateUrl: 'header/header.html'
   controller: 'ptHeaderCtrl as title'
 
-.controller 'ptHeaderCtrl', ($scope, $rootScope, titleButtons, nativeWindow, $location) ->
+.controller 'ptHeaderCtrl', ($scope, $rootScope, titleButtons, ipc, $location) ->
   vm = this
 
   vm.platform = process.platform
@@ -18,24 +18,24 @@ angular.module 'app.header', []
     maximized: false
 
   vm.max = ->
-    if nativeWindow.isFullscreen
+    if vm.state.fullscreen
       vm.fullscreen()
     else
-      if window.screen.availHeight <= nativeWindow.height
-        nativeWindow.unmaximize()
+      if window.screen.availHeight <= ipc.height
+        ipc.send 'unminimize'
         vm.state.maximized = false
       else
-        nativeWindow.maximize()
+        ipc.send 'minimize'
       vm.state.maximized = true
 
   vm.min = ->
-    nativeWindow.minimize()
+    ipc.send 'minimize'
 
   vm.close = ->
-    nativeWindow.close()
+    ipc.send 'close'
 
   vm.fullscreen = ->
-    nativeWindow.toggleFullscreen()
-    vm.state.fullscreen = nativeWindow.isFullscreen
+    ipc.send 'toggleFullscreen'
+    vm.state.fullscreen = true
 
   return

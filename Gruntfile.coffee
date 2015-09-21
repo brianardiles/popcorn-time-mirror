@@ -8,10 +8,10 @@ if platform == 'darwin'
   runcmd = 'open electron/electron.app/Contents/MacOS/electron' + ' .' 
 
 if platform == 'win32' or 'win64'
-  runcmd = 'start electron/electron.exe' + '  .'
+  runcmd = 'start electron/electron.exe' + ' .'
 
 if platform == 'linux'
-  runcmd = 'electron/electron' + '  .'
+  runcmd = 'electron/electron' + ' .'
 
 if platform == 'linux' or platform == 'osx'
   platform = platform + os.arch().replace('x', '')

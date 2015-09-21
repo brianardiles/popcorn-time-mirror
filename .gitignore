@@ -14,7 +14,7 @@ node_modules/
 src/app/vendor
 src/app/themes
 build/
-cache/
+electron/
 dist/
 
 pids

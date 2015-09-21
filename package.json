@@ -14,18 +14,21 @@
     "grunt-contrib-copy": "~0.7.0",
     "grunt-contrib-stylus": "^0.21.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-download-electron": "^2.1.2",
     "grunt-ng-annotate": "^1.0.1",
     "grunt-preprocess": "~4.1.0",
     "grunt-run": "~0.3.0",
+    "grunt-shell": "^1.1.2",
+    "grunt-shell-spawn": "^0.3.9",
     "grunt-zip": "^0.17.0",
     "load-grunt-tasks": "^3.2.0"
   },
   "dependencies": {
     "body-parser": "^1.13.3",
+    "electron-packager": "^5.1.0",
     "express": "^4.13.3",
     "fluent-ffmpeg": "^2.0.1",
     "get-port": "^1.0.0",
-    "electron-packager": "^5.1.0",
     "mime": "^1.3.4",
     "mkdirp": "^0.5.1",
     "nedb": "^1.1.2",
@@ -41,7 +44,7 @@
     "socket.io": "^1.3.6",
     "torrent-health": "0.0.6",
     "torrent-stream": "^0.21.3",
-    "wcjs-prebuilt": "git://github.com/Ivshti/wcjs-prebuilt.git#download-redo"
+    "wcjs-prebuilt": "^2.0.0"
   },
   "scripts": {
     "start": "electron build/server.js",

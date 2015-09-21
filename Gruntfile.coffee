@@ -5,9 +5,21 @@ platform  = os.platform()
 
 if platform == 'darwin'
   platform = 'osx'
+  runcmd = 'open electron/electron.app/Contents/MacOS/electron' + ' .' 
+
+if platform == 'win32' or 'win64'
+  runcmd = 'start electron/electron.exe' + '  .'
+
+if platform == 'linux'
+  runcmd = 'electron/electron' + '  .'
 
 if platform == 'linux' or platform == 'osx'
   platform = platform + os.arch().replace('x', '')
+
+log = (err, stdout, stderr, cb) ->
+  console.log err or stdout or stderr
+  cb()
+  return
 
 module.exports = (grunt) ->
 
@@ -18,6 +30,9 @@ module.exports = (grunt) ->
       env: 'dev'
       pkg: grunt.file.readJSON 'package.json'
       
+      electron:
+        version: '0.33.0'
+
       path:
         build: normalize "#{__dirname}/build"
         dist: 'dist'
@@ -96,6 +111,21 @@ module.exports = (grunt) ->
         join: true
         files: 'build/css/app.css': ['src/**/*.styl', 'src/**/**.styl']
 
+    'download-electron':
+      version: '<%= config.electron.version %>'
+      appDir: '<%= config.path.build %>/'
+      outputDir: 'electron'
+
+    shell:
+      electron:
+        command: runcmd
+        options:
+          async: true
+          callback: log
+          execOptions: 
+            env: process.env
+
+
     copy: 
       build:
         src: ['package.json']
@@ -119,6 +149,9 @@ module.exports = (grunt) ->
   # load the tasks
   require('load-grunt-tasks') grunt
   
+  grunt.registerTask 'electron', ->
+    grunt.task.run 'download-electron'
+
   grunt.registerTask 'copyDeps', ->
     grunt.task.run 'copy:build'
     grunt.task.run 'copy:main'
@@ -139,6 +172,7 @@ module.exports = (grunt) ->
     grunt.task.run 'copyDeps'
     
     grunt.task.run 'preprocess:build'
+    grunt.task.run 'download-electron'
 
   grunt.registerTask 'buildAngular', (env) ->
     env = env or 'dev'
@@ -165,7 +199,8 @@ module.exports = (grunt) ->
 
     grunt.config.set 'config.env', env
 
-    grunt.task.run 'build'
+    grunt.task.run 'download-electron'
+    grunt.task.run 'shell:electron'
     grunt.task.run 'watch'
 
   grunt.event.on 'watch', (action, filepath, target) ->

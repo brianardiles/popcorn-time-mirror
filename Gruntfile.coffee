@@ -5,7 +5,7 @@ platform  = os.platform()
 
 if platform == 'darwin'
   platform = 'osx'
-  runcmd = 'open electron/electron.app/Contents/MacOS/electron' + ' .' 
+  runcmd = 'open electron/Electron.app/Contents/MacOS/Electron' + ' .' 
 
 if platform == 'win32' or 'win64'
   runcmd = 'start electron/electron.exe' + ' .'

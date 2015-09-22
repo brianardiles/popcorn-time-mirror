@@ -31,10 +31,10 @@ module.exports =
 
     win = new window
       title: 'Angular Popcorn Time'
-      'min-width': 960
+      'min-width': 520
       'min-height': 520
-      frame: true
-      show: true
+      frame: false
+      resizable: true
       icon: 'assets/images/icon.png'
       transparent: true
       center: true

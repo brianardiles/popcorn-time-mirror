@@ -80,9 +80,9 @@ module.exports =
     ipc.on 'ready', (event, data) ->
       ready = true
 
-      { size, coords, port } = data 
+      { size, coords, port, zoom } = data 
 
-      win.setSize size[0], size[0]
+      win.setSize size[0], size[1]
       win.setBounds coords[0], coords[1]
 
       win.show()

@@ -18,8 +18,6 @@ angular.module 'app.services', []
 
 .run (ipc, Settings, ScreenResolution, $timeout, deviceScan, $templateCache) ->
 
-  console.log $templateCache
-  
   zoom = 0
   screen = window.screen
   
@@ -51,6 +49,7 @@ angular.module 'app.services', []
   ipc.send 'ready', 
     size: [width, height]
     coords: [x, y] 
+    zoom: zoom
 
   $timeout -> 
     deviceScan()

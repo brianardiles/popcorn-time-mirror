@@ -46,3 +46,4 @@ dist/linux/*.deb
 src/WCjs
 src/lib
 vlc/lib
+bin

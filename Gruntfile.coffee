@@ -1,20 +1,20 @@
 os        = require 'os'
 
 platform  = os.platform()
-{ normalize } = require 'path'
+{ normalize, sep } = require 'path'
 
-if platform == 'darwin'
+if platform is 'darwin'
   platform = 'osx'
-  runcmd = 'open electron/Electron.app/Contents/MacOS/Electron' + ' .' 
+  run = 'electron/Electron.app/Contents/MacOS/Electron ' 
 
-if platform == 'win32' or 'win64'
-  runcmd = 'start electron/electron.exe' + ' .'
+if platform in [ 'win32', 'win64' ]
+  run = 'start electron/electron.exe '
 
-if platform == 'linux'
-  runcmd = 'electron/electron' + ' .'
+if platform is 'linux'
+  run = 'electron/electron ' 
 
-if platform == 'linux' or platform == 'osx'
-  platform = platform + os.arch().replace('x', '')
+if platform in [ 'linux', 'osx' ]
+  platform = platform + os.arch().replace 'x', ''
 
 log = (err, stdout, stderr, cb) ->
   console.log err or stdout or stderr
@@ -32,6 +32,7 @@ module.exports = (grunt) ->
       
       electron:
         version: '0.31.2'
+        run: run + '<%= config.path.build %>' + sep + 'server.js'
 
       path:
         build: normalize "#{__dirname}/build"
@@ -118,7 +119,7 @@ module.exports = (grunt) ->
 
     shell:
       electron:
-        command: runcmd
+        command: '<%= config.electron.run %>'
         options:
           async: true
           callback: log

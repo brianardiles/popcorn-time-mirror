@@ -9,8 +9,7 @@ angular.module 'app.settings'
     false
   
   set: (variable, newValue) ->
-    Database.writeSetting({ key: variable, value: newValue }).then ->
-      Settings[variable] = newValue
+    Settings[variable] = newValue
 
   setup: ->
     @performUpgrade()

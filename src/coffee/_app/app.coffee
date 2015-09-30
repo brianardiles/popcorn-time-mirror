@@ -101,7 +101,7 @@ angular.module 'app', [
         templateUrl: 'torrents/torrents.html'
 
     .state 'app.detail',
-      url: '/detail/:id?type?title'
+      url: '/detail/:id?type?title?subtype'
       sticky: true
       title: null
       views: detail:

@@ -6,7 +6,8 @@ angular.module 'app.providers'
   tvdb.getLanguages().then (langlist) ->
     AdvSettings.set 'tvdbLangs', langlist
 
-  shows = {}
+  shows = []
+  showIds = {}
 
   fetch: (filters) ->
     deferred = $q.defer()
@@ -36,9 +37,12 @@ angular.module 'app.providers'
         deferred.reject err
       else
 
-        for idx, show of data
-          shows[show._id] = show
-          shows[show._id].type = 'show'
+        for show, idx in data 
+          if not showIds[show._id]?
+            show.type = 'show'
+            showIds[show._id] = idx 
+            shows.push show 
+
         deferred.resolve { results: shows, hasMore: true }
     .error (error, response) ->
       deferred.reject error

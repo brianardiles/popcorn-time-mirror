@@ -25,16 +25,20 @@ angular.module 'app.detail', []
   vm.trakt_url = 'http://www.imdb.com/title/' + $stateParams.id
   vm.type = $stateParams.type
 
-  api = switch vm.type
-    when 'anime'
-      Haruhichan
-    when 'show'
-      TVApi
-    else YTS
+  if $stateParams.subtype
+    api = Haruhichan
+  else 
+    api = switch vm.type
+      when 'show'
+        TVApi
+      else YTS
 
   vm.goBack = ->
     vm.config = angular.copy playerConfig
-    $state.go 'app.' + vm.type
+    
+    if $stateParams.subtype
+      $state.go 'app.' + $stateParams.subtype
+    else $state.go 'app.' + vm.type
 
   vm.selectSeason = (season) ->
     seasonIndex = '' + vm.selectedSeason 

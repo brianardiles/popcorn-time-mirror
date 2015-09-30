@@ -31,7 +31,7 @@ module.exports = (grunt) ->
       pkg: grunt.file.readJSON 'package.json'
       
       electron:
-        version: '0.31.2'
+        version: '0.33.3'
         run: run + '<%= config.path.build %>' + sep + 'server.js'
 
       path:

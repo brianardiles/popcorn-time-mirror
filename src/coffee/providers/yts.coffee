@@ -3,7 +3,8 @@
 angular.module 'app.providers'
 
 .factory 'YTS', ($q, $http, Settings, cloudFlareApi) ->
-  movies = {}
+  movies = []
+  movieIds = {}
 
   any = (list, fn) ->
     idx = 0
@@ -30,8 +31,11 @@ angular.module 'app.providers'
     for idx, movie of data.movies
       torrents = formatTorrents movie.torrents
 
-      if torrents     
-        movies[movie.imdb_code] =
+      if torrents and not movieIds[movie.imdb_code]?  
+        movieIds[movie.imdb_code] = idx
+      
+        movies.push
+          _id: movie.imdb_code
           title: movie.title_english
           year: movie.year
           genres: movie.genres
@@ -60,7 +64,7 @@ angular.module 'app.providers'
       sort_by: 'seeds'
       limit: 50
       with_rt_ratings: true
-      page: filters.page or 1
+      page: filters.page
       quality: Settings.movies_quality or 'all'
       lang: Settings.language if Settings.translateSynopsis
   
@@ -108,8 +112,8 @@ angular.module 'app.providers'
 
     defer.promise
 
-  extractIds: (items) ->
-    items.results.map (item) -> item['imdb_id']
+  extractIds: ->
+    movies.map (item) -> item['_id']
 
   detail: (torrent_id) ->
-    $q.when data: movies[torrent_id]
+    $q.when data: movies[movieIds[torrent_id]]

@@ -5,6 +5,7 @@ angular.module 'app.browser', []
 .controller 'browserController', ($scope, $interval, api, type) ->
   vm = this
 
+  loading = false 
   bgCycler = null
 
   vm.activeBgImageIndex = 0
@@ -30,12 +31,16 @@ angular.module 'app.browser', []
   vm.type = type
 
   vm.currentFilters = 
-    page: 0
+    page: 1
 
   fetchData = ->
-    api.fetch(vm.currentFilters).then (resp) ->
-      getBackdrop resp.results
-      vm.data = resp.results
+    if not loading 
+      loading = true 
+
+      api.fetch(vm.currentFilters).then (resp) ->
+        getBackdrop resp.results
+        vm.data = resp.results
+        loading = false 
 
   vm.loadMoreItems = ->
     vm.currentFilters.page = vm.currentFilters.page + 1

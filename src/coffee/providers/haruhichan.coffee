@@ -3,7 +3,8 @@
 angular.module 'app.providers'
 
 .factory 'Haruhichan', ($q, $http, Settings, $log, timeoutCache) ->
-  results = {}
+  anime = []
+  animeIds = {}
 
   statusMap = [
     'Not Airing Yet'
@@ -23,22 +24,24 @@ angular.module 'app.providers'
     for idx, item of items
       aired = if item.aired.indexOf(', ') != -1 then item.aired.split(', ')[1] else item.aired
       
-      results['mal-' + item.id] =
-        images:
-          poster: item.malimg
-          fanart: item.malimg
-          banner: item.malimg
-        mal_id: item.MAL
-        haru_id: item.id
-        tvdb_id: 'mal-' + item.id
-        imdb_id: 'mal-' + item.id
-        slug: item.name.toLowerCase().replace(/\s/g, '-')
-        title: item.name
-        year: aired.replace(RegExp(' to.*'), '')
-        type: if item.type is 'Movie' then 'movie' else 'show'
-        item_data: item.type
+      if not animeIds['mal-' + item.id]?
+        anime.push 
+          _id: 'mal-' + item.id
+          images:
+            poster: item.malimg
+            fanart: item.malimg
+            banner: item.malimg
+          mal_id: item.MAL
+          haru_id: item.id
+          slug: item.name.toLowerCase().replace(/\s/g, '-')
+          title: item.name
+          year: aired.replace(RegExp(' to.*'), '')
+          subtype: 'anime'
+          type: if item.type is 'Movie' then 'movie' else 'show'
+          
+        animeIds['mal-' + item.id] = idx 
 
-    results: results or null
+    results: anime or null
     hasMore: true
 
   movieTorrents = (id, dl) ->

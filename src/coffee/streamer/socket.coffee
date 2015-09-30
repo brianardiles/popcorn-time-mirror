@@ -2,9 +2,22 @@
 
 angular.module 'app.streamer'
 
-.value 'serverPort', require('ipc').sendSync 'get-port'
+.provider 'serverPort', ->
+  port = null
 
-.run (torrentProvider, socketServer, serverPort) ->
+  setPort: (newport) ->
+    port = newport 
+
+  $get: -> port 
+
+.config (serverPortProvider) ->
+  ipc = require 'ipc'
+
+  port = ipc.sendSync 'get-port', null
+
+  serverPortProvider.setPort port  
+
+.run (socketServer, torrentProvider) ->
   socketServer.start().then ->
     torrentProvider.getAllTorrents()
 

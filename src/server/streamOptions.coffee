@@ -3,10 +3,14 @@
 crypto = require 'crypto'
 path   = require 'path'
 semver = require 'semver'
+getport = require 'get-port'
 
 homePath = process.env[(if process.platform == 'win32' then 'USERPROFILE' else 'HOME')]
 tmpLocation = path.join homePath, 'tmp', 'streamer'
 
+getport (err, newport) ->
+  exports.streamOptions.port = newport 
+  
 getPeerID = ->
   version = semver.parse '0.0.5'
 
@@ -28,6 +32,7 @@ getPeerID = ->
 exports.streamOptions =
   connections: 1000
   dht: true
+  port: null
   id: getPeerID()
   name: 'Popcorn Time'
   path: tmpLocation

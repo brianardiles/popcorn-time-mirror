@@ -2,7 +2,7 @@
     'use strict';
 
     var request = require('request'),
-    inherits = require('util').inherits,
+        inherits = require('util').inherits,
         _ = require('lodash'),
         Q = require('q'),
         querystring = require('querystring'),
@@ -120,7 +120,7 @@
         ],
         types: []
     };
-    
+
     Vodo.prototype.updateAPI = function () {
         var self = this;
         var defer = Q.defer();
@@ -133,12 +133,12 @@
             },
             function (err, res, data) {
                 console.log('got data');
-                    /*
-                     data = _.map (helpers.formatForPopcorn(data), function (item) {
-                     item.rating = item.rating.percentage * Math.log(item.rating.votes);
-                     return item;
-                     });
-                     */
+                /*
+                 data = _.map (helpers.formatForPopcorn(data), function (item) {
+                 item.rating = item.rating.percentage * Math.log(item.rating.votes);
+                 return item;
+                 });
+                 */
                 db.insert(formatForPopcorn(data.downloads), function (err, newDocs) {
                     if (err) {
                         console.error('Error inserting', err);

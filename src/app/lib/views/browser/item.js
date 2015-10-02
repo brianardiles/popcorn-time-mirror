@@ -329,6 +329,7 @@
                         })
                         .then(function () {
                             that.model.set('bookmarked', false);
+                            App.Trakt.lists.removeItem('popcorntime-bookmarks', 'movie', that.model.get('imdb_id'));
                         });
                 } else {
                     this.ui.bookmarkIcon.addClass('selected');
@@ -397,6 +398,7 @@
                             .then(function () {
                                 win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
                                 that.model.set('bookmarked', true);
+                                App.Trakt.lists.addItem('popcorntime-bookmarks', 'movie', that.model.get('imdb_id'));
                             });
                     }
                 }
@@ -413,6 +415,7 @@
 
                             // we'll make sure we dont have a cached show
                             Database.deleteTVShow(that.model.get('imdb_id'));
+                            App.Trakt.lists.removeItem('popcorntime-bookmarks', 'show', that.model.get('imdb_id'));
                         });
                 } else {
                     this.model.set('bookmarked', true);
@@ -437,6 +440,7 @@
                                     win.info('Bookmark added (' + that.model.get('imdb_id') + ')');
                                     that.model.set('bookmarked', true);
                                     App.userBookmarks.push(that.model.get('imdb_id'));
+                                    App.Trakt.lists.addItem('popcorntime-bookmarks', 'show', that.model.get('imdb_id'));
                                 }).catch(function (err) {
                                     win.error(err);
                                 });

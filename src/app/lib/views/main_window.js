@@ -420,6 +420,15 @@
         traktAuthenticated: function () {
             win.info('Trakt: authenticated');
             if (Settings.traktSyncOnStart && (Settings.traktLastSync + 1800000 < new Date().valueOf())) { //only refresh every 30min
+                if (!Settings.traktBookmarksCreated) {
+                    App.Trakt.lists.exists('popcorntime-bookmarks')
+                       .then(function (state) {
+                            if (!state) {
+                                App.Trakt.lists.create('popcorntime-bookmarks');
+                                AdvSettings.set('traktBookmarksCreated', true);
+                            }
+                        });
+                }
                 App.Trakt.sync.lastActivities()
                     .then(function (activities) { // check if new activities
                         var lastActivities = activities.movies.watched_at > activities.episodes.watched_at ? activities.movies.watched_at : activities.episodes.watched_at;

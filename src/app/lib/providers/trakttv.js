@@ -421,6 +421,15 @@
     };
 
     TraktTv.prototype.lists = {
+        exists: function (name) {
+            return this.lists.getItems(name)
+                .then(function () {
+                    return true;
+                })
+                .catch(function () {
+                    return false;
+                });
+        },
         create: function (name) {
             if (!name) {
                 return;
@@ -622,7 +631,43 @@
         all: function () {
             var self = this;
             AdvSettings.set('traktLastSync', new Date().valueOf());
-            return this.syncing = Q.all([self.syncTrakt.movies(), self.syncTrakt.shows()]);
+            return this.syncing = Q.all([self.syncTrakt.movies(), self.syncTrakt.shows(), self.syncTrakt.bookmarks()]);
+        },
+        bookmarks: function () {
+            return this.lists.getItems('popcorntime-bookmarks')
+                .then(function(data) {
+                    var bookmarks = [];
+                    if (data) {
+                        var item;
+                        for (var i in data) {
+                            try { // some ids might be incorrect
+                                item = data[i][data[i]['type']];
+                                bookmarks.push({
+                                    imdb: item.ids.imdb.toString(),
+                                    type: data[i].type,
+                                });
+                            } catch (e) {
+                                win.warn('Cannot add an item (' + data[i][data[i]['type']].title + ') to bookmarks, the problem is: ' + e.message + '. Continuing without this item...');
+                            }
+                        }
+                    }                
+                
+                    return bookmarks;
+                })
+                .then(function (bookmarks) {
+                    for (var b in bookmarks) {
+                        if (bookmarks[b].type === 'show') {
+                            bookmarks[b].type = 'tvshow';
+                        }
+                        Database.addBookmark(bookmarks[b].imdb, bookmarks[b].type);
+                    }
+                })
+                .then(function () {
+                    win.debug('Trakt: bookmark(s) synchronized');
+                })
+                .catch(function (err) {
+                    win.debug('Trakt: no bookmark(s) to sync');
+                });
         },
         movies: function () {
             return this.sync.getWatched('movies')

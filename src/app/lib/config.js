@@ -146,9 +146,10 @@
         },
 
         providers: {
-            movie: ['Yts', 'Vodo'],
+            movie: ['Yts'],
             tvshow: ['TVApi'],
             anime: ['Haruhichan'],
+            indie: ['Vodo'],
             subtitle: 'YSubs',
             metadata: 'Trakttv',
             tvst: 'TVShowTime',

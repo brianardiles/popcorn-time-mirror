@@ -37,6 +37,9 @@
         _.each(this.sync, function (method, key) {
             self.sync[key] = method.bind(self);
         });
+        _.each(this.lists, function (method, key) {
+            self.lists[key] = method.bind(self);
+        });
 
         // Bind all custom functions to TraktTv
         _.each(this.oauth, function (method, key) {
@@ -123,6 +126,37 @@
 
         request({
             method: 'POST',
+            url: requestUri.toString(),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + Settings.traktToken,
+                'trakt-api-version': '2',
+                'trakt-api-key': CLIENT_ID
+            },
+            body: JSON.stringify(postVariables)
+        }, function (error, response, body) {
+            if (error || !body) {
+                defer.reject(error);
+            } else if (response.statusCode >= 400) {
+                defer.resolve({});
+            } else {
+                defer.resolve(Common.sanitize(JSON.parse(body)));
+            }
+        });
+
+        return defer.promise;
+    };
+
+    TraktTv.prototype.delete = function (endpoint, postVariables) {
+        var defer = Q.defer();
+
+        postVariables = postVariables || {};
+
+        var requestUri = API_ENDPOINT.clone()
+            .segment(endpoint);
+
+        request({
+            method: 'DELETE',
             url: requestUri.toString(),
             headers: {
                 'Content-Type': 'application/json',
@@ -384,6 +418,80 @@
                 });
             }
         },
+    };
+
+    TraktTv.prototype.lists = {
+        create: function (name) {
+            if (!name) {
+                return;
+            }
+            return this.post('users/me/lists', {
+                name: name
+            });
+        },
+        delete: function (name) {
+            if (!name) {
+                return;
+            }
+            name = name.toLowerCase().replace(/\W/g, '-');
+            return this.delete('users/me/lists/' + name);
+        },
+        getItems: function (name) {
+            if (!name) {
+                return;
+            }
+            name = name.toLowerCase().replace(/\W/g, '-');
+            return this.get('users/me/lists/' + name + '/items');
+            // /users/me/lists/id/items
+        },
+        addItem: function (name, type, id) {
+            if (!name || !isValid(id)) {
+                return;
+            }
+            name = name.toLowerCase().replace(/\W/g, '-');
+            if (type === 'movie') {
+                return this.post('/users/me/lists/' + name + '/items', {
+                    movies: [{
+                        ids: {
+                            imdb: id
+                        }
+                    }]
+                });
+            }
+            if (type === 'show') {
+                return this.post('/users/me/lists/' + name + '/items', {
+                    shows: [{
+                        ids: {
+                            imdb: id
+                        }
+                    }]
+                });
+            }
+        },
+        removeItem: function (name, type, id) {
+            if (!name || !isValid(id)) {
+                return;
+            }
+            name = name.toLowerCase().replace(/\W/g, '-');
+            if (type === 'movie') {
+                return this.post('/users/me/lists/' + name + '/items/remove', {
+                    movies: [{
+                        ids: {
+                            imdb: id
+                        }
+                    }]
+                });
+            }
+            if (type === 'show') {
+                return this.post('/users/me/lists/' + name + '/items/remove', {
+                    shows: [{
+                        ids: {
+                            imdb: id
+                        }
+                    }]
+                });
+            }
+        }
     };
 
     /*

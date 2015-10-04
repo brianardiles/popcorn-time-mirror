@@ -15,6 +15,7 @@ socket        = require 'socket.io'
 http          = require 'http'
 torrentStore  = require './server/torrentStore'
 
+livereload = require 'electron-livereload'
 
 ready = false
 win   = undefined
@@ -87,6 +88,8 @@ getport (err, port) ->
 
     win.loadUrl 'file://' + path.join __dirname, 'index.html'
     
+    livereload.client win
+
     ipc.on 'close', ->
       app.quit()
 
@@ -129,7 +132,6 @@ getport (err, port) ->
       { size, coords, port, zoom } = data 
 
       win.setSize size[0], size[1]
-      win.setBounds coords[0], coords[1]
 
       win.show()
 

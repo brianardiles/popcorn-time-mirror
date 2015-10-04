@@ -1,25 +1,16 @@
 os        = require 'os'
+livereload = require 'electron-livereload'
+
+electron = livereload.server()
 
 platform  = os.platform()
 { normalize, sep } = require 'path'
 
 if platform is 'darwin'
   platform = 'osx'
-  run = 'electron/Electron.app/Contents/MacOS/Electron ' 
-
-if platform in [ 'win32', 'win64' ]
-  run = 'start electron/electron.exe '
-
-if platform is 'linux'
-  run = 'electron/electron ' 
 
 if platform in [ 'linux', 'osx' ]
   platform = platform + os.arch().replace 'x', ''
-
-log = (err, stdout, stderr, cb) ->
-  console.log err or stdout or stderr
-  cb()
-  return
 
 module.exports = (grunt) ->
 
@@ -30,10 +21,6 @@ module.exports = (grunt) ->
       env: 'dev'
       pkg: grunt.file.readJSON 'package.json'
       
-      electron:
-        version: '0.33.3'
-        run: run + '<%= config.path.build %>' + sep + 'server.js'
-
       path:
         build: normalize "#{__dirname}/build"
         dist: 'dist'
@@ -61,10 +48,14 @@ module.exports = (grunt) ->
         files: 'build/server.js': ['src/server.coffee']
 
     watch: 
-      coffee: 
-        files: ['src/coffee/*.coffee', 'src/coffee/**/*.coffee'], tasks: ['coffee', 'ngtemplates', 'ngAnnotate']
+      options: 
+        nospawn : true
+      client: 
+        files: ['src/coffee/*.coffee', 'src/coffee/**/*.coffee'], tasks: ['coffee', 'ngtemplates', 'ngAnnotate', 'restart-electron']
       stylus: 
-        files: ['src/**/*.styl'], tasks: ['stylus']
+        files: ['src/**/*.styl'], tasks: ['stylus', 'restart-electron']
+      server: 
+        files: ['src/server/*.coffee', 'src/server/**/*.coffee'], tasks: ['coffee', 'restart-electron']
 
     # https://www.npmjs.com/package/grunt-angular-templates
     ngtemplates:
@@ -93,13 +84,6 @@ module.exports = (grunt) ->
         ]
         dest: 'build/css/vendor.css'
 
-    preprocess: 
-      build:
-        src: [ '<%= config.path.build %>/**/*.html' ]
-        options:
-          inline: true
-          context: NODE_ENV: '<%= config.env %>'
-
     stylus:
       build:
         options:
@@ -111,21 +95,6 @@ module.exports = (grunt) ->
         expand: true
         join: true
         files: 'build/css/app.css': ['src/**/*.styl', 'src/**/**.styl']
-
-    'download-electron':
-      version: '<%= config.electron.version %>'
-      appDir: '<%= config.path.build %>/'
-      outputDir: 'electron'
-
-    shell:
-      electron:
-        command: '<%= config.electron.run %>'
-        options:
-          async: true
-          callback: log
-          execOptions: 
-            env: process.env
-
 
     copy: 
       build:
@@ -150,8 +119,15 @@ module.exports = (grunt) ->
   # load the tasks
   require('load-grunt-tasks') grunt
   
-  grunt.registerTask 'electron', ->
-    grunt.task.run 'download-electron'
+  grunt.registerTask 'restart-electron', ->
+    electron.restart()
+   
+    return
+
+  grunt.registerTask 'reload-electron', ->
+    electron.reload()
+
+    return
 
   grunt.registerTask 'copyDeps', ->
     grunt.task.run 'copy:build'
@@ -171,52 +147,22 @@ module.exports = (grunt) ->
     grunt.task.run 'stylus:build'
     grunt.task.run 'concat'
     grunt.task.run 'copyDeps'
-    
-    grunt.task.run 'preprocess:build'
-    grunt.task.run 'download-electron'
-
-  grunt.registerTask 'buildAngular', (env) ->
-    env = env or 'dev'
-
-    grunt.config.set 'config.env', env
-
-    grunt.task.run 'coffee'
-    grunt.task.run 'ngtemplates:ng'
-    grunt.task.run 'ngAnnotate:build'
-    grunt.task.run 'concat'
-    grunt.task.run 'copyDeps'
-    grunt.task.run 'preprocess:build'
-
-  grunt.registerTask 'buildAngularWatch', (env) ->
-    env = env or 'dev'
-
-    grunt.config.set 'config.env', env
-
-    grunt.task.run 'buildAngular'
-    grunt.task.run 'watch'
 
   grunt.registerTask 'start', (env) ->
-    env = env or 'dev'
-
-    grunt.config.set 'config.env', env
-
-    grunt.task.run 'download-electron'
-    grunt.task.run 'shell:electron'
+    electron.start()
     grunt.task.run 'watch'
+
+
+  grunt.registerTask 'dev', (env) ->
+    grunt.task.run 'build'
+    grunt.task.run 'start'
+
+    return
 
   grunt.event.on 'watch', (action, filepath, target) ->
     grunt.log.writeln target + ': ' + filepath + ' has ' + action
     return
 
-  grunt.registerTask 'app', (env) ->
-    env = env or 'dev'
-
-    grunt.config.set 'config.env', env
-
   grunt.task.registerTask 'dist', (env) ->
-    env = env or 'dev'
-
-    grunt.config.set 'config.env', env
-
     grunt.task.run 'build:' + env
     grunt.task.run 'copy:node_modules'

@@ -25,7 +25,9 @@
   },
   "dependencies": {
     "body-parser": "^1.13.3",
+    "electron-livereload": "0.0.2",
     "electron-packager": "^5.1.0",
+    "electron-prebuilt": "0.33.3",
     "express": "^4.13.3",
     "fluent-ffmpeg": "^2.0.1",
     "get-port": "^1.0.0",

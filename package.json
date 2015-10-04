@@ -51,7 +51,6 @@
     "postinstall": "WCJS_RUNTIME_VERSION=0.33.3 npm install wcjs-prebuilt@2.0.2",
     "start": "electron build/server.js",
     "dev": "electron build/server.js",
-    "wcjs-prebuilt": "node require('git://github.com/Ivshti/wcjs-prebuilt.git#download-redo');",
     "mac-bundle": "electron-packager . Angular-Popcorn-Time --platform=darwin --arch=x64 --version=0.33.0 --ignore=node_modules/electron-prebuilt && cp info.plist Angular-Popcorn-Time.app/Contents/info.plist && cp icon.icns Angular-Popcorn-Time.app/Contents/Resources/atom.icns",
     "win-bundle": "electron-packager . Angular-Popcorn-Time --platform=win32 --arch=ia32 --version=0.33.0 --icon=icon.ico",
     "linux-64-bundle": "electron-packager . Angular-Popcorn-Time --platform=linux --arch=x64 --version=0.33.0 ignore='node_modules/(electron-packager|electron-prebuilt)'"

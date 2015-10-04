@@ -45,13 +45,13 @@
     "semver": "^5.0.1",
     "socket.io": "^1.3.6",
     "torrent-health": "0.0.6",
-    "torrent-stream": "1.0.0",
-    "wcjs-prebuilt": "^2.0.0"
+    "torrent-stream": "1.0.0"
   },
   "scripts": {
+    "postinstall": "WCJS_RUNTIME_VERSION=0.33.3 npm install wcjs-prebuilt@2.0.2",
     "start": "electron build/server.js",
     "dev": "electron build/server.js",
-    "wcjs-prebuilt": "git://github.com/Ivshti/wcjs-prebuilt.git#download-redo",
+    "wcjs-prebuilt": "node require('git://github.com/Ivshti/wcjs-prebuilt.git#download-redo');",
     "mac-bundle": "electron-packager . Angular-Popcorn-Time --platform=darwin --arch=x64 --version=0.33.0 --ignore=node_modules/electron-prebuilt && cp info.plist Angular-Popcorn-Time.app/Contents/info.plist && cp icon.icns Angular-Popcorn-Time.app/Contents/Resources/atom.icns",
     "win-bundle": "electron-packager . Angular-Popcorn-Time --platform=win32 --arch=ia32 --version=0.33.0 --icon=icon.ico",
     "linux-64-bundle": "electron-packager . Angular-Popcorn-Time --platform=linux --arch=x64 --version=0.33.0 ignore='node_modules/(electron-packager|electron-prebuilt)'"

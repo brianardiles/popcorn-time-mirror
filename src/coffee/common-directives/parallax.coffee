@@ -60,7 +60,7 @@ angular.module 'app.common-directives'
           func.apply context, args
           timeout = null
 
-    ptLazyService.getScrollElement().then (parentElement) ->
+    ptLazyService.getScrollElement(scope.type).then (parentElement) ->
       parent = parentElement[0]
 
       throttledScroll = throttleOnAnimationFrame setPosition

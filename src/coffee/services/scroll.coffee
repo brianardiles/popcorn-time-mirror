@@ -31,7 +31,7 @@ angular.module 'app.services'
   restrict: 'A'
   require: '^ptLazyContainer'
   link: (scope, element, attrs, containerController) ->
-    ptLazyService.setScrollElement element 
+    ptLazyService.setScrollElement element, scope.type 
 
     element.bind 'scroll', containerController.checkIsVisible
 
@@ -65,7 +65,7 @@ angular.module 'app.services'
   _windowEventsHandlerBinded = no
 
   _containersControllers = []
-  _scrollDefer = $q.defer()
+  _scrollContainers = {}
 
   triggerIsVisibleCallback = (item, visible, isTopVisible, isBottomVisible) ->
     if visible
@@ -116,11 +116,11 @@ angular.module 'app.services'
         triggerIsVisibleCallback(item, false)
 
 
-  setScrollElement: (el) ->
-    _scrollDefer.resolve el
+  setScrollElement: (el, id) ->
+    _scrollContainers[id] = el
 
-  getScrollElement: -> 
-    _scrollDefer.promise 
+  getScrollElement: (id) -> 
+    $q.when _scrollContainers[id]
 
   trackIsVisibleContainer: (controller) ->
     _containersControllers.push controller

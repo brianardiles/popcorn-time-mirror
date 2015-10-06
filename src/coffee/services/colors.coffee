@@ -43,7 +43,7 @@ angular.module 'app.services'
     if contrast
       contrast = "color: #{contrast}"
 
-    stylesheet.insertRule ".md-#{cssname}-#{name}.text { color: #{color} !important }", index
+    stylesheet.insertRule ".md-#{cssname}-#{name}.text { #{contrast} !important }", index
     stylesheet.insertRule ".md-#{cssname}-#{name}.background { background-color: #{color}; #{contrast} }", index + 1
 
     index += 2
@@ -62,29 +62,30 @@ angular.module 'app.services'
   themeNames: []
   themeStore: {}
 
-  getContrastColor: (palette) ->
-    { contrastDefaultColor, lightColors, strongLightColors, darkColors } = palette
+  getContrastColor: (palette, hueName) ->
 
-    if angular.isString lightColors
-      lightColors = lightColors.split ' '
+    { contrastDefaultColor, contrastLightColors, contrastStrongLightColors, contrastDarkColors } = palette
+
+    if angular.isString contrastLightColors
+      contrastLightColors = contrastLightColors.split ' '
     
-    if angular.isString strongLightColors
-      strongLightColors = strongLightColors.split ' '
+    if angular.isString contrastStrongLightColors
+      contrastStrongLightColors = contrastStrongLightColors.split ' '
     
-    if angular.isString darkColors
-      darkColors = darkColors.split ' '
+    if angular.isString contrastDarkColors
+      contrastDarkColors = contrastDarkColors.split ' '
 
     if contrastDefaultColor is 'light'
-      if darkColors?.indexOf(hueName) > -1
+      if contrastDarkColors?.indexOf(hueName) > -1
         DARK_CONTRAST_COLOR
       else
-        if strongLightColors?.indexOf(hueName) > -1 
+        if contrastStrongLightColors?.indexOf(hueName) > -1 
           STRONG_LIGHT_CONTRAST_COLOR 
         else 
           LIGHT_CONTRAST_COLOR
     else
-      if lightColors?.indexOf(hueName) > -1
-        if strongLightColors?.indexOf(hueName) > -1
+      if contrastLightColors?.indexOf(hueName) > -1
+        if contrastStrongLightColors?.indexOf(hueName) > -1
           STRONG_LIGHT_CONTRAST_COLOR 
         else 
           LIGHT_CONTRAST_COLOR
@@ -117,7 +118,6 @@ angular.module 'app.services'
         for name, color of group 
           addCustomStyle cleanedThemeName + groupName, name, color.value, color.contrast
 
-    console.log @themeStore
     return
 
   $get: ->
@@ -132,32 +132,51 @@ angular.module 'app.services'
     loadPalette: @loadPalette
  
 .config ($mdThemingProvider, $mdColorsProvider) ->
-  $mdThemingProvider
-    .theme 'default' 
-    .primaryPalette 'blue'
 
-  dark = $mdThemingProvider.extendPalette 'grey', 
+  $mdThemingProvider.definePalette 'dark',
+    50: '#e8e8e9'
+    100: '#babbbc'
+    200: '#8c8e90'
+    300: '#65686b'
+    400: '#3e4346'
+    500: '#181d21'
+    600: '#15191d'
+    700: '#121619'
+    800: '#0f1215'
+    900: '#0c0f11'
+    A100: '#babbbc'
+    A200: '#8c8e90'
+    A400: '#3e4346'
+    A700: '#050607'
     contrastDefaultColor: 'light'
-
-  $mdThemingProvider.definePalette 'dark', dark
+    contrastDarkColors: '50 100 200 400'
+    contrastStrongLightColors: '500 600 300'
+    contrastLightColors: '700 800 900 A100 A200 A400'
 
   $mdThemingProvider.theme 'black'
-    .primaryPalette 'dark', default: '900'
+    .primaryPalette 'dark', default: '900' 
+
+  $mdThemingProvider
+    .theme 'default' 
+    .primaryPalette 'dark', default: '900' 
+    .backgroundPalette 'dark', default: '700' 
 
   colorStore = {}
 
   parsePalette = (paletteName, palette) ->
-    paletteContrast = $mdThemingProvider._rgba $mdColorsProvider.getContrastColor palette 
+    paletteContrast = palette 
     hueColors = $mdThemingProvider._THEMES['default'].colors['primary'].hues
-    
+
     colors = {}
 
     addHue = (hueName) ->
-      colors[hueName] = value: palette[hueColors[hueName]], contrast: paletteContrast
+      contrastColor = $mdThemingProvider._rgba $mdColorsProvider.getContrastColor(palette, hueColors[hueName])
+      colors[hueName] = value: palette[hueColors[hueName]], contrast: contrastColor
 
-    copyColors = (colorName, color) ->
+    copyColors = (colorName) ->
       if /#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})\b/.test(palette[colorName])
-        colors[colorName] = value: palette[colorName], contrast: paletteContrast
+        contrastColor = $mdThemingProvider._rgba $mdColorsProvider.getContrastColor(palette, colorName)
+        colors[colorName] = value: palette[colorName], contrast: contrastColor
       return
 
     colorStore[paletteName] = colors
@@ -210,12 +229,20 @@ angular.module 'app.services'
     styles = parsedStyles()
 
     for cssName, cssValue of styles
-      [color, hue] = cssValue.split '.'
+      [color, hue, hue2] = cssValue.split '.'
 
       if color in ['primary', 'accent', 'background', 'foreground', 'warn']
         color = themeStore['default'][color]
       else if color not in colorNames
         color = colorSelected
+
+        if themeStore[color]
+          color = themeStore[color]
+
+          if hue2 
+            color = color[hue][hue2]
+          else 
+            color = color[hue]['default']
 
       color = colorStore[color] or color
       colorObject = color[hue] or color.default
@@ -223,4 +250,8 @@ angular.module 'app.services'
       if colorObject 
         if cssName is 'background-color'
           element.css 'color', colorObject.contrast
-        element.css cssName, colorObject.value
+
+        if angular.isString attrs.mdContrast
+          element.css cssName, colorObject.contrast
+        else 
+          element.css cssName, colorObject.value

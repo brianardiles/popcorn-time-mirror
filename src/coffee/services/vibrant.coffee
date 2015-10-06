@@ -22,7 +22,7 @@ angular.module 'app.services'
         opacity = 1
       'rgba(' + array.join() + ',' + opacity + ')'
 
-    if swatches['Vibrant']
+    if swatches['Vibrant'].getRgb()
       if swatches['Vibrant'].population < 20
         color = rgba(swatches['Muted'].getRgb(), 0.96)
         textColor = swatches['Muted'].getTitleTextColor()
@@ -31,7 +31,7 @@ angular.module 'app.services'
         color = rgba(swatches['Vibrant'].getRgb(), 0.96)
         textColor = swatches['Vibrant'].getTitleTextColor()
         fabColor = swatches['DarkMuted']?.getHex()
-    else if swatches['Muted']
+    else if swatches['Muted'].getRgb()
       color = rgba(swatches['Muted'].getRgb(), 0.96)
       textColor = swatches['Muted'].getTitleTextColor()
       fabColor = swatches['DarkVibrant']?.getHex() or swatches['DarkMuted'].getHex()
@@ -55,6 +55,21 @@ angular.module 'app.services'
     fabColor = null
 
     defer.promise
+
+.factory 'EmptySwatch', (quantize) ->
+  class EmptySwatch
+
+    getHsl: -> null
+
+    getPopulation: -> null
+
+    getRgb: -> null
+
+    getHex: -> null
+
+    getTitleTextColor: -> null
+
+    getBodyTextColor: -> null
 
 
 .factory 'Swatch', (quantize, VibrantUtils) ->
@@ -95,7 +110,7 @@ angular.module 'app.services'
 
 .constant 'quantize', require 'quantize'
 
-.factory 'Vibrant', (quantize, VibrantUtils, Swatch, CanvasImage) ->
+.factory 'Vibrant', (quantize, VibrantUtils, Swatch, EmptySwatch, CanvasImage) ->
   class Vibrant
     quantize: quantize
 
@@ -193,24 +208,33 @@ angular.module 'app.services'
         if @DarkVibrantSwatch isnt undefined
           # ...but we do have a dark vibrant, generate the value by modifying the luma
           hsl = @DarkVibrantSwatch.getHsl()
-          hsl[2] = @TARGET_NORMAL_LUMA
-          @VibrantSwatch = new Swatch VibrantUtils.hslToRgb(hsl[0], hsl[1], hsl[2]), 0
 
+          if hsl
+            hsl[2] = @TARGET_NORMAL_LUMA
+            @VibrantSwatch = new Swatch VibrantUtils.hslToRgb(hsl[0], hsl[1], hsl[2]), 0
+        else @VibrantSwatch = new EmptySwatch()
+      
       if @DarkVibrantSwatch is undefined
         # If we do not have a vibrant color...
         if @VibrantSwatch isnt undefined
           # ...but we do have a dark vibrant, generate the value by modifying the luma
           hsl = @VibrantSwatch.getHsl()
-          hsl[2] = @TARGET_DARK_LUMA
-          @DarkVibrantSwatch = new Swatch VibrantUtils.hslToRgb(hsl[0], hsl[1], hsl[2]), 0
 
+          if hsl
+            hsl[2] = @TARGET_DARK_LUMA
+            @DarkVibrantSwatch = new Swatch VibrantUtils.hslToRgb(hsl[0], hsl[1], hsl[2]), 0
+        else @DarkVibrantSwatch = new EmptySwatch()
+      
       if @DarkMutedSwatch is undefined
         # If we do not have a vibrant color...
         if @MutedSwatch isnt undefined
           # ...but we do have a dark vibrant, generate the value by modifying the luma
           hsl = @VibrantSwatch.getHsl()
-          hsl[2] = @TARGET_DARK_LUMA
-          @DarkMutedSwatch = new Swatch VibrantUtils.hslToRgb(hsl[0], hsl[1], hsl[2]), 0
+
+          if hsl
+            hsl[2] = @TARGET_DARK_LUMA
+            @DarkMutedSwatch = new Swatch VibrantUtils.hslToRgb(hsl[0], hsl[1], hsl[2]), 0
+        else @DarkMutedSwatch = new EmptySwatch()
 
     findMaxPopulation: ->
       population = 0

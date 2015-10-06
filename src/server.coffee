@@ -82,6 +82,7 @@ getport (err, port) ->
       'min-height': 520
       frame: false
       resizable: true
+      show: false
       icon: 'assets/images/icon.png'
       transparent: true
       center: true

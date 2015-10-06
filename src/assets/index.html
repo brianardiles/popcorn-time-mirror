@@ -5,11 +5,17 @@
 <head>
   <link rel="stylesheet" href="css/vendor.css"/>
   <link rel="stylesheet" href="css/app.css"/>
+  <link rel="stylesheet" type="text/css" href="css/splash.css"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel='stylesheet'/>
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,300,700' rel='stylesheet' type='text/css'/> 
 
   <body>
-  <ui-view></ui-view>
+    <pt-panel>
+      <pt-pane title="Movies" icon="local_movies" src="browser/browser.html" ctrl="browser" selected="true"></pt-pane>
+      <pt-pane title="TV Series" icon="tv" src="browser/browser.html" ctrl="browser"></pt-pane>
+      <pt-pane title="Anime" icon="mood" src="browser/browser.html" ctrl="browser"></pt-pane>
+      <pt-pane title="Settings" icon="settings" src="settings/settings.html" ctrl="settings"></pt-pane>
+    </pt-panel>
 
   <!-- App -->
   <script src="js/angular.js"></script>

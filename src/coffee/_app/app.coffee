@@ -8,7 +8,6 @@ angular.module 'app', [
   'ngAria'
 
   'socket-io'
-  'ct.ui.router.extras'
   'xmlrpc'
   
   'app.about'
@@ -27,101 +26,15 @@ angular.module 'app', [
   'app.quality-selector'
   'app.services'
   'app.settings'
-  'app.sidebar'
   'app.streamer'
   'app.torrents'
   'app.webchimera'
   
 ]
 
-.config ($compileProvider, $httpProvider, $mdThemingProvider, $stateProvider, $urlRouterProvider, $uiViewScrollProvider) ->
+.config ($compileProvider, $httpProvider, $mdThemingProvider) ->
 
-  $stateProvider
-    .state 'app',
-      url: ''
-      abstract: true
-      templateUrl: '_app/app.html'
-
-    .state 'app.about',
-      url: '/about'
-      sticky: true
-      views: app:
-        templateUrl: 'about/about.html'
-
-    .state 'app.movie',
-      url: '/movie'
-      sticky: true
-      title: 'Movies'
-      root: true
-      views: app:
-        templateUrl: 'browser/browser.html'
-        controller: 'browserController as browser'
-      resolve: 
-        type: -> 'movie'
-        api: (YTS) -> YTS
-
-    .state 'app.show',
-      url: '/show'
-      sticky: true
-      title: 'TV Shows'
-      root: true
-      views: app:
-        templateUrl: 'browser/browser.html'
-        controller: 'browserController as browser'
-      resolve: 
-        type: -> 'show'
-        api: (TVApi) -> TVApi
-
-    .state 'app.anime',
-      url: '/anime'
-      sticky: true
-      title: 'Anime'
-      root: true
-      views: app:
-        templateUrl: 'browser/browser.html'
-        controller: 'browserController as browser'
-      resolve: 
-        type: -> 'anime'
-        api: (Haruhichan) -> Haruhichan
-
-    .state 'app.bookmarks',
-      url: '/bookmarks'
-      sticky: true
-      title: 'Bookmarks'
-      root: true
-      views: app:
-        templateUrl: 'browser/browser.html'
-        controller: 'browserController as browser'
-
-    .state 'app.torrents',
-      url: '/torrents'
-      sticky: true
-      title: 'Torrents List'
-      views: app:
-        templateUrl: 'torrents/torrents.html'
-
-    .state 'app.detail',
-      url: '/detail/:id?type?title?subtype'
-      sticky: true
-      title: null
-      views: detail:
-        template: '''<wc-poster ng-hide="ctrl.player.canplay" ng-if="ctrl.config.poster" poster="ctrl.config.poster"></wc-poster>
-          <wc-detail ng-hide="ctrl.player.torrentLink" player="ctrl.player" torrent="ctrl.torrent" config="ctrl.config"></wc-detail>'''
-
-    .state 'app.settings',
-      url: '/settings'
-      sticky: true
-      title: 'Settings'
-      views: app:
-        templateUrl: 'settings/settings.html'
-        controller: 'settingsController as settings'
-        
-  $urlRouterProvider.otherwise '/movie'
-  $uiViewScrollProvider.useAnchorScroll()
-
-  $httpProvider.useApplyAsync true
-
-  $compileProvider.debugInfoEnabled false
+  $compileProvider.debugInfoEnabled true
 
   $mdThemingProvider.definePalette 'white',
     '50': '#ffffff'

@@ -2,10 +2,10 @@
 
 angular.module 'app.common-directives'
 
-.directive 'ptParallax', ($window) ->
+.directive 'ptParallax', ($window, ptLazyService) ->
   restrict: 'A'
   link: (scope, elem, attrs) ->
-    win = angular.element $window
+    parent = null
 
     ratio = (first, second) ->
       r = first / second
@@ -17,7 +17,7 @@ angular.module 'app.common-directives'
 
     setPosition = ->
       unless document.body.style.position is 'fixed'
-        calcValY = $window.pageYOffset * (attrs.parallaxRatio or 1)
+        calcValY = parent.scrollTop * (attrs.parallaxRatio or 1)
 
         switch attrs.ptParallax
           when 'fade'
@@ -31,7 +31,7 @@ angular.module 'app.common-directives'
             elem.css 'background-position', '50% ' + calcValY + 'px'
 
           when 'sticky'
-            transform = ratio $window.pageYOffset, elem.parent()[0].offsetTop
+            transform = ratio parent.scrollTop, elem.parent()[0].offsetTop
 
             elem.css 'top', -Math.abs(elem.parent()[0].offsetTop) + 'px'
             elem.css 'padding-top', elem.parent()[0].offsetTop + 'px'
@@ -49,12 +49,6 @@ angular.module 'app.common-directives'
 
         return
 
-    if attrs.ptParallax is 'background'
-      win.bind 'load', ->
-        setPosition()
-        scope.$apply()
-    else setPosition()
-
     throttleOnAnimationFrame = (func) ->
       ->
         context = this
@@ -66,13 +60,22 @@ angular.module 'app.common-directives'
           func.apply context, args
           timeout = null
 
-    throttledScroll = throttleOnAnimationFrame setPosition
+    ptLazyService.getScrollElement().then (parentElement) ->
+      parent = parentElement[0]
 
-    win.on 'scroll resize', throttledScroll
+      throttledScroll = throttleOnAnimationFrame setPosition
 
-    scope.$on '$destroy', ->
-      win.off 'resize scroll', throttledScroll
+      if attrs.ptParallax is 'background'
+        angular.element($window).bind 'load', ->
+          setPosition()
+          scope.$apply()
+      else setPosition()
 
-    throttledScroll()
+      parentElement.on 'scroll resize', throttledScroll
+
+      scope.$on '$destroy', ->
+        parentElement.off 'resize scroll', throttledScroll
+
+      throttledScroll()
 
     return

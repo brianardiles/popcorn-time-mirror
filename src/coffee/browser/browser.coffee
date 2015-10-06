@@ -2,11 +2,21 @@
 
 angular.module 'app.browser', []
 
-.controller 'browserController', ($scope, $interval, api, type) ->
+.controller 'browserController', ($scope, $interval, YTS, Haruhichan, TVApi) ->
   vm = this
 
-  loading = false 
+  vm.loading = false 
+  
   bgCycler = null
+  
+  api = switch $scope.type
+    when 'Movies'
+      YTS
+    when 'TV Series'
+      TVApi
+    when 'Anime'
+      Haruhichan
+    else null
 
   vm.activeBgImageIndex = 0
 
@@ -28,19 +38,18 @@ angular.module 'app.browser', []
     vm.bgImagesKeys = Object.keys results
     vm.cycleBgImages()
 
-  vm.type = type
-
   vm.currentFilters = 
     page: 1
 
   fetchData = ->
-    if not loading 
-      loading = true 
+    if not vm.loading 
+      vm.loading = true 
 
-      api.fetch(vm.currentFilters).then (resp) ->
-        getBackdrop resp.results
-        vm.data = resp.results
-        loading = false 
+      if api 
+        api.fetch(vm.currentFilters).then (resp) ->
+          getBackdrop resp.results
+          vm.data = resp.results
+          vm.loading = false 
 
   vm.loadMoreItems = ->
     vm.currentFilters.page = vm.currentFilters.page + 1

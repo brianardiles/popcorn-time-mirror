@@ -53,6 +53,6 @@ angular.module 'app.services', []
 
   $timeout -> 
     deviceScan()
-  , 1000, false
+  , 1500, false
 
   return

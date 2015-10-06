@@ -9,7 +9,7 @@ angular.module 'app.detail', []
   templateUrl: 'detail/detail.html'
   controller: 'detailController as detail'
 
-.controller 'detailController', ($scope, $filter, playerConfig, $timeout, Settings, $stateParams, $state, TVApi, YTS, Haruhichan) ->
+.controller 'detailController', ($scope, $filter, playerConfig, $timeout, Settings, TVApi, YTS, Haruhichan) ->
   vm = this
 
   $state.current.title = vm.show = $stateParams.title

@@ -5,14 +5,11 @@ angular.module 'app.page-header', []
 .directive 'ptPageHeader', ->
   restrict: 'E'
   templateUrl: 'page-header/page-header.html'
-  scope: { goBack: '&' }
+  scope: { title: '=', goBack: '&' }
   bindToController: true
   controller: 'pageHeaderController as header'
 
-.controller 'pageHeaderController', ($state, $stateParams) ->
+.controller 'pageHeaderController', ->
   vm = this
 
-  vm.root = $state.current.root 
-  vm.title = $state.current.title
-
-  vm.torrentId = $stateParams.id
+  vm.torrentId = null

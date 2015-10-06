@@ -3,7 +3,7 @@
 angular.module 'app.services'
 
   .constant 'sorters',
-    movie: [
+    'Movies': [
       'trending'
       'popularity'
       'last added'
@@ -12,7 +12,7 @@ angular.module 'app.services'
       'rating'
       ]
 
-    show: [
+    'TV Series': [
       'trending'
       'popularity'
       'updated'
@@ -21,7 +21,7 @@ angular.module 'app.services'
       'rating'
       ]
 
-    anime: [
+    'Anime': [
       'popularity'
       'trending'
       'updated'
@@ -31,7 +31,7 @@ angular.module 'app.services'
       ]
       
   .constant 'types',
-    anime: [
+    'Anime': [
       'All'
       'Movies'
       'TV'
@@ -40,7 +40,7 @@ angular.module 'app.services'
     ]
 
   .constant 'genres', 
-    movie: [
+    'Movies': [
       'All'
       'Action'
       'Adventure'
@@ -67,7 +67,7 @@ angular.module 'app.services'
       'Western'
       ]
 
-    anime: [
+    'Anime': [
       'All'
       'Action'
       'Adventure'
@@ -111,7 +111,7 @@ angular.module 'app.services'
       'Vampire'
       ]
 
-    show: [
+    'TV Series': [
       'All'
       'Action'
       'Adventure'

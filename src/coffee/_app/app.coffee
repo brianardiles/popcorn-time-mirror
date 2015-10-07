@@ -9,7 +9,7 @@ angular.module 'app', [
 
   'socket-io'
   'xmlrpc'
-  
+
   'app.about'
   'app.bookmarks'
   'app.browser'
@@ -19,7 +19,9 @@ angular.module 'app', [
   'app.device-selector'
   'app.filter-bar'
   'app.header'
+  'app.gsTimelines' 
   'app.page-header'
+  'app.plugins'
   'app.play-torrent'
   'app.providers'
   'app.quality-icon'

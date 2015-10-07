@@ -6,7 +6,7 @@ angular.module 'app.browser', []
   vm = this
 
   vm.loading = false 
-  
+
   bgCycler = null
   
   api = switch $scope.type

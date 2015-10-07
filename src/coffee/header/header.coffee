@@ -25,8 +25,8 @@ angular.module 'app.header', []
         ipc.send 'unminimize'
         vm.state.maximized = false
       else
-        ipc.send 'minimize'
-      vm.state.maximized = true
+        ipc.send 'maximize'
+        vm.state.maximized = true
 
   vm.min = ->
     ipc.send 'minimize'

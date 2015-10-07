@@ -1,11 +1,21 @@
-<section id="title">
-    <h1>Settings</h1>
-    <div class="content">
-        <div class="content-row">
-            <i class="fa fa-keyboard-o keyboard tooltipped" data-toggle="tooltip" data-placement="bottom" title="Keyboard Shortcuts"></i>
-            <i class="fa fa-question-circle help tooltipped" data-toggle="tooltip" data-placement="bottom" title="Help Section"></i>
-            <input id="show-advanced-settings" class="settings-checkbox" name="showAdvancedSettings" type="checkbox" ng-model="settings.config.showAdvancedSettings">
-            <label class="settings-label" for="show-advanced-settings">Show advanced settings</label>
-        </div>
+<section class="settings-panel" id="settings">
+    <div class="settings-panel-header">
+        Settings
+    </div>
+    
+    <div class="settings-panel-body">
+      <md-button class="md-icon--button" ng-click="showKeyboard()">
+          <md-icon md-font-set="material-icons">keyboard</md-icon>
+          Keyboard Shortcuts
+      </md-button>    
+
+      <md-button class="md-icon--button" ng-click="showHelp()">
+          <md-icon md-font-set="material-icons">question</md-icon>
+      </md-button>    
+
+      <md-checkbox aria-label="Show advanced settings" ng-model="settings.config.showAdvancedSettings">
+        Show advanced settings
+      </md-checkbox>
+
     </div>
 </section>

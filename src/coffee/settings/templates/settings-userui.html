@@ -1,46 +1,47 @@
-<section id="user-interface">
-    <h1>User Interface</h1>
-    <div class="content">
-        <div class="content-row">
-            <div class="dropdown subtitles-language">
-                <p>Default Language</p>
-                <md-select class="settings-dropdown" aria-label="language" ng-model="settings.config.lang">
-                   <md-option ng-repeat="lang in settings.config.langs" name="language">{{ lang }}</md-option>
-                </md-select>
-            </div>
-        </div>
+<section class="settings-panel" id="user_ui">
+    <div class="settings-panel-header">
+        User Interface
+    </div>
 
-        <div class="content-row">
-            <div class="dropdown pct-theme">
-                <p>Theme</p>
-                <md-select class="settings-dropdown" ng-model="settings.config.theme">
-                   <md-option ng-repeat="theme in settings.config.themes" name="theme">{{ theme }}</md-option>
-                </md-select>
-            </div>
-        </div>
+    <div class="settings-panel-body">
+        <section class="settings-select">
+            <div class="select-label">Default Language</div>
+            <md-select class="settings-dropdown" aria-aria-label="language" ng-model="settings.config.lang">
+                <md-option ng-repeat="lang in settings.config.langs" name="language">{{ lang }}</md-option>
+            </md-select>
+        </section>
 
-        <div class="content-row" ng-if="settings.config.showAdvancedSettings">
-            <div class="dropdown start-screen">
-                <p>Start Screen</p>
-                <md-select class="settings-dropdown" ng-model="settings.config.screen">
-                   <md-option ng-repeat="screen in settings.config.start_screens" name="start_screen">{{ screen }}</md-option>
-                </md-select>
-            </div>
-        </div>
+
+         <section class="settings-select">
+            <div class="select-label">Theme</div>
+            <md-select class="settings-dropdown" ng-model="settings.config.theme">
+               <md-option ng-repeat="theme in settings.config.themes" name="theme">{{ theme }}</md-option>
+            </md-select>
+        </section>
+
+         <section class="settings-select">
+            <div class="select-label">Start Screen</div>
+            <md-select class="settings-dropdown" ng-model="settings.config.screen">
+               <md-option ng-repeat="screen in settings.config.start_screens" name="start_screen">{{ screen }}</md-option>
+            </md-select>
+        </section>
 
         <md-input-container ng-if="settings.config.showAdvancedSettings">
-            <label>Translate Synopsis</label>
-            <md-checkbox ng-model="settings.config.translateSynopsis"></md-checkbox>
+            <md-checkbox aria-label="Translate Synopsis" ng-model="settings.config.translateSynopsis">
+                Translate Synopsis
+            </md-checkbox>
         </md-input-container>
         
         <md-input-container ng-if="settings.config.showAdvancedSettings">
-            <label>Show rating over covers</label>
-            <md-checkbox ng-model="settings.config.coversShowRating"></md-checkbox>
+            <md-checkbox aria-label="Show rating over covers" ng-model="settings.config.coversShowRating">
+                Show rating over
+            </md-checkbox>
         </md-input-container>
 
         <md-input-container ng-if="settings.config.showAdvancedSettings">
-            <label class="settings-label" for="cb4">Always On Top</label>
-            <md-checkbox ng-model="settings.config.alwaysOnTop"></md-checkbox>
+            <md-checkbox aria-label="Always On Top" ng-model="settings.config.alwaysOnTop">
+                Always On Top
+            </md-checkbox>
         </md-input-container>
 
         <md-input-container ng-if="settings.config.showAdvancedSettings">

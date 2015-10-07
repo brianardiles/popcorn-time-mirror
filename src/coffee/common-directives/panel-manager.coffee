@@ -8,16 +8,12 @@ angular.module 'app.common-directives'
   template: '''
     <pt-header></pt-header>
 
-    <pt-sidebar>
+    <pt-sidebar class="md-black-primary-default background">
       <nav>
-        <ul>
-          <li id="nav-{{ pane.ctrl }}" class="source showMovies providerinfo" ng-repeat="(name, pane) in ::ctrl.panes" title="YTS">
-              <a ng-class="{ selected: pane.selected }" ng-click="ctrl.select(pane)" >
-                  <md-icon md-font-set="material-icons">{{ :: pane.icon }}</md-icon>
-                  <span class="nav-text">{{ :: pane.title }}</span>
-              </a>
-          </li>
-        </ul>
+        <md-button id="nav-{{ pane.ctrl }}" layout="row" ng-repeat="(name, pane) in ::ctrl.panes" ng-click="ctrl.select(pane)" ng-class="{ selected: pane.selected }">
+          <md-icon class="md-background-primary-default text" md-font-set="material-icons">{{ :: pane.icon }}</md-icon>
+          <span flex>{{ :: pane.title }}</span>
+        </md-button>
       </nav>
     </pt-sidebar>
 

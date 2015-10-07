@@ -1,95 +1,49 @@
-main-background-color = rgb(13, 14, 15, 1)
-main-background-color-light = rgb(28, 29, 33, 1)
-main-text-color = rgb(255, 255, 255, 1)
-main-text-color-secondary = rgba(255, 255, 255, 0.6)
-main-text-color-inactive = rgba(255, 255, 255, 0.3)
-main-color-accent = rgb(63, 81, 181, 1)
-disabled-text-color = rgb(122, 122, 122, 1)
+pt-sidebar 
+  max-width 100px
+  min-width 0px
+  z-index 9
+  overflow visible
+  user-select none
+  height 100%
 
-lesscss-percentage(n)
-    (n * 100)%
-    
-pre-show-text(wait)
-    opacity 0
-    transform translateY(-50px)
-    transition opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) wait, transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) wait
-    
-stagger(n)
-    for i in (1..n)
-        &:nth-of-type(i)
-            transition opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) (0.1s * i), transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) (0.1s * i)
+  &:hover 
+      nav
+        width 220px !important
+      
+      .md-button span
+        opacity 1
+  
+  nav
+    padding-top 50px
+    transition width 0.2s ease-out, left 0.5s ease-out
+    min-width 100px !important
+    width 100px !important
+    max-width 220px !important
+    height inherit
+    background-color inherit
+  
+  .md-button 
+    cursor pointer
+    line-height 60px
+    padding 0px 0px 0px 30px
+    max-height 60px
+    text-transform none
+    min-width 0px
+    overflow hidden
+    margin 0
+    text-align left
+    width 100%
 
-pt-sidebar
-    display block
-    width 100px
-    float left
-    height 100vw
+    span
+      opacity 0
+      margin-left 10px
+      transition opacity 0.3s ease-in
 
-    nav 
-        position fixed
-        top 0px
-        left 0
-        bottom 0
-        width 100px
-        background-color main-background-color
-        padding-top 60px
-        font-size 1em
-        line-height 1.7em
-        transition width 0.2s ease-out, left 0.5s ease-out
-        overflow hidden
-        z-index 4
-        
-        &:hover
-            width 212px
-            ul li a .nav-text
-                opacity 1
+    span, md-icon 
+      padding 0px 5px 10px
 
-    ul
-        overflow hidden
-        margin 0
-        padding: 0
-        height 100%
-
-        #nav-settings
-            position absolute
-            bottom 20px
-        
-        li
-            display block
-            cursor pointer
-            margin-bottom 2em
-            padding 0 35px
-            a
-                display block
-                color main-text-color-secondary
-                fill main-text-color-secondary
-                white-space nowrap
-                text-decoration none
-                transition color 0.2s ease-out
-                
-                .active
-                    color main-text-color
-                    fill main-text-color
-                    
-                    md-icon
-                        color main-text-color
-                        fill main-text-color
-                                 
-                md-icon, i
-                    width 30px
-                    height 30px
-                    margin-right 20px
-                    vertical-align bottom
-                    font-size 30px
-                span
-                    opacity 0
-                    transition opacity 0.3s ease-in
-                
-                &:hover, &.active
-                    color main-text-color
-                    fill main-text-color  
-                    
-                    md-icon
-                        color main-text-color
-                        fill main-text-color
-                                               
+  .md-button .md-ripple-container  
+    border-radius 0px !important
+  
+  button.md-button-moz-focus-inner 
+    padding 0

@@ -60,7 +60,7 @@ angular.module 'app.common-directives'
       vm.panes[pane.title] = pane
 
       if not vm.templates[pane.title]
-        paneElement = angular.element '<pt-content pt-lazy-container pt-lazy-scroll style="overflow: auto; display: none;"></pt-content>'
+        paneElement = angular.element '<pt-content pt-lazy-container="' + pane.title + '" pt-lazy-scroll style="overflow: auto; display: none;"></pt-content>'
         paneElement.append $templateCache.get pane.src      
 
         vm.templates[pane.src] = $compile paneElement

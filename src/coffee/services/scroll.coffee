@@ -4,7 +4,7 @@ angular.module 'app.services'
 
 .directive 'ptLazyContainer', (ptLazyService) ->
   restrict: 'AC'
-  controller: 'ptLazyController'
+  controller: 'ptLazyController as lazy'
   link: (scope, element, attrs, controller) ->
     ptLazyService.trackIsVisibleContainer controller
     

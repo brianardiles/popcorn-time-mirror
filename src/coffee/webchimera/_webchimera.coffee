@@ -17,7 +17,7 @@ angular.module 'app.webchimera', [
 .controller 'detailCtrl', (playerService, $scope, playerConfig, $rootScope) ->
   vm = this
 
-  vm.config = angular.copy playerConfig.config
+  vm.config = playerConfig.config
   
   vm.player = 
     id: null

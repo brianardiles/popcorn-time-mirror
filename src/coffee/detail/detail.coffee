@@ -9,7 +9,7 @@ angular.module 'app.detail', []
   templateUrl: 'detail/detail.html'
   controller: 'detailController as detail'
 
-.controller 'detailController', ($scope, $filter, playerConfig, $timeout, Settings, TVApi, YTS, Haruhichan) ->
+.controller 'detailController', ($scope, $filter, defaultPlayerConfig, $timeout, Settings, TVApi, YTS, Haruhichan) ->
   vm = this
 
   vm.currentDevice = Settings.chosenPlayer
@@ -18,26 +18,30 @@ angular.module 'app.detail', []
 
   vm.seasons = {}
   vm.selectedSeason = null
+  
+  api = null
 
-  vm.torrentId = vm.player.id
-  vm.trakt_url = 'http://www.imdb.com/title/' + vm.player.id
-  vm.type = vm.player.type
+  $scope.$watch 'detail.config.id', (newConfig) ->
+    if newConfig
+      vm.torrentId = vm.config.id
+      vm.trakt_url = 'http://www.imdb.com/title/' + vm.config.id
+      vm.type = vm.config.type
 
-  if vm.player.subtype
-    api = Haruhichan
-  else 
-    api = switch vm.type
-      when 'show'
-        TVApi
-      else YTS
+      if vm.config.subtype
+        api = Haruhichan
+      else 
+        api = switch vm.config.type
+          when 'show'
+            TVApi
+          else YTS
+
+      getTorrentDetails vm.config.id, vm.config.type
 
   vm.goBack = ->
-    vm.player = player
+    vm.config.id = null
+    vm.config.poster = null
+    vm.data = null
     
-    if vm.player.subtype
-      $state.go 'app.' + vm.player.subtype
-    else $state.go 'app.' + vm.type
-
   vm.selectSeason = (season) ->
     seasonIndex = '' + vm.selectedSeason 
     
@@ -49,10 +53,10 @@ angular.module 'app.detail', []
 
     vm.currentQuality = '0'
 
-  getTorrentDetails = (newTorrent) ->
-    api.detail(newTorrent, vm.type).then (resp) ->
+  getTorrentDetails = (newTorrent, type) ->
+    api.detail(newTorrent, type).then (resp) ->
       vm.data = resp.data
-      vm.vm.player.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.type) 
+      vm.config.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.type) 
       
       if vm.type is 'show'
         angular.forEach resp.data.episodes, (value, currentEpisode) ->

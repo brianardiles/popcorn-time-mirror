@@ -12,8 +12,6 @@ angular.module 'app.detail', []
 .controller 'detailController', ($scope, $filter, playerConfig, $timeout, Settings, TVApi, YTS, Haruhichan) ->
   vm = this
 
-  $state.current.title = vm.show = $stateParams.title
-  
   vm.currentDevice = Settings.chosenPlayer
   vm.currentQuality = '0' 
   vm.currentTorrent = null
@@ -21,11 +19,11 @@ angular.module 'app.detail', []
   vm.seasons = {}
   vm.selectedSeason = null
 
-  vm.torrentId = $stateParams.id
-  vm.trakt_url = 'http://www.imdb.com/title/' + $stateParams.id
-  vm.type = $stateParams.type
+  vm.torrentId = vm.player.id
+  vm.trakt_url = 'http://www.imdb.com/title/' + vm.player.id
+  vm.type = vm.player.type
 
-  if $stateParams.subtype
+  if vm.player.subtype
     api = Haruhichan
   else 
     api = switch vm.type
@@ -34,10 +32,10 @@ angular.module 'app.detail', []
       else YTS
 
   vm.goBack = ->
-    vm.config = angular.copy playerConfig
+    vm.player = player
     
-    if $stateParams.subtype
-      $state.go 'app.' + $stateParams.subtype
+    if vm.player.subtype
+      $state.go 'app.' + vm.player.subtype
     else $state.go 'app.' + vm.type
 
   vm.selectSeason = (season) ->
@@ -54,7 +52,7 @@ angular.module 'app.detail', []
   getTorrentDetails = (newTorrent) ->
     api.detail(newTorrent, vm.type).then (resp) ->
       vm.data = resp.data
-      vm.config.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.type) 
+      vm.vm.player.poster = $filter('traktSize')(resp.data.images.fanart, 'medium', vm.type) 
       
       if vm.type is 'show'
         angular.forEach resp.data.episodes, (value, currentEpisode) ->
@@ -73,7 +71,5 @@ angular.module 'app.detail', []
   if vm.type is 'show'
     $scope.$watch 'detail.selectedSeason', (newSeason) ->
       vm.selectSeason newSeason
-
-  getTorrentDetails $stateParams.id
 
   return 

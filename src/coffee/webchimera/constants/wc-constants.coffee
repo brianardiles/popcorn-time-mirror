@@ -53,7 +53,7 @@ angular.module 'app.webchimera'
     onchange: 'MSFullscreenChange'
     onerror: 'MSFullscreenError'
 
-.constant 'playerConfig', 
+.constant 'defaultPlayerConfig', 
   controls: false
   loop: false
   autoPlay: true
@@ -63,3 +63,13 @@ angular.module 'app.webchimera'
   sources: null
   tracks: []
   poster: null
+
+.factory 'playerConfig', (defaultPlayerConfig) ->
+  config: angular.copy defaultPlayerConfig
+
+  reset: -> 
+    @config = angular.copy defaultPlayerConfig
+
+  merge: (config) ->
+    @config = angular.merge @config, config 
+

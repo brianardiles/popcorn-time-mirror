@@ -132,6 +132,22 @@ angular.module 'app.services'
     loadPalette: @loadPalette
  
 .config ($mdThemingProvider, $mdColorsProvider) ->
+  $mdThemingProvider.definePalette 'white',
+    50: '#ffffff'
+    100: '#ffffff'
+    200: '#ffffff'
+    300: '#ffffff'
+    400: '#ffffff'
+    500: '#ffffff'
+    600: '#ffffff'
+    700: '#ffffff'
+    800: '#ffffff'
+    900: '#ffffff'
+    A100: '#ffffff'
+    A200: '#ffffff'
+    A400: '#ffffff'
+    A700: '#ffffff'
+    contrastDefaultColor: 'dark'
 
   $mdThemingProvider.definePalette 'dark',
     50: '#e8e8e9'
@@ -149,17 +165,19 @@ angular.module 'app.services'
     A400: '#3e4346'
     A700: '#050607'
     contrastDefaultColor: 'light'
-    contrastDarkColors: '50 100 200 400'
-    contrastStrongLightColors: '500 600 300'
+    contrastDarkColors: '50 100 200'
+    contrastStrongLightColors: ' 500 600 300'
     contrastLightColors: '700 800 900 A100 A200 A400'
 
   $mdThemingProvider.theme 'black'
     .primaryPalette 'dark', default: '900' 
+    .dark()
 
   $mdThemingProvider
     .theme 'default' 
-    .primaryPalette 'dark', default: '900' 
+    .primaryPalette 'white', default: '900' 
     .backgroundPalette 'dark', default: '700' 
+    .dark()
 
   colorStore = {}
 

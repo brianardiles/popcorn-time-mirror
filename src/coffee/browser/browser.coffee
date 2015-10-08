@@ -2,7 +2,7 @@
 
 angular.module 'app.browser', []
 
-.controller 'browserController', ($scope, $interval, YTS, Haruhichan, TVApi) ->
+.controller 'browserController', ($scope, $interval, YTS, Haruhichan, TVApi, playerConfig) ->
   vm = this
 
   vm.loading = false 
@@ -19,6 +19,13 @@ angular.module 'app.browser', []
     else null
 
   vm.activeBgImageIndex = 0
+
+  vm.selectDetail = (item) ->
+    playerConfig.merge 
+      id: item._id
+      type: item.type
+      subtype: item.subtype
+      title: item.title
 
   vm.cycleBgImages = ->
     if bgCycler

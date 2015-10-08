@@ -4150,9 +4150,9 @@ var DARK_FOREGROUND = {
 var LIGHT_FOREGROUND = {
   name: 'light',
   '1': 'rgba(255,255,255,1.0)',
-  '2': 'rgba(255,255,255,0.7)',
-  '3': 'rgba(255,255,255,0.3)',
-  '4': 'rgba(255,255,255,0.12)'
+  '2': 'rgba(255,255,255,0.9)',
+  '3': 'rgba(255,255,255,0.8)',
+  '4': 'rgba(255,255,255,0.7)'
 };
 
 var DARK_SHADOW = '1px 1px 0px rgba(0,0,0,0.4), -1px -1px 0px rgba(0,0,0,0.4)';

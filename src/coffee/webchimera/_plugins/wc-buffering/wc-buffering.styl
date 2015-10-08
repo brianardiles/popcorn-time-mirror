@@ -1,27 +1,23 @@
 /********************/
 /* Buffering plugin */
 /********************/
-wc-buffering 
-  width: 100vw
-  height: 100vh
+wc-buffering
+  width: 100%
+  height: 100%
   position: absolute
-  z-index: 2
+  z-index: 4
   top: 0
 
-wc-buffering .bufferingContainer 
-  width: 100vw
+wc-buffering .bufferingContainer
+  width: 100%
   position: absolute
   cursor: pointer
   top: 50%
   margin-top: -50px
-
   zoom: 1
   opacity: 0.6
 
-/* Loading Spinner
- * http://www.alessioatzeni.com/blog/css3-loading-animation-loop/
- */
-wc-buffering .loadingSpinner 
+wc-buffering .loadingSpinner
   background-color: rgba(0, 0, 0, 0)
   border: 5px solid rgba(255, 255, 255, 1)
   opacity: .9
@@ -35,10 +31,10 @@ wc-buffering .loadingSpinner
   -moz-animation: spin .5s infinite linear
   -webkit-animation: spin .5s infinite linear
 
-wc-buffering .loadingSpinner .stop 
+wc-buffering .loadingSpinner .stop
   -webkit-animation-play-state: paused
   -moz-animation-play-state: paused
-
+  
 @keyframes spin {
   0% {
     -webkit-transform: rotate(0deg)

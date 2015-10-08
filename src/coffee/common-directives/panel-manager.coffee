@@ -11,7 +11,7 @@ angular.module 'app.common-directives'
     <pt-sidebar class="md-black-primary-default background">
       <nav>
         <md-button id="nav-{{ pane.ctrl }}" layout="row" ng-repeat="(name, pane) in ::ctrl.panes" ng-click="ctrl.select(pane)" ng-class="{ selected: pane.selected }">
-          <md-icon class="md-background-primary-default text" md-font-set="material-icons">{{ :: pane.icon }}</md-icon>
+          <md-icon class="md-black-primary-default text" md-font-set="material-icons">{{ :: pane.icon }}</md-icon>
           <span flex>{{ :: pane.title }}</span>
         </md-button>
       </nav>

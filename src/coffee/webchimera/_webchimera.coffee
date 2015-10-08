@@ -12,20 +12,21 @@ angular.module 'app.webchimera', [
 .directive 'ptDetail', ->
   restrict: 'E'
   templateUrl: 'webchimera/webchimera.html'
-  controller: 'detailCtrl as ctrl'
+  controller: 'detailCtrl as chimera'
 
-.controller 'detailCtrl', (playerService, $scope, playerConfig, $stateParams) ->
+.controller 'detailCtrl', (playerService, $scope, playerConfig, $rootScope) ->
   vm = this
 
-  vm.config = angular.copy playerConfig
+  vm.config = angular.copy playerConfig.config
   
-  vm.player = null
+  vm.player = 
+    id: null
 
-  $scope.$watch 'ctrl.torrent.ready', (readyState) ->
+  $scope.$watch 'chimera.torrent.ready', (readyState) ->
     vm.config.controls = readyState
 
-  $scope.$watchCollection 'ctrl.player', (newPlayer, oldPlayer) ->
-    if $stateParams.type is 'show'
+  $scope.$watchCollection 'chimera.player', (newPlayer, oldPlayer) ->
+    if $rootScope.type is 'show'
       playerService.sortNextEpisodes(newPlayer).then (data) ->
         vm.config.next = data
 

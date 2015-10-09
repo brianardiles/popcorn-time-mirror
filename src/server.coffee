@@ -89,6 +89,9 @@ getport (err, port) ->
 
     win.loadUrl 'file://' + path.join __dirname, 'index.html'
     
+    if not win.webContents.isDevToolsOpened()
+      win.webContents.toggleDevTools()
+
     livereload.client win
 
     ipc.on 'close', ->

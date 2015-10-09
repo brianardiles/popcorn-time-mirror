@@ -2,7 +2,7 @@
   "name": "Angular-Popcorn-Time",
   "version": "0.0.0",
   "description": "There's nothing on TV",
-  "main": "build/server.js",
+  "main": "build/scripts/main.js",
   "devDependencies": {
     "asar": "^0.8.0",
     "async": "^1.4.2",
@@ -36,7 +36,7 @@
     "body-parser": "^1.13.3",
     "electron-livereload": "0.0.2",
     "electron-packager": "^5.1.0",
-    "electron-prebuilt": "0.33.3",
+    "electron-prebuilt": "0.33.6",
     "express": "^4.13.3",
     "fluent-ffmpeg": "^2.0.1",
     "get-port": "^1.0.0",

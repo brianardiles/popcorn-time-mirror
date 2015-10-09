@@ -20,7 +20,7 @@ exports.serializeFiles = (torrent) ->
       cleanedTorrentFiles.push 
         name: torrentFile.name
         path: torrentFile.path
-        src: 'http://127.0.0.1:' + process.socketPort + '/torrents/' + torrent.infoHash + '/files/' + encodeURIComponent(torrentFile.path)
+        src: 'http://127.0.0.1:' + process.argv[2] + '/torrents/' + torrent.infoHash + '/files/' + encodeURIComponent(torrentFile.path)
         length: torrentFile.length
         offset: torrentFile.offset
         selected: torrent.selection.some (s) ->

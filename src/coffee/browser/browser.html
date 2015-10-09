@@ -15,7 +15,7 @@
 
     <background-cycler class="bg-fade"></background-cycler>
 
-    <md-content layout-padding  ng-show="browser.data && browser.backdrop">
+    <md-content layout-padding  ng-show="browser.data">
       <md-grid-list md-row-height="4:3" md-cols-sm="2" md-cols-gt-sm="3" md-cols-md="4" md-cols-gt-md="5" md-cols-lg="6" md-cols-gt-lg="8" md-gutter-sm="8px" md-gutter-md="12px" md-gutter-lg="16px" md-gutter-gt-lg="16px">
 
         <md-grid-tile pt-lazy-item="showItem = true" md-rowspan="2" ng-repeat="item in browser.data track by item._id" ng-click="browser.selectDetail(item)">

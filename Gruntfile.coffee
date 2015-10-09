@@ -45,7 +45,11 @@ module.exports = (grunt) ->
         dest: 'build/server/'
         ext: '.js'
       main:
-        files: 'build/server.js': ['src/server.coffee']
+        expand: true
+        cwd: 'src/scripts'
+        src: [ '**/*.coffee' ]
+        dest: 'build/scripts/'
+        ext: '.js'
 
     watch: 
       options: 
@@ -154,6 +158,8 @@ module.exports = (grunt) ->
 
 
   grunt.registerTask 'dev', (env) ->
+    process.env.NODE_ENV = 'dev'
+    
     grunt.task.run 'build'
     grunt.task.run 'start'
 

@@ -1,15 +1,17 @@
-[
+{ name, version } = require '../../package.json'
+
+module.exports = [
   {
-    label: '{{ productName }}'
+    label: name
     submenu: [
-      { label: 'About {{ productName }}', selector: 'orderFrontStandardAboutPanel:' }
-      { label: 'Version {{ version }}', enabled: false }
+      { label: 'About ' + name, selector: 'orderFrontStandardAboutPanel:' }
+      { label: 'Version ' + version, enabled: false }
       { label: 'Check for Update', command: 'application:check-for-update' }
       { type: 'separator' }
       { label: 'Preferences...', command: 'application:show-settings' }
       { label: 'Services', submenu: [] }
       { type: 'separator' }
-      { label: 'Hide {{ productName }}', accelerator: 'Command+H', selector: 'hide:' }
+      { label: 'Hide ' + name, accelerator: 'Command+H', selector: 'hide:' }
       { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' }
       { label: 'Show All', selector: 'unhideAllApplications:' }
       { type: 'separator' }

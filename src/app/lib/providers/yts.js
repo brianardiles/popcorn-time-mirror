@@ -1,8 +1,6 @@
 (function (App) {
     'use strict';
 
-    var Q = require('q');
-    var request = require('request');
     var inherits = require('util').inherits;
 
     function YTS() {

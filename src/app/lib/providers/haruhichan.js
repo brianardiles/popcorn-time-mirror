@@ -1,8 +1,5 @@
 (function (App) {
     'use strict';
-    var querystring = require('querystring');
-    var inherits = require('util').inherits;
-
 
     var statusMap = {
         0: 'Not Airing Yet',

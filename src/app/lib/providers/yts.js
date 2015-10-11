@@ -109,7 +109,7 @@
                 uri: Settings.ytsAPI[index].url + 'api/v2/list_movies_pct.json',
                 qs: params,
                 json: true,
-                timeout: 10000
+                timeout: 6000
             };
             var req = jQuery.extend(true, {}, Settings.ytsAPI[index], options);
             request(req, function (err, res, data) {
@@ -141,7 +141,7 @@
             var options = {
                 uri: Settings.ytsAPI[index].url + 'api/v2/get_random_movie.json?' + Math.round((new Date()).valueOf() / 1000),
                 json: true,
-                timeout: 10000
+                timeout: 6000
             };
             var req = jQuery.extend(true, {}, Settings.ytsAPI[index], options);
             request(req, function (err, res, data) {

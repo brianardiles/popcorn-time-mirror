@@ -28,6 +28,8 @@
             'click .close-info-player': 'closePlayer',
             'click .playnownext': 'playNextNow',
             'click .playnownextNOT': 'playNextNot',
+            'click .verifmetaTRUE': 'verifyMetadata',
+            'click .verifmetaFALSE': 'wrongMetadata',
             'click .vjs-subtitles-button': 'toggleSubtitles',
             'click .vjs-text-track': 'moveSubtitles',
             'click .vjs-play-control': 'togglePlay'
@@ -91,6 +93,36 @@
             }
         },
 
+        uploadSubtitles: function () {
+            // verify custom subtitles not modified
+            if (AdvSettings.get('opensubtitlesAutoUpload') && this.customSubtitles && !this.customSubtitles.modified) {
+                var real_elapsedTime = (Date.now() - this.customSubtitles.added_at) / 1000;
+                var player_elapsedTime = this.video.currentTime() - this.customSubtitles.timestamp;
+                var perc_elapsedTime = player_elapsedTime / this.video.duration();
+
+                // verify was played long enough
+                if (real_elapsedTime >= player_elapsedTime && perc_elapsedTime >= 0.7) {
+                    var upload = {
+                        subpath: this.customSubtitles.subPath,
+                        path: this.model.get('videoFile'),
+                        imdbid: this.model.get('imdb_id')
+                    };
+
+                    win.debug('OpenSubtitles - Uploading subtitles', upload);
+
+                    var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
+                    subtitleProvider.upload(upload).then(function (data) {
+                        if (data.alreadyindb) {
+                            return;
+                        }
+                        win.debug('OpenSubtitles - Subtitles successfully uploaded', data);
+                    }).catch(function (err) {
+                        win.warn('OpenSubtitles: could not upload subtitles', err);
+                    });
+                }
+            }
+        },
+
         closePlayer: function () {
             win.info('Player closed');
             if (this._AutoPlayCheckTimer) {
@@ -100,13 +132,14 @@
                 clearInterval(this._ShowUIonHover);
             }
 
+            this.uploadSubtitles();
             this.sendToTrakt('stop');
 
             var type = this.isMovie();
             if (type === 'episode') {
                 type = 'show';
             }
-            if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== undefined) {
+            if (this.video.currentTime() / this.video.duration() >= 0.8 && type !== undefined && this.model.get('metadataCheckRequired') !== false) {
                 App.vent.trigger(type + ':watched', this.model.attributes, 'database');
             }
 
@@ -233,6 +266,37 @@
                 }
 
             });
+
+            App.vent.on('customSubtitles:added', function (subpath) {
+                _this.customSubtitles = {
+                    subPath: subpath,
+                    added_at: Date.now(),
+                    timestamp: _this.video.currentTime(),
+                    modified: false
+                };
+                $('#video_player li:contains("' + i18n.__('Disabled') + '")').on('click', function () {
+                    _this.customSubtitles = undefined;
+                });
+            });
+
+            if (this.model.get('metadataCheckRequired')) {
+                var matcher = this.model.get('title').split(/\s-\s/i);
+                $('.verifmeta_poster').attr('src', this.model.get('poster'));
+                $('.verifmeta_show').text(matcher[0]);
+                if (this.model.get('episode')) {
+                    $('.verifmeta_episode').text(matcher[2]);
+                    $('.verifmeta_number').text(i18n.__('Season %s', this.model.get('season')) + ', ' + i18n.__('Episode %s', this.model.get('episode')));
+                } else {
+                    $('.verifmeta_episode').text(this.model.get('year'));
+                }
+
+                // display it
+                $('.verify-metadata').show();
+                $('.verify-metadata').appendTo('div#video_player');
+                if (!_this.player.userActive()) {
+                    _this.player.userActive(true);
+                }
+            }
 
             var checkAutoPlay = function () {
                 if (_this.isMovie() === 'episode' && next_episode_model) {
@@ -393,7 +457,7 @@
 
             this.player.volume(AdvSettings.get('playerVolume'));
 
-            $('.vjs-menu-content, .eye-info-player, .playing_next').hover(function () {
+            $('.vjs-menu-content, .eye-info-player, .playing_next, .verify_metadata').hover(function () {
                 _this._ShowUIonHover = setInterval(function () {
                     App.PlayerView.player.userActive(true);
                 }, 100);
@@ -475,6 +539,46 @@
             }
         },
 
+        verifyMetadata: function () {
+            $('.verify-metadata').hide();
+        },
+
+        wrongMetadata: function () {
+            $('.verify-metadata').hide();
+
+            // stop trakt
+            this.sendToTrakt('stop');
+
+            // remove wrong metadata
+            var title = path.basename(this.model.get('src'));
+            this.model.set('imdb_id', false);
+            this.model.set('cover', false);
+            this.model.set('title', title);
+            this.model.set('season', false);
+            this.model.set('episode', false);
+            this.model.set('tvdb_id', false);
+            this.model.set('episode_id', false);
+            this.model.set('metadataCheckRequired', false);
+            $('.player-title').text(title);
+
+            // remove subtitles
+            var subs = this.model.get('subtitle');
+            if (subs && subs.local) {
+                var tmpLoc = subs.local;
+                this.model.set('subtitle', {
+                    local: tmpLoc
+                });
+            }
+
+            var item;
+            for (var i = $('.vjs-subtitles-button .vjs-menu-item').length - 1; i > 0; i--) {
+                item = $('.vjs-subtitles-button .vjs-menu-item')[i];
+                if (item.innerText !== i18n.__('Subtitles') && item.innerText !== i18n.__('Custom...') && item.innerText !== i18n.__('Disabled')) {
+                    item.remove();
+                }
+            }
+        },
+
         scaleWindow: function (scale) {
             var v = $('video')[0];
             if (v.videoWidth && v.videoHeight) {
@@ -487,7 +591,7 @@
 
             // add ESC toggle when full screen, go back when not
             Mousetrap.bind('esc', function (e) {
-                _this.nativeWindow = require('nw.gui').Window.get();
+                _this.nativeWindow = win;
 
                 if (_this.nativeWindow.isFullscreen) {
                     _this.toggleFullscreen();
@@ -767,7 +871,7 @@
         },
 
         displayStreamURL: function () {
-            var clipboard = require('nw.gui').Clipboard.get();
+            var clipboard = gui.Clipboard.get();
             clipboard.set($('#video_player video').attr('src'), 'text');
             this.displayOverlayMsg(i18n.__('URL of this stream was copied to the clipboard'));
         },
@@ -776,6 +880,9 @@
             var o = this.player.options()['trackTimeOffset'];
             this.player.options()['trackTimeOffset'] = (o + s);
             this.displayOverlayMsg(i18n.__('Subtitles Offset') + ': ' + (-this.player.options()['trackTimeOffset'].toFixed(1)) + ' ' + i18n.__('secs'));
+            if (this.customSubtitles) {
+                this.customSubtitles.modified = true;
+            }
         },
 
         adjustPlaybackRate: function (rate, delta) {

@@ -1,8 +1,7 @@
 (function (App) {
     'use strict';
 
-    var inherits = require('util').inherits,
-        chromecast = require('chromecast-js'),
+    var chromecast = require('chromecast-js'),
         collection = App.Device.Collection;
 
     var Chromecast = App.Device.Generic.extend({
@@ -12,7 +11,7 @@
         },
 
         _makeID: function (baseID) {
-            return 'chromecast-' + baseID.replace(' ', '-');
+            return 'chromecast-' + Common.md5(baseID);
         },
 
         initialize: function (attrs) {

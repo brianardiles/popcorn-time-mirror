@@ -103,8 +103,7 @@
         },
 
         context_Menu: function (cutLabel, copyLabel, pasteLabel) {
-            var gui = require('nw.gui'),
-                menu = new gui.Menu(),
+            var menu = new gui.Menu(),
 
                 cut = new gui.MenuItem({
                     label: cutLabel || 'Cut',

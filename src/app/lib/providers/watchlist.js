@@ -1,7 +1,6 @@
 /* globals moment*/
 (function (App) {
     'use strict';
-    var Q = require('q');
     var TVApi = App.Providers.get('TVApi');
 
     var Watchlist = function () {};
@@ -45,7 +44,7 @@
                         deferred.resolve(doc.value || []);
                     } else {
                         win.info('Watchlist - Fetching new watchlist');
-                        App.Trakt.calendars.myShows(moment().subtract(30, 'days').format('YYYY-MM-DD'), 30)
+                        App.Trakt.calendars.myShows(moment().subtract(30, 'days').format('YYYY-MM-DD'), 31)
                             .then(function (data) {
                                 App.db.writeSetting({
                                         key: 'watchlist',
@@ -178,7 +177,7 @@
         var deferred = Q.defer();
 
         win.info('Watchlist - Fetching new watchlist');
-        App.Trakt.calendars.myShows(moment().subtract(30, 'days').format('YYYY-MM-DD'), 30)
+        App.Trakt.calendars.myShows(moment().subtract(30, 'days').format('YYYY-MM-DD'), 31)
             .then(function (data) {
                 App.db.writeSetting({
                         key: 'watchlist',

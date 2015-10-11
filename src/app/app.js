@@ -1,35 +1,3 @@
-var
-// Minimum percentage to open video
-    MIN_PERCENTAGE_LOADED = 0.5,
-
-    // Minimum bytes loaded to open video
-    MIN_SIZE_LOADED = 10 * 1024 * 1024,
-
-    // Load native UI library
-    gui = require('nw.gui'),
-
-    // browser window object
-    win = gui.Window.get(),
-
-    // os object
-    os = require('os'),
-
-    // path object
-    path = require('path'),
-
-    // fs object
-    fs = require('fs'),
-
-    // url object
-    url = require('url'),
-
-    // i18n module (translations)
-    i18n = require('i18n'),
-
-    moment = require('moment'),
-
-    Q = require('q');
-
 // Special Debug Console Calls!
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -51,13 +19,11 @@ win.error = function () {
     var params = Array.prototype.slice.call(arguments, 1);
     params.unshift('%c[%cERROR%c] ' + arguments[0], 'color: black;', 'color: red;', 'color: black;');
     console.error.apply(console, params);
-    fs.appendFileSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'), '\n\n' + (arguments[0].stack || arguments[0])); // log errors;
+    fs.appendFileSync(path.join(data_path, 'logs.txt'), '\n\n' + (arguments[0].stack || arguments[0])); // log errors;
 };
 
 
 if (gui.App.fullArgv.indexOf('--reset') !== -1) {
-
-    var data_path = require('nw.gui').App.dataPath;
 
     localStorage.clear();
 
@@ -242,8 +208,7 @@ var deleteFolder = function (path) {
 };
 
 var deleteCookies = function () {
-    var nwWin = gui.Window.get();
-    nwWin.cookies.getAll({}, function (cookies) {
+    win.cookies.getAll({}, function (cookies) {
         if (cookies.length > 0) {
             win.debug('Removing ' + cookies.length + ' cookies...');
             for (var i = 0; i < cookies.length; i++) {
@@ -254,7 +219,7 @@ var deleteCookies = function () {
 
     function removeCookie(cookie) {
         var lurl = 'http' + (cookie.secure ? 's' : '') + '://' + cookie.domain + cookie.path;
-        nwWin.cookies.remove({
+        win.cookies.remove({
             url: lurl,
             name: cookie.name
         }, function (result) {
@@ -299,8 +264,8 @@ win.on('close', function () {
     if (App.settings.deleteTmpOnClose) {
         deleteFolder(App.settings.tmpLocation);
     }
-    if (fs.existsSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'))) {
-        fs.unlinkSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'));
+    if (fs.existsSync(path.join(data_path, 'logs.txt'))) {
+        fs.unlinkSync(path.join(data_path, 'logs.txt'));
     }
     try {
         delCache();
@@ -438,7 +403,7 @@ var minimizeToTray = function () {
         openFromTray();
     });
 
-    require('nw.gui').App.on('open', function (cmd) {
+    gui.App.on('open', function (cmd) {
         openFromTray();
     });
 };
@@ -458,7 +423,9 @@ var isVideo = function (file) {
 };
 
 var handleVideoFile = function (file) {
-    // look for subtitles
+    $('.spinner').show();
+
+    // look for local subtitles
     var checkSubs = function () {
         var _ext = path.extname(file.name);
         var toFind = file.path.replace(_ext, '.srt');
@@ -472,28 +439,118 @@ var handleVideoFile = function (file) {
         }
     };
 
+    // get subtitles from provider
+    var getSubtitles = function (subdata) {
+        return Q.Promise(function (resolve, reject) {
+            win.debug('Subtitles data request:', subdata);
+
+            var subtitleProvider = App.Config.getProvider('tvshowsubtitle');
+
+            subtitleProvider.fetch(subdata).then(function (subs) {
+                if (subs && Object.keys(subs).length > 0) {
+                    win.info(Object.keys(subs).length + ' subtitles found');
+                    resolve(subs);
+                } else {
+                    win.warn('No subtitles returned');
+                    reject(new Error('No subtitles returned'));
+                }
+            }).catch(function (err) {
+                reject(err);
+            });
+        });
+    };
+
+    // close the player if needed
     try {
         App.PlayerView.closePlayer();
-    } catch (err) {
-        // The player wasn't running
-    }
+    } catch (err) {}
 
-    // streamer model
-    var localVideo = new Backbone.Model({
+    // init our objects
+    var playObj = {
         src: path.join(file.path),
-        title: file.name,
-        type: 'video/mp4',
-        subtitle: checkSubs(),
-        defaultSubtitle: 'local',
-        quality: false
-    });
-    win.debug('Trying to play local file', localVideo.get('src'), localVideo.attributes);
+        type: 'video/mp4'
+    };
+    var sub_data = {
+        filename: path.basename(file.path),
+        path: file.path
+    };
 
-    var tmpPlayer = App.Device.Collection.selected.attributes.id;
-    App.Device.Collection.setDevice('local');
-    App.vent.trigger('stream:ready', localVideo);
-    App.Device.Collection.setDevice(tmpPlayer);
-    $('.eye-info-player').hide();
+    // try to figure out what movie/episode we're playing
+    Common.matchTorrent(path.basename(file.path))
+        .then(function (res) {
+            if (!res || res.error) {
+                throw new Error('matchTorrent failed');
+            }
+
+            playObj.metadataCheckRequired = true;
+            switch (res.type) {
+            case 'movie':
+                playObj.title = res.movie.title;
+                playObj.quality = res.quality;
+                playObj.imdb_id = res.movie.imdbid;
+                playObj.poster = res.movie.poster;
+                playObj.year = res.movie.year;
+
+                sub_data.imdbid = res.movie.imdbid;
+                break;
+            case 'episode':
+                playObj.title = res.show.title + ' - ' + i18n.__('Season %s', res.show.episode.season) + ', ' + i18n.__('Episode %s', res.show.episode.episode) + ' - ' + res.show.episode.title;
+                playObj.quality = res.quality;
+                playObj.season = res.show.episode.season;
+                playObj.episode = res.show.episode.episode;
+                playObj.poster = res.show.poster;
+                playObj.tvdb_id = res.show.tvdbid;
+                playObj.imdb_id = res.show.imdbid;
+                playObj.episode_id = res.show.episode.tvdbid;
+
+                sub_data.imdbid = res.show.imdbid;
+                sub_data.season = res.show.episode.season;
+                sub_data.episode = res.show.episode.episode;
+                break;
+            default:
+            }
+
+            // try to get subtitles for that movie/episode
+            return getSubtitles(sub_data)
+                .then(function (subtitles) {
+                    var localsub = checkSubs();
+                    if (localsub !== null) {
+                        subtitles = jQuery.extend({}, subtitles, localsub);
+                    }
+                    playObj.subtitle = subtitles;
+
+                    if (localsub !== null) {
+                        playObj.defaultSubtitle = 'local';
+                    } else {
+                        playObj.defaultSubtitle = 'none';
+                    }
+                })
+                .catch(function (err) {
+                    playObj.defaultSubtitle = 'local';
+                    playObj.subtitle = checkSubs();
+                });
+        })
+        .catch(function (err) {
+            playObj.title = file.name;
+            playObj.quality = false;
+            playObj.defaultSubtitle = 'local';
+            playObj.subtitle = checkSubs();
+        })
+
+    // once we've checked everything, we start playing.
+    .finally(function () {
+        $('.spinner').hide();
+
+        var localVideo = new Backbone.Model(playObj); // streamer model
+        win.debug('Trying to play local file', localVideo.get('src'), localVideo.attributes);
+
+        var tmpPlayer = App.Device.Collection.selected.attributes.id;
+        App.Device.Collection.setDevice('local');
+        App.vent.trigger('stream:ready', localVideo); // start stream
+        App.Device.Collection.setDevice(tmpPlayer);
+
+        $('.eye-info-player').hide();
+    });
 };
 
 var handleTorrent = function (torrent) {

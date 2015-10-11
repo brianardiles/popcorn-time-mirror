@@ -1,5 +1,3 @@
-var request = require('request');
-
 (function (App) {
     'use strict';
 

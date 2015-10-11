@@ -1,7 +1,6 @@
 (function (App) {
     'use strict';
     var clipboard = gui.Clipboard.get(),
-        AdmZip = require('adm-zip'),
         fdialogs = require('node-webkit-fdialogs'),
         waitComplete,
         oldTmpLocation,
@@ -36,6 +35,8 @@
             'click #unauthTrakt': 'disconnectTrakt',
             'click #connect-with-tvst': 'connectWithTvst',
             'click #disconnect-tvst': 'disconnectTvst',
+            'click #authOpensubtitles': 'connectOpensubtitles',
+            'click #unauthOpensubtitles': 'disconnectOpensubtitles',
             'click .reset-tvAPI': 'resetTVShowAPI',
             'change #tmpLocation': 'updateCacheDirectory',
             'click #syncTrakt': 'syncTrakt',
@@ -79,8 +80,7 @@
         },
 
         context_Menu: function (cutLabel, copyLabel, pasteLabel, field) {
-            var gui = require('nw.gui'),
-                menu = new gui.Menu(),
+            var menu = new gui.Menu(),
 
                 cut = new gui.MenuItem({
                     label: cutLabel || 'Cut',
@@ -236,6 +236,8 @@
             case 'activateTorrentCollection':
             case 'activateWatchlist':
             case 'activateRandomize':
+            case 'opensubtitlesAutoUpload':
+            case 'subtitles_bold':
             case 'rememberFilters':
                 value = field.is(':checked');
                 break;
@@ -258,6 +260,9 @@
                 $('.vpn-connect').toggle();
                 value = field.is(':checked');
                 break;
+            case 'opensubtitlesUsername':
+            case 'opensubtitlesPassword':
+                return;
             default:
                 win.warn('Setting not defined: ' + field.attr('name'));
             }
@@ -383,21 +388,21 @@
             }
 
             $('#authTrakt > i').css('visibility', 'hidden');
-            $('.loading-spinner').show();
+            $('.trakt-loading-spinner').show();
 
             App.Trakt.oauth.authenticate()
                 .then(function (valid) {
                     if (valid) {
-                        $('.loading-spinner').hide();
+                        $('.trakt-loading-spinner').hide();
                         that.render();
                     } else {
-                        $('.loading-spinner').hide();
+                        $('.trakt-loading-spinner').hide();
                         $('#authTrakt > i').css('visibility', 'visible');
                     }
                 }).catch(function (err) {
                     win.debug('Trakt', err);
                     $('#authTrakt > i').css('visibility', 'visible');
-                    $('.loading-spinner').hide();
+                    $('.trakt-loading-spinner').hide();
                 });
         },
 
@@ -442,7 +447,6 @@
                 self.render();
             });
             App.TVShowTime.authenticate(function (activateUri) {
-                var gui = require('nw.gui');
                 gui.App.addOriginAccessWhitelistEntry(activateUri, 'app', 'host', true);
                 window.loginWindow = gui.Window.open(activateUri, {
                     position: 'center',
@@ -468,6 +472,52 @@
             App.TVShowTime.disconnect(function () {
                 self.render();
             });
+        },
+
+        connectOpensubtitles: function (e) {
+            var self = this,
+                usn = $('#opensubtitlesUsername').val(),
+                pw = $('#opensubtitlesPassword').val(),
+                OS = require('opensubtitles-api');
+
+            $('.opensubtitles-options .invalid-cross').hide();
+
+            if (usn !== '' && pw !== '') {
+                $('.opensubtitles-options .loading-spinner').show();
+                var OpenSubtitles = new OS('Popcorn Time v' + (Settings.version || 1), usn, Common.md5(pw));
+
+                OpenSubtitles.login()
+                    .then(function (res) {
+                        if (res.token) {
+                            AdvSettings.set('opensubtitlesUsername', usn);
+                            AdvSettings.set('opensubtitlesPassword', Common.md5(pw));
+                            AdvSettings.set('opensubtitlesAuthenticated', true);
+                            $('.opensubtitles-options .loading-spinner').hide();
+                            $('.opensubtitles-options .valid-tick').show();
+                            win.info('Setting changed: opensubtitlesAuthenticated - true');
+                            return;
+                        } else {
+                            throw new Error('no token returned by OpenSubtitles');
+                        }
+                    }).delay(1000).then(function () {
+                        self.render();
+                    }).catch(function (err) {
+                        win.error(err);
+                        $('.opensubtitles-options .loading-spinner').hide();
+                        $('.opensubtitles-options .invalid-cross').show();
+                    });
+            } else {
+                $('.opensubtitles-options .invalid-cross').show();
+            }
+
+        },
+
+        disconnectOpensubtitles: function (e) {
+            var self = this;
+            AdvSettings.set('opensubtitlesUsername', '');
+            AdvSettings.set('opensubtitlesPassword', '');
+            AdvSettings.set('opensubtitlesAuthenticated', false);
+            setTimeout(self.render, 200);
         },
 
         flushBookmarks: function (e) {
@@ -700,7 +750,7 @@
 
         getIPAddress: function () {
             var ip, alias = 0;
-            var ifaces = require('os').networkInterfaces();
+            var ifaces = os.networkInterfaces();
             for (var dev in ifaces) {
                 ifaces[dev].forEach(function (details) {
                     if (details.family === 'IPv4') {
